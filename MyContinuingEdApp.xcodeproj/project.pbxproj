@@ -23,6 +23,8 @@
 		F2772B992E1DDAA2006A94BD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F2772BA12E1DDB3B006A94BD /* CEActivityModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CEActivityModel.xcdatamodel; sourceTree = "<group>"; };
 		F2772BA32E1DE3A2006A94BD /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		F2772BA52E1DFA3D006A94BD /* MyContinuingEdApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyContinuingEdApp.entitlements; sourceTree = "<group>"; };
+		F2772BA62E1DFA49006A94BD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,8 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				F2772BA62E1DFA49006A94BD /* Info.plist */,
+				F2772BA52E1DFA3D006A94BD /* MyContinuingEdApp.entitlements */,
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
 				F2772B942E1DDA9F006A94BD /* ContentView.swift */,
 				F2772BA02E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld */,
@@ -272,11 +276,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MyContinuingEdApp/MyContinuingEdApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MyContinuingEdApp/Preview Content\"";
+				DEVELOPMENT_TEAM = 5ZMV4Y9GVG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyContinuingEdApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -300,11 +307,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = MyContinuingEdApp/MyContinuingEdApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MyContinuingEdApp/Preview Content\"";
+				DEVELOPMENT_TEAM = 5ZMV4Y9GVG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MyContinuingEdApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
