@@ -13,6 +13,8 @@ class DataController: ObservableObject {
     // container for holding the data in memory
     let container: NSPersistentCloudKitContainer  // so we can sync with iCloud
     
+    @Published var selectedFilter: Filter? = Filter.allActivities
+    
     
     // MARK: - SAVING & DELETING METHODS
     
@@ -127,6 +129,6 @@ class DataController: ObservableObject {
         }
         
         
-    }
+    } //: INIT
     
 } //: DATACONTROLLER
