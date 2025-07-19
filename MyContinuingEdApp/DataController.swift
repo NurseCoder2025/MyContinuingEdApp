@@ -11,9 +11,11 @@ import CoreData
 class DataController: ObservableObject {
     // MARK: - PROPERTIES
     // container for holding the data in memory
-    let container: NSPersistentCloudKitContainer  // so we can sync with iCloud
+    let container: NSPersistentCloudKitContainer  // so app can sync with iCloud
     
+    // Properties for storing the current activity or filter/tag that the user has selected
     @Published var selectedFilter: Filter? = Filter.allActivities
+    @Published var selectedActivity: CeActivity?
     
     
     // MARK: - SAVING & DELETING METHODS
@@ -62,12 +64,17 @@ class DataController: ObservableObject {
         let activityFetch: NSFetchRequest<NSFetchRequestResult> = CeActivity.fetchRequest()
         delete(activityFetch)
         
-        let tagFetch: NSFetchRequest<NSFetchRequestResult> = Tags.fetchRequest()
+        let tagFetch: NSFetchRequest<NSFetchRequestResult> = Tag.fetchRequest()
         delete(tagFetch)
         
         save()
     }
     
+    
+    // MARK: - Cloud storage syncronization methods
+    func remoteStorageChanged(_ notification: Notification) {
+        objectWillChange.send()
+    }
     
     
     // MARK: - PREVIEW SAMPLE DATA
@@ -79,23 +86,24 @@ class DataController: ObservableObject {
         
         // Creating 5 sample activities, and 10 tags per activity
         for i in 1...5 {
-            let activity = CeActivity(context: viewContext)
-            activity.activityTitle = "Activity # \(i)"
-            activity.activityDescription = "A fun and educational CE activity!"
-            activity.contactHours = 1.0
-            activity.evalRating = 4
-            activity.ceType = "Nursing CE"
-            activity.activityCompleted = Bool.random()
-            activity.expirationDate = Date.now.addingTimeInterval(ThirtyDaysInSeconds)
-            activity.cost = 35.0
-            activity.formatType = "Recorded Self-Study"
-            activity.whatILearned = "A lot!"
+            let tag = Tag(context: viewContext)
+            
+            tag.tagID = UUID()
+            tag.tagName = "Tag #\(i)"
             
             for j in 1...10 {
-                let tag = Tags(context: viewContext)
-                
-                tag.tagID = UUID()
-                tag.tagName = "Tag #\(j) for activity #\(i)"
+                let activity = CeActivity(context: viewContext)
+                activity.activityTitle = "Activity # \(i)-\(j)"
+                activity.activityDescription = "A fun and educational CE activity!"
+                activity.contactHours = 1.0
+                activity.evalRating = 4
+                activity.ceType = "Nursing CE"
+                activity.activityCompleted = Bool.random()
+                activity.expirationDate = Date.now.addingTimeInterval(ThirtyDaysInSeconds)
+                activity.cost = 35.0
+                activity.formatType = "Recorded Self-Study"
+                activity.whatILearned = "A lot!"
+                tag.addToTags_activities(activity)
             } //: J LOOP
             
         } //: I LOOP
@@ -115,6 +123,20 @@ class DataController: ObservableObject {
     init(inMemory: Bool = false) {
         // identifying the name of the stored data to load and use
         container = NSPersistentCloudKitContainer(name: "CEActivityModel")
+        
+        // Cloudkit Syncronization configuration
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.persistentStoreDescriptions.first?.setOption(
+            true as NSNumber,
+            forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
+        )
+        
+        NotificationCenter.default.addObserver(
+            forName: .NSPersistentStoreRemoteChange,
+            object: container.persistentStoreCoordinator,
+            queue: .main,
+            using: remoteStorageChanged
+        )
         
         // Load data only into memory for testing purposes (if init parameter is set to true)
         if inMemory {

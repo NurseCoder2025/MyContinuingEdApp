@@ -12,7 +12,7 @@ struct Filter: Identifiable, Hashable {
     var name: String
     var icon: String
     var minModificationDate: Date = Date.distantPast
-    var tag: Tags?
+    var tag: Tag?
     
     // "Smart Filter" properties
     static var recentActivities = Filter(

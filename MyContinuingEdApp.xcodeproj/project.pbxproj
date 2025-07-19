@@ -16,6 +16,12 @@
 		F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */; };
 		F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */; };
 		F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B521C72E1F65A9000AB6E6 /* Filter.swift */; };
+		F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */; };
+		F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */; };
+		F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */; };
+		F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */; };
+		F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */; };
+		F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D57B2E2B53E500E1FB5F /* ExpirationTypeEnum.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +37,12 @@
 		F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		F2B521C72E1F65A9000AB6E6 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CEActivity-CoreDateHelper.swift"; sourceTree = "<group>"; };
+		F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tag-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoActivityView.swift; sourceTree = "<group>"; };
+		F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
+		F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRow.swift; sourceTree = "<group>"; };
+		F2F6D57B2E2B53E500E1FB5F /* ExpirationTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpirationTypeEnum.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,8 +83,14 @@
 				F2772B962E1DDAA2006A94BD /* Assets.xcassets */,
 				F2772B982E1DDAA2006A94BD /* Preview Content */,
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
+				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
+				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
+				F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */,
 				F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
+				F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */,
+				F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */,
+				F2F6D57B2E2B53E500E1FB5F /* ExpirationTypeEnum.swift */,
 				F2B521C72E1F65A9000AB6E6 /* Filter.swift */,
 			);
 			path = MyContinuingEdApp;
@@ -156,13 +174,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
+				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
+				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
+				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
+				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
+				F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,12 +18,13 @@ struct SidebarView: View {
     // Converting all fetched tags to Filter objects
     var convertedTagFilters: [Filter] {
         tags.map { tag in
-            Filter(name: tag.tagName ?? "No Name", icon: "tag", tag: tag)
+            Filter(name: tag.tagTagName, icon: "tag", tag: tag)
         }
     }
     
     // MARK: - Core Data fetch requests
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.tagName)]) var tags: FetchedResults<Tags>
+    // All tags sorted by name
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.tagName)]) var tags: FetchedResults<Tag>
     
     
     // MARK: - BODY
@@ -42,9 +43,13 @@ struct SidebarView: View {
                 ForEach(convertedTagFilters) { filter in
                     NavigationLink(value: filter) {
                         Label(filter.name, systemImage: filter.icon)
+                            .badge(filter.tag?.tagActiveActivities.count ?? 0)
                     } //: NAV LINK
                 } //: LOOP
+                .onDelete(perform: delete)
+                
             } //: SECTION (tags)
+            
             
         } //: LIST
         .toolbar {
@@ -56,6 +61,14 @@ struct SidebarView: View {
             }
         }
     } //: BODY
+    
+    // MARK: - View Functions
+    func delete(_ offsets: IndexSet) {
+        for offset in offsets {
+            let item = tags[offset]
+            dataController.delete(item)
+        }
+    } //: DELETE method
 }
 
 

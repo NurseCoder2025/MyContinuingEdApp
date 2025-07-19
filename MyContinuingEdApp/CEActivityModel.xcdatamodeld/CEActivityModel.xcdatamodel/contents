@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21H1320" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="CeActivity" representedClassName="CeActivity" syncable="YES" codeGenerationType="class">
+        <attribute name="activityAddedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="activityCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="activityDescription" optional="YES" attributeType="String"/>
         <attribute name="activityTitle" optional="YES" attributeType="String"/>
@@ -13,9 +14,9 @@
         <attribute name="formatType" optional="YES" attributeType="String"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="whatILearned" optional="YES" attributeType="String"/>
-        <relationship name="activity_tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tags" inverseName="tags_activities" inverseEntity="Tags"/>
+        <relationship name="activity_tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="tags_activities" inverseEntity="Tag"/>
     </entity>
-    <entity name="Tags" representedClassName="Tags" syncable="YES" codeGenerationType="class">
+    <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="tagName" optional="YES" attributeType="String"/>
         <relationship name="tags_activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="activity_tags" inverseEntity="CeActivity"/>
