@@ -18,6 +18,20 @@ class DataController: ObservableObject {
     @Published var selectedActivity: CeActivity?
     
     
+    // MARK: - Tag Related Methods
+    func missingTags(from activity: CeActivity) -> [Tag] {
+        let request = Tag.fetchRequest()
+        let allTags = (try? container.viewContext.fetch(request)) ?? []
+        
+        let tagSet = Set(allTags)
+        let difference = tagSet.symmetricDifference(activity.activityTags)
+        
+        return difference.sorted()
+        
+    }
+    
+    
+    
     // MARK: - SAVING & DELETING METHODS
     
     /// Save function that will save the context to disk only when changes are made and the function is called.

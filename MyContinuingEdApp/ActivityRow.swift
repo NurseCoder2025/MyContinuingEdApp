@@ -64,7 +64,7 @@ struct ActivityRow: View {
                         .lineLimit(1)
                     
                     // Tags
-                    Text("No Tags")
+                    Text(activity.allActivityTagString)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 } //: VSTACK

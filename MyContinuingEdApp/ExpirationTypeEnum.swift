@@ -11,6 +11,10 @@ import Foundation
 /// ActivityRow struct.  This enum is used to provide specific values indicating
 /// whether a given activity has already expired, is about to expire (within the next
 /// 30 days) or is still good.
-enum ExpirationType: CaseIterable, Hashable {
-    case expired, expiringSoon, finalDay, stillValid
+enum ExpirationType: String, CaseIterable, Hashable {
+    case expired = "Expired"
+    case expiringSoon = "Expiring Soon"
+    case finalDay = "Final Day"
+    case stillValid = "Valid"
+    case finishedActivity = "Finished Activity"
 }

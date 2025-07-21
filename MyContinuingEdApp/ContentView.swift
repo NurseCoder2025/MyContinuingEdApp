@@ -34,7 +34,9 @@ struct ContentView: View {
     
     // MARK: - BODY
     var body: some View {
-        List {
+        /// The List section navigates to the ActivityROW and not the ActivityView. The
+        /// ActivityView struct is for showing the details of each activity.
+        List(selection: $dataController.selectedActivity) {
             ForEach(activitiesToShow) { activity in
                 ActivityRow(activity: activity)
             } //: LOOP

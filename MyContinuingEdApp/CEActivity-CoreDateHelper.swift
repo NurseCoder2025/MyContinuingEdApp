@@ -36,11 +36,13 @@ extension CeActivity {
     }
     
     var ceActivityCompletedDate: Date {
-        dateCompleted ?? .now
+        get {dateCompleted ?? .now }
+        set {dateCompleted = newValue}
     }
     
     var ceActivityExpirationDate: Date {
-        expirationDate ?? .now
+        get {expirationDate ?? .now }
+        set {expirationDate = newValue}
     }
     
     var ceActivityModifiedDate: Date {
@@ -51,10 +53,22 @@ extension CeActivity {
         activityAddedDate ?? .now
     }
     
-    // MARK: - All related tags in a sorted order
+    // MARK: - Tag-related properties
     var activityTags: [Tag] {
         let result = activity_tags?.allObjects as? [Tag] ?? []
         return result.sorted()
+    }
+    
+    var allActivityTagString: String {
+        // making sure there are tags in the tag property
+        guard let activity_tags else { return "No tags"}
+        
+        if activity_tags.count == 0 {
+            return "No tags"
+        } else {
+            return activityTags.map(\.tagTagName).formatted()
+        }
+        
     }
     
     // MARK: - Example Activity
@@ -102,7 +116,9 @@ extension CeActivity {
         let expiration = ceActivityExpirationDate
         let monthOut: Double = 86400 * 30
         
-        if expiration < Date.now {
+        if activityCompleted {
+            return .finishedActivity
+        } else if expiration < Date.now {
             return .expired
         } else if expiration == Date.now {
             return .finalDay
@@ -114,3 +130,6 @@ extension CeActivity {
     }
     
 }
+
+
+
