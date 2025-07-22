@@ -17,6 +17,9 @@ class DataController: ObservableObject {
     @Published var selectedFilter: Filter? = Filter.allActivities
     @Published var selectedActivity: CeActivity?
     
+    // Task property for controlling how often the app saves changes to disk
+    private var saveTask: Task<Void, Error>?
+    
     
     // MARK: - Tag Related Methods
     func missingTags(from activity: CeActivity) -> [Tag] {
@@ -38,6 +41,17 @@ class DataController: ObservableObject {
     func save() {
         if container.viewContext.hasChanges {
             try? container.viewContext.save()
+        }
+    }
+    
+    /// The queueSave function calls the save() function in the DataController but assigns it to a task variable
+    /// which will delay saving for 5 seconds unless the action gets cancelled by user behavior.
+    func queueSave() {
+        saveTask?.cancel()
+        
+        saveTask = Task { @MainActor in
+            try await Task.sleep(for: .seconds(5))
+            save()
         }
     }
     

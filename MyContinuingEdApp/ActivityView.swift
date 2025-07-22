@@ -146,6 +146,9 @@ struct ActivityView: View {
             
         } //: FORM
         .disabled(activity.isDeleted)
+        .onReceive(activity.objectWillChange) { _ in
+            dataController.queueSave()
+        }
     }
 }
 
