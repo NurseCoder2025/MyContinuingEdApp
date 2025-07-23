@@ -8,6 +8,12 @@
 import Foundation
 import CoreData
 
+enum SortType: String {
+    case dateCreated = "activityAddedDate"
+    case dateModified = "modifiedDate"
+    
+}
+
 class DataController: ObservableObject {
     // MARK: - PROPERTIES
     // container for holding the data in memory
@@ -17,8 +23,30 @@ class DataController: ObservableObject {
     @Published var selectedFilter: Filter? = Filter.allActivities
     @Published var selectedActivity: CeActivity?
     
+    // Properties for holding search terms the user enters for either straight text or tokens
+    @Published var filterText: String = ""
+    @Published var filterTokens: [Tag] = []
+    
+    // Properties for sorting and filtering CE activities list
+    
+    
     // Task property for controlling how often the app saves changes to disk
     private var saveTask: Task<Void, Error>?
+    
+    // Computed property to return an array of tokens for use in the search field in ContentView
+    var suggestedFilterTokens: [Tag] {
+        guard filterText.starts(with: "#") else {return []}
+        
+        let trimmedFilterText = filterText.trimmingCharacters(in: .whitespaces)
+        let request = Tag.fetchRequest()
+        
+        if trimmedFilterText.isNotEmpty {
+            request.predicate = NSPredicate(format: "tagName CONTAINS[c] %@", trimmedFilterText)
+        }
+        
+        return (try? container.viewContext.fetch(request).sorted()) ?? []
+    
+    }
     
     
     // MARK: - Tag Related Methods
@@ -97,6 +125,39 @@ class DataController: ObservableObject {
         
         save()
     }
+    
+    // MARK: - Search Methods
+    
+    /// This function stores whatever filter the user has selected into a filter variable, but if none is selected
+    /// saves the allActivities smart filter.  A compound NSPredicate is created by this function, and within the
+    /// compound predicate is the tag that the user selected (if applicable) as well as the modification date.
+    /// A fetch request is created that creates the compound predicates and supplies that to the viewContext's fetch
+    /// request, returning an array of any CeActivity objects having the selected tag.
+    func activitiesForSelectedFilter() -> [CeActivity] {
+        let filter = selectedFilter ?? .allActivities
+        var predicates: [NSPredicate] = [NSPredicate]()
+        
+        if let tag = filter.tag {
+            let tagPredicate = NSPredicate(format: "activity_tags CONTAINS %@", tag)
+            predicates.append(tagPredicate)
+        } else {
+            let datePredicate = NSPredicate(format: "modifiedDate > %@", filter.minModificationDate as NSDate)
+            predicates.append(datePredicate)
+        }
+        
+        // Adding any selected tokens to the predicates array
+        if filterTokens.isNotEmpty {
+            let tokenPredicate = NSPredicate(format: "ANY activity_tags IN %@", filterTokens)
+            predicates.append(tokenPredicate)
+        }
+        
+        let request = CeActivity.fetchRequest()
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        
+        let allActivities = (try? container.viewContext.fetch(request)) ?? []
+        return allActivities.sorted()
+    }
+    
     
     
     // MARK: - Cloud storage syncronization methods

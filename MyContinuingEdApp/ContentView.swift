@@ -11,25 +11,7 @@ struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var dataController: DataController
     
-    // Computed property to retun all activities as determined by active filters and selected tag
-    var activitiesToShow: [CeActivity] {
-        let filter = dataController.selectedFilter ?? .allActivities
-        var allActivities: [CeActivity]
-        
-        if let tag = filter.tag {
-            // Type casting to CeActivity becuase tag objects are stored as NSSet data types in Core Data
-            allActivities = tag.tags_activities?.allObjects as? [CeActivity] ?? []
-        } else {
-            // Defining the fetch request and predicate
-            let request = CeActivity.fetchRequest()
-            request.predicate = NSPredicate(format: "modifiedDate > %@", filter.minModificationDate as NSDate)
-            
-            // Running the fetch request and assigning the results to allActivities
-            allActivities = (try? dataController.container.viewContext.fetch(request)) ?? []
-        }
-        
-        return allActivities.sorted()
-    }
+    
     
     
     // MARK: - BODY
@@ -37,19 +19,24 @@ struct ContentView: View {
         /// The List section navigates to the ActivityROW and not the ActivityView. The
         /// ActivityView struct is for showing the details of each activity.
         List(selection: $dataController.selectedActivity) {
-            ForEach(activitiesToShow) { activity in
+            ForEach(dataController.activitiesForSelectedFilter()) { activity in
                 ActivityRow(activity: activity)
             } //: LOOP
             .onDelete(perform: delete)
             
         } //: LIST
         .navigationTitle("CE Activities")
+        .searchable(text: $dataController.filterText, tokens: $dataController.filterTokens, suggestedTokens:  .constant(dataController.suggestedFilterTokens), prompt: "Filter CE activities, or type # to add tags") { tag in
+                Text(tag.tagTagName)
+        }
     }
     
     // MARK: - ContentView Methods
     func delete(_ offsets: IndexSet) {
+        let activities = dataController.activitiesForSelectedFilter()
+        
         for offset in offsets {
-            let item = activitiesToShow[offset]
+            let item = activities[offset]
             dataController.delete(item)
         }
     } //: DELETE Method
