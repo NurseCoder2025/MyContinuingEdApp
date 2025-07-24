@@ -27,27 +27,26 @@ struct ActivityRow: View {
                 // has been completed by the user, and if not, whether the activity
                 // has expired or will be expiring soon
                 VStack(alignment: .leading) {
-                    if activity.activityCompleted != true {
-                        if expiration == .expiringSoon {
-                            // Extra padding was required for this icon due to it
-                            // appearing misaligned when other entries were displaying
-                            // the checkmark icon.
-                            Image(systemName: "hourglass")
-                                .imageScale(.large)
-                                .padding(.trailing, 8)
-                                .padding(.leading, 2)
-                        } else if expiration == .expired {
-                            Image(systemName: "x.circle.fill")
-                                .imageScale(.large)
-                        } else if expiration == .finalDay {
-                            Image(systemName: "clock.badge.exclamation")
-                                .imageScale(.large)
-                        }
-                    } else if activity.activityCompleted {
+                    if activity.activityCompleted == true {
                         Image(systemName: "checkmark.seal.fill")
                             .imageScale(.large)
                             .foregroundColor(Color.green)
-                    } else {
+                    }
+                    if expiration == .expiringSoon {
+                        // Extra padding was required for this icon due to it
+                        // appearing misaligned when other entries were displaying
+                        // the checkmark icon.
+                        Image(systemName: "hourglass")
+                            .imageScale(.large)
+                            .padding(.trailing, 8)
+                            .padding(.leading, 2)
+                    } else if expiration == .expired {
+                        Image(systemName: "x.circle.fill")
+                            .imageScale(.large)
+                    } else if expiration == .finalDay {
+                        Image(systemName: "clock.badge.exclamation")
+                            .imageScale(.large)
+                    } else if expiration == .stillValid {
                         Image(systemName: "book.fill")
                             .imageScale(.large)
                             .opacity(0)
@@ -69,14 +68,12 @@ struct ActivityRow: View {
                         .lineLimit(1)
                 } //: VSTACK
                
-                
-            
-            
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text(activity.ceActivityExpirationDate.formatted(date: .numeric, time: .omitted))
+                Text("exp \(activity.ceActivityExpirationDate.formatted(date: .numeric, time: .omitted))")
                     .font(.subheadline)
+                    .italic()
                 
                 if activity.activityCompleted {
                     Text("Completed")

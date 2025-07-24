@@ -17,4 +17,5 @@ enum ExpirationType: String, CaseIterable, Hashable {
     case finalDay = "Final Day"
     case stillValid = "Valid"
     case finishedActivity = "Finished Activity"
+    case all = "All"
 }

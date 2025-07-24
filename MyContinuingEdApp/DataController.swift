@@ -8,11 +8,18 @@
 import Foundation
 import CoreData
 
+// MARK: - ENUMS
 enum SortType: String {
+    case name = "activityTitle"
     case dateCreated = "activityAddedDate"
     case dateModified = "modifiedDate"
-    
+    case dateCompleted = "dateCompleted"
+    case activityCost = "cost"
+    case hoursAwarded = "contactHours"
+    case typeOfCE = "ceType"
+    case format = "formatType"
 }
+
 
 class DataController: ObservableObject {
     // MARK: - PROPERTIES
@@ -28,7 +35,16 @@ class DataController: ObservableObject {
     @Published var filterTokens: [Tag] = []
     
     // Properties for sorting and filtering CE activities list
+        // MARK: Sorting properties
+        @Published var sortType: SortType = .name
+        @Published var sortNewestFirst: Bool = true
+       
     
+        // MARK: Filtering properties
+        @Published var filterEnabled: Bool = false
+        @Published var filterRating: Int = -1
+        @Published var filterExpirationStatus: ExpirationType = .all
+   
     
     // Task property for controlling how often the app saves changes to disk
     private var saveTask: Task<Void, Error>?
@@ -126,7 +142,7 @@ class DataController: ObservableObject {
         save()
     }
     
-    // MARK: - Search Methods
+    // MARK: - Search & Filter Methods
     
     /// This function stores whatever filter the user has selected into a filter variable, but if none is selected
     /// saves the allActivities smart filter.  A compound NSPredicate is created by this function, and within the
@@ -151,8 +167,34 @@ class DataController: ObservableObject {
             predicates.append(tokenPredicate)
         }
         
+        // if the user activates the filter feature, add the selected filters to the compound NSPredicate
+        if filterEnabled {
+            // Rating filter
+            if filterRating >= 0 {
+                let ratingPredicate = NSPredicate(format: "evalRating = %d", filterRating)
+                predicates.append(ratingPredicate)
+            }
+            // Expiration status filter
+            if filterExpirationStatus != .all {
+                // All completed activities filter
+                let lookForCompleted = filterExpirationStatus == .finishedActivity
+                let completedActivityPredicate = NSPredicate(format: "activityCompleted = %@", NSNumber(value: lookForCompleted))
+                predicates.append(completedActivityPredicate)
+                
+                // Finding activities under other statuses
+                let otherStatusPredicate = NSPredicate(format: "currentStatus = %@", filterExpirationStatus.rawValue)
+                predicates.append(otherStatusPredicate)
+                
+            }
+        } //: IF Filter Enabled
+        
         let request = CeActivity.fetchRequest()
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        
+        // TODO: Fix sorting problem (sorting doesn't appear to be occurring)
+        // For sorting the selected filter/sort items:
+        request.sortDescriptors = [NSSortDescriptor(key: sortType.rawValue, ascending: sortNewestFirst)]
+        
         
         let allActivities = (try? container.viewContext.fetch(request)) ?? []
         return allActivities.sorted()
@@ -171,7 +213,6 @@ class DataController: ObservableObject {
     // Creating sample data for testing and previewing
     func createSampleData() {
         let viewContext = container.viewContext
-        let ThirtyDaysInSeconds: Double = 60 * 60 * 24 * 30
         
         // Creating 5 sample activities, and 10 tags per activity
         for i in 1...5 {
@@ -181,15 +222,21 @@ class DataController: ObservableObject {
             tag.tagName = "Tag #\(i)"
             
             for j in 1...10 {
+                let randomFutureExpirationDate: Double = 86400 * Double(Int.random(in: 1...730))
+                let randomPastDate: Double = -(86400 * Double.random(in: 7...180))
                 let activity = CeActivity(context: viewContext)
-                activity.activityTitle = "Activity # \(i)-\(j)"
+                
+                activity.activityAddedDate = Date.now.addingTimeInterval(randomPastDate)
+                activity.activityTitle = "Activity # \(j)-\(i)"
                 activity.activityDescription = "A fun and educational CE activity!"
-                activity.contactHours = 1.0
-                activity.evalRating = 4
+                activity.contactHours = Double.random(in: 0.5...10)
+                activity.evalRating = Int16.random(in: 0...4)
                 activity.ceType = "Nursing CE"
                 activity.activityCompleted = Bool.random()
-                activity.expirationDate = Date.now.addingTimeInterval(ThirtyDaysInSeconds)
-                activity.cost = 35.0
+                activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
+                activity.dateCompleted = Date.now.addingTimeInterval(randomPastDate)
+                activity.currentStatus = activity.expirationStatusString
+                activity.cost = Double.random(in: 0...450)
                 activity.formatType = "Recorded Self-Study"
                 activity.whatILearned = "A lot!"
                 tag.addToTags_activities(activity)

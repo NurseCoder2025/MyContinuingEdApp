@@ -129,6 +129,10 @@ extension CeActivity {
         }
     }
     
+    var expirationStatusString: String {
+        return expirationStatus.rawValue
+    }
+    
 }
 
 

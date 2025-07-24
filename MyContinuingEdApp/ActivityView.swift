@@ -46,11 +46,11 @@ struct ActivityView: View {
                 } //: VSTACK (title and modification date)
                 
                 Picker("My Rating:", selection: $activity.evalRating) {
-                    Text("Terrible").tag(Int16(0))
-                    Text("Poor").tag(Int16(1))
-                    Text("So-So").tag(Int16(2))
-                    Text("Interesting").tag(Int16(3))
-                    Text("Loved it").tag(Int16(4))
+                    Text(ActivityRating.terrible.rawValue).tag(Int16(0))
+                    Text(ActivityRating.poor.rawValue).tag(Int16(1))
+                    Text(ActivityRating.soSo.rawValue).tag(Int16(2))
+                    Text(ActivityRating.interesting.rawValue).tag(Int16(3))
+                    Text(ActivityRating.lovedIt.rawValue).tag(Int16(4))
                 }
                 // MARK: Tag Menu
                 Menu {
@@ -100,6 +100,9 @@ struct ActivityView: View {
                         .keyboardType(.default)
                     
                     DatePicker("Expires On", selection: $activity.ceActivityExpirationDate, displayedComponents: [.date])
+                        .onChange(of: activity.ceActivityExpirationDate) { _ in
+                            updateActivityStatus(status: activity.expirationStatus)
+                        }
                 } //: Description Subsection
                 
             // MARK: - Hours & Cost
@@ -145,10 +148,23 @@ struct ActivityView: View {
             
             
         } //: FORM
+        .onAppear {
+            updateActivityStatus(status: activity.expirationStatus)
+        }
         .disabled(activity.isDeleted)
         .onReceive(activity.objectWillChange) { _ in
             dataController.queueSave()
         }
+    }//: BODY
+    
+    
+    // MARK: - Activity Specialty Methods
+    /// The updateActivityStatus function exists to enable filtering functionality in the DataController. -->
+    /// Adding this function in order to automatically assign the computed ExpirationType value from the CEActivity-Core
+    /// DataHelper file (see bottom extension) to the direct property in Core Data.  Need to use this in order to
+    /// properly filter activities by expiration status (type) in the DataController.
+    func updateActivityStatus(status: ExpirationType) {
+        activity.currentStatus = status.rawValue
     }
 }
 
