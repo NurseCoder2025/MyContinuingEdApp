@@ -36,12 +36,12 @@ extension CeActivity {
     }
     
     var ceActivityCompletedDate: Date {
-        get {dateCompleted ?? .now }
+        get {dateCompleted ?? .futureCompletion }
         set {dateCompleted = newValue}
     }
     
     var ceActivityExpirationDate: Date {
-        get {expirationDate ?? .now }
+        get {expirationDate ?? .futureExpiration }
         set {expirationDate = newValue}
     }
     

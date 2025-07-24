@@ -132,6 +132,9 @@ struct ContentView: View {
                     .symbolVariant(dataController.filterEnabled ? .fill : .none)
             } //: MENU + label
             
+            Button(action: dataController.createActivity) {
+                Label("New Activity", systemImage: "square.and.pencil")
+            }
             
             
         } //: TOOLBAR

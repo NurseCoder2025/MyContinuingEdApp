@@ -77,6 +77,15 @@ class DataController: ObservableObject {
         
     }
     
+    func createNewTag() {
+        let newTag = Tag(context: container.viewContext)
+        newTag.tagID = UUID()
+        newTag.tagName = "New tag"
+        
+        save()
+    }
+    
+    
     
     
     // MARK: - SAVING & DELETING METHODS
@@ -207,6 +216,30 @@ class DataController: ObservableObject {
         objectWillChange.send()
     }
     
+    // MARK: - Creating new objects (activities & tags)
+    func createActivity() {
+        // creating new object in memory
+        let newActivity = CeActivity(context: container.viewContext)
+        
+        // setting up initial values
+        newActivity.ceTitle = "New CE Activity"
+        newActivity.activityAddedDate = Date.now
+        newActivity.contactHours = 1.0
+        newActivity.ceDescription = "An exciting learning opportunity!"
+        newActivity.formatType = "Recorded webinar"
+        newActivity.ceType = "CME"
+        newActivity.cost = 0.0
+        
+        // if user creates a new activity while a specific tag has been selected
+        // assign that tag to the new activity
+        if let tag = selectedFilter?.tag {
+            newActivity.addToActivity_tags(tag)
+        }
+        
+        save()
+        
+        selectedActivity = newActivity
+    }
     
     // MARK: - PREVIEW SAMPLE DATA
     

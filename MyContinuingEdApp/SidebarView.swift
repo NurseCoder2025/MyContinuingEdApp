@@ -12,6 +12,11 @@ struct SidebarView: View {
     // Accessing the data controller environmental object
     @EnvironmentObject var dataController: DataController
     
+    // Properties for renaming tags
+    @State private var showRenamingAlert: Bool = false
+    @State private var newTagName: String = ""
+    @State private var tagToRename: Tag?
+    
     // Defining smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
     
@@ -44,34 +49,66 @@ struct SidebarView: View {
                     NavigationLink(value: filter) {
                         Label(filter.name, systemImage: filter.icon)
                             .badge(filter.tag?.tagActiveActivities.count ?? 0)
-                    } //: NAV LINK
-                } //: LOOP
-                .onDelete(perform: delete)
+                            .contextMenu {
+                                Button {
+                                    renameTag(filter)
+                                } label: {
+                                    Label("Rename", systemImage: "pencil")
+                                }
+                            }//: CONTEXT MENU
+
+                            } //: NAV LINK
+                    } //: LOOP
+                    .onDelete(perform: delete)
+                    
+                } //: SECTION (tags)
                 
-            } //: SECTION (tags)
-            
-            
-        } //: LIST
-        .toolbar {
-            Button {
-                dataController.deleteAll()
-                dataController.createSampleData()
-            } label: {
-                Label("Add Samples", systemImage: "flame")
+                
+            } //: LIST
+            .toolbar {
+                Button(action: dataController.createNewTag) {
+                    Label("Add Tag", systemImage: "plus")
+                }
+                
+                
+            #if DEBUG
+                Button {
+                    dataController.deleteAll()
+                    dataController.createSampleData()
+                } label: {
+                    Label("Add Samples", systemImage: "flame")
+                }
+            #endif
+                
+            } //: TOOLBAR
+            .alert("Rename Tag", isPresented: $showRenamingAlert) {
+                Button("OK", action: confirmTagRename)
+                Button("Cancel", role: .cancel) {}
+                TextField("New tag name:", text: $newTagName)
             }
+        } //: BODY
+        
+        // MARK: - View Functions
+        func delete(_ offsets: IndexSet) {
+            for offset in offsets {
+                let item = tags[offset]
+                dataController.delete(item)
+            }
+        } //: DELETE method
+        
+        func renameTag(_ selectedFilter: Filter) {
+            tagToRename = selectedFilter.tag
+            newTagName = selectedFilter.name
+            showRenamingAlert = true
         }
-    } //: BODY
+        
+        func confirmTagRename() {
+            tagToRename?.tagName = newTagName
+            dataController.save()
+        }
+        
+    } //: STRUCT
     
-    // MARK: - View Functions
-    func delete(_ offsets: IndexSet) {
-        for offset in offsets {
-            let item = tags[offset]
-            dataController.delete(item)
-        }
-    } //: DELETE method
-}
-
-
 
 // MARK: - PREVIEW
 struct SidebarView_Previews: PreviewProvider {
