@@ -58,7 +58,7 @@ struct ActivityView: View {
                     ForEach(activity.activityTags) { tag in
                         Button {
                             // Tapping button will remove tag for the specific activity and into the "missing tags" set
-                            activity.removeFromActivity_tags(tag)
+                            activity.removeFromTags(tag)
                         } label: {
                             Label(tag.tagTagName, systemImage: "checkmark")
                         } //: Button + Label
@@ -75,7 +75,7 @@ struct ActivityView: View {
                         Section("Add Tags") {
                             ForEach(remainingTags) { tag in
                                 Button {
-                                    activity.addToActivity_tags(tag)
+                                    activity.addToTags(tag)
                                 } label: {
                                     Text(tag.tagTagName)
                                 } //: BUTTON + label
@@ -140,8 +140,11 @@ struct ActivityView: View {
             // MARK: - Activity Completion
             Section("Activity Completion") {
                 Toggle("Activity Completed?", isOn: $activity.activityCompleted)
-                DatePicker("Date Completed", selection: $activity.ceActivityCompletedDate, displayedComponents: [.date])
-                TextField("What I Learned", text: $activity.ceActivityWhatILearned, prompt: Text("What did you learn from this activity?"),axis: .vertical )
+                if activity.activityCompleted {
+                    DatePicker("Date Completed", selection: $activity.ceActivityCompletedDate, displayedComponents: [.date])
+                    
+                    TextField("What I Learned", text: $activity.ceActivityWhatILearned, prompt: Text("What did you learn from this activity?"),axis: .vertical )
+                } // IF activity completed...
                 
             }//: Activity Completion Section
                 
@@ -150,10 +153,13 @@ struct ActivityView: View {
         } //: FORM
         .onAppear {
             updateActivityStatus(status: activity.expirationStatus)
-        }
+        } //: onAppear
         .disabled(activity.isDeleted)
         .onReceive(activity.objectWillChange) { _ in
             dataController.queueSave()
+        } //: onReceive
+        .onChange(of: activity.dateCompleted) { _ in
+            dataController.assignActivitiesToRenewalPeriod()
         }
     }//: BODY
     

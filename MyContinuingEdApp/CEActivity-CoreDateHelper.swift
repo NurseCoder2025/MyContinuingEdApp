@@ -55,15 +55,15 @@ extension CeActivity {
     
     // MARK: - Tag-related properties
     var activityTags: [Tag] {
-        let result = activity_tags?.allObjects as? [Tag] ?? []
+        let result = tags?.allObjects as? [Tag] ?? []
         return result.sorted()
     }
     
     var allActivityTagString: String {
         // making sure there are tags in the tag property
-        guard let activity_tags else { return "No tags"}
+        guard let tags else { return "No tags"}
         
-        if activity_tags.count == 0 {
+        if tags.count == 0 {
             return "No tags"
         } else {
             return activityTags.map(\.tagTagName).formatted()

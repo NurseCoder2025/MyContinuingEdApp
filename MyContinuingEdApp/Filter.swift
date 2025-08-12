@@ -13,8 +13,9 @@ struct Filter: Identifiable, Hashable {
     var icon: String
     var minModificationDate: Date = Date.distantPast
     var tag: Tag?
+    var renewalPeriod: RenewalPeriod?
     
-    // "Smart Filter" properties
+    // MARK: - "Smart Filter" properties
     static var recentActivities = Filter(
         name: "Recent",
         icon: "tray",
@@ -22,6 +23,8 @@ struct Filter: Identifiable, Hashable {
     )
     
     static var allActivities = Filter(name: "All CE Activities", icon: "clock")
+    
+    // MARK: - PROTOCOL CONFORMANCE
     
     /// Customizing the hash function for this struct by only hasing the id value for each filter as that is the
     /// only value that matters for the puroses of this app.

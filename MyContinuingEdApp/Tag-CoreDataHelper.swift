@@ -19,7 +19,7 @@ extension Tag {
     }
     
     var tagActiveActivities: [CeActivity] {
-        let result = tags_activities?.allObjects as? [CeActivity] ?? []
+        let result = activity?.allObjects as? [CeActivity] ?? []
         return result.filter {$0.activityCompleted == false}
      }
     

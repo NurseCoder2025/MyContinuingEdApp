@@ -21,4 +21,17 @@ extension Date {
     
     // Property for providing a more reasonable future completion date for new CE activities
     static let futureCompletion: Date = Date.now.addingTimeInterval(86400 * 180)
+    
+    // Property for providing a reasonable renewal period start date
+    static let renewalStartDate: Date = Date.now.addingTimeInterval(86400 * -180)
+    
+    // Property for providing a reasonable renewal period end date
+    static let renewalEndDate: Date = Date.now.addingTimeInterval(86400 * 1095)
+    
+    // Getting a year string from a given date
+    var yearString: String {
+        let calendar = Calendar.current
+        let year = calendar.component(.year, from: self)
+        return String(year)
+    }
 }

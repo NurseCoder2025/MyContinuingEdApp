@@ -1,0 +1,46 @@
+//
+//  RenewalPeriod+CoreDataProperties.swift
+//  MyContinuingEdApp
+//
+//  Created by Kamino on 8/6/25.
+//
+//
+
+import Foundation
+import CoreData
+
+
+extension RenewalPeriod {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<RenewalPeriod> {
+        return NSFetchRequest<RenewalPeriod>(entityName: "RenewalPeriod")
+    }
+
+    @NSManaged public var periodEnd: Date?
+    @NSManaged public var periodID: UUID?
+    @NSManaged public var periodName: String?
+    @NSManaged public var periodStart: Date?
+    @NSManaged public var cesCompleted: NSSet?
+
+}
+
+// MARK: Generated accessors for cesCompleted
+extension RenewalPeriod {
+
+    @objc(addCesCompletedObject:)
+    @NSManaged public func addToCesCompleted(_ value: CeActivity)
+
+    @objc(removeCesCompletedObject:)
+    @NSManaged public func removeFromCesCompleted(_ value: CeActivity)
+
+    @objc(addCesCompleted:)
+    @NSManaged public func addToCesCompleted(_ values: NSSet)
+
+    @objc(removeCesCompleted:)
+    @NSManaged public func removeFromCesCompleted(_ values: NSSet)
+
+}
+
+extension RenewalPeriod : Identifiable {
+
+}

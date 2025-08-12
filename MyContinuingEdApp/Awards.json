@@ -1,0 +1,234 @@
+[
+    {
+        "name": "First Steps",
+        "description": "Earn your first CE contact hour.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 1,
+        "image": "figure.walk"
+    },
+    {
+        "name": "A Great Start",
+        "description": "Earn 15 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 15,
+        "image": "hand.thumbsup.fill"
+    },
+    {
+        "name": "Moving On Up",
+        "description": "Earn 25 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 25,
+        "image": "tray.and.arrow.up.fill"
+    },
+    {
+        "name": "Gathering Speed",
+        "description": "Earn 45 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 45,
+        "image": "speedometer"
+    },
+    {
+        "name": "Making Waves",
+        "description": "Earn 65 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 65,
+        "image": "dot.radiowaves.left.and.right"
+    },
+    {
+        "name": "High Performer",
+        "description": "Earn 85 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 85,
+        "image": "square.stack.3d.up.fill"
+    },
+    {
+        "name": "Star Performer",
+        "description": "Earn 100 CE contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 100,
+        "image": "star.circle.fill"
+    },
+    {
+        "name": "Champion Performer",
+        "description": "Earn 150 contact hours.",
+        "color": "Light Blue",
+        "criterion": "CEs",
+        "value": 150,
+        "image": "crown.fill"
+    },
+    {
+        "name": "Checking Boxes",
+        "description": "Complete your first CE.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 1,
+        "image": "checkmark.shield.fill"
+    },
+    {
+        "name": "Rocking it",
+        "description": "Complete 10 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 10,
+        "image": "guitars.fill"
+    },
+    {
+        "name": "20 is Plenty",
+        "description": "Complete 20 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 20,
+        "image": "20.square.fill"
+    },
+    {
+        "name": "Bullseye!",
+        "description": "Complete 30 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 30,
+        "image": "target"
+    },
+    {
+        "name": "Flying High",
+        "description": "Complete 50 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 50,
+        "image": "airplane.circle.fill"
+    },
+    {
+        "name": "You're On Fire!",
+        "description": "Complete 75 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 75,
+        "image": "flame.fill"
+    },
+    {
+        "name": "Box Ticker in Chief",
+        "description": "Complete 100 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 100,
+        "image": "text.badge.checkmark"
+    },
+    {
+        "name": "Boom!",
+        "description": "Complete 150 CE activities.",
+        "color": "Green",
+        "criterion": "completed",
+        "value": 150,
+        "image": "bolt.circle.fill"
+    },
+    {
+        "name": "Playing tag",
+        "description": "You created your first tag.",
+        "color": "Gold",
+        "criterion": "tags",
+        "value": 1,
+        "image": "tag.fill"
+    },
+    {
+        "name": "Tag wrestling",
+        "description": "You've created 10 tags.",
+        "color": "Gold",
+        "criterion": "tags",
+        "value": 10,
+        "image": "tag.circle.fill"
+    },
+    {
+        "name": "Supreme tagger",
+        "description": "You've created 50 tags.",
+        "color": "Gold",
+        "criterion": "tags",
+        "value": 50,
+        "image": "square.grid.3x1.folder.fill.badge.plus"
+    },
+    {
+        "name": "Supporter",
+        "description": "You bought the premium unlock.",
+        "color": "Purple",
+        "criterion": "unlock",
+        "value": 0,
+        "image": "dollarsign.square.fill"
+    },
+    {
+        "name": "Loving Every Minute!",
+        "description": "Rate 20 activities as 'Loved It'",
+        "color": "Red",
+        "criterion": "loved",
+        "value": 20,
+        "image": "heart.circle.fill"
+    },
+    {
+        "name": "Breaking Boring",
+        "description": "Rate 10 activities as 'Interesting'",
+        "color": "Teal",
+        "criterion": "howInteresting",
+        "value": 10,
+        "image": "hammer.fill"
+    },
+    {
+        "name": "Entered the Meditation Chamber",
+        "description": "Complete a relection on 20 activities",
+        "color": "Dark Blue",
+        "criterion": "reflections",
+        "value": 20,
+        "image": "brain.head.profile"
+    },
+    {
+        "name": "On a Learning Curve",
+        "description": "Complete a relection on 45 activities",
+        "color": "Dark Blue",
+        "criterion": "reflections",
+        "value": 45,
+        "image": "chart.xyaxis.line"
+    },
+    {
+        "name": "Filled Up on Knowledge",
+        "description": "Complete a relection on 75 activities",
+        "color": "Dark Blue",
+        "criterion": "reflections",
+        "value": 75,
+        "image": "fuelpump.fill"
+    },
+    {
+        "name": "Encyclopedic!",
+        "description": "Complete a relection on 100 activities",
+        "color": "Dark Blue",
+        "criterion": "reflections",
+        "value": 100,
+        "image": "books.vertical.fill"
+    },
+    {
+        "name": "Surprise Me Once",
+        "description": "Write about one activity where you learned something surprising",
+        "color": "Orange",
+        "criterion": "surprises",
+        "value": 1,
+        "image": "eye.trianglebadge.exclamationmark"
+    },
+    {
+        "name": "Hidden Gems",
+        "description": "Write about 10 activities where you learned something surprising",
+        "color": "Orange",
+        "criterion": "surprises",
+        "value": 10,
+        "image": "bitcoinsign.circle"
+    },
+    {
+        "name": "Raiders of Limitless Learning",
+        "description": "Write about 25 activities where you learned something surprising",
+        "color": "Orange",
+        "criterion": "surprises",
+        "value": 25,
+        "image": "r.circle.fill"
+    }
+]

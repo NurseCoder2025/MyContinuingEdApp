@@ -1,0 +1,59 @@
+//
+//  RenewalPeriod-CoreDataHelper.swift
+//  MyContinuingEdApp
+//
+//  Created by Manann on 7/28/25.
+//
+
+import Foundation
+
+extension RenewalPeriod {
+    
+    var renewalPeriodStart: Date {
+        get { periodStart ?? Date.renewalStartDate}
+        set { periodStart = newValue }
+    }
+    
+    var renewalPeriodEnd: Date {
+        get { periodEnd ?? Date.renewalEndDate }
+        set { periodEnd = newValue }
+    }
+    
+    var renewalPeriodUID: UUID {
+        periodID ?? UUID()
+    }
+    
+    /// No getter for the renewalPeriodName computed property as it will
+    /// be automatically calculated by the generateRenewalPeriodName property
+    var renewalPeriodName: String {
+        get { periodName ?? ""}
+    }
+    
+    
+    
+    // Computed property that returns all activities that fall within the
+    // current (selected) renewal period
+    var renewalCurrentActivities: [CeActivity] {
+        let renewalStart = self.renewalPeriodStart
+        let renewalEnd = self.renewalPeriodEnd
+        
+        let result = cesCompleted?.allObjects as? [CeActivity] ?? []
+        return result.filter {$0.ceActivityCompletedDate >= renewalStart && $0.ceActivityCompletedDate <= renewalEnd }
+    }
+}
+
+
+extension RenewalPeriod {
+    
+    // Creating an example for previewing purposes
+    static var example: RenewalPeriod {
+        let controller = DataController(inMemory: true)
+        let viewContext = controller.container.viewContext
+        
+        let newPeriod = RenewalPeriod(context: viewContext)
+        newPeriod.periodStart = Date.renewalStartDate
+        newPeriod.periodEnd = Date.renewalEndDate
+        
+        return newPeriod
+    }
+}

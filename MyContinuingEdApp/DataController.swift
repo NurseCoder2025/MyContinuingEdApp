@@ -85,9 +85,6 @@ class DataController: ObservableObject {
         save()
     }
     
-    
-    
-    
     // MARK: - SAVING & DELETING METHODS
     
     /// Save function that will save the context to disk only when changes are made and the function is called.
@@ -163,7 +160,7 @@ class DataController: ObservableObject {
         var predicates: [NSPredicate] = [NSPredicate]()
         
         if let tag = filter.tag {
-            let tagPredicate = NSPredicate(format: "activity_tags CONTAINS %@", tag)
+            let tagPredicate = NSPredicate(format: "tags CONTAINS %@", tag)
             predicates.append(tagPredicate)
         } else {
             let datePredicate = NSPredicate(format: "modifiedDate > %@", filter.minModificationDate as NSDate)
@@ -172,8 +169,14 @@ class DataController: ObservableObject {
         
         // Adding any selected tokens to the predicates array
         if filterTokens.isNotEmpty {
-            let tokenPredicate = NSPredicate(format: "ANY activity_tags IN %@", filterTokens)
+            let tokenPredicate = NSPredicate(format: "ANY tags IN %@", filterTokens)
             predicates.append(tokenPredicate)
+        }
+        
+        // Adding any selected renewal period to the predicates
+        if let renewalPeriod = filter.renewalPeriod {
+            let renewalPredicate = NSPredicate(format: "renewal == %@", renewalPeriod)
+            predicates.append(renewalPredicate)
         }
         
         // if the user activates the filter feature, add the selected filters to the compound NSPredicate
@@ -211,12 +214,15 @@ class DataController: ObservableObject {
     
     
     
+    
     // MARK: - Cloud storage syncronization methods
     func remoteStorageChanged(_ notification: Notification) {
         objectWillChange.send()
     }
     
-    // MARK: - Creating new objects (activities & tags)
+    // MARK: - Creating NEW objects
+    /// createActivity() makes a new instance of a CeActivity object with certain default values
+    /// put into place for the activity title, description, expiration date, and such...
     func createActivity() {
         // creating new object in memory
         let newActivity = CeActivity(context: container.viewContext)
@@ -233,7 +239,7 @@ class DataController: ObservableObject {
         // if user creates a new activity while a specific tag has been selected
         // assign that tag to the new activity
         if let tag = selectedFilter?.tag {
-            newActivity.addToActivity_tags(tag)
+            newActivity.addToTags(tag)
         }
         
         save()
@@ -241,11 +247,184 @@ class DataController: ObservableObject {
         selectedActivity = newActivity
     }
     
+    /// Creating a new renewal period for which CEs need to be earned
+    func createRenewalPeriod() -> RenewalPeriod {
+        let newRenewalPeriod = RenewalPeriod(context: container.viewContext)
+        
+        // setting up renewal period initial values
+        newRenewalPeriod.periodStart = Date.now
+        newRenewalPeriod.periodEnd = Date.now.addingTimeInterval(86400 * 730)
+        
+        save()
+        return newRenewalPeriod
+    }
+    
+    /// Creating a new reflection for a given activity. Only two default values are made:
+    /// 1. The reflection date and
+    /// 2. The UUID value for the id property
+    func createNewActivityReflection() {
+        let newReflection = ActivityReflection(context: container.viewContext)
+        
+        newReflection.reflectionID = UUID()
+        newReflection.dateAdded = Date.now
+        
+        save()
+    }
+    
+    
+    // MARK: - AWARDS Related Functions
+    
+    /// Function to count a given object
+    func count<T>(for fetchRequest: NSFetchRequest<T>) -> Int {
+        (try? container.viewContext.count(for: fetchRequest)) ?? 0
+    }
+    
+    /// The addContactHours function is designed to add up all of the contact
+    /// hours returned from a CeActivity fetch request and return that value
+    /// as a double which can then be used.
+    func addContactHours(for fetchRequest: NSFetchRequest<CeActivity>) -> Double {
+        do {
+            let fetchResult = try container.viewContext.fetch(fetchRequest)
+            
+            var totalValue: Double = 0
+            let allHours: [Double] = {
+                var hours: [Double] = []
+                for activity in fetchResult {
+                    hours.append(activity.contactHours)
+                } //: LOOP
+                
+                return hours
+            }() //: allHours
+            
+            for hour in allHours {
+                totalValue += hour
+            }
+            
+            return totalValue
+            
+        } catch  {
+            print("Error adding contact hours up")
+            return 0
+        }
+        
+        
+    }
+    
+        
+    // Function to determine whether an award has been earned
+    func hasEarned(award: Award) -> Bool {
+        switch award.criterion {
+            // # of hours earned achievements
+        case "CEs":
+            let fetchRequest = CeActivity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "contactHours > %d", 0.0)
+            fetchRequest.propertiesToFetch = ["contactHours"]
+            
+            let totalHours = addContactHours(for: fetchRequest)
+            return totalHours >= Double(award.value)
+            
+        case "completed":
+            let fetchRequest = CeActivity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "activityCompleted = true")
+            
+            let totalCompleted = count(for: fetchRequest)
+            return totalCompleted >= award.value
+            
+        case "tags":
+            let fetchRequest = Tag.fetchRequest()
+            let totalTags = count(for: fetchRequest)
+            return totalTags >= award.value
+            
+        case "loved":
+            let fetchRequest = CeActivity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 4)
+            let totalLoved = count(for: fetchRequest)
+            return totalLoved >= award.value
+            
+        case "howInteresting":
+            let fetchRequest = CeActivity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 3)
+            let totalUnliked = count(for: fetchRequest)
+            return totalUnliked >= award.value
+            
+        case "reflections":
+            let fetchRequest = ActivityReflection.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "completedYN = true")
+            let totalReflections = count(for: fetchRequest)
+            return totalReflections >= award.value
+            
+        case "surprises":
+            let fetchRequest = ActivityReflection.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "surpriseEntered = true")
+            let totalSurprises = count(for: fetchRequest)
+            return totalSurprises >= award.value
+            
+            // TODO: Determine why the default case is executing each time the award screen
+            // shows up. This also happens each time a button is pressed.
+        default:
+            print("Sorry, but no award to bestow...")
+            return false
+        
+        } //: hasEarned
+    }
+    
+    
+    // MARK: - Automation Related Methods
+    
+    /// Function that finds the appropriate renewal period for each CE activity, if applicable, and assigns the activity to that period.
+    func assignActivitiesToRenewalPeriod() {
+        let viewContext = container.viewContext
+        // Fetching only all completed CE Activities
+        let activityRequest: NSFetchRequest<CeActivity> = CeActivity.fetchRequest()
+        activityRequest.predicate = NSPredicate(format: "activityCompleted = true")
+        let allCompletedActivities = (try? viewContext.fetch(activityRequest)) ?? []
+        
+        // Fetching all renewal periods
+        let renewalRequest: NSFetchRequest<RenewalPeriod> = RenewalPeriod.fetchRequest()
+        let allRenewals = (try? viewContext.fetch(renewalRequest)) ?? []
+        
+        guard allRenewals.isNotEmpty else { return }
+        
+        // Match each completed activity with the corresponding renewal period based on the completed date
+        for activity in allCompletedActivities {
+            guard let completedDate = activity.dateCompleted else { continue }
+            
+            // finding the matching renewal period
+            if let matchingRenewal = allRenewals.first(where: {renewal in
+                    guard let start = renewal.periodStart, let end = renewal.periodEnd else { return false }
+                
+                    return completedDate >= start && completedDate <= end
+            }) {
+                activity.renewal = matchingRenewal
+            } else {
+                activity.renewal = nil
+            }
+            
+            save()
+            
+        }//: LOOP
+        
+    }
+    
+    
     // MARK: - PREVIEW SAMPLE DATA
     
     // Creating sample data for testing and previewing
     func createSampleData() {
         let viewContext = container.viewContext
+        
+        // Creating calendar components for the sample renewal period
+        let calendar = Calendar.current
+        let currentYear = calendar.component(.year, from: Date())
+        let janFirst = calendar.date(from: DateComponents(year: currentYear, month: 1, day: 1))
+        
+        
+        // Creating renewal period for sample data
+        let sampleRenewalPeriod = RenewalPeriod(context: viewContext)
+        let sampleStartDate = janFirst ?? Date.now
+        sampleRenewalPeriod.periodStart = sampleStartDate
+        sampleRenewalPeriod.periodEnd = sampleStartDate.addingTimeInterval(86400 * 730)
+        
         
         // Creating 5 sample activities, and 10 tags per activity
         for i in 1...5 {
@@ -272,7 +451,30 @@ class DataController: ObservableObject {
                 activity.cost = Double.random(in: 0...450)
                 activity.formatType = "Recorded Self-Study"
                 activity.whatILearned = "A lot!"
-                tag.addToTags_activities(activity)
+                tag.addToActivity(activity)
+                
+                // Adding sample activity reflections
+                let reflection = ActivityReflection(context: viewContext)
+                reflection.reflectionID = UUID()
+                reflection.generalReflection = """
+                Wow, this CE course was so helpful and interesting.  Hope to take more
+                like this one!
+                """
+                reflection.reflectionThreeMainPoints = """
+                1. Study hard
+                2. Get lots of sleep
+                3. Eat healthy
+                """
+                reflection.reflectionSurprises = """
+                No real surprises here today...
+                """
+                activity.reflection = reflection
+                
+                // assigning each activity to the sample renewal period
+                if activity.activityCompleted {
+                    activity.renewal = sampleRenewalPeriod
+                }
+                
             } //: J LOOP
             
         } //: I LOOP
