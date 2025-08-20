@@ -17,10 +17,12 @@
         <attribute name="activityAddedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="activityCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="activityDescription" optional="YES" attributeType="String"/>
+        <attribute name="activityExpires" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="activityID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="activityTitle" optional="YES" attributeType="String"/>
         <attribute name="ceType" optional="YES" attributeType="String"/>
         <attribute name="ceuEarned" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="completionCertificate" optional="YES" attributeType="Binary"/>
         <attribute name="contactHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="currentStatus" optional="YES" attributeType="String"/>

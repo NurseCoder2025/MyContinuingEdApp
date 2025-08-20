@@ -18,18 +18,18 @@ struct ActivityReflectionView: View {
     
     // MARK: - BODY
     var body: some View {
-        NavigationStack {
                 Form {
                     Section {
                         Text("Reflections on \(activity.ceTitle)")
-                            .font(.headline)
+                            .font(.largeTitle)
                     }//: HEADER SECTION
                     
                     Section("3 Main Points") {
                         TextField(
                             "Three main points summary",
                             text: $reflection.reflectionThreeMainPoints,
-                            prompt: Text("Summarize the 3 main points of this activity")
+                            prompt: Text("Summarize the 3 main points of this activity"),
+                            axis: .vertical
                         )
                             .font(.title3)
                         
@@ -42,7 +42,8 @@ struct ActivityReflectionView: View {
                             TextField(
                                 "Anything surprising",
                                 text: $reflection.reflectionSurprises,
-                                prompt: Text("Did you learn anything that surprised you during the activity?")
+                                prompt: Text("Did you learn anything that surprised you during the activity?"),
+                                axis: .vertical
                             )
                             .font(.title3)
                         } //: IF - was surprised
@@ -52,7 +53,8 @@ struct ActivityReflectionView: View {
                         TextField(
                             "Want to learn more about what",
                             text: $reflection.reflectionLearnMoreAbout,
-                            prompt: Text("What would you like to learn more about on from this activity?")
+                            prompt: Text("What would you like to learn more about on from this activity?"),
+                            axis: .vertical
                         )
                             .font(.title3)
                         
@@ -62,7 +64,8 @@ struct ActivityReflectionView: View {
                         TextField(
                             "Other thoughts",
                             text: $reflection.reflectionGeneralReflection,
-                            prompt: Text("Do you have any other reflections or thoughts regarding this activity?")
+                            prompt: Text("Do you have any other reflections or thoughts regarding this activity?"),
+                            axis: .vertical
                         )
                             .font(.title3)
                         
@@ -70,11 +73,10 @@ struct ActivityReflectionView: View {
                     
                     
                 }//: FORM
-                .onReceive(reflection.objectWillChange) { _ in
-                    dataController.queueSave()
+                .onDisappear {
+                    dataController.save()
                 }
             
-        }//: NAV STACK
     } //: BODY
 }
 

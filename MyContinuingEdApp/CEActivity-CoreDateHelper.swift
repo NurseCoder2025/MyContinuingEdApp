@@ -35,15 +35,19 @@ extension CeActivity {
         set { whatILearned = newValue }
     }
     
-    var ceActivityCompletedDate: Date {
-        get {dateCompleted ?? .futureCompletion }
-        set {dateCompleted = newValue}
-    }
+    // Removing this part of the helper as activities that aren't completed
+    // shouldn't have a date value at all (should be nil)
+//    var ceActivityCompletedDate: Date {
+//        get {dateCompleted ?? .futureCompletion }
+//        set {dateCompleted = newValue}
+//    }
     
-    var ceActivityExpirationDate: Date {
-        get {expirationDate ?? .futureExpiration }
-        set {expirationDate = newValue}
-    }
+    // Removing this part of the helper so activities that don't have
+    // an expiration date don't get assigned a random value
+//    var ceActivityExpirationDate: Date {
+//        get {expirationDate ?? .futureExpiration }
+//        set {expirationDate = newValue}
+//    }
     
     var ceActivityModifiedDate: Date {
         modifiedDate ?? .now
@@ -111,22 +115,38 @@ extension CeActivity: Comparable {
 // MARK: - Adding computed expiration status property
 extension CeActivity {
     
-    // computed property to determine if the given activity will be expiring soon or not
+    // computed property to determine if the given activity will be
+    // expiring soon or not
+    
+    // Updated 8/12/25 to reflect the fact I removed the expirationDate
+    // getter and setter from the helper file in order to keep nil values
+    // nil (and not replaced with an arbitrary fill-in value).
     var expirationStatus: ExpirationType {
-        let expiration = ceActivityExpirationDate
-        let monthOut: Double = 86400 * 30
+        if let expiration = expirationDate {
+            let monthOut: Double = 86400 * 30
+            
+            if activityCompleted {
+                return .finishedActivity
+            } else if expiration < Date.now {
+                return .expired
+            } else if expiration == Date.now {
+                return .finalDay
+            } else if expiration <= Date.now.addingTimeInterval(monthOut) {
+                return .expiringSoon
+            } else {
+                return .stillValid
+            }
+            
+        } //: IF LET
         
+        // If there is NO expiration date for an activity, return either
+        // that it has been completed or it is still valid
         if activityCompleted {
             return .finishedActivity
-        } else if expiration < Date.now {
-            return .expired
-        } else if expiration == Date.now {
-            return .finalDay
-        } else if expiration <= Date.now.addingTimeInterval(monthOut) {
-            return .expiringSoon
         } else {
             return .stillValid
         }
+        
     }
     
     var expirationStatusString: String {

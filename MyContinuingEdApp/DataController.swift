@@ -262,13 +262,14 @@ class DataController: ObservableObject {
     /// Creating a new reflection for a given activity. Only two default values are made:
     /// 1. The reflection date and
     /// 2. The UUID value for the id property
-    func createNewActivityReflection() {
+    func createNewActivityReflection() -> ActivityReflection {
         let newReflection = ActivityReflection(context: container.viewContext)
         
         newReflection.reflectionID = UUID()
         newReflection.dateAdded = Date.now
         
         save()
+        return newReflection
     }
     
     
@@ -444,31 +445,47 @@ class DataController: ObservableObject {
                 activity.contactHours = Double.random(in: 0.5...10)
                 activity.evalRating = Int16.random(in: 0...4)
                 activity.ceType = "Nursing CE"
+                              
+                // MARK: activity expiration (sample data)
+                activity.activityExpires = Bool.random()
+                if activity.activityExpires {
+                    activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
+                } else {
+                    activity.expirationDate = nil
+                }
+                
+                // MARK: sample activity completion
                 activity.activityCompleted = Bool.random()
-                activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
-                activity.dateCompleted = Date.now.addingTimeInterval(randomPastDate)
+                if activity.activityCompleted {
+                    activity.dateCompleted = Date.now.addingTimeInterval(randomPastDate)
+                } else {
+                    activity.dateCompleted = nil
+                }
+                
                 activity.currentStatus = activity.expirationStatusString
                 activity.cost = Double.random(in: 0...450)
                 activity.formatType = "Recorded Self-Study"
                 activity.whatILearned = "A lot!"
                 tag.addToActivity(activity)
                 
-                // Adding sample activity reflections
-                let reflection = ActivityReflection(context: viewContext)
-                reflection.reflectionID = UUID()
-                reflection.generalReflection = """
-                Wow, this CE course was so helpful and interesting.  Hope to take more
-                like this one!
-                """
-                reflection.reflectionThreeMainPoints = """
-                1. Study hard
-                2. Get lots of sleep
-                3. Eat healthy
-                """
-                reflection.reflectionSurprises = """
-                No real surprises here today...
-                """
-                activity.reflection = reflection
+                // Adding sample activity reflections IF activity has been
+                // completed
+                if activity.activityCompleted {
+                    let reflection = ActivityReflection(context: viewContext)
+                    reflection.reflectionID = UUID()
+                    reflection.generalReflection = """
+                    Wow, this CE course was so helpful and interesting.  Hope to take more like this one!
+                    """
+                    reflection.reflectionThreeMainPoints = """
+                        1. Study hard
+                        2. Get lots of sleep
+                        3. Eat healthy
+                        """
+                    reflection.reflectionSurprises = """
+                        No real surprises here today...
+                        """
+                    activity.reflection = reflection
+                }
                 
                 // assigning each activity to the sample renewal period
                 if activity.activityCompleted {

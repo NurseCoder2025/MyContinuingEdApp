@@ -19,7 +19,6 @@ struct RenewalPeriodView: View {
     
     // MARK: - BODY
     var body: some View {
-        NavigationStack {
             Spacer()
             VStack {
                 if addingNewRenewalPeriod {
@@ -89,10 +88,6 @@ struct RenewalPeriodView: View {
                 dataController.assignActivitiesToRenewalPeriod()
             }
             
-    
-            
-            
-        }//: NAV STACK
     } //: BODY
 }
 

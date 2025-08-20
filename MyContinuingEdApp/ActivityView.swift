@@ -6,11 +6,23 @@
 //
 
 import SwiftUI
+import PhotosUI
+import PDFKit
+
 
 struct ActivityView: View {
     // MARK: - Properties
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
+    
+    // Properties related to changes with the CE certificate
+    @State private var showCertificateChangeAlert: Bool = false
+    @State private var certificateToConfirm: CertificateDataWrapper?
+    @State private var previousCertificate: Data?
+    @State private var okToShowAlert: Bool = true
+    
+    // Properties related to deleting the saved certificate
+    @State private var showDeleteCertificateWarning: Bool = false
     
     
     // MARK: - BODY
@@ -35,8 +47,14 @@ struct ActivityView: View {
             // MARK: - HEADER section
             Section {
                 VStack(alignment: .leading) {
-                    TextField("Title:", text: $activity.ceTitle, prompt: Text("Enter the activity name here"))
+                    TextField(
+                        "Title:",
+                        text: $activity.ceTitle,
+                        prompt: Text("Enter the activity name here"),
+                        axis: .vertical
+                    )
                         .font(.title)
+                    
                     
                     Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
                         .foregroundStyle(.secondary)
@@ -99,15 +117,25 @@ struct ActivityView: View {
                     TextField("Description:", text: $activity.ceDescription, prompt: Text("Enter a description of the activity"), axis: .vertical)
                         .keyboardType(.default)
                     
-                    DatePicker("Expires On", selection: $activity.ceActivityExpirationDate, displayedComponents: [.date])
-                        .onChange(of: activity.ceActivityExpirationDate) { _ in
-                            updateActivityStatus(status: activity.expirationStatus)
-                        }
+                    Toggle("Expires?", isOn: $activity.activityExpires)
+                    
+                    if activity.activityExpires {
+                        DatePicker("Expires On", selection: Binding(
+                            get: { activity.expirationDate ?? Date.now },
+                            set: { activity.expirationDate = $0 }),
+                            displayedComponents: [.date])
+                        
+                        
+                            .onChange(of: activity.expirationDate) { _ in
+                                updateActivityStatus(status: activity.expirationStatus)
+                            } //: ON CHANGE
+                        
+                    } //: IF expires...
+                    
                 } //: Description Subsection
                 
             // MARK: - Hours & Cost
                 Section("Contact Hours & Cost") {
-                    HStack {
                         HStack {
                             Text("Contact Hours:")
                                 .bold()
@@ -117,17 +145,16 @@ struct ActivityView: View {
                     
                         } //: HSTACK
                         
-                        Divider()
                         
                         HStack {
                             Text("Cost:")
                                 .bold()
-                                .padding(.trailing, 20)
+                                .padding(.trailing, 5)
                             TextField("Activity Cost:", value: $activity.cost, formatter: currencyFormatter, prompt: Text("Cost/Fees"))
                                 .keyboardType(.decimalPad)
                                 
                         } //: HSTACK
-                    }
+                    
                 } //: Contact Hours & Cost subsection
             
             // MARK: - CE Type and Activity Format
@@ -141,18 +168,77 @@ struct ActivityView: View {
             Section("Activity Completion") {
                 Toggle("Activity Completed?", isOn: $activity.activityCompleted)
                 if activity.activityCompleted {
-                    DatePicker("Date Completed", selection: $activity.ceActivityCompletedDate, displayedComponents: [.date])
+                    DatePicker("Date Completed", selection: Binding(
+                        get: {activity.dateCompleted ?? Date.now},
+                        set: {activity.dateCompleted = $0}),
+                    displayedComponents: [.date])
                     
-                    TextField("What I Learned", text: $activity.ceActivityWhatILearned, prompt: Text("What did you learn from this activity?"),axis: .vertical )
+                    if !activity.isDeleted, let reflection = activity.reflection {
+                        NavigationLink {
+                            ActivityReflectionView(activity: activity, reflection: reflection)
+                        } label: {
+                            Text("Activity reflections...")
+                                .backgroundStyle(.yellow)
+                                .foregroundStyle(.blue)
+                                .fontWeight(.semibold)
+                        } //: NAV LINK
+                        
+                    }//: IF LET
+                    
                 } // IF activity completed...
-                
-            }//: Activity Completion Section
-                
+            }// MARK: Activity Completion Section
+            .onChange(of: activity.activityCompleted) { _ in
+                if activity.reflection == nil {
+                    let newReflection = dataController.createNewActivityReflection()
+                    activity.reflection = newReflection
+                } //: IF
+            } //: ON CHANGE
             
+            // MARK: - Certificate Image section
+            if activity.activityCompleted {
+                Section("Certificate Image") {
+                    CertificatePickerView(
+                        activity: activity,
+                        certificateData: $activity.completionCertificate
+                    )
+                                        
+                    if let data = activity.completionCertificate {
+                        if isPDF(data) {
+                            PDFKitView(data: data)
+                                .frame(height: 300)
+                        } else if let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 300)
+                        } else {
+                            Text("Unsupported file format - must be either an image (.png, .jpg) or PDF only.")
+                                .foregroundStyle(.secondary)
+                        }
+                    }//: IF LET (data)
+                    
+                   
+
+                    // MARK: - Certificate Sharing
+                    if let data = activity.completionCertificate {
+                        CertificateShareView(activity: activity, certificateData: data)
+                        
+                        Button(role: .destructive) {
+                            showDeleteCertificateWarning = true
+                        } label: {
+                            Text("Delete Certificate")
+                        }
+                    }
+                    
+                    
+                }//: Certificate Section
+                
+            } //: IF activity completed
             
         } //: FORM
         .onAppear {
             updateActivityStatus(status: activity.expirationStatus)
+            previousCertificate = activity.completionCertificate
         } //: onAppear
         .disabled(activity.isDeleted)
         .onReceive(activity.objectWillChange) { _ in
@@ -160,6 +246,50 @@ struct ActivityView: View {
         } //: onReceive
         .onChange(of: activity.dateCompleted) { _ in
             dataController.assignActivitiesToRenewalPeriod()
+        }
+        .onChange(of: activity.completionCertificate) { newCertificate in
+            // Prevent alert from appearing after user cancels a change
+            if okToShowAlert == false {
+                okToShowAlert = true
+                previousCertificate = newCertificate
+                return
+            }
+            
+            // once a certificate has been saved, bring up an alert each
+            // time the user wishes to change it...
+            if let oldCert = previousCertificate,
+               let newCert = newCertificate {
+                       certificateToConfirm = CertificateDataWrapper(newData: newCert, oldData: oldCert)
+                }
+            
+            previousCertificate = newCertificate
+        }
+        // MARK: - Changing Certificate Alert
+        .alert(item: $certificateToConfirm) { wrapper in
+            Alert(
+                title: Text("Change Certificate?"),
+                message: Text("Are you sure you wish to change the certificate associated with this activity?"),
+                primaryButton: .default(Text("Confirm")) {
+                    activity.completionCertificate = wrapper.newData
+                   
+                },
+                secondaryButton: .cancel() {
+                    okToShowAlert = false
+                    if let data = wrapper.oldData {
+                        activity.completionCertificate = data
+                    }
+                }
+            )
+        } //: Change ALERT
+        // MARK: - Deleting Certificate Alert
+        .alert("Delete Certificate", isPresented: $showDeleteCertificateWarning) {
+            Button("DELETE", role: .destructive) {
+                activity.completionCertificate = nil
+            }
+            
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You are about to delete the saved CE certificate. Are you sure?  This cannot be undone.")
         }
     }//: BODY
     
@@ -172,11 +302,28 @@ struct ActivityView: View {
     func updateActivityStatus(status: ExpirationType) {
         activity.currentStatus = status.rawValue
     }
+    
+    func changeCertificateImage(certificate: Data) {
+        
+    }
+    
 }
 
 // MARK: - Preview
 struct ActivityView_Previews: PreviewProvider {
     static var previews: some View {
+        let controller = DataController(inMemory: true)
         ActivityView(activity: .example)
+            .environmentObject(controller)
+            .environment(\.managedObjectContext, controller.container.viewContext)
     }
+}
+
+
+
+// MARK: - Certificate Data Wrapper struct
+struct CertificateDataWrapper: Identifiable {
+    let id = UUID()
+    let newData: Data
+    let oldData: Data?
 }

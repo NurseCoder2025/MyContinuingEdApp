@@ -71,15 +71,41 @@ struct ActivityRow: View {
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text("exp \(activity.ceActivityExpirationDate.formatted(date: .numeric, time: .omitted))")
-                    .font(.subheadline)
-                    .italic()
-                
+                // 8-12-25 Improvement: Placed "Completed" and "exp" date in
+                // an if-else statement so that the expiration date is hidden
+                // once an activity is marked completed by the user.
                 if activity.activityCompleted {
                     Text("Completed")
                         .font(.body.smallCaps())
                         .foregroundColor(Color.green)
-                }
+                    
+                    if let completionDate = activity.dateCompleted {
+                        Text("on \(completionDate.formatted(date: .numeric, time: .omitted))")
+                            .font(.caption)
+                            .italic()
+                    } else {
+                        Text("Need date completed...")
+                            .font(.caption)
+                            .italic()
+                    }
+                } else {
+                    if let expiration = activity.expirationDate {
+                        Text("Expires on")
+                            .foregroundStyle(.red)
+                        Text("\(expiration.formatted(date: .numeric, time: .omitted))")
+                            .foregroundStyle(.red)
+                            .font(.subheadline)
+                            .bold()
+                    } else {
+                        Text("No expiration")
+                            .foregroundStyle(.gray)
+                            .font(.subheadline)
+                            .italic()
+                    }
+                   
+                       
+                } //: IF - ELSE
+                
             } //: VSTACK - Expiration date
                 
         } //: HSTACK

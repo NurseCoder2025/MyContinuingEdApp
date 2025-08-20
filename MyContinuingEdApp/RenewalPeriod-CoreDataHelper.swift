@@ -38,7 +38,13 @@ extension RenewalPeriod {
         let renewalEnd = self.renewalPeriodEnd
         
         let result = cesCompleted?.allObjects as? [CeActivity] ?? []
-        return result.filter {$0.ceActivityCompletedDate >= renewalStart && $0.ceActivityCompletedDate <= renewalEnd }
+        return result.filter {
+            var filterResult: Bool = false
+            if let completionDate = $0.dateCompleted {
+                filterResult = completionDate >= renewalStart && completionDate <= renewalEnd
+            } //: IF LET
+            return filterResult
+        } //: FILTER
     }
 }
 

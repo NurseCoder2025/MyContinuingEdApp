@@ -11,14 +11,23 @@ struct DetailView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
     
+    // For customizing the navigation path since there are more than
+    // three views in this trisplit navigation app
+    @State private var navigationPath: NavigationPath = NavigationPath()
+    
     // MARK: - BODY
     var body: some View {
-        if let activity = dataController.selectedActivity {
-            ActivityView(activity: activity)
-        } else {
-            NoActivityView()
-        }
-    }
+        NavigationStack(path: $navigationPath) {
+            if let activity = dataController.selectedActivity {
+                ActivityView(activity: activity)
+                    .navigationDestination(for: ActivityReflection.self) { reflection in
+                        ActivityReflectionView(activity: activity, reflection: reflection)
+                    }
+            } else {
+                NoActivityView()
+            }
+        } //: NAV STACK
+    } //: BODY
 }
 
 
