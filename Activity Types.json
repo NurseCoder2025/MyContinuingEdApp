@@ -1,0 +1,26 @@
+[
+    {
+        "typeName": "Article"
+    },
+    {
+        "typeName": "Conference"
+    },
+    {
+        "typeName": "Course"
+    },
+    {
+        "typeName": "Journal club"
+    },
+    {
+        "typeName": "Podcast"
+    },
+    {
+        "typeName": "Simulation"
+    },
+    {
+        "typeName": "Webinar"
+    },
+    {
+        "typeName": "Workshop"
+    }
+]

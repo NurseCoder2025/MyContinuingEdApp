@@ -15,7 +15,7 @@ enum SortType: String {
     case dateModified = "modifiedDate"
     case dateCompleted = "dateCompleted"
     case activityCost = "cost"
-    case hoursAwarded = "contactHours"
+    case awardedCEAmount = "ceAwarded"
     case typeOfCE = "ceType"
     case format = "formatType"
 }
@@ -81,6 +81,47 @@ class DataController: ObservableObject {
         let newTag = Tag(context: container.viewContext)
         newTag.tagID = UUID()
         newTag.tagName = "New tag"
+        
+        save()
+    }
+    // MARK: - CE Designations METHODS
+    /// This fucntion decodes all of the default CE designations in the "Defaut CE Designations" JSON file
+    ///  and then creates a CeDesignation object for each JSON object IF there are currently no designations
+    ///  stored.  This will load default values upon the first use of the app by the user.  Thereafter, the user
+    ///  can edit the list as desired.
+    func preloadCEDesignations() {
+        let request = CeDesignation.fetchRequest()
+        let count = (try? container.viewContext.count(for: request)) ?? 0
+        guard count == 0 else { return }
+        
+        let defaultCeDesignations: [CeDesignationJSON] = Bundle.main.decode("Default CE Designations.json")
+        
+        for designation in defaultCeDesignations {
+            let convertedItem = CeDesignation(context: container.viewContext)
+            convertedItem.designationAbbreviation = designation.designationAbbreviation
+            convertedItem.designationName = designation.designationName
+            convertedItem.designationAKA = designation.designationAKA
+        }
+        save()
+    }
+    
+    // MARK: - ACTIVITY TYPE METHODS
+    
+    /// Like the preloadCEDesignations() method, this function loads a set of default activity value types into the persisten container
+    ///  upon the initial run of the application (or after re-install).  However, after the defaults are created the user can edit them later.
+    func preloadActivityTypes() {
+        let viewContext = container.viewContext
+        let fetchTypes = ActivityType.fetchRequest()
+        
+        let count = (try? viewContext.count(for: fetchTypes)) ?? 0
+        guard count == 0 else { return }
+        
+        let defaultActivityTypes: [ActivityTypeJSON] = Bundle.main.decode("Activity Types.json")
+        
+        for type in defaultActivityTypes {
+            let item = ActivityType(context: viewContext)
+            item.activityTypeName = type.typeName
+        }
         
         save()
     }
@@ -230,10 +271,10 @@ class DataController: ObservableObject {
         // setting up initial values
         newActivity.ceTitle = "New CE Activity"
         newActivity.activityAddedDate = Date.now
-        newActivity.contactHours = 1.0
+        newActivity.ceAwarded = 1.0
         newActivity.ceDescription = "An exciting learning opportunity!"
-        newActivity.formatType = "Recorded webinar"
-        newActivity.ceType = "CME"
+        newActivity.activityFormat = "Virtual"
+       // TODO: Add CE Designation default
         newActivity.cost = 0.0
         
         // if user creates a new activity while a specific tag has been selected
@@ -283,28 +324,28 @@ class DataController: ObservableObject {
     /// The addContactHours function is designed to add up all of the contact
     /// hours returned from a CeActivity fetch request and return that value
     /// as a double which can then be used.
-    func addContactHours(for fetchRequest: NSFetchRequest<CeActivity>) -> Double {
+    func addAwardedCE(for fetchRequest: NSFetchRequest<CeActivity>) -> Double {
         do {
             let fetchResult = try container.viewContext.fetch(fetchRequest)
             
             var totalValue: Double = 0
-            let allHours: [Double] = {
+            let allCE: [Double] = {
                 var hours: [Double] = []
                 for activity in fetchResult {
-                    hours.append(activity.contactHours)
+                    hours.append(activity.ceAwarded)
                 } //: LOOP
                 
                 return hours
             }() //: allHours
             
-            for hour in allHours {
-                totalValue += hour
+            for ce in allCE {
+                totalValue += ce
             }
             
             return totalValue
             
         } catch  {
-            print("Error adding contact hours up")
+            print("Error adding awarded CE up")
             return 0
         }
         
@@ -318,10 +359,10 @@ class DataController: ObservableObject {
             // # of hours earned achievements
         case "CEs":
             let fetchRequest = CeActivity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "contactHours > %d", 0.0)
-            fetchRequest.propertiesToFetch = ["contactHours"]
+            fetchRequest.predicate = NSPredicate(format: "ceAwarded > %d", 0.0)
+            fetchRequest.propertiesToFetch = ["ceAwarded"]
             
-            let totalHours = addContactHours(for: fetchRequest)
+            let totalHours = addAwardedCE(for: fetchRequest)
             return totalHours >= Double(award.value)
             
         case "completed":
@@ -442,11 +483,39 @@ class DataController: ObservableObject {
                 activity.activityAddedDate = Date.now.addingTimeInterval(randomPastDate)
                 activity.activityTitle = "Activity # \(j)-\(i)"
                 activity.activityDescription = "A fun and educational CE activity!"
-                activity.contactHours = Double.random(in: 0.5...10)
+                activity.ceAwarded = Double.random(in: 0.5...10)
                 activity.evalRating = Int16.random(in: 0...4)
-                activity.ceType = "Nursing CE"
+                
+                // MARK: CE Designation
+                let designationRequest: NSFetchRequest<CeDesignation> = CeDesignation.fetchRequest()
+                let allDesignations = (
+                    try? viewContext.fetch(designationRequest)
+                ) ?? []
+                
+                if allDesignations.isNotEmpty {
+                    let designationCount = allDesignations.count
+                    let randomIndex = Int.random(in: 0..<designationCount)
+                    
+                    activity.designation = allDesignations[randomIndex]
+                }
+                
+                // MARK: Sample Activity Format
+                let allFormats: [ActivityFormat] = ActivityFormat.allFormats
+                let randomFormat = allFormats.randomElement()
+                activity.activityFormat = randomFormat?.formatName
+                
+                // MARK: Sample Activity Type
+                let typeRequest = ActivityType.fetchRequest()
+                let allTypes = (try? container.viewContext.fetch(typeRequest)) ?? []
+                
+                if allTypes.isNotEmpty {
+                    let typecount = allTypes.count
+                    let randomIndex = Int.random(in: 0..<typecount)
+                    
+                    activity.type = allTypes[randomIndex]
+                }
                               
-                // MARK: activity expiration (sample data)
+                // MARK: Sample Activity Expiration
                 activity.activityExpires = Bool.random()
                 if activity.activityExpires {
                     activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
@@ -464,7 +533,7 @@ class DataController: ObservableObject {
                 
                 activity.currentStatus = activity.expirationStatusString
                 activity.cost = Double.random(in: 0...450)
-                activity.formatType = "Recorded Self-Study"
+                activity.activityFormat = "Virtual"
                 activity.whatILearned = "A lot!"
                 tag.addToActivity(activity)
                 
@@ -535,6 +604,22 @@ class DataController: ObservableObject {
         container.loadPersistentStores { storeDescription, error in
             if error != nil {
                 fatalError("Failed to load data from local storage...")
+            }
+            
+            // for first time app use load "Default CE Designations"
+            let request = CeDesignation.fetchRequest()
+            let count = (try? self.container.viewContext.count(for: request))
+            
+            if count == 0 {
+                self.preloadCEDesignations()
+            }
+            
+            // for first time app use or install load default Activity Types
+            let typeRequest = ActivityType.fetchRequest()
+            let typeCount = (try? self.container.viewContext.count(for: typeRequest))
+            
+            if typeCount == 0 {
+                self.preloadActivityTypes()
             }
         }
         

@@ -5,6 +5,7 @@
 //  Created by Manann on 7/18/25.
 //
 
+import CoreData
 import SwiftUI
 import PhotosUI
 import PDFKit
@@ -24,6 +25,16 @@ struct ActivityView: View {
     // Properties related to deleting the saved certificate
     @State private var showDeleteCertificateWarning: Bool = false
     
+    // Property for the selecting/changing the CE designation
+    @State private var showCeDesignationSheet: Bool = false
+    
+    // Property for changing the activity type
+    @State private var selectedActivityType: ActivityType?
+    
+    // MARK: - Core Data Fetch Requests
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.designationAbbreviation)]) var allDesignations: FetchedResults<CeDesignation>
+    
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.typeName)]) var allActivityTypes: FetchedResults<ActivityType>
     
     // MARK: - BODY
     var body: some View {
@@ -135,12 +146,12 @@ struct ActivityView: View {
                 } //: Description Subsection
                 
             // MARK: - Hours & Cost
-                Section("Contact Hours & Cost") {
+                Section("CE Awarded & Cost") {
                         HStack {
-                            Text("Contact Hours:")
+                            Text("CE Earned:")
                                 .bold()
                                 .padding(.trailing, 5)
-                            TextField("Contact Hours:", value: $activity.contactHours, formatter: hoursFormatter , prompt: Text("# hours awarded"))
+                            TextField("Earned CE:", value: $activity.ceAwarded, formatter: hoursFormatter , prompt: Text("amount of CE awarded"))
                                 .keyboardType(.decimalPad)
                     
                         } //: HSTACK
@@ -157,13 +168,56 @@ struct ActivityView: View {
                     
                 } //: Contact Hours & Cost subsection
             
-            // MARK: - CE Type and Activity Format
-            Section("CE Awarded & Activity Format") {
-                TextField("Type of CE Awarded", text: $activity.ceActivityCEType, prompt: Text("CME, Nursing CE, CEU, etc."))
+            // MARK: - CE Designation
+            Section("CE Designation") {
+                Button {
+                    showCeDesignationSheet = true
+                } label: {
+                    HStack {
+                        Text("Designated as:")
+                        if let des = activity.designation {
+                            Text(des.ceDesignationAbbrev)
+                                .lineLimit(1)
+                        } else {
+                            Text("Select")
+                        }
+                    }//: HSTACK
+                }
+            }//: SECTION
+            
+            // MARK: - Activity Type
+            
+            Section("Activity Type") {
+                Picker("Type:", selection: $selectedActivityType) {
+                    ForEach(allActivityTypes) { type in
+                        Text(type.activityTypeName)
+                            .tag(type as ActivityType?)
+                    }//: LOOP
+                    
+                }//: PICKER
+                .onChange(of: selectedActivityType) { newType in
+                    activity.type = newType
+                }
                 
-                TextField("Activity Format", text: $activity.ceActivityFormatType, prompt: Text("Recording? Live webinar? Conference?"))
+            }//: SECTION
+            
+                // MARK: - Activity Format Selection
+                Section("Activity Format") {
+                    Picker("Format", selection: $activity.ceActivityFormat) {
+                        ForEach(ActivityFormat.allFormats) {format in
+                            HStack {
+                                Image(systemName: format.image)
+                                Text(format.formatName)
+                            }//: HSTACK
+                            .tag(format.formatName)
+                        }//: LOOP
+                        
+                    }//: PICKER
+                    .pickerStyle(.wheel)
+                    .frame(height: 100)
+                }//: SECTION
                 
-            }//: CE Type and Activity Format subsection
+         
             // MARK: - Activity Completion
             Section("Activity Completion") {
                 Toggle("Activity Completed?", isOn: $activity.activityCompleted)
@@ -239,6 +293,7 @@ struct ActivityView: View {
         .onAppear {
             updateActivityStatus(status: activity.expirationStatus)
             previousCertificate = activity.completionCertificate
+            selectedActivityType = activity.type
         } //: onAppear
         .disabled(activity.isDeleted)
         .onReceive(activity.objectWillChange) { _ in
@@ -291,6 +346,12 @@ struct ActivityView: View {
         } message: {
             Text("You are about to delete the saved CE certificate. Are you sure?  This cannot be undone.")
         }
+        // MARK: - SHEETS
+        .sheet(isPresented: $showCeDesignationSheet) {
+                CeDesignationSelectionSheet(activity: activity)
+            
+        }//: SHOW Ce Designation SHEET
+        
     }//: BODY
     
     

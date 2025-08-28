@@ -12,7 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var dataController: DataController
     
     let allDateSortTypes: [SortType] = [.dateCompleted, .dateCreated, .dateModified]
-    let hoursCostsSortTypes: [SortType] = [.hoursAwarded, .activityCost]
+    let hoursCostsSortTypes: [SortType] = [.awardedCEAmount, .activityCost]
     let allAlphabeticalSortTypes: [SortType] = [.format, .typeOfCE]
     
     // Properties for warning users about deleting a CE activity
@@ -88,10 +88,10 @@ struct ContentView: View {
                             
                         }//: Date Sub-Menu
                         
-                        Menu("Hours & Cost") {
+                        Menu("CE Amount & Cost") {
                             Picker("Hours and cost", selection: $dataController.sortType) {
                                 Text("Cost").tag(SortType.activityCost)
-                                Text("Hours").tag(SortType.hoursAwarded)
+                                Text("CE Earned").tag(SortType.awardedCEAmount)
                             } //: Hours and cost PICKER
                             Divider()
                             

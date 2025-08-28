@@ -5,6 +5,7 @@
 //  Created by Manann on 7/16/25.
 //
 
+import CoreData
 import Foundation
 
 extension CeActivity {
@@ -20,14 +21,10 @@ extension CeActivity {
         set { activityDescription = newValue }
     }
     
-    var ceActivityCEType: String {
-        get { ceType ?? "" }
-        set { ceType = newValue }
-    }
     
-    var ceActivityFormatType: String {
-        get { formatType ?? "" }
-        set { formatType = newValue }
+    var ceActivityFormat: String {
+        get { activityFormat ?? "" }
+        set { activityFormat = newValue }
     }
     
     var ceActivityWhatILearned: String {
@@ -82,9 +79,16 @@ extension CeActivity {
         
         let activity = CeActivity(context: viewContext)
         activity.activityTitle = "Example CE Activity"
-        activity.ceType = "CME"
-        activity.formatType = "Recorded Webinar"
-        activity.contactHours = 1.0
+        
+        // MARK: CE Designation
+        let sampleDesignation = CeDesignation(context: viewContext)
+        sampleDesignation.designationName = "Nursing Continuing Education"
+        sampleDesignation.designationAbbreviation = "Nursing CE"
+        sampleDesignation.designationAKA = "Continuing Nursing Education (CNE)"
+        activity.designation = sampleDesignation
+        
+        activity.activityFormat = "Webinar"
+        activity.ceAwarded = 1.0
         activity.cost = 50.00
         activity.activityDescription = "A sample activity that enhanced your professional growth"
         activity.activityCompleted = true
@@ -155,5 +159,20 @@ extension CeActivity {
     
 }
 
-
+// MARK: - Designation ID Computed Property
+// Adding another extension to allow for CeDesignation objects to be identified by
+// SwiftUI
+extension CeActivity {
+    var designationID: NSManagedObjectID? {
+        get { designation?.objectID }
+        set {
+            if let newID = newValue,
+               let context = self.managedObjectContext,
+               let newDesignation = try? context.existingObject(with: newID) as? CeDesignation {
+                self.designation = newDesignation
+            }
+        }
+    }
+    
+}
 

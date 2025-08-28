@@ -28,6 +28,7 @@ struct AwardsView: View {
     
     // MARK: - BODY
     var body: some View {
+        NavigationView {
             ScrollView {
                 LazyVGrid(columns: columns) {
                     ForEach(Award.allAwards) { award in
@@ -49,8 +50,9 @@ struct AwardsView: View {
                 } //: LAZY V GRID
                 
             }//: SCROLL VIEW
-            .navigationTitle("Awards")
-            
+            .navigationTitle("Achievements")
+        } //: NAV VIEW
+        
         .alert(awardTitle, isPresented: $showingAwardDetails) {
         } message: {
             Text(selectedAward.description)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G84" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="ActivityReflection" representedClassName="ActivityReflection" syncable="YES" codeGenerationType="class">
         <attribute name="completedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -13,28 +13,51 @@
         <attribute name="wasSurprised" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ceToReflectUpon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="reflection" inverseEntity="CeActivity"/>
     </entity>
+    <entity name="ActivityType" representedClassName="ActivityType" syncable="YES" codeGenerationType="class">
+        <attribute name="typeID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="typeName" optional="YES" attributeType="String"/>
+        <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="type" inverseEntity="CeActivity"/>
+    </entity>
     <entity name="CeActivity" representedClassName="CeActivity" syncable="YES" codeGenerationType="class">
         <attribute name="activityAddedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="activityCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="activityDescription" optional="YES" attributeType="String"/>
         <attribute name="activityExpires" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="activityFormat" optional="YES" attributeType="String"/>
         <attribute name="activityID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="activityTitle" optional="YES" attributeType="String"/>
-        <attribute name="ceType" optional="YES" attributeType="String"/>
-        <attribute name="ceuEarned" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="ceAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="completionCertificate" optional="YES" attributeType="Binary"/>
-        <attribute name="contactHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="currentStatus" optional="YES" attributeType="String"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="formatType" optional="YES" attributeType="String"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="whatILearned" optional="YES" attributeType="String"/>
+        <relationship name="designation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeDesignation" inverseName="activity" inverseEntity="CeDesignation"/>
         <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
         <relationship name="renewal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="activity" inverseEntity="Tag"/>
+        <relationship name="type" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityType" inverseName="activity" inverseEntity="ActivityType"/>
+    </entity>
+    <entity name="CeDesignation" representedClassName="CeDesignation" syncable="YES" codeGenerationType="class">
+        <attribute name="designationAbbreviation" optional="YES" attributeType="String"/>
+        <attribute name="designationAKA" optional="YES" attributeType="String"/>
+        <attribute name="designationName" optional="YES" attributeType="String"/>
+        <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="designation" inverseEntity="CeActivity"/>
+    </entity>
+    <entity name="CeMeasurement" representedClassName="CeMeasurement" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="contactHourEquivalence" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="measurementName" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="License" representedClassName="License" syncable="YES" codeGenerationType="class">
+        <attribute name="issueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="licenseID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="licenseNumber" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="renewalPeriodLength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
         <attribute name="periodEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -48,6 +71,12 @@
         <attribute name="hoursRequired" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="useCEUs" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="userProfession" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SpecialCategory" representedClassName="SpecialCategory" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="catDescription" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="requiredHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

@@ -1,0 +1,108 @@
+[
+        {
+            "designationAbbreviation": "ACPE CE",
+            "designationName": "Accreditation Council for Pharmacy Education Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "APCH",
+            "designationName": "Advanced Practice Clinician Hour",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Athletic Training CE",
+            "designationName": "Athletic Training Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CECH",
+            "designationName": "Continuing Education Contact Hours",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CLE",
+            "designationName": "Continuing Legal Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CME",
+            "designationName": "Continuing Medical Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CPE",
+            "designationName": "Continuing Professional Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CPEU",
+            "designationName": "Continuing Professional Education Units",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CPHCE",
+            "designationName": "Certified Public Health Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "CRCE",
+            "designationName": "Continuing Respiratory Care Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Dental CE",
+            "designationName": "Dental Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "IPCE",
+            "designationName": "Interprofessional Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Nursing CE",
+            "designationAKA": "CNE (Continuing Nursing Education)",
+            "designationName": "Nursing Continuing Education"
+        },
+        {
+            "designationAbbreviation": "Optometry CE",
+            "designationName": "Optometry Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "OT CE",
+            "designationName": "Occupational Therapy Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Pharmacy CE",
+            "designationName": "Pharmacy Continuing Education",
+            "designationAKA": "Non-ACPE CE"
+        },
+        {
+            "designationAbbreviation": "PT CH",
+            "designationName": "Physical Therapy Contact Hour",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Social Work CE",
+            "designationName": "Social Work Continuing Education",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "PDH",
+            "designationName": "Professional Development Hours",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "PDU",
+            "designationName": "Professional Development Unit",
+            "designationAKA": ""
+        },
+        {
+            "designationAbbreviation": "Veterinary CE",
+            "designationName": "Veterinary Continuing Education",
+            "designationAKA": ""
+        }
+    
+]
