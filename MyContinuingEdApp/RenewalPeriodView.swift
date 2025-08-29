@@ -10,28 +10,29 @@ import SwiftUI
 struct RenewalPeriodView: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
+    
+    // This is passed in via the view's initializer instead of the environment
+    let dataController: DataController
+    
     @ObservedObject var renewalPeriod: RenewalPeriod
     
-    // Property to indicate whether the view is showing a completely new
-    // renewal period that the user is adding or not
-    @State var addingNewRenewalPeriod: Bool = false
+    // Renewal period properties
+    @State private var periodStart: Date = Date.renewalStartDate
+    @State private var periodEnd: Date = Date.renewalEndDate
     
     // MARK: - BODY
     var body: some View {
-            Spacer()
             VStack {
-                if addingNewRenewalPeriod {
-                    Text("Add New Renewal Period")
-                        .font(.largeTitle)
-                } else  {
+                if renewalPeriod.renewalPeriodName != "" {
                     Text(renewalPeriod.renewalPeriodName)
+                        .font(.largeTitle)
+                } else {
+                    Text("Add New Renewal Period")
                         .font(.largeTitle)
                 }
             }//: VSTACK
-            
-            Spacer()
-            
+            .padding(.bottom, 20)
+        
             VStack {
                 Group {
                     Text("Enter the date the renewal period begins:")
@@ -41,7 +42,7 @@ struct RenewalPeriodView: View {
                     Divider()
                     DatePicker(
                         "Starting Date",
-                        selection: $renewalPeriod.renewalPeriodStart,
+                        selection: $periodStart,
                         displayedComponents: .date
                     )
                     .padding([.leading, .trailing], 35)
@@ -57,7 +58,7 @@ struct RenewalPeriodView: View {
                     Divider()
                     DatePicker(
                         "Ending Date",
-                        selection: $renewalPeriod.renewalPeriodEnd,
+                        selection: $periodEnd,
                         displayedComponents: .date
                     )
                     .padding([.leading, .trailing], 35)
@@ -66,6 +67,8 @@ struct RenewalPeriodView: View {
                 
                 
                 Button {
+                    renewalPeriod.periodStart = periodStart
+                    renewalPeriod.periodEnd = periodEnd
                     dataController.save()
                     dismiss()
                 } label: {
@@ -75,26 +78,42 @@ struct RenewalPeriodView: View {
                 
                 
             }//: VSTACK
+            .onAppear {
+                periodStart = renewalPeriod.periodStart ?? Date.renewalStartDate
+                periodEnd = renewalPeriod.periodEnd ?? Date.renewalEndDate
+            }
             
             .onReceive(renewalPeriod.objectWillChange) { _ in
                 dataController.queueSave()
             }
             .onChange(of: renewalPeriod.periodStart) { _ in
-                addingNewRenewalPeriod = false
                 dataController.assignActivitiesToRenewalPeriod()
             }
             .onChange(of: renewalPeriod.periodEnd) { _ in
-                addingNewRenewalPeriod = false
                 dataController.assignActivitiesToRenewalPeriod()
             }
             
     } //: BODY
+    
+    // MARK: - Custom INIT
+    
+    init(renewalPeriod: RenewalPeriod? = nil, dataController: DataController) {
+        if let existingPeriod = renewalPeriod {
+            _renewalPeriod = ObservedObject(initialValue: existingPeriod)
+        } else {
+            let newPeriod = RenewalPeriod(context: dataController.container.viewContext)
+            _renewalPeriod = ObservedObject(initialValue: newPeriod)
+        }
+        
+        self.dataController = dataController
+    }
+    
 }
 
 
 // MARK: - Preview
 struct RenewalPeriodView_Previews: PreviewProvider {
     static var previews: some View {
-        RenewalPeriodView(renewalPeriod: .example)
+        RenewalPeriodView(renewalPeriod: .example, dataController: DataController())
     }
 }

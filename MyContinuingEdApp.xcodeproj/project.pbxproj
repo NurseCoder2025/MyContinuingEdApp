@@ -11,6 +11,8 @@
 		F202F7C42E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F202F7C22E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift */; };
 		F202F7C62E4410AB00504F43 /* Ditched Code.md in Resources */ = {isa = PBXBuildFile; fileRef = F202F7C52E4410AB00504F43 /* Ditched Code.md */; };
 		F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229518C2E3179BF002550EC /* ActivityRatingScale.swift */; };
+		F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */; };
+		F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506F602E610BC700D25D33 /* CredentialSheet.swift */; };
 		F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25DCC732E553470006EFEDE /* CameraPickerView.swift */; };
 		F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */; };
 		F266C57E2E4AFBE500D0832D /* Defunct Code.md in Resources */ = {isa = PBXBuildFile; fileRef = F266C57D2E4AFBE500D0832D /* Defunct Code.md */; };
@@ -62,6 +64,8 @@
 		F202F7C22E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RenewalPeriod+CoreDataProperties.swift"; path = "MyContinuingEdApp/RenewalPeriod+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F202F7C52E4410AB00504F43 /* Ditched Code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Ditched Code.md"; sourceTree = "<group>"; };
 		F229518C2E3179BF002550EC /* ActivityRatingScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRatingScale.swift; sourceTree = "<group>"; };
+		F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Credential-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2506F602E610BC700D25D33 /* CredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSheet.swift; sourceTree = "<group>"; };
 		F25DCC732E553470006EFEDE /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPickerView.swift; sourceTree = "<group>"; };
 		F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CeDesignation-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		F266C57D2E4AFBE500D0832D /* Defunct Code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Defunct Code.md"; sourceTree = "<group>"; };
@@ -166,6 +170,8 @@
 				F2BC949E2E32D0C100926B3D /* Bundle-Decodable.swift */,
 				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
+				F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */,
+				F2506F602E610BC700D25D33 /* CredentialSheet.swift */,
 				F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */,
 				F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
@@ -282,6 +288,7 @@
 			files = (
 				F202F7C32E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift in Sources */,
 				F202F7C42E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift in Sources */,
+				F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */,
 				F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
@@ -302,6 +309,7 @@
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
+				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
 				F27B0FC52E2EF6AA00A8B4E9 /* GeneralExtensions.swift in Sources */,
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,

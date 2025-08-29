@@ -14,6 +14,7 @@ struct Filter: Identifiable, Hashable {
     var minModificationDate: Date = Date.distantPast
     var tag: Tag?
     var renewalPeriod: RenewalPeriod?
+    var credential: Credential?
     
     // MARK: - "Smart Filter" properties
     static var recentActivities = Filter(

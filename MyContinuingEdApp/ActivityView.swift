@@ -153,6 +153,12 @@ struct ActivityView: View {
                                 .padding(.trailing, 5)
                             TextField("Earned CE:", value: $activity.ceAwarded, formatter: hoursFormatter , prompt: Text("amount of CE awarded"))
                                 .keyboardType(.decimalPad)
+                            
+                            Picker("", selection: $activity.hoursOrUnits){
+                                Text("hours").tag(Int16(1))
+                                Text("units").tag(Int16(2))
+                            }//: PICKER
+                            .labelsHidden()
                     
                         } //: HSTACK
                         

@@ -484,6 +484,7 @@ class DataController: ObservableObject {
                 activity.activityTitle = "Activity # \(j)-\(i)"
                 activity.activityDescription = "A fun and educational CE activity!"
                 activity.ceAwarded = Double.random(in: 0.5...10)
+                activity.hoursOrUnits = Int16.random(in: 1...2)
                 activity.evalRating = Int16.random(in: 0...4)
                 
                 // MARK: CE Designation

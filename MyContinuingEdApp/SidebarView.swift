@@ -17,9 +17,9 @@ struct SidebarView: View {
     @State private var newTagName: String = ""
     @State private var tagToRename: Tag?
     
-    // Properties for editing renewal periods
+    // MARK: Properties for editing renewal periods
     @State private var renewalToEdit: RenewalPeriod?
-    @State private var newRenewal: RenewalPeriod?
+    
     
     // MARK: deleting renewal periods
     @State private var showDeletingRenewalAlert: Bool = false
@@ -31,8 +31,6 @@ struct SidebarView: View {
     // Property for displaying the half-screen Renewal Period entry screen
     @State private var showRenewalPeriodView: Bool = false
     
-    // Property for indicating whether a new renewal period is being added
-    @State private var isAddingNewRenewal: Bool = false
     
     // Defining smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
@@ -72,7 +70,7 @@ struct SidebarView: View {
                     } //: LOOP
                 } //: SECTION (smart filters)
                 
-                // MARK: TAGS
+                // MARK: - TAGS
                 Section {
                     ForEach(convertedTagFilters) { filter in
                         NavigationLink(value: filter) {
@@ -109,7 +107,7 @@ struct SidebarView: View {
                     
                 } //: SECTION (tags)
                 
-                // MARK: RENEWAL PERIODS
+                // MARK: - RENEWAL PERIODS
                 Section {
                     ForEach(convertedRenewalFilters) { filter in
                         NavigationLink(value: filter) {
@@ -117,7 +115,6 @@ struct SidebarView: View {
                                 .badge(filter.renewalPeriod?.renewalCurrentActivities.count ?? 0)
                                 .contextMenu {
                                     Button {
-                                        isAddingNewRenewal = false
                                         editRenewalPeriod(filter)
                                     } label: {
                                         Label("Edit", systemImage: "pencil")
@@ -135,9 +132,8 @@ struct SidebarView: View {
                             .font(.subheadline)
                         Spacer()
                         
+                        // MARK: Pull up RenewalPeriodView for adding a new renewal
                         Button {
-                            newRenewal = dataController.createRenewalPeriod()
-                            isAddingNewRenewal = true
                             showRenewalPeriodView = true
                         } label: {
                             Label("New renewal", systemImage:"plus")
@@ -158,12 +154,11 @@ struct SidebarView: View {
             .onChange(of: showRenewalPeriodView) {isPresented in
                 if !isPresented {
                     renewalToEdit = nil
-                    newRenewal = nil
                 }
                 
             }  // ON CHANGE
             
-            // MARK: Toolbar
+            // MARK: - Toolbar
             .toolbar {
                 // Awards sheet toggle button
                 Button {
@@ -203,12 +198,15 @@ struct SidebarView: View {
             }//: ALERT
             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
             .sheet(isPresented: $showRenewalPeriodView){
-                if let renewal = isAddingNewRenewal ? newRenewal : renewalToEdit {
+                if let renewal = renewalToEdit {
                     RenewalPeriodView(
                         renewalPeriod: renewal,
-                        addingNewRenewalPeriod: isAddingNewRenewal
+                        dataController: DataController()
                     )
                     .presentationDetents([.medium])
+                } else {
+                    RenewalPeriodView(dataController: DataController())
+                        .presentationDetents([.medium])
                 }
                 
             }//: SHEET

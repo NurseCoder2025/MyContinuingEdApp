@@ -33,8 +33,10 @@
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="whatILearned" optional="YES" attributeType="String"/>
+        <relationship name="credential" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="activity" inverseEntity="Credential"/>
         <relationship name="designation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeDesignation" inverseName="activity" inverseEntity="CeDesignation"/>
         <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
         <relationship name="renewal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
@@ -52,12 +54,17 @@
         <attribute name="contactHourEquivalence" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="measurementName" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="License" representedClassName="License" syncable="YES" codeGenerationType="class">
+    <entity name="Credential" representedClassName="Credential" syncable="YES" codeGenerationType="class">
+        <attribute name="credentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="credentialNumber" optional="YES" attributeType="String"/>
+        <attribute name="credentialType" optional="YES" attributeType="String"/>
+        <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="issueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="licenseID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="licenseNumber" optional="YES" attributeType="String"/>
+        <attribute name="issuer" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="renewalPeriodLength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="credential" inverseEntity="CeActivity"/>
+        <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="credential" inverseEntity="RenewalPeriod"/>
     </entity>
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
         <attribute name="periodEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -65,6 +72,7 @@
         <attribute name="periodName" optional="YES" attributeType="String"/>
         <attribute name="periodStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewal" inverseEntity="CeActivity"/>
+        <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="renewals" inverseEntity="Credential"/>
     </entity>
     <entity name="Settings" representedClassName="Settings" syncable="YES" codeGenerationType="class">
         <attribute name="ceEquivalence" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
