@@ -1,0 +1,26 @@
+[
+    {
+        "reasonName": "Changed Career"
+    },
+    {
+        "reasonName": "Credential Revoked"
+    },
+    {
+        "reasonName": "Failed to Renew"
+    },
+    {
+        "reasonName": "Expired & Foreign"
+    },
+    {
+        "reasonName": "No Longer Need It"
+    },
+    {
+        "reasonName": "Retired"
+    },
+    {
+        "reasonName": "Unable to Renew"
+    },
+    {
+        "reasonName": "Voluntarily Surrended"
+    }
+]

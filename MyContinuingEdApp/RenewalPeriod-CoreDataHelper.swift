@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: CoreData Helpers
 extension RenewalPeriod {
     
     var renewalPeriodStart: Date {
@@ -49,6 +50,7 @@ extension RenewalPeriod {
 }
 
 
+// MARK: Renewal Period EXAMPLE
 extension RenewalPeriod {
     
     // Creating an example for previewing purposes

@@ -24,7 +24,7 @@ enum SortType: String {
 class DataController: ObservableObject {
     // MARK: - PROPERTIES
     // container for holding the data in memory
-    let container: NSPersistentCloudKitContainer  // so app can sync with iCloud
+    let container: NSPersistentCloudKitContainer
     
     // Properties for storing the current activity or filter/tag that the user has selected
     @Published var selectedFilter: Filter? = Filter.allActivities
@@ -84,7 +84,8 @@ class DataController: ObservableObject {
         
         save()
     }
-    // MARK: - CE Designations METHODS
+    // MARK: - PRELOADING  METHODS
+    // MARK: CE Designations METHODS
     /// This fucntion decodes all of the default CE designations in the "Defaut CE Designations" JSON file
     ///  and then creates a CeDesignation object for each JSON object IF there are currently no designations
     ///  stored.  This will load default values upon the first use of the app by the user.  Thereafter, the user
@@ -105,7 +106,31 @@ class DataController: ObservableObject {
         save()
     }
     
-    // MARK: - ACTIVITY TYPE METHODS
+    // MARK: Preload Countries
+    /// Like the preloadCEDesignations method, the preloadCountries creates Country objects
+    ///  for each country in the "Country List.json" file and saves them to persistent storage on the
+    ///  first run of the app (or whenever the # of countries stored = 0.
+    func preloadCountries() {
+        let request = Country.fetchRequest()
+        let count = (try? container.viewContext.count(for: request)) ?? 0
+        guard count == 0 else {return}
+        
+        let defaultCountries: [CountryJSON] = Bundle.main.decode("Country List.json")
+        
+        for country in defaultCountries {
+            let place = Country(context: container.viewContext)
+            place.id = UUID() // Ensure unique identifier
+            place.name = country.name
+            place.alpha2 = country.alpha2
+            place.alpha3 = country.alpha3
+            place.sortOrder = country.sortOrder
+        }
+        
+        save()
+    
+    }
+    
+    // MARK: Preload ACTIVITY TYPE METHODS
     
     /// Like the preloadCEDesignations() method, this function loads a set of default activity value types into the persisten container
     ///  upon the initial run of the application (or after re-install).  However, after the defaults are created the user can edit them later.
@@ -121,6 +146,28 @@ class DataController: ObservableObject {
         for type in defaultActivityTypes {
             let item = ActivityType(context: viewContext)
             item.activityTypeName = type.typeName
+        }
+        
+        save()
+    }
+    
+    /// Loads all 50 U.S. state objects as saved in the JSON file within the bundle.  This will be
+    /// executed only upon first install of the app.  Thereafter, all 50 values will remain as the user
+    /// cannot edit or delete any of these values.
+    func preloadStatesList() {
+        let viewContext = container.viewContext
+        let statesFetch = USState.fetchRequest()
+        
+        let count = (try? viewContext.count(for: statesFetch)) ?? 0
+        guard count == 0 else {return}
+        
+        let defaultStates = USStateJSON.allStates
+        
+        for state in defaultStates {
+            let item = USState(context: viewContext)
+            item.id = UUID()
+            item.stateName = state.stateName
+            item.abbreviation = state.abbreviation
         }
         
         save()
@@ -212,6 +259,12 @@ class DataController: ObservableObject {
         if filterTokens.isNotEmpty {
             let tokenPredicate = NSPredicate(format: "ANY tags IN %@", filterTokens)
             predicates.append(tokenPredicate)
+        }
+        
+        // Adding selected credential to the predicates array
+        if let chosenCredential = filter.credential {
+            let credentialPredicate = NSPredicate(format: "credential == %@", chosenCredential)
+            predicates.append(credentialPredicate)
         }
         
         // Adding any selected renewal period to the predicates
@@ -314,7 +367,7 @@ class DataController: ObservableObject {
     }
     
     
-    // MARK: - AWARDS Related Functions
+    // MARK: - ACHIEVEMENTS Related Functions
     
     /// Function to count a given object
     func count<T>(for fetchRequest: NSFetchRequest<T>) -> Int {
@@ -421,31 +474,38 @@ class DataController: ObservableObject {
         activityRequest.predicate = NSPredicate(format: "activityCompleted = true")
         let allCompletedActivities = (try? viewContext.fetch(activityRequest)) ?? []
         
+        // Fetching all credentials
+        let credentialRequest: NSFetchRequest<Credential> = Credential.fetchRequest()
+        let allCredentials = (try? viewContext.fetch(credentialRequest)) ?? []
+        
         // Fetching all renewal periods
         let renewalRequest: NSFetchRequest<RenewalPeriod> = RenewalPeriod.fetchRequest()
         let allRenewals = (try? viewContext.fetch(renewalRequest)) ?? []
         
-        guard allRenewals.isNotEmpty else { return }
+        guard allCredentials.isNotEmpty, allRenewals.isNotEmpty else { return }
         
-        // Match each completed activity with the corresponding renewal period based on the completed date
         for activity in allCompletedActivities {
             guard let completedDate = activity.dateCompleted else { continue }
             
-            // finding the matching renewal period
-            if let matchingRenewal = allRenewals.first(where: {renewal in
-                    guard let start = renewal.periodStart, let end = renewal.periodEnd else { return false }
-                
-                    return completedDate >= start && completedDate <= end
-            }) {
-                activity.renewal = matchingRenewal
-            } else {
-                activity.renewal = nil
+            // Find the credential(s) for this activity
+            let activityCredentials = activity.credential as? Set<Credential> ?? []
+            
+            for credential in activityCredentials {
+                // Cast renewals to Set<RenewalPeriod> for type-safe access
+                if let renewalsSet = credential.renewals as? Set<RenewalPeriod> {
+                    if let matchingRenewal = renewalsSet.first(where: { renewal in
+                        guard let start = renewal.periodStart, let end = renewal.periodEnd else { return false }
+                        return start <= completedDate && completedDate <= end
+                    }) {
+                        activity.renewal = matchingRenewal
+                        break // Found a match, no need to check other credentials
+                    } else {
+                        activity.renewal = nil
+                    }
+                }
             }
-            
-            save()
-            
-        }//: LOOP
-        
+        }
+        save()
     }
     
     
@@ -467,6 +527,32 @@ class DataController: ObservableObject {
         sampleRenewalPeriod.periodStart = sampleStartDate
         sampleRenewalPeriod.periodEnd = sampleStartDate.addingTimeInterval(86400 * 730)
         
+        // Creating sample Country for Issuer object
+        let sampleCountry = Country(context: viewContext)
+        sampleCountry.name = CountryJSON.defaultCountry.name
+        sampleCountry.alpha2 = CountryJSON.defaultCountry.alpha2
+        sampleCountry.alpha3 = CountryJSON.defaultCountry.alpha3
+        
+        // Creating sample State for Issuer object
+        let sampleState = USState(context: viewContext)
+        sampleState.stateName = USStateJSON.example.stateName
+        sampleState.abbreviation = USStateJSON.example.abbreviation
+        
+        // Creating Issuer object for the sample Credential
+        let sampleIssuer = Issuer(context: viewContext)
+        sampleIssuer.name = "Ohio Board of Nursing"
+        sampleIssuer.country = sampleCountry
+        sampleIssuer.state = sampleState
+        
+        // Creating Credential object for all sample credentials
+        let sampleCredential = Credential(context: viewContext)
+        sampleCredential.name = "Ohio RN License"
+        sampleCredential.credentialType = "License"
+        sampleCredential.isActive = true
+        sampleCredential.issueDate = Date.renewalStartDate
+        sampleCredential.renewalPeriodLength = 24
+        sampleCredential.credentialNumber = "RN123456"
+        sampleCredential.issuer = sampleIssuer
         
         // Creating 5 sample activities, and 10 tags per activity
         for i in 1...5 {
@@ -486,6 +572,9 @@ class DataController: ObservableObject {
                 activity.ceAwarded = Double.random(in: 0.5...10)
                 activity.hoursOrUnits = Int16.random(in: 1...2)
                 activity.evalRating = Int16.random(in: 0...4)
+                
+                // MARK: Credential assignment
+                activity.credential = [sampleCredential]
                 
                 // MARK: CE Designation
                 let designationRequest: NSFetchRequest<CeDesignation> = CeDesignation.fetchRequest()
@@ -579,52 +668,57 @@ class DataController: ObservableObject {
     // MARK: - INITIALIZER
     
     init(inMemory: Bool = false) {
-        // identifying the name of the stored data to load and use
+        // Assigning initial value for container
         container = NSPersistentCloudKitContainer(name: "CEActivityModel")
         
-        // Cloudkit Syncronization configuration
-        container.viewContext.automaticallyMergesChangesFromParent = true
-        container.persistentStoreDescriptions.first?.setOption(
-            true as NSNumber,
-            forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
-        )
-        
-        NotificationCenter.default.addObserver(
-            forName: .NSPersistentStoreRemoteChange,
-            object: container.persistentStoreCoordinator,
-            queue: .main,
-            using: remoteStorageChanged
-        )
-        
-        // Load data only into memory for testing purposes (if init parameter is set to true)
+        // identifying the name of the stored data to load and use
         if inMemory {
-            container.persistentStoreDescriptions.first?.url = URL(filePath: "/dev/null")
+            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+        } else {
+            container.viewContext.automaticallyMergesChangesFromParent = true
+            container.persistentStoreDescriptions.first?.setOption(
+                true as NSNumber,
+                forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
+            )
+            NotificationCenter.default.addObserver(
+                forName: .NSPersistentStoreRemoteChange,
+                object: container.persistentStoreCoordinator,
+                queue: .main,
+                using: remoteStorageChanged
+            )
         }
-    
+
         // Loading data from local storage
         container.loadPersistentStores { storeDescription, error in
-            if error != nil {
-                fatalError("Failed to load data from local storage...")
+            if let error = error {
+                print("Core Data store failed to load: \(error.localizedDescription)")
+                fatalError("Failed to load data from local storage: \(error)")
             }
-            
             // for first time app use load "Default CE Designations"
             let request = CeDesignation.fetchRequest()
             let count = (try? self.container.viewContext.count(for: request))
-            
             if count == 0 {
                 self.preloadCEDesignations()
             }
-            
             // for first time app use or install load default Activity Types
             let typeRequest = ActivityType.fetchRequest()
             let typeCount = (try? self.container.viewContext.count(for: typeRequest))
-            
             if typeCount == 0 {
                 self.preloadActivityTypes()
             }
+            // First-time use/install of app for loading default Countries
+            let countryRequest = Country.fetchRequest()
+            let countryCount = (try? self.container.viewContext.count(for: countryRequest))
+            if countryCount == 0 {
+                self.preloadCountries()
+            }
+            // First-time loading of U.S. states list
+            let statesRequest = USState.fetchRequest()
+            let stateCount = (try? self.container.viewContext.count(for: statesRequest))
+            if stateCount == 0 {
+                self.preloadStatesList()
+            }
         }
-        
-        
     } //: INIT
     
 } //: DATACONTROLLER

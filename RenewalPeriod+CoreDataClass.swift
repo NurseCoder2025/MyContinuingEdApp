@@ -2,7 +2,7 @@
 //  RenewalPeriod+CoreDataClass.swift
 //  MyContinuingEdApp
 //
-//  Created by Kamino on 8/6/25.
+//  Created by Kamino on 9/8/25.
 //
 //
 
@@ -11,8 +11,6 @@ import CoreData
 
 @objc(RenewalPeriod)
 public class RenewalPeriod: NSManagedObject {
-    
-    
     // MARK: - FUNCTIONS
     
     /// Overriding the willSave function for the class by adding the functionality

@@ -7,16 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F202F7C32E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F202F7C12E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift */; };
-		F202F7C42E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F202F7C22E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift */; };
+		F2011DBB2E623C0400D5DF92 /* DisciplinaryHistoryItem-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DBA2E623C0400D5DF92 /* DisciplinaryHistoryItem-CoreDataHelper.swift */; };
+		F2011DBD2E62415500D5DF92 /* Inactive Reasons.json in Resources */ = {isa = PBXBuildFile; fileRef = F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */; };
+		F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */; };
+		F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */; };
+		F2011DC32E62527800D5DF92 /* USStatesList.json in Resources */ = {isa = PBXBuildFile; fileRef = F2011DC22E62527800D5DF92 /* USStatesList.json */; };
+		F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DC42E62529100D5DF92 /* US-StatesList.swift */; };
+		F2011DC72E6253FB00D5DF92 /* CountryJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DC62E6253FB00D5DF92 /* CountryJSON.swift */; };
+		F2011DCB2E62680700D5DF92 /* IssuerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DCA2E62680700D5DF92 /* IssuerSheet.swift */; };
 		F202F7C62E4410AB00504F43 /* Ditched Code.md in Resources */ = {isa = PBXBuildFile; fileRef = F202F7C52E4410AB00504F43 /* Ditched Code.md */; };
+		F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20C4AF62E71FE1600A2B4AE /* IssuerRowView.swift */; };
+		F20C4AF92E720BE200A2B4AE /* CountryRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F20C4AF82E720BE200A2B4AE /* CountryRowView.swift */; };
+		F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21A7F2D2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift */; };
+		F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21A7F2E2E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift */; };
 		F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = F229518C2E3179BF002550EC /* ActivityRatingScale.swift */; };
+		F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243B41D2E68F9670072419D /* Country-CoreDataHelper.swift */; };
+		F243B4202E68FC4D0072419D /* CountryListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243B41F2E68FC4D0072419D /* CountryListSheet.swift */; };
+		F243B4222E6905500072419D /* Country List.json in Resources */ = {isa = PBXBuildFile; fileRef = F243B4212E6905500072419D /* Country List.json */; };
 		F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */; };
 		F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2506F602E610BC700D25D33 /* CredentialSheet.swift */; };
+		F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F254BB9A2E74E9D50020DB28 /* StatePickerRowView.swift */; };
+		F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */ = {isa = PBXBuildFile; fileRef = F254BB9C2E74EFFF0020DB28 /* DismissButtonCustomizations.swift */; };
+		F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F254BB9E2E74FA350020DB28 /* NoIssuersView.swift */; };
 		F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25DCC732E553470006EFEDE /* CameraPickerView.swift */; };
 		F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */; };
 		F266C57E2E4AFBE500D0832D /* Defunct Code.md in Resources */ = {isa = PBXBuildFile; fileRef = F266C57D2E4AFBE500D0832D /* Defunct Code.md */; };
-		F273EC092E541A12003FCC43 /* NoCertificateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F273EC082E541A04003FCC43 /* NoCertificateView.swift */; };
+		F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F273EC082E541A04003FCC43 /* NoItemView.swift */; };
 		F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */; };
 		F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2772B942E1DDA9F006A94BD /* ContentView.swift */; };
 		F2772B972E1DDAA2006A94BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2772B962E1DDAA2006A94BD /* Assets.xcassets */; };
@@ -46,8 +62,12 @@
 		F2BC94AD2E38348600926B3D /* Settings-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC94AC2E38348600926B3D /* Settings-CoreDataHelper.swift */; };
 		F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */; };
 		F2BC94B12E38770000926B3D /* RenewalPeriodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC94B02E38770000926B3D /* RenewalPeriodView.swift */; };
+		F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */; };
+		F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C0D13A2E6A4B5000458022 /* IssuerListSheet.swift */; };
 		F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */; };
 		F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */; };
+		F2CFCE622E70D41D00443C5C /* NoCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */; };
+		F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CFCE632E7119DA00443C5C /* CredentialListSheet.swift */; };
 		F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */; };
 		F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */; };
 		F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */; };
@@ -60,16 +80,32 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F202F7C12E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RenewalPeriod+CoreDataClass.swift"; path = "MyContinuingEdApp/RenewalPeriod+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F202F7C22E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "RenewalPeriod+CoreDataProperties.swift"; path = "MyContinuingEdApp/RenewalPeriod+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F2011DBA2E623C0400D5DF92 /* DisciplinaryHistoryItem-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DisciplinaryHistoryItem-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Inactive Reasons.json"; sourceTree = "<group>"; };
+		F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InactiveReasons-Defaults.swift"; sourceTree = "<group>"; };
+		F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Issuer-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2011DC22E62527800D5DF92 /* USStatesList.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = USStatesList.json; sourceTree = "<group>"; };
+		F2011DC42E62529100D5DF92 /* US-StatesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "US-StatesList.swift"; sourceTree = "<group>"; };
+		F2011DC62E6253FB00D5DF92 /* CountryJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryJSON.swift; sourceTree = "<group>"; };
+		F2011DCA2E62680700D5DF92 /* IssuerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerSheet.swift; sourceTree = "<group>"; };
 		F202F7C52E4410AB00504F43 /* Ditched Code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Ditched Code.md"; sourceTree = "<group>"; };
+		F20C4AF62E71FE1600A2B4AE /* IssuerRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerRowView.swift; sourceTree = "<group>"; };
+		F20C4AF82E720BE200A2B4AE /* CountryRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryRowView.swift; sourceTree = SOURCE_ROOT; };
+		F21A7F2D2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenewalPeriod+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F21A7F2E2E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RenewalPeriod+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F229518C2E3179BF002550EC /* ActivityRatingScale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRatingScale.swift; sourceTree = "<group>"; };
+		F243B41D2E68F9670072419D /* Country-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Country-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F243B41F2E68FC4D0072419D /* CountryListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryListSheet.swift; sourceTree = "<group>"; };
+		F243B4212E6905500072419D /* Country List.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Country List.json"; sourceTree = "<group>"; };
 		F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Credential-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		F2506F602E610BC700D25D33 /* CredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSheet.swift; sourceTree = "<group>"; };
+		F254BB9A2E74E9D50020DB28 /* StatePickerRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatePickerRowView.swift; sourceTree = SOURCE_ROOT; };
+		F254BB9C2E74EFFF0020DB28 /* DismissButtonCustomizations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissButtonCustomizations.swift; sourceTree = SOURCE_ROOT; };
+		F254BB9E2E74FA350020DB28 /* NoIssuersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoIssuersView.swift; sourceTree = "<group>"; };
 		F25DCC732E553470006EFEDE /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPickerView.swift; sourceTree = "<group>"; };
 		F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CeDesignation-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		F266C57D2E4AFBE500D0832D /* Defunct Code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Defunct Code.md"; sourceTree = "<group>"; };
-		F273EC082E541A04003FCC43 /* NoCertificateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCertificateView.swift; sourceTree = "<group>"; };
+		F273EC082E541A04003FCC43 /* NoItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoItemView.swift; sourceTree = "<group>"; };
 		F2772B8F2E1DDA9F006A94BD /* MyContinuingEdApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyContinuingEdApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyContinuingEdAppApp.swift; sourceTree = "<group>"; };
 		F2772B942E1DDA9F006A94BD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,8 +138,12 @@
 		F2BC94AC2E38348600926B3D /* Settings-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReflectionView.swift; sourceTree = "<group>"; };
 		F2BC94B02E38770000926B3D /* RenewalPeriodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalPeriodView.swift; sourceTree = "<group>"; };
+		F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "USState-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2C0D13A2E6A4B5000458022 /* IssuerListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerListSheet.swift; sourceTree = SOURCE_ROOT; };
 		F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CEActivity-CoreDateHelper.swift"; sourceTree = "<group>"; };
 		F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tag-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCredentialsView.swift; sourceTree = "<group>"; };
+		F2CFCE632E7119DA00443C5C /* CredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialListSheet.swift; sourceTree = SOURCE_ROOT; };
 		F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoActivityView.swift; sourceTree = "<group>"; };
 		F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRow.swift; sourceTree = "<group>"; };
@@ -129,14 +169,11 @@
 		F2772B862E1DDA9F006A94BD = {
 			isa = PBXGroup;
 			children = (
-				F202F7C12E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift */,
-				F202F7C22E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift */,
+				F21A7F2D2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift */,
+				F21A7F2E2E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift */,
+				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
 				F2772B902E1DDA9F006A94BD /* Products */,
-				F273EC082E541A04003FCC43 /* NoCertificateView.swift */,
-				F2892B032E5D20DB00DA392A /* Default CE Designations.json */,
-				F2FBAAE02E5FABE900348AAA /* Activity Formats.json */,
-				F2FBAAE22E5FD68C00348AAA /* Activity Types.json */,
 			);
 			sourceTree = "<group>";
 		};
@@ -151,11 +188,29 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				F254BB9C2E74EFFF0020DB28 /* DismissButtonCustomizations.swift */,
+				F254BB9A2E74E9D50020DB28 /* StatePickerRowView.swift */,
+				F20C4AF82E720BE200A2B4AE /* CountryRowView.swift */,
+				F2CFCE632E7119DA00443C5C /* CredentialListSheet.swift */,
+				F2C0D13A2E6A4B5000458022 /* IssuerListSheet.swift */,
+				F254BB9E2E74FA350020DB28 /* NoIssuersView.swift */,
+				F20C4AF62E71FE1600A2B4AE /* IssuerRowView.swift */,
+				F273EC082E541A04003FCC43 /* NoItemView.swift */,
+				F2892B032E5D20DB00DA392A /* Default CE Designations.json */,
+				F2FBAAE02E5FABE900348AAA /* Activity Formats.json */,
+				F2FBAAE22E5FD68C00348AAA /* Activity Types.json */,
+				F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */,
+				F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */,
 				F2772BA62E1DFA49006A94BD /* Info.plist */,
 				F2772BA52E1DFA3D006A94BD /* MyContinuingEdApp.entitlements */,
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
 				F2772B942E1DDA9F006A94BD /* ContentView.swift */,
 				F2772BA02E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld */,
+				F243B41F2E68FC4D0072419D /* CountryListSheet.swift */,
+				F243B41D2E68F9670072419D /* Country-CoreDataHelper.swift */,
+				F2011DCA2E62680700D5DF92 /* IssuerSheet.swift */,
+				F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */,
+				F2011DC62E6253FB00D5DF92 /* CountryJSON.swift */,
 				F2BC94AA2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift */,
 				F2BC94AC2E38348600926B3D /* Settings-CoreDataHelper.swift */,
 				F2772B962E1DDAA2006A94BD /* Assets.xcassets */,
@@ -171,12 +226,15 @@
 				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
 				F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */,
+				F2011DBA2E623C0400D5DF92 /* DisciplinaryHistoryItem-CoreDataHelper.swift */,
 				F2506F602E610BC700D25D33 /* CredentialSheet.swift */,
 				F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */,
 				F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */,
+				F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
 				F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */,
 				F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */,
+				F243B4212E6905500072419D /* Country List.json */,
 				F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */,
 				F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */,
 				F2B389F02E4C49BD00518868 /* PDFKitView.swift */,
@@ -197,6 +255,8 @@
 				F266C57D2E4AFBE500D0832D /* Defunct Code.md */,
 				F202F7C52E4410AB00504F43 /* Ditched Code.md */,
 				F2BC94A12E32DA1000926B3D /* Colors.xcassets */,
+				F2011DC22E62527800D5DF92 /* USStatesList.json */,
+				F2011DC42E62529100D5DF92 /* US-StatesList.swift */,
 			);
 			path = MyContinuingEdApp;
 			sourceTree = "<group>";
@@ -271,9 +331,12 @@
 				F2772B9A2E1DDAA2006A94BD /* Preview Assets.xcassets in Resources */,
 				F266C57E2E4AFBE500D0832D /* Defunct Code.md in Resources */,
 				F2BC94A32E32DA1000926B3D /* Colors.xcassets in Resources */,
+				F243B4222E6905500072419D /* Country List.json in Resources */,
 				F2BC94A22E32DA1000926B3D /* Awards.json in Resources */,
+				F2011DC32E62527800D5DF92 /* USStatesList.json in Resources */,
 				F2772B972E1DDAA2006A94BD /* Assets.xcassets in Resources */,
 				F2FBAAE12E5FABE900348AAA /* Activity Formats.json in Resources */,
+				F2011DBD2E62415500D5DF92 /* Inactive Reasons.json in Resources */,
 				F2892B042E5D20DB00DA392A /* Default CE Designations.json in Resources */,
 				F2FBAAE32E5FD68C00348AAA /* Activity Types.json in Resources */,
 			);
@@ -286,44 +349,61 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F202F7C32E44085F00504F43 /* RenewalPeriod+CoreDataClass.swift in Sources */,
-				F202F7C42E44085F00504F43 /* RenewalPeriod+CoreDataProperties.swift in Sources */,
+				F2CFCE622E70D41D00443C5C /* NoCredentialsView.swift in Sources */,
+				F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */,
+				F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */,
 				F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */,
 				F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */,
+				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
+				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,
 				F2B389F32E4C538100518868 /* CertificateShareView.swift in Sources */,
+				F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */,
+				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
+				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
+				F2011DBB2E623C0400D5DF92 /* DisciplinaryHistoryItem-CoreDataHelper.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
+				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
+				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
+				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
 				F27B0FC52E2EF6AA00A8B4E9 /* GeneralExtensions.swift in Sources */,
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
+				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,
+				F20C4AF92E720BE200A2B4AE /* CountryRowView.swift in Sources */,
+				F2011DC72E6253FB00D5DF92 /* CountryJSON.swift in Sources */,
 				F2BC94B12E38770000926B3D /* RenewalPeriodView.swift in Sources */,
+				F243B4202E68FC4D0072419D /* CountryListSheet.swift in Sources */,
 				F2BC94A92E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift in Sources */,
-				F273EC092E541A12003FCC43 /* NoCertificateView.swift in Sources */,
+				F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */,
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
+				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
 				F2BC94AD2E38348600926B3D /* Settings-CoreDataHelper.swift in Sources */,
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
 				F2B389EF2E4C37C200518868 /* CertificatePickerView.swift in Sources */,
+				F2011DCB2E62680700D5DF92 /* IssuerSheet.swift in Sources */,
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
+				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
 				F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */,
 				F2FBAAE52E5FDCE400348AAA /* ActivityType-CoreDataHelper.swift in Sources */,

@@ -46,6 +46,7 @@
     <entity name="CeDesignation" representedClassName="CeDesignation" syncable="YES" codeGenerationType="class">
         <attribute name="designationAbbreviation" optional="YES" attributeType="String"/>
         <attribute name="designationAKA" optional="YES" attributeType="String"/>
+        <attribute name="designationID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="designationName" optional="YES" attributeType="String"/>
         <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="designation" inverseEntity="CeActivity"/>
     </entity>
@@ -54,17 +55,50 @@
         <attribute name="contactHourEquivalence" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="measurementName" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="Country" representedClassName="Country" syncable="YES" codeGenerationType="class">
+        <attribute name="alpha2" optional="YES" attributeType="String"/>
+        <attribute name="alpha3" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="sortOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="userAbbrev" optional="YES" attributeType="String"/>
+        <relationship name="issuer" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Issuer" inverseName="country" inverseEntity="Issuer"/>
+    </entity>
     <entity name="Credential" representedClassName="Credential" syncable="YES" codeGenerationType="class">
         <attribute name="credentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="credentialNumber" optional="YES" attributeType="String"/>
         <attribute name="credentialType" optional="YES" attributeType="String"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inactiveReason" optional="YES" attributeType="String"/>
+        <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isRestricted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="issueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="issuer" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="renewalPeriodLength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="restrictions" optional="YES" attributeType="String"/>
         <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="credential" inverseEntity="CeActivity"/>
-        <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="credential" inverseEntity="RenewalPeriod"/>
+        <relationship name="issuer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Issuer" inverseName="credential" inverseEntity="Issuer"/>
+        <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="RenewalPeriod" inverseName="credential" inverseEntity="RenewalPeriod"/>
+    </entity>
+    <entity name="DisciplinaryHistoryItem" representedClassName="DisciplinaryHistoryItem" syncable="YES" codeGenerationType="class">
+        <attribute name="actionDescription" optional="YES" attributeType="String"/>
+        <attribute name="actionName" optional="YES" attributeType="String"/>
+        <attribute name="disciplinaryDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="disciplineEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="disciplineID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="resolutionActions" optional="YES" attributeType="String"/>
+        <attribute name="temporaryOnly" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="Issuer" representedClassName="Issuer" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="issuerID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="issuerName" optional="YES" attributeType="String"/>
+        <attribute name="issuerWebSite" optional="YES" attributeType="String"/>
+        <attribute name="phoneNumber" optional="YES" attributeType="String"/>
+        <relationship name="country" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="issuer" inverseEntity="Country"/>
+        <relationship name="credential" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="issuer" inverseEntity="Credential"/>
+        <relationship name="state" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="USState" inverseName="issuer" inverseEntity="USState"/>
     </entity>
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
         <attribute name="periodEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -90,5 +124,11 @@
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="tagName" optional="YES" attributeType="String"/>
         <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="tags" inverseEntity="CeActivity"/>
+    </entity>
+    <entity name="USState" representedClassName="USState" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="stateName" optional="YES" attributeType="String"/>
+        <relationship name="issuer" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Issuer" inverseName="state" inverseEntity="Issuer"/>
     </entity>
 </model>

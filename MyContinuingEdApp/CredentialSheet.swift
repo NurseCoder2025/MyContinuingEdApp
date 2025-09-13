@@ -14,35 +14,55 @@ import SwiftUI
 struct CredentialSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
+    
     @EnvironmentObject var dataController: DataController
     
     // License related properties
-    var credential: Credential?
+    let credential: Credential?
+    
+    // MARK: Credential properties
     @State private var name: String = ""
     @State private var type: String = ""
     @State private var number: String = ""
-    @State private var issuer: String = ""
-    @State private var issueDate: Date?
     @State private var expiration: Date?
-    @State private var renewalLength: Double = 0.0
+    @State private var renewalLength: Double = 24.0   // 2 year renewal period is common across many professions
+    @State private var activeYN: Bool = true
+    @State private var whyInactive: String = ""
+    @State private var restrictedYN: Bool = false
+    @State private var restrictionsDetails: String = ""
+    
+    // MARK: Issuer related properties
+    @State private var issueDate: Date?
+    @State private var credIssuer: Issuer?
+    
+    // Show list of Issuers property
+    @State private var showIssuerListSheet: Bool = false
+
     
     // Properties for showing the renewal period sheet
     @State private var showRenewalPeriodView: Bool = false
+    
+    // MARK: - Computed Properties
     
     // MARK: - Core Data Fetch Requests
     // This property will be used to determine the most recent (current) renewal
     // period for calculating the next expiration date of the credential
     @FetchRequest(sortDescriptors: [SortDescriptor(\.periodEnd, order: .reverse)]) var renewalsSorted: FetchedResults<RenewalPeriod>
     
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.issuerName)]) var allIssuers: FetchedResults<Issuer>
+    
+    
     // MARK: - BODY
     var body: some View {
         // MARK: - BODY Properties
-        let monthsFormatter: NumberFormatter = {
+        /// Computed property to format any values where only a single decimal place is needed in a Text control.
+        let singleDecimalFormatter: NumberFormatter = {
             let formatter = NumberFormatter()
             formatter.numberStyle = .decimal
             formatter.maximumFractionDigits = 1
             return formatter
         }()
+        
         
         // MARK: - Main Nav VIEW
         NavigationView {
@@ -66,8 +86,43 @@ struct CredentialSheet: View {
                     TextField("Number", text: $number)
                     
                     // MARK: Credential issuer
-                    TextField("Issuer", text: $issuer)
+                    // ONLY show the picker if at least 1 issuer has been entered
+                    if allIssuers.isNotEmpty {
+                        Picker("Issuer", selection: $credIssuer) {
+                            ForEach(allIssuers) { issuer in
+                                HStack {
+                                    Text(issuer.issuerLabel)
+                                    Text(issuer.country?.countryAbbrev ?? "No Country Selected")
+                                        .foregroundStyle(.secondary)
+                                }//: HSTACK
+                                .tag(issuer)
+                            }//: LOOP
+                        } //: PICKER
+                    }//: IF
                     
+                    Button {
+                        showIssuerListSheet = true
+                    } label: {
+                        Text(allIssuers.isEmpty ? "Add Issuer" : "Edit Issuers")
+                    }
+                    
+                }//: SECTION
+                
+                // MARK: ACTIVE Y or N?
+                Section {
+                    Toggle("Credential Active?", isOn: $activeYN)
+                    
+                    // ONLY show the following fields if credential is inactive
+                    if activeYN == false {
+                        Text("Why Is the Credential Inactive?")
+                        Picker("Inactive Reason", selection: $whyInactive) {
+                            ForEach(InactiveReasons.defaultReasons) { reason in
+                                Text(reason.reasonName).tag(reason.reasonName)
+                            }//: LOOP
+                        }//: PICKER
+                        .pickerStyle(.wheel)
+                        .frame(height:100)
+                    }
                 }//: SECTION
                 
                 
@@ -81,7 +136,7 @@ struct CredentialSheet: View {
                     // MARK: Renewal Period Length
                     HStack(spacing: 4) {
                         Label("Renews every: ", systemImage: "calendar.badge.clock")
-                        TextField("Renews in months", value: $renewalLength, formatter: monthsFormatter )
+                        TextField("Renews in months", value: $renewalLength, formatter: singleDecimalFormatter )
                             .frame(maxWidth: 25)
                             .bold()
                             .foregroundStyle(.red)
@@ -90,33 +145,152 @@ struct CredentialSheet: View {
                     
                 }//: SECTION
                 
-                Section("Next Expiration"){
-                    if renewalLength == 0 {
-                        Text("Please enter the number of months the credential is valid before it expires.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        if renewalsSorted.isEmpty {
-                            Text("Please add a renewal period in order to calculate the next expiration date for this credential.")
+                // MARK: Next Expiration
+                // Show the following section ONLY if editing an existing credential
+                if credential != nil {
+                    Section("Next Expiration"){
+                        if renewalLength <= 0.0 {
+                            Text("Please enter the number of months the credential is valid before it expires.")
                                 .foregroundStyle(.secondary)
-                            Button{
-                                showRenewalPeriodView = true
-                            } label: {
-                                Label("Add Renewal", systemImage: "plus")
-                            }
-                        }//: INNER IF
-                        
-                    } //: ELSE
+                        } else {
+                            if renewalsSorted.isEmpty {
+                                Text("Please add a renewal period in order to calculate the next expiration date for this credential.")
+                                    .foregroundStyle(.secondary)
+                                Button{
+                                    showRenewalPeriodView = true
+                                } label: {
+                                    Label("Add Renewal", systemImage: "plus")
+                                }
+                            } else {
+                                // If there is at least one value in the renewalsSorted fetch request, then
+                                // calculate the next expiration date based on the first item in the array
+                                let mostCurrentRenewal = renewalsSorted[0]
+                                let minutesToRenew = mostCurrentRenewal.renewalPeriodEnd.timeIntervalSince(Date.now)
+                                let daysToRenew = minutesToRenew / 86400
+                                
+                                // if the most recent renewal period happens to have an ending date prior to
+                                // the current date (meaning no current renewal period has been entered yet) then
+                                // alert the user and prompt him to add a new (current) period
+                                if daysToRenew <= 0 {
+                                    Text("The latest renewal period entered has ended./nPlease enter a new renewal period that includes today's date so that the time until the next expiration can be calculated.")
+                                        .foregroundStyle(.secondary)
+                                    Button {
+                                        showRenewalPeriodView = true
+                                    } label: {
+                                        Text("Add new (current) renewal period")
+                                    }
+                                } else {
+                                    VStack {
+                                        Text(mostCurrentRenewal.renewalPeriodName)
+                                        Text("\(NSNumber(value: daysToRenew), formatter: singleDecimalFormatter) days before the credential expires")
+                                            .font(.title)
+                                            .bold()
+                                    }//: VSTACK
+                                }
+                            }//: INNER IF-ELSE
+                            
+                        } //: ELSE
+                    }//: SECTION
+                }//: IF not NIL
+                
+                // MARK: RESTRICTIONS
+                Section("Credential Restrictions"){
+                    Toggle("Any Restrictions?", isOn: $restrictedYN)
+                    
+                    // Details for any restrictions IF true
+                    if restrictedYN {
+                        TextField("Restriction details:", text: $restrictionsDetails)
+                    }
                 }//: SECTION
                 
+                // TODO: Add Disciplinary Action Hx section
+                
+                // MARK: SAVE Button
+                Section {
+                    HStack {
+                        Spacer()
+                        Button {
+                            mapAndSave()
+                            dismiss()
+                        } label: {
+                            Label("Save", systemImage: "internaldrive.fill")
+                                .font(.title)
+                        }
+                        Spacer()
+                    }//: HSTACK
+                }//: SECTION
                 
             }//: FORM
-            .navigationTitle(credential == nil ? "Add Credential" : "Credential Info")
-            .sheet(isPresented: $showRenewalPeriodView) {
-               RenewalPeriodView(dataController: DataController())
+            // If the user changes the credential active switch to true from
+            // false, reset the inactiveReason property to an empty string.
+            .onChange(of: activeYN) { _ in
+                if activeYN == true {
+                    whyInactive = ""
+                }
+                
             }
+            .navigationTitle(credential == nil ? "Add Credential" : "Credential Info")
+            // Presenting the RenewalPeriodView if no RenewalPeriod objects exist at the time of the
+            // object's creation
+            
+            // MARK: - TOOLBAR
+            .toolbar {
+                Button(action: {dismiss()}){
+                    DismissButtonLabel()
+                }.applyDismissStyle()
+            }
+            // MARK: - SHEETS
+            .sheet(isPresented: $showRenewalPeriodView) {
+                RenewalPeriodView(renewalPeriod: nil)
+            }
+            .sheet(isPresented: $showIssuerListSheet) {
+                IssuerListSheet()
+            }
+            
 
         }//: NAV VIEW
     }//: BODY
+    
+    // MARK: - METHODS
+    /// Method for assigning the values of each input field with the corresponding property in a Credential object.
+    /// - Parameter cred: Credential object to be passed in
+    func mapCredProperties(for cred: Credential) {
+        cred.name = name
+        cred.credentialType = type
+        cred.credentialNumber = number
+        cred.issueDate = issueDate
+        cred.renewalPeriodLength = renewalLength
+        cred.isActive = activeYN
+        cred.isRestricted = restrictedYN
+        cred.restrictions = restrictionsDetails
+        cred.inactiveReason = whyInactive
+        
+        // If an issuer has been selected
+        if let selectedIssuer = credIssuer {
+            cred.issuer = selectedIssuer
+        }
+        
+    }
+    
+    func mapAndSave() {
+        // IF an existing Credential is being edited
+        if let existingCred = credential {
+            mapCredProperties(for: existingCred)
+            
+            dataController.save()
+        } else {
+            let context = dataController.container.viewContext
+            let newCredential = Credential(context: context)
+            
+            mapCredProperties(for: newCredential)
+            
+            dataController.save()
+            
+        }
+    }//: MAP & SAVE
+    
+    
+    
 }
 
  // MARK: - PREVIEW

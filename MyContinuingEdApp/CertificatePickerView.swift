@@ -29,7 +29,7 @@ struct CertificatePickerView: View {
         VStack {
             
             if certificateData == nil {
-                NoCertificateView()
+                NoItemView(noItemTitleText: "Add Certificate", noItemMessage: "You haven't yet added your CE certificate for this completed activity.")
             }
             
             Menu(activity.completionCertificate == nil ? "Add Certificate" : "Change Certificate") {

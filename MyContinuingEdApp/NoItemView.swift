@@ -7,24 +7,27 @@
 
 import SwiftUI
 
-struct NoCertificateView: View {
+struct NoItemView: View {
     // MARK: - PROPERTIES
+    let noItemTitleText: String
+    let noItemMessage: String
+    let noItemImage: String = "doc.circle"
     
     // MARK: - BODY
     var body: some View {
         if #available(iOS 17, *) {
             ContentUnavailableView {
-                Label("No certificate", systemImage: "doc.circle")
+                Label(noItemTitleText, systemImage: noItemImage)
             } description: {
-                Text("You haven't added a CE certificate for this activity yet.")
+                Text(noItemMessage)
             }
         } else {
             VStack {
-                Text("No Certificate")
+                Text(noItemTitleText)
                     .font(.title3)
-                Image(systemName: "doc.badge.plus")
+                Image(systemName: noItemImage)
                     .font(.largeTitle)
-                Text("You haven't added a CE certificate for this activity yet.")
+                Text(noItemMessage)
                     .foregroundStyle(.secondary)
             } //: VSTACK
             

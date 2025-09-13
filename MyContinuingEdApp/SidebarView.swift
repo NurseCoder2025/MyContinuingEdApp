@@ -7,12 +7,16 @@
 
 import SwiftUI
 
+// The primary (initial) view when first launching the app. Provides different ways of filtering
+// CE activities that have been entered: via 2 "smart" filters, user-created tags, and by
+// credential-renewal cycle.
+
 struct SidebarView: View {
     // MARK: - PROPERTIES
     // Accessing the data controller environmental object
     @EnvironmentObject var dataController: DataController
     
-    // MARK: renaming tags
+    // MARK: Renaming tags
     @State private var showRenamingAlert: Bool = false
     @State private var newTagName: String = ""
     @State private var tagToRename: Tag?
@@ -21,17 +25,21 @@ struct SidebarView: View {
     @State private var renewalToEdit: RenewalPeriod?
     
     
-    // MARK: deleting renewal periods
+    // MARK: Deleting renewal periods
     @State private var showDeletingRenewalAlert: Bool = false
     @State private var renewalToDelete: RenewalPeriod?
     
-    // Property for displaying the Awards sheet
+    // MARK: Credentials
+    @State private var showCredentialListView: Bool = false  // show ALL entered credentials
+    @State private var showCredentialSheet:Bool = false // for adding a brand new credential only
+    
+    // MARK: Property for displaying the Awards sheet
     @State private var showAwardsSheet: Bool = false
     
     // Property for displaying the half-screen Renewal Period entry screen
     @State private var showRenewalPeriodView: Bool = false
     
-    
+    // MARK: - FILTERS
     // Defining smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
     
@@ -49,6 +57,13 @@ struct SidebarView: View {
         }
     }
     
+    // Converting all fetched credentials to Filter objects
+    var convertedCredentialFilters: [Filter] {
+        allCredentials.map { credential in
+            Filter(name: credential.credentialName, icon: "person.text.rectangle.fill", credential: credential)
+        }
+    }
+    
     
     // MARK: - Core Data fetch requests
     // All tags sorted by name
@@ -56,6 +71,9 @@ struct SidebarView: View {
     
     // Retrieving all saved renewal periods
     @FetchRequest(sortDescriptors: [SortDescriptor(\.periodName)]) var renewals: FetchedResults<RenewalPeriod>
+    
+    // Fetching all saved credentials
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     
     // MARK: - BODY
     var body: some View {
@@ -107,44 +125,60 @@ struct SidebarView: View {
                     
                 } //: SECTION (tags)
                 
-                // MARK: - RENEWAL PERIODS
-                Section {
-                    ForEach(convertedRenewalFilters) { filter in
-                        NavigationLink(value: filter) {
-                            Label(filter.name, systemImage: filter.icon)
-                                .badge(filter.renewalPeriod?.renewalCurrentActivities.count ?? 0)
-                                .contextMenu {
-                                    Button {
-                                        editRenewalPeriod(filter)
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
+                // MARK: - Credentials Grouping
+                
+                // IF NO credentials have yet been entered (or have been deleted)
+                if allCredentials.isEmpty {
+                    Section("Add License, Certification, or Other Credential") {
+                        NoCredentialsView()
+                    }//: SECTION
+                }//:
+                
+                // MARK: Credential Parent Group
+                // For whenever at least one credential has been saved
+                ForEach(allCredentials) { credential in
+                    // Creating a section for each renewal period for the credential
+                    Section {
+                        ForEach(convertedRenewalFilters.filter{$0.credential == credential}) { filter in
+                            NavigationLink(value: filter) {
+                                Label(filter.name, systemImage: "calendar.badge.clock")
+                                    .badge(
+                                        filter.renewalPeriod?.renewalCurrentActivities.count ?? 0
+                                    )
+                                    .contextMenu {
+                                        // Edit Renewal Period
+                                        Button {
+                                            editRenewalPeriod(filter)
+                                        } label: {
+                                            Label("Edit", systemImage: "pencil")
+                                        }
+                                        
+                                        // Delete Renewal Period
+                                        Button(role: .destructive) {
+                                            renewalToDelete = filter.renewalPeriod
+                                            showDeletingRenewalAlert = true
+                                        } label: {
+                                            Label("Delete", systemImage: "trash.fill")
+                                        }
                                     }
-                                }
-                        } //: NAV LINK
-                        
-                    }//: LOOP
-                    .onDelete(perform: deleteRenewalPeriod)
-                    
-                } header: {
-                    // TODO: Add groups for multi-license support
-                    HStack {
-                        Text("Renewal Periods")
-                            .font(.subheadline)
-                        Spacer()
-                        
-                        // MARK: Pull up RenewalPeriodView for adding a new renewal
-                        Button {
-                            showRenewalPeriodView = true
-                        } label: {
-                            Label("New renewal", systemImage:"plus")
-                                .labelStyle(.iconOnly)
-                        }
-                        .padding(.trailing, 20)
-                        
-                        
-                        
-                    } //: HSTACK
-                }//: SECTION (renewal periods)
+                                    
+                            }//: NAV LINK
+                        }//: LOOP
+                    } header: {
+                        HStack {
+                            Text("\(credential.credentialName) Renewals")
+                            Spacer()
+                            
+                            Button {
+                                showRenewalPeriodView = true
+                            }label: {
+                                Label("Add Renewal Period", systemImage: "plus")
+                                    .labelStyle(.iconOnly)
+                            }
+                            
+                        }//: HSTACK
+                    }//: SECTION w/ custom header
+                }//: LOOP (allCredentials ForEach)
                 
                 
                 
@@ -155,8 +189,7 @@ struct SidebarView: View {
                 if !isPresented {
                     renewalToEdit = nil
                 }
-                
-            }  // ON CHANGE
+            }//:  ON CHANGE
             
             // MARK: - Toolbar
             .toolbar {
@@ -165,7 +198,7 @@ struct SidebarView: View {
                     showAwardsSheet.toggle()
                 } label: {
                     Label("Show awards", systemImage: "rosette")
-                }
+                }//: BUTTON
                 
 #if DEBUG
                 Button {
@@ -177,12 +210,14 @@ struct SidebarView: View {
 #endif
                 
             } //: TOOLBAR
-            // MARK: Alerts & Sheets
+            // MARK: - Alerts
+            // RENAMING TAG ALERT
             .alert("Rename Tag", isPresented: $showRenamingAlert) {
                 Button("OK", action: confirmTagRename)
                 Button("Cancel", role: .cancel) {}
                 TextField("New tag name:", text: $newTagName)
             } //: ALERT
+            // DELETING RENEWAL PERIOD ALERT
             .alert("Warning: Deleting Renewal Period", isPresented: $showDeletingRenewalAlert) {
                 Button("Delete", role: .destructive ) {
                     if let renewal = renewalToDelete {
@@ -196,20 +231,22 @@ struct SidebarView: View {
             } message: {
                 Text("You are about to delete the \(renewalToDelete?.renewalPeriodName ?? "selected") renewal period. This ONLY removes the renewal period and NOT the CE Activities assigned to it. This action cannot be undone.")
             }//: ALERT
+            // MARK: - SHEETS
             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
             .sheet(isPresented: $showRenewalPeriodView){
                 if let renewal = renewalToEdit {
-                    RenewalPeriodView(
-                        renewalPeriod: renewal,
-                        dataController: DataController()
-                    )
+                    RenewalPeriodView(renewalPeriod: renewal)
                     .presentationDetents([.medium])
                 } else {
-                    RenewalPeriodView(dataController: DataController())
+                    RenewalPeriodView(renewalPeriod: nil)
                         .presentationDetents([.medium])
                 }
                 
             }//: SHEET
+            .onAppear {
+                renewalToEdit = nil
+                renewalToDelete = nil
+            }
         
     } //: BODY
     

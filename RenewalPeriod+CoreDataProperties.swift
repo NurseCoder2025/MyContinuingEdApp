@@ -2,7 +2,7 @@
 //  RenewalPeriod+CoreDataProperties.swift
 //  MyContinuingEdApp
 //
-//  Created by Kamino on 8/6/25.
+//  Created by Kamino on 9/8/25.
 //
 //
 
@@ -21,6 +21,7 @@ extension RenewalPeriod {
     @NSManaged public var periodName: String?
     @NSManaged public var periodStart: Date?
     @NSManaged public var cesCompleted: NSSet?
+    @NSManaged public var credential: Credential?
 
 }
 

@@ -5,6 +5,8 @@
 //  Created by Kamino on 8/22/25.
 //
 
+import Foundation
+
 extension CeDesignation {
     
     var ceDesignationName: String {
@@ -20,6 +22,10 @@ extension CeDesignation {
     var ceDesignationAKA: String {
         get {designationAKA ?? ""}
         set {designationAKA = newValue}
+    }
+    
+    var ceDesignationID: UUID {
+        return designationID ?? UUID()
     }
     
     // Setting a sample CE Type for previewing purposes

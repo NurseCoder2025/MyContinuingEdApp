@@ -28,6 +28,12 @@ extension Credential {
         credentialID ?? UUID()
     }
     
+    var credentialRestrictions: String {
+        get {restrictions ?? ""}
+        set {restrictions = newValue}
+    }
+    
+    
     // MARK: - Sample License
     static var example: Credential {
         let controller = DataController(inMemory: true)
@@ -38,11 +44,15 @@ extension Credential {
         license.credentialType = "License"
         license.issueDate = Date.now
         license.credentialNumber = "RN0003425"
+        
         license.renewalPeriodLength = 24  // time in months
+        license.isActive = true
+        license.isRestricted = false
         
         return license
     }
-}
+    
+}//: EXTENSION
 
 
 // MARK: - Making License conform to Comparable for sorting purposes
@@ -64,7 +74,7 @@ extension Credential: Comparable {
         }
         
     }
-}
+}//: EXTENSION
 
 
 // MARK: - Adding all credential types
@@ -72,6 +82,6 @@ extension Credential {
     
     static var allTypes: [String] {
         // Defining credential types in a set array
-        ["License", "Certificate", "Endorsement", "Membership"]
+        ["License", "Certificate", "Endorsement", "Membership", "Other"]
     }
-}
+}//: EXTENSION
