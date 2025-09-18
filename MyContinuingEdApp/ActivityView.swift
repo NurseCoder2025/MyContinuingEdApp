@@ -5,6 +5,8 @@
 //  Created by Manann on 7/18/25.
 //
 
+// Purpose: For the creation and editing of Continuing Education (CE) activity objects.
+
 import CoreData
 import SwiftUI
 import PhotosUI
@@ -30,6 +32,27 @@ struct ActivityView: View {
     
     // Property for changing the activity type
     @State private var selectedActivityType: ActivityType?
+    
+    // Property for showing the Activity-CredentialSelectionSheet
+    @State private var showACSelectionSheet: Bool = false
+    
+    // Property for showing the SpecialCECatAssignmentManagementSheet
+    @State private var showSpecialCECatAssignmentSheet: Bool = false
+    
+    // Properties for the Credential selection popover
+    @State private var showCredentialSelectionPopover: Bool = false
+    @State private var selectedCredential: Credential?
+    
+    // MARK: - COMPUTED PROPERTIES
+    
+    // Property that returns a joined String of all Credential names assigned to an activity
+    var assignedCredentials: String {
+        let sortedCreds = activity.activityCredentials.sorted()
+        let credString = sortedCreds.map {$0.credentialName}.joined(separator: ",")
+        
+        return credString
+    }
+    
     
     // MARK: - Core Data Fetch Requests
     @FetchRequest(sortDescriptors: [SortDescriptor(\.designationAbbreviation)]) var allDesignations: FetchedResults<CeDesignation>
@@ -58,6 +81,7 @@ struct ActivityView: View {
             // MARK: - HEADER section
             Section {
                 VStack(alignment: .leading) {
+                    // Activity Title
                     TextField(
                         "Title:",
                         text: $activity.ceTitle,
@@ -66,14 +90,33 @@ struct ActivityView: View {
                     )
                         .font(.title)
                     
+                    // Credential(s) to which activity is assigned to
+                    if activity.activityCredentials.isNotEmpty {
+                        Text("Assigned Credential(s): \(assignedCredentials)")
+                    }
                     
+                    Button {
+                        showACSelectionSheet = true
+                    } label: {
+                        if activity.activityCredentials.isEmpty {
+                            Label("Assign Credential", systemImage: "wallet.pass.fill")
+                        } else {
+                            Label("Manage Credential Assignments", systemImage: "list.bullet.clipboard.fill")
+                        }
+                    }
+                    
+                    
+                    
+                    // Modified Date
                     Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
                         .foregroundStyle(.secondary)
                     
+                    // Expiration status of activity
                     Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
                         .foregroundStyle(.secondary)
                 } //: VSTACK (title and modification date)
                 
+                // User's rating of the activity
                 Picker("My Rating:", selection: $activity.evalRating) {
                     Text(ActivityRating.terrible.rawValue).tag(Int16(0))
                     Text(ActivityRating.poor.rawValue).tag(Int16(1))
@@ -161,6 +204,7 @@ struct ActivityView: View {
                             .labelsHidden()
                     
                         } //: HSTACK
+                
                         
                         
                         HStack {
@@ -188,7 +232,50 @@ struct ActivityView: View {
                             Text("Select")
                         }
                     }//: HSTACK
-                }
+                } //: BUTTON
+                
+                // MARK: Special Category
+                VStack {
+                    Text("Special CE Category:")
+                        .bold()
+                    Text("NOTE: If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
+                        .font(.caption)
+                        .multilineTextAlignment(.leading)
+                } //: VSTACK
+                // Check to see if an activity has a credential assigned to it, because
+                // the data model is setup so that only special CE categories assigned to
+                // a Credential object should be shown in the picker in this section
+                if activity.activityCredentials.isEmpty {
+                    Text("Please assign a credential to this activity first.")
+                    // If NO Special CE Categories have been created or assigned yet
+                } else if activity.allSpecialCECats.isEmpty {
+                    Button {
+                        // If at least one Credential has been associated with an activity
+                        // but no special CE categories have been assigned to the Credential then
+                        // the user can use this button to assign such category objects to a selected
+                        // credential (done this way as an activity may be associated with more
+                        // than one Credential object.
+                        showCredentialSelectionPopover = true
+                    } label: {
+                        Text("Assign a Special CE Category to a Credential")
+                    }
+                } else {
+                    Picker("Special CE Category", selection: $activity.specialCat) {
+                        ForEach(activity.allSpecialCECats) { cat in
+                            Text(cat.labelText).tag(cat)
+                        }//: LOOP
+                    }//: PICKER
+                    
+                    // Adding a button for the user to manage special CE categories for a given
+                    // Credential
+                    Button {
+                        showCredentialSelectionPopover = true
+                    } label: {
+                        Text("Manage Credential Special CE Categories")
+                    }
+                    
+                }//: IF-ELSE
+                
             }//: SECTION
             
             // MARK: - Activity Type
@@ -296,15 +383,22 @@ struct ActivityView: View {
             } //: IF activity completed
             
         } //: FORM
+        // MARK: - ON APPEAR
         .onAppear {
             updateActivityStatus(status: activity.expirationStatus)
             previousCertificate = activity.completionCertificate
             selectedActivityType = activity.type
         } //: onAppear
+        
+        // MARK: - DISABLED
         .disabled(activity.isDeleted)
+        
+        // MARK: - ON RECEIVE
         .onReceive(activity.objectWillChange) { _ in
             dataController.queueSave()
         } //: onReceive
+        
+        // MARK: - ON CHANGE
         .onChange(of: activity.dateCompleted) { _ in
             dataController.assignActivitiesToRenewalPeriod()
         }
@@ -325,6 +419,15 @@ struct ActivityView: View {
             
             previousCertificate = newCertificate
         }
+        
+        // Changing the value of showSpecialCECatAssignmentSheet to true only once the user has closed out of the
+        // CredentialSelectionPopOver popover - this will then trigger the SpecialCECatAssignment sheet to appear
+        .onChange(of: showCredentialSelectionPopover) { _ in
+            if showCredentialSelectionPopover == false {
+                showSpecialCECatAssignmentSheet = true
+            }
+        }
+        
         // MARK: - Changing Certificate Alert
         .alert(item: $certificateToConfirm) { wrapper in
             Alert(
@@ -342,6 +445,7 @@ struct ActivityView: View {
                 }
             )
         } //: Change ALERT
+        
         // MARK: - Deleting Certificate Alert
         .alert("Delete Certificate", isPresented: $showDeleteCertificateWarning) {
             Button("DELETE", role: .destructive) {
@@ -352,11 +456,36 @@ struct ActivityView: View {
         } message: {
             Text("You are about to delete the saved CE certificate. Are you sure?  This cannot be undone.")
         }
+        
         // MARK: - SHEETS
+        // CeDesgination selection (i.e. CME, legal CE, etc.)
         .sheet(isPresented: $showCeDesignationSheet) {
                 CeDesignationSelectionSheet(activity: activity)
-            
-        }//: SHOW Ce Designation SHEET
+        }//: SHEET (CE Designation)
+        
+        // Credential(s) selection
+        .sheet(isPresented: $showACSelectionSheet) {
+            Activity_CredentialSelectionSheet(activity: activity)
+        }//: SHEET (activity-credential selection)
+        
+        // Once at least one Credential has been assigned to an activity, this sheet can be presented
+        // to the user for assigning/adding special CE categories to the Credential if not previously
+        // entered by the user.
+        .sheet(isPresented: $showSpecialCECatAssignmentSheet) {
+            if let chosenCred = selectedCredential {
+                SpecialCECatAssignmentManagementSheet(credential: chosenCred)
+            }
+        }//: SHEET (SpecialCECatASsignmentManagementSheet)
+        
+        // MARK: - POPOVERS
+        .popover(isPresented: $showCredentialSelectionPopover) {
+            CredentialSelectionPopOver(
+                activity: activity,
+                selectedCredential: $selectedCredential,
+                showCredentialSelectionPopover: $showCredentialSelectionPopover
+            )
+        }//: POPOVER
+        
         
     }//: BODY
     

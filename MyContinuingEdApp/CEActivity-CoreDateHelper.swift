@@ -176,3 +176,46 @@ extension CeActivity {
     
 }
 
+// MARK: - Credential Related Properties
+extension CeActivity {
+    // Computed property to retrieve all Credential objects associated with a given CE object
+    var activityCredentials: [Credential] {
+        let result = credential?.allObjects as? [Credential] ?? []
+        return result.sorted()
+    }
+}
+
+
+// MARK: - Special CE Categories for Each Activity
+extension CeActivity {
+    
+    var allSpecialCECats: [SpecialCategory] {
+        // Computed property logic:
+        // 1. retrieve all credential objects associated with a given activity
+        // 2. for each credential, retrieve all special CE categories associated with it
+        // 3.  append all special CE categories to a single array and return the array
+        
+        // defining a SpecialCategory array which will hold all SpecialCategory objects
+        var allCredCats: [SpecialCategory] = []
+        
+        // Getting all Credential objects for a CeActivity (computed property in extension)
+        let allActivityCreds = activityCredentials  // [Credential]
+        
+        // For each Credential, retrieve all SpecialCategory objects and append them to the
+        // allCredCats array, which will be returned
+        for cred in allActivityCreds {
+            let specialCatObjects = cred.specialCats?.allObjects as? [SpecialCategory] ?? []
+            if specialCatObjects.isNotEmpty {
+                // appending each SpecialCategory object linked to the credential
+                // to the allCredCats array
+                for object in specialCatObjects {
+                    allCredCats.append(object)
+                }
+            }
+            
+        }//: LOOP
+        
+        return allCredCats
+    }
+    
+}

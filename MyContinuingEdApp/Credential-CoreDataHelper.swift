@@ -82,6 +82,35 @@ extension Credential {
     
     static var allTypes: [String] {
         // Defining credential types in a set array
-        ["License", "Certificate", "Endorsement", "Membership", "Other"]
+        ["License", "Certification", "Endorsement", "Membership", "Other"]
     }
 }//: EXTENSION
+
+// MARK: - One To Many Relationship Object Arrays
+extension Credential {
+    // All SpecialCategory objects
+    var assignedSpecialCeCategories: [SpecialCategory] {
+        let foundCategories = specialCats?.allObjects as? [SpecialCategory] ?? []
+        return foundCategories
+    }
+    
+    // All DisciplinaryActionItem objects
+    var allDisciplinaryActions: [DisciplinaryActionItem] {
+        let actionsTaken = disciplinaryActions?.allObjects as? [DisciplinaryActionItem] ?? []
+        return actionsTaken
+    }
+    
+    // All CeActivity objects
+    var allCredentialCEs: [CeActivity] {
+        let cesForCredential = activities?.allObjects as? [CeActivity] ?? []
+        return cesForCredential.sorted {$0.ceTitle < $1.ceTitle}
+    }
+    
+    // All RenewalPeriod objects
+    var allRenewals: [RenewalPeriod] {
+        let credRenewals = renewals?.allObjects as? [RenewalPeriod] ?? []
+        return credRenewals.sorted {$0.renewalPeriodStart < $1.renewalPeriodStart}
+    }
+    
+    
+}

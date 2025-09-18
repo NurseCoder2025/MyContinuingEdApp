@@ -24,6 +24,10 @@ struct RenewalPeriodView: View {
     // Renewal period properties
     @State private var periodStart: Date = Date.renewalStartDate
     @State private var periodEnd: Date = Date.renewalEndDate
+    @State private var reinstatingYN: Bool = false
+    @State private var reinstateHours: Double = 30.0
+    @State private var lateFeeDate: Date = Date.renewalLateFeeStartDate
+    @State private var lateFeeAmount: Double = 50.0
     
     // Credential property that the renewal is assigned to
     @State private var renewalCredential: Credential?
@@ -36,7 +40,22 @@ struct RenewalPeriodView: View {
     
     // MARK: - BODY
     var body: some View {
-        // MARK: - Sheet Title
+        // MARK: Number & Currency Formatters
+        var generalDecimal: NumberFormatter {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .decimal
+            formatter.maximumFractionDigits = 2
+            return formatter
+        }
+        
+        var dollarFormat: NumberFormatter {
+            let formatter = NumberFormatter()
+            formatter.numberStyle = .currency
+            return formatter
+        }
+        
+        VStack {
+            // MARK: - Sheet Title
             VStack {
                 if let existingRenewal = renewalPeriod {
                     if existingRenewal.renewalPeriodName != "" {
@@ -49,31 +68,48 @@ struct RenewalPeriodView: View {
                 }
             }//: VSTACK
             .padding(.bottom, 20)
-                
-        
             
-        VStack {
-            // MARK: - Credential Selection
-            if allCredentials.isEmpty {
-                NoCredentialsView()
-            } else {
-                Picker("Select Credential", selection: $renewalCredential) {
-                    ForEach(allCredentials) { credential in
-                        Text(credential.credentialName).tag(credential)
-                    }//: LOOP
-                }//: PICKER
-                
-                Button {
-                    // TODO: Replace CredentialSheet with CredentialListView
-                    showCredentialSheet = true
-                } label: {
-                    Label("Add Credential", systemImage: "square.and.at.rectangle.fill")
+            
+            
+            VStack {
+                // MARK: - Credential Selection
+                if allCredentials.isEmpty {
+                    NoCredentialsView()
+                } else {
+                    Group {
+                        // TODO: Consider making this section a HSTACK
+                        Picker("Select Credential", selection: $renewalCredential) {
+                            ForEach(allCredentials) { credential in
+                                Text(credential.credentialName).tag(credential)
+                            }//: LOOP
+                        }//: PICKER
+                        
+                        Button {
+                            showCredentialSheet = true
+                        } label: {
+                            Label("Add Credential", systemImage: "square.and.at.rectangle.fill")
+                        }
+                        
+                        // Reinstatement info
+                        Toggle(isOn: $reinstatingYN) {
+                            Text("Reinstating Credential?")
+                        }
+                        
+                        if reinstatingYN {
+                            TextField("CE Hours Needed:", value: $reinstateHours, formatter: generalDecimal)
+                        }
+                        
+                        
+                    }//: GROUP
                 }
-            }
                 
                 // MARK: - Renewal START
                 Group {
                     VStack{
+                        // LATE FEE INFO
+                        DatePicker("Late Fee Starts", selection: $lateFeeDate, displayedComponents: .date)
+                        TextField("Late Fee Amount:", value: $lateFeeAmount, formatter: dollarFormat)
+                        
                         Text("Enter the date the renewal period begins:")
                             .font(.headline)
                         Text("If you don't know the exact date, enter January 1st of the starting year")
@@ -120,12 +156,18 @@ struct RenewalPeriodView: View {
                 
                 
             }//: VSTACK
+            // MARK: - ON APPEAR
             .onAppear {
                 periodStart = renewalPeriod?.periodStart ?? Date.renewalStartDate
                 periodEnd = renewalPeriod?.periodEnd ?? Date.renewalEndDate
             }
+            // MARK: - SHEETS
+            .sheet(isPresented: $showCredentialSheet) {
+                CredentialListSheet()
+            }
             
             
+        }//: VSTACK
             
     } //: BODY
     
@@ -136,6 +178,10 @@ struct RenewalPeriodView: View {
         renewal.periodStart = periodStart
         renewal.periodEnd = periodEnd
         renewal.credential = renewalCredential
+        renewal.reinstateCredential = reinstatingYN
+        renewal.reinstatementHours = reinstateHours
+        renewal.lateFeeStartDate = lateFeeDate
+        renewal.lateFeeAmount = lateFeeAmount
     }
     
     func saveRenewal() {

@@ -28,6 +28,12 @@ extension Date {
     // Property for providing a reasonable renewal period end date
     static let renewalEndDate: Date = Date.now.addingTimeInterval(86400 * 1095)
     
+    // Property for providing a reasonable late fee start date for a given renewal period
+    static let renewalLateFeeStartDate: Date = Date.now.addingTimeInterval((86400 * 1095) - (86400 * 30))
+    
+    // Property for providing a reasonable probationary end date for a given credential disciplinary action item
+    static let probationaryEndDate: Date = Date.now.addingTimeInterval(86400 * 90)
+    
     // Getting a year string from a given date
     var yearString: String {
         let calendar = Calendar.current

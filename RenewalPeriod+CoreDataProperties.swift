@@ -22,6 +22,11 @@ extension RenewalPeriod {
     @NSManaged public var periodStart: Date?
     @NSManaged public var cesCompleted: NSSet?
     @NSManaged public var credential: Credential?
+    @NSManaged public var reinstateCredential: Bool
+    @NSManaged public var reinstatementHours: Double
+    @NSManaged public var lateFeeStartDate: Date?
+    @NSManaged public var lateFeeAmount: Double
+   
 
 }
 

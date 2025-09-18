@@ -20,6 +20,11 @@ extension RenewalPeriod {
         set { periodEnd = newValue }
     }
     
+    var renewalLateFeeStartDate: Date {
+        get {lateFeeStartDate ?? Date.renewalLateFeeStartDate}
+        set {lateFeeStartDate = newValue}
+    }
+    
     var renewalPeriodUID: UUID {
         periodID ?? UUID()
     }

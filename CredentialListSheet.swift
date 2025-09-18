@@ -38,45 +38,59 @@ struct CredentialListSheet: View {
     // MARK: - BODY
     var body: some View {
         NavigationView {
-            List {
-                ForEach(allCredentials) { credential in
+            List(allCredentials) { credential in
+                HStack {
+                    Text(credential.credentialName)
+                }//: HSTACK
+                .swipeActions {
+                    // Edit Credential
                     Button {
                         credentialToEdit = credential
                     } label: {
-                        HStack {
-                            Text(credential.credentialName)
-                            Spacer()
-                            if credential == credentialToEdit {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                        }//: HSTACK
+                        Label("Edit", systemImage: "pencil")
                     }
-                }//: LOOP
-                .onDelete(perform: deleteCredential)
+                    
+                    // Delete Credential
+                    Button(role: .destructive) {
+                        credentialToDelete = credential
+                        showDeletionWarning = true
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                    
+                }//: SWIPE ACTIONS
                 
             }//: LIST
             .navigationTitle("Manage Credentials")
-            .swipeActions {
-                Button {
-                    CredentialSheet(credential: credentialToEdit)
-                } label: {
-                    Label("Edit Credential", systemImage: "pencil")
-                        .labelStyle(.iconOnly)
-                        
-                }
-            }//: SWIPE
             
+            // MARK: - SHEETS
+            .sheet(item: $credentialToEdit) { credential in
+                CredentialSheet(credential: credential)
+            }
+            
+            // MARK: - ALERTS
+            .alert("Confirm Credential Deletion", isPresented: $showDeletionWarning) {
+                Button("Delete", action: {deleteCredential()})
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("You are about to delete \(credentialToDelete?.credentialName ?? "the selected credential").  Are you sure? This cannot be undone.")
+            }//: ALERT (delete)
+            
+            // MARK: - ON APPEAR
+            .onAppear {
+                credentialToEdit = nil
+                credentialToDelete = nil
+            }
             
         }//: NAV VIEW
     }
     
     // MARK: - Functions
-    func deleteCredential(_ indices: IndexSet) {
-        for item in indices {
-            let selectedCred = allCredentials[item]
-            credentialToDelete = selectedCred
+    func deleteCredential() {
+        if let selectedCredential = credentialToDelete {
+            dataController.delete(selectedCredential)
+            dataController.save()
         }
-        showDeletionWarning = true
     }//: deleteCredential
 }
 

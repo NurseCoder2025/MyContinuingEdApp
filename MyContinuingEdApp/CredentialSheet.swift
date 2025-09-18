@@ -38,9 +38,15 @@ struct CredentialSheet: View {
     // Show list of Issuers property
     @State private var showIssuerListSheet: Bool = false
 
-    
     // Properties for showing the renewal period sheet
     @State private var showRenewalPeriodView: Bool = false
+    
+    // Show the Credential-SpecialCatsSelectionSheet for selecting any specific special CE categories
+    // that are required for the specific credential
+    @State private var showCredSpecialCatSheet: Bool = false
+
+    // Hold the newly created Credential for sheet presentation
+    @State private var newCredential: Credential?
     
     // MARK: - Computed Properties
     
@@ -105,6 +111,29 @@ struct CredentialSheet: View {
                     } label: {
                         Text(allIssuers.isEmpty ? "Add Issuer" : "Edit Issuers")
                     }
+                    
+                }//: SECTION
+                
+                // MARK: Special CE Categories for the Credential
+                Section(
+                    header: Text("Special CE Categories"),
+                    footer: HStack {
+                        Image(systemName: "info.circle")
+                        Text("This section may or may not apply to your situation, depending on the credential and what CE requirements the licensing or governing body have in-place. Typically, a special CE category is a subject that the credential issuer wants so many hours/units of CE in as part of the renewal total. For example, it could be 2 hours of ethics as part of the 30 CE hour total.")
+                    }//: HSTACK
+                    
+                ) {
+                    Button {
+                        if credential == nil {
+                            newCredential = createNewCredential()
+                            showCredSpecialCatSheet = true
+                        } else {
+                            showCredSpecialCatSheet = true
+                        }
+                    } label: {
+                        specialCategoryButtonLabel()
+                    }
+                    
                     
                 }//: SECTION
                 
@@ -246,7 +275,11 @@ struct CredentialSheet: View {
             .sheet(isPresented: $showIssuerListSheet) {
                 IssuerListSheet()
             }
-            
+            .sheet(isPresented: $showCredSpecialCatSheet) {
+                if let cred = credential ?? newCredential {
+                    SpecialCECatAssignmentManagementSheet(credential: cred)
+                }
+            }
 
         }//: NAV VIEW
     }//: BODY
@@ -269,7 +302,6 @@ struct CredentialSheet: View {
         if let selectedIssuer = credIssuer {
             cred.issuer = selectedIssuer
         }
-        
     }
     
     func mapAndSave() {
@@ -289,6 +321,31 @@ struct CredentialSheet: View {
         }
     }//: MAP & SAVE
     
+    /// This function is intended to save a newly created Credential and then pass the object to the
+    ///  "Credential\_SpecialCatsSelectionSheet" so the user can then assign whatever special CE categories are desired
+    ///   to the newly created object.
+    func createNewCredential() -> Credential? {
+        let context = dataController.container.viewContext
+        let newCredential = Credential(context: context)
+        mapCredProperties(for: newCredential)
+        dataController.save()
+        return newCredential
+    }
+    
+    /// Creates a label for the button that controls whether the Credential-SpecialCatSelectionSheet is shown. Depending on whether a credential
+    ///  object was passed in (is being edited) or if a new one is being made, the wording will reflect the appropriate situation.
+    /// - Returns: a Lable object with different title text and system image, depending on whether the user is making a new credential or
+    ///      is editing an existing one that has special categories already assigned to it.
+    func specialCategoryButtonLabel() -> some View {
+        let labelDetails: Label<Text, Image>
+        if let existingCred = credential, existingCred.assignedSpecialCeCategories.isNotEmpty {
+            labelDetails = Label("Manage Special CE Categories", systemImage: "folder.badge.gear")
+        } else {
+           labelDetails = Label("Add Special CE Category", systemImage: "plus")
+        }
+        
+        return labelDetails
+    }
     
     
 }
