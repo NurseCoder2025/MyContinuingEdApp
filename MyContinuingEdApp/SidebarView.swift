@@ -29,7 +29,7 @@ struct SidebarView: View {
     @State private var showDeletingRenewalAlert: Bool = false
     @State private var renewalToDelete: RenewalPeriod?
     
-    // MARK: Credentials
+    // MARK: Credential sheets
     @State private var showCredentialListView: Bool = false  // show ALL entered credentials
     @State private var showCredentialSheet:Bool = false // for adding a brand new credential only
     
@@ -38,6 +38,9 @@ struct SidebarView: View {
     
     // Property for displaying the half-screen Renewal Period entry screen
     @State private var showRenewalPeriodView: Bool = false
+    
+    // MARK: Credential object to be passed into RenewalPeriodView (for creating or editing)
+    @State private var selectedCredential: Credential?
     
     // MARK: - FILTERS
     // Defining smart filters
@@ -53,14 +56,23 @@ struct SidebarView: View {
     // Converting all fetched renewal periods to Filter objects
     var convertedRenewalFilters: [Filter] {
         renewals.map { renewal in
-            Filter(name: renewal.renewalPeriodName, icon: "timer.square", renewalPeriod: renewal)
+            Filter(
+                name: renewal.renewalPeriodName,
+                icon: "timer.square",
+                renewalPeriod: renewal,
+                credential: renewal.credential
+            )
         }
     }
     
     // Converting all fetched credentials to Filter objects
     var convertedCredentialFilters: [Filter] {
         allCredentials.map { credential in
-            Filter(name: credential.credentialName, icon: "person.text.rectangle.fill", credential: credential)
+            Filter(
+                name: credential.credentialName,
+                icon: "person.text.rectangle.fill",
+                credential: credential
+            )
         }
     }
     
@@ -169,12 +181,24 @@ struct SidebarView: View {
                             Text("\(credential.credentialName) Renewals")
                             Spacer()
                             
+                            // Add Renewal Period button
                             Button {
+                                selectedCredential = credential
                                 showRenewalPeriodView = true
                             }label: {
                                 Label("Add Renewal Period", systemImage: "plus")
                                     .labelStyle(.iconOnly)
                             }
+                            
+                            #if DEBUG
+                            // Debugging button
+                            Button {
+                                diagnoseRenewalNotShowing(dataController: dataController, for: selectedCredential)
+                            } label: {
+                                Label("Dx", systemImage: "sparkle.magnifyingglass")
+                                    .labelStyle(.iconOnly)
+                            }
+                            #endif
                             
                         }//: HSTACK
                     }//: SECTION w/ custom header
@@ -183,6 +207,7 @@ struct SidebarView: View {
                 
                 
             } //: LIST
+        // MARK: - ON CHANGE OF
             // Adding this code to prevent a stale state between times
             // when the user decides to edit a renewal period
             .onChange(of: showRenewalPeriodView) {isPresented in
@@ -217,6 +242,7 @@ struct SidebarView: View {
                 Button("Cancel", role: .cancel) {}
                 TextField("New tag name:", text: $newTagName)
             } //: ALERT
+        
             // DELETING RENEWAL PERIOD ALERT
             .alert("Warning: Deleting Renewal Period", isPresented: $showDeletingRenewalAlert) {
                 Button("Delete", role: .destructive ) {
@@ -225,6 +251,7 @@ struct SidebarView: View {
                     }
                     renewalToDelete = nil
                 } //: Delete button
+                
                 Button("Cancel", role: .cancel) {
                     renewalToDelete = nil
                 } //: Cancel button
@@ -234,12 +261,12 @@ struct SidebarView: View {
             // MARK: - SHEETS
             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
             .sheet(isPresented: $showRenewalPeriodView){
-                if let renewal = renewalToEdit {
-                    RenewalPeriodView(renewalPeriod: renewal)
-                    .presentationDetents([.medium])
+                if let renewal = renewalToEdit, let cred = selectedCredential {
+                    RenewalPeriodView(renewalCredential: cred, renewalPeriod: renewal)
+                } else if let cred = selectedCredential {
+                    RenewalPeriodView(renewalCredential: cred, renewalPeriod: nil)
                 } else {
-                    RenewalPeriodView(renewalPeriod: nil)
-                        .presentationDetents([.medium])
+                    Text("Error")
                 }
                 
             }//: SHEET
@@ -288,6 +315,8 @@ struct SidebarView: View {
             showDeletingRenewalAlert = true
         }
     }
+    
+ 
         
     } //: STRUCT
     

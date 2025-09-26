@@ -42,6 +42,7 @@ struct ActivityView: View {
     // Properties for the Credential selection popover
     @State private var showCredentialSelectionPopover: Bool = false
     @State private var selectedCredential: Credential?
+
     
     // MARK: - COMPUTED PROPERTIES
     
@@ -218,8 +219,9 @@ struct ActivityView: View {
                     
                 } //: Contact Hours & Cost subsection
             
-            // MARK: - CE Designation
-            Section("CE Designation") {
+            // MARK: - CE DETAILS
+            // MARK: Designation
+            Section("CE Details") {
                 Button {
                     showCeDesignationSheet = true
                 } label: {
@@ -241,40 +243,23 @@ struct ActivityView: View {
                     Text("NOTE: If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
                         .font(.caption)
                         .multilineTextAlignment(.leading)
+                    
+                    Button {
+                        showSpecialCECatAssignmentSheet = true
+                    } label: {
+                        HStack {
+                            Text("Category:")
+                            if let assignedCat = activity.specialCat {
+                                Text(assignedCat.specialName)
+                                    .lineLimit(1)
+                            } else {
+                                Text("Select Category (if applicable)")
+                            }
+                        }//: HSTACK
+                    }
+                    
                 } //: VSTACK
-                // Check to see if an activity has a credential assigned to it, because
-                // the data model is setup so that only special CE categories assigned to
-                // a Credential object should be shown in the picker in this section
-                if activity.activityCredentials.isEmpty {
-                    Text("Please assign a credential to this activity first.")
-                    // If NO Special CE Categories have been created or assigned yet
-                } else if activity.allSpecialCECats.isEmpty {
-                    Button {
-                        // If at least one Credential has been associated with an activity
-                        // but no special CE categories have been assigned to the Credential then
-                        // the user can use this button to assign such category objects to a selected
-                        // credential (done this way as an activity may be associated with more
-                        // than one Credential object.
-                        showCredentialSelectionPopover = true
-                    } label: {
-                        Text("Assign a Special CE Category to a Credential")
-                    }
-                } else {
-                    Picker("Special CE Category", selection: $activity.specialCat) {
-                        ForEach(activity.allSpecialCECats) { cat in
-                            Text(cat.labelText).tag(cat)
-                        }//: LOOP
-                    }//: PICKER
-                    
-                    // Adding a button for the user to manage special CE categories for a given
-                    // Credential
-                    Button {
-                        showCredentialSelectionPopover = true
-                    } label: {
-                        Text("Manage Credential Special CE Categories")
-                    }
-                    
-                }//: IF-ELSE
+                
                 
             }//: SECTION
             
@@ -420,13 +405,7 @@ struct ActivityView: View {
             previousCertificate = newCertificate
         }
         
-        // Changing the value of showSpecialCECatAssignmentSheet to true only once the user has closed out of the
-        // CredentialSelectionPopOver popover - this will then trigger the SpecialCECatAssignment sheet to appear
-        .onChange(of: showCredentialSelectionPopover) { _ in
-            if showCredentialSelectionPopover == false {
-                showSpecialCECatAssignmentSheet = true
-            }
-        }
+        
         
         // MARK: - Changing Certificate Alert
         .alert(item: $certificateToConfirm) { wrapper in
@@ -468,13 +447,9 @@ struct ActivityView: View {
             Activity_CredentialSelectionSheet(activity: activity)
         }//: SHEET (activity-credential selection)
         
-        // Once at least one Credential has been assigned to an activity, this sheet can be presented
-        // to the user for assigning/adding special CE categories to the Credential if not previously
-        // entered by the user.
+        // CE Category selection
         .sheet(isPresented: $showSpecialCECatAssignmentSheet) {
-            if let chosenCred = selectedCredential {
-                SpecialCECatAssignmentManagementSheet(credential: chosenCred)
-            }
+            SpecialCECatsManagementSheet(activity: activity)
         }//: SHEET (SpecialCECatASsignmentManagementSheet)
         
         // MARK: - POPOVERS

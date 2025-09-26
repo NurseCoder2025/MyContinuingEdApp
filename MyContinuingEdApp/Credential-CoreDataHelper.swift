@@ -88,11 +88,6 @@ extension Credential {
 
 // MARK: - One To Many Relationship Object Arrays
 extension Credential {
-    // All SpecialCategory objects
-    var assignedSpecialCeCategories: [SpecialCategory] {
-        let foundCategories = specialCats?.allObjects as? [SpecialCategory] ?? []
-        return foundCategories
-    }
     
     // All DisciplinaryActionItem objects
     var allDisciplinaryActions: [DisciplinaryActionItem] {

@@ -2,7 +2,7 @@
 //  RenewalPeriod+CoreDataProperties.swift
 //  MyContinuingEdApp
 //
-//  Created by Kamino on 9/8/25.
+//  Created by Kamino on 9/23/25.
 //
 //
 
@@ -16,17 +16,16 @@ extension RenewalPeriod {
         return NSFetchRequest<RenewalPeriod>(entityName: "RenewalPeriod")
     }
 
+    @NSManaged public var lateFeeAmount: Double
+    @NSManaged public var lateFeeStartDate: Date?
     @NSManaged public var periodEnd: Date?
     @NSManaged public var periodID: UUID?
     @NSManaged public var periodName: String?
     @NSManaged public var periodStart: Date?
+    @NSManaged public var reinstatementHours: Double
+    @NSManaged public var reinstateCredential: Bool
     @NSManaged public var cesCompleted: NSSet?
     @NSManaged public var credential: Credential?
-    @NSManaged public var reinstateCredential: Bool
-    @NSManaged public var reinstatementHours: Double
-    @NSManaged public var lateFeeStartDate: Date?
-    @NSManaged public var lateFeeAmount: Double
-   
 
 }
 

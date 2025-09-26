@@ -53,7 +53,7 @@ struct Activity_CredentialSelectionSheet: View {
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button {
-                            activity.credential = selectedCredentials as NSSet
+                            activity.credentials = selectedCredentials as NSSet
                             dataController.save()
                             dismiss()
                         } label: {
@@ -75,7 +75,7 @@ struct Activity_CredentialSelectionSheet: View {
                 // this sheet is pulled up, then assign those values to the
                 // @State property so that the user can modify as desired
                 .onAppear {
-                    if let creds = activity.credential as? Set<Credential> {
+                    if let creds = activity.credentials as? Set<Credential> {
                         selectedCredentials = creds
                     }
                 }//: ON APPEAR

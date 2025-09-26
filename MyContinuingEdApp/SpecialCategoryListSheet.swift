@@ -10,6 +10,9 @@ import SwiftUI
 
 // Purpose: To show a list of all entered Special Category objects and allow the user to add, edit, and delete them at will
 
+// UPDATE: NO longer need this specific sheet as all functionality has been added
+// to the SpecialCECAtsManagementSheet file for simplicity
+
 struct SpecialCategoryListSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss

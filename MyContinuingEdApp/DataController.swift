@@ -173,6 +173,7 @@ class DataController: ObservableObject {
         save()
     }
     
+    
     // MARK: - SAVING & DELETING METHODS
     
     /// Save function that will save the context to disk only when changes are made and the function is called.
@@ -263,7 +264,7 @@ class DataController: ObservableObject {
         
         // Adding selected credential to the predicates array
         if let chosenCredential = filter.credential {
-            let credentialPredicate = NSPredicate(format: "credential == %@", chosenCredential)
+            let credentialPredicate = NSPredicate(format: "ANY credentials == %@", chosenCredential)
             predicates.append(credentialPredicate)
         }
         
@@ -301,7 +302,6 @@ class DataController: ObservableObject {
         // For sorting the selected filter/sort items:
         request.sortDescriptors = [NSSortDescriptor(key: sortType.rawValue, ascending: sortNewestFirst)]
         
-        
         let allActivities = (try? container.viewContext.fetch(request)) ?? []
         return allActivities.sorted()
     }
@@ -329,11 +329,20 @@ class DataController: ObservableObject {
         newActivity.activityFormat = "Virtual"
        // TODO: Add CE Designation default
         newActivity.cost = 0.0
+        newActivity.specialCat = nil
         
         // if user creates a new activity while a specific tag has been selected
         // assign that tag to the new activity
         if let tag = selectedFilter?.tag {
             newActivity.addToTags(tag)
+        }
+        
+        // if the user creates a new activity while a specific renewal period has been
+        // selected then the corresponding Credential object will automatically
+        // be assigned to the new activity as well as the Renewal Period
+        if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
+            newActivity.addToCredentials(credential)
+            newActivity.renewal = renewal
         }
         
         save()
@@ -488,7 +497,7 @@ class DataController: ObservableObject {
             guard let completedDate = activity.dateCompleted else { continue }
             
             // Find the credential(s) for this activity
-            let activityCredentials = activity.credential as? Set<Credential> ?? []
+            let activityCredentials = activity.credentials as? Set<Credential> ?? []
             
             for credential in activityCredentials {
                 // Cast renewals to Set<RenewalPeriod> for type-safe access
@@ -574,7 +583,7 @@ class DataController: ObservableObject {
                 activity.evalRating = Int16.random(in: 0...4)
                 
                 // MARK: Credential assignment
-                activity.credential = [sampleCredential]
+                activity.credentials = [sampleCredential]
                 
                 // MARK: CE Designation
                 let designationRequest: NSFetchRequest<CeDesignation> = CeDesignation.fetchRequest()
@@ -718,7 +727,10 @@ class DataController: ObservableObject {
             if stateCount == 0 {
                 self.preloadStatesList()
             }
+            
         }
     } //: INIT
+    
+   
     
 } //: DATACONTROLLER

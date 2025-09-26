@@ -5,6 +5,7 @@
 //  Created by Kamino on 9/13/25.
 //
 
+import CoreData
 import Foundation
 
 
@@ -46,7 +47,8 @@ extension SpecialCategory {
     }
 }
 
-// Adding a computed property that will create an array of CeActivities for a given Special Category
+// Adding a computed property that will create an array of
+// CeActivities for a given Special Category
 extension SpecialCategory {
     
     var designatedActivities: [CeActivity] {
@@ -70,3 +72,5 @@ extension SpecialCategory {
         }
     }
 }
+
+
