@@ -35,6 +35,11 @@
 		F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F254BB9E2E74FA350020DB28 /* NoIssuersView.swift */; };
 		F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F25DCC732E553470006EFEDE /* CameraPickerView.swift */; };
 		F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */; };
+		F2612A1D2E87275000CC463D /* ActivityViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2612A1C2E87275000CC463D /* ActivityViewHeader.swift */; };
+		F2612A1F2E872AC100CC463D /* TagMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2612A1E2E872AC100CC463D /* TagMenuView.swift */; };
+		F2612A212E874D6500CC463D /* ActivityDescriptionSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2612A202E874D6500CC463D /* ActivityDescriptionSectionView.swift */; };
+		F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2612A222E874FB900CC463D /* ActivityHoursAndCostView.swift */; };
+		F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2612A242E87512D00CC463D /* ActivityCEDetailsView.swift */; };
 		F266C57E2E4AFBE500D0832D /* Defunct Code.md in Resources */ = {isa = PBXBuildFile; fileRef = F266C57D2E4AFBE500D0832D /* Defunct Code.md */; };
 		F27259192E78C3B300210F11 /* DisciplinaryActionItemSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27259182E78C3B300210F11 /* DisciplinaryActionItemSheet.swift */; };
 		F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F272591A2E78CBD500210F11 /* HeaderNoteView.swift */; };
@@ -55,6 +60,9 @@
 		F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */; };
 		F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */; };
 		F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */; };
+		F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */; };
+		F2AA2AB02E8AFFC300321667 /* ActivityCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */; };
+		F2AA2AB22E8B03D200321667 /* ActivityCertificateImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */; };
 		F2B389EF2E4C37C200518868 /* CertificatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */; };
 		F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B389F02E4C49BD00518868 /* PDFKitView.swift */; };
 		F2B389F32E4C538100518868 /* CertificateShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B389F22E4C537C00518868 /* CertificateShareView.swift */; };
@@ -132,6 +140,11 @@
 		F254BB9E2E74FA350020DB28 /* NoIssuersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoIssuersView.swift; sourceTree = "<group>"; };
 		F25DCC732E553470006EFEDE /* CameraPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPickerView.swift; sourceTree = "<group>"; };
 		F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CeDesignation-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		F2612A1C2E87275000CC463D /* ActivityViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViewHeader.swift; sourceTree = "<group>"; };
+		F2612A1E2E872AC100CC463D /* TagMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagMenuView.swift; sourceTree = "<group>"; };
+		F2612A202E874D6500CC463D /* ActivityDescriptionSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityDescriptionSectionView.swift; sourceTree = "<group>"; };
+		F2612A222E874FB900CC463D /* ActivityHoursAndCostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityHoursAndCostView.swift; sourceTree = "<group>"; };
+		F2612A242E87512D00CC463D /* ActivityCEDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCEDetailsView.swift; sourceTree = "<group>"; };
 		F266C57D2E4AFBE500D0832D /* Defunct Code.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Defunct Code.md"; sourceTree = "<group>"; };
 		F27259182E78C3B300210F11 /* DisciplinaryActionItemSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionItemSheet.swift; sourceTree = "<group>"; };
 		F272591A2E78CBD500210F11 /* HeaderNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderNoteView.swift; sourceTree = SOURCE_ROOT; };
@@ -155,6 +168,9 @@
 		F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeDesignationSelectionSheet.swift; sourceTree = "<group>"; };
 		F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignationBoxView.swift; sourceTree = "<group>"; };
 		F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignationEditView.swift; sourceTree = "<group>"; };
+		F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTypeAndFormatView.swift; sourceTree = "<group>"; };
+		F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCompletionView.swift; sourceTree = "<group>"; };
+		F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCertificateImageView.swift; sourceTree = "<group>"; };
 		F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePickerView.swift; sourceTree = "<group>"; };
 		F2B389F02E4C49BD00518868 /* PDFKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFKitView.swift; sourceTree = "<group>"; };
 		F2B389F22E4C537C00518868 /* CertificateShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateShareView.swift; sourceTree = "<group>"; };
@@ -301,6 +317,14 @@
 				F2B580172E7B84510073BCA7 /* NoSpecialCatsView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
 				F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */,
+				F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */,
+				F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */,
+				F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */,
+				F2612A242E87512D00CC463D /* ActivityCEDetailsView.swift */,
+				F2612A202E874D6500CC463D /* ActivityDescriptionSectionView.swift */,
+				F2612A222E874FB900CC463D /* ActivityHoursAndCostView.swift */,
+				F2612A1C2E87275000CC463D /* ActivityViewHeader.swift */,
+				F2612A1E2E872AC100CC463D /* TagMenuView.swift */,
 				F2B580132E7B39000073BCA7 /* Activity-CredentialSelectionSheet.swift */,
 				F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */,
 				F243B4212E6905500072419D /* Country List.json */,
@@ -447,27 +471,34 @@
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
+				F2612A1D2E87275000CC463D /* ActivityViewHeader.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
+				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
+				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
+				F2612A212E874D6500CC463D /* ActivityDescriptionSectionView.swift in Sources */,
 				F2BDFC112E83657A00A8CDAA /* RenewalPeriodDatesView.swift in Sources */,
 				F22940A92E76678400BFE78A /* SpecialCategoryListSheet.swift in Sources */,
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
+				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
 				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
 				F27B0FC52E2EF6AA00A8B4E9 /* GeneralExtensions.swift in Sources */,
 				F2B937AB2E83A92300AF9155 /* DebuggingFunctions.swift in Sources */,
+				F2AA2AB22E8B03D200321667 /* ActivityCertificateImageView.swift in Sources */,
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
+				F2612A1F2E872AC100CC463D /* TagMenuView.swift in Sources */,
 				F27259192E78C3B300210F11 /* DisciplinaryActionItemSheet.swift in Sources */,
 				F22940A32E764EE200BFE78A /* Enums-DisciplinaryActionItem.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
@@ -492,6 +523,7 @@
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
 				F2B9379D2E836F5600AF9155 /* Enums-General.swift in Sources */,
+				F2AA2AB02E8AFFC300321667 /* ActivityCompletionView.swift in Sources */,
 				F2B389EF2E4C37C200518868 /* CertificatePickerView.swift in Sources */,
 				F2011DCB2E62680700D5DF92 /* IssuerSheet.swift in Sources */,
 				F2B580142E7B39000073BCA7 /* Activity-CredentialSelectionSheet.swift in Sources */,

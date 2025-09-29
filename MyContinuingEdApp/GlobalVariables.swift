@@ -15,3 +15,20 @@ let singleDecimalFormatter: NumberFormatter = {
     formatter.maximumFractionDigits = 1
     return formatter
 }()
+
+
+// formatting contact hours value to 2 decimal places for use in textfield
+let hoursFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.maximumFractionDigits = 2
+    return formatter
+}()
+
+// creating a formatter for currency values to be used in another textfield
+let currencyFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    
+    return formatter
+}()
