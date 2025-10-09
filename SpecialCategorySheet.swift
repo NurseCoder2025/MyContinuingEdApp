@@ -39,16 +39,20 @@ struct SpecialCategorySheet: View {
         NavigationView {
             VStack {
                 Form {
-                    Section {
+                    Section("Name & Abbreviation") {
                         TextField("Category Name:", text: $catName)
                         TextField("Abbreviation:", text: $catAbbrev)
                     }//: SECTION
                     
-                    Section {
+                    Section(header: Text("Details"), footer: Text("Enter how many hours you are required to obtain for activities of this category in any given renewal period.")) {
                         TextField("Description:", text: $description)
-                        TextField("CE Hours Required:", value: $hoursRequired, formatter: ceHourFormat)
-                        
-                    }//: SECTION
+                        HStack {
+                            Text("Hours Required:")
+                                .bold()
+                            TextField("CE Hours Required:", value: $hoursRequired, formatter: ceHourFormat)
+                                .keyboardType(.decimalPad)
+                        }//: HSTACK
+                    }
                     
                 }//: FORM
                 
@@ -66,15 +70,29 @@ struct SpecialCategorySheet: View {
             .navigationTitle("Special Category Info")
             // MARK: - TOOLBAR
             .toolbar {
-                Button {
-                    dismiss()
-                } label: {
-                    DismissButtonLabel()
-                }.applyDismissStyle()
+                // Cancel button
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Dismiss")
+                    }
+                }//: TOOLBAR ITEM
             }
+            // MARK: - ON APPEAR
+            .onAppear {
+                // Mapping existing special cat properties to UI
+                // control values
+                if let passedInCat = existingCat {
+                    catName = passedInCat.specialName
+                    catAbbrev = passedInCat.specialAbbreviation
+                    description = passedInCat.specialCatDescription
+                    hoursRequired = passedInCat.requiredHours
+                }//: IF LET
+            }//: ON APPEAR
             
         }//: NAV VIEW
-    }
+    }//: BODY
     // MARK: - FUNCTIONS
     /// Function which maps each control in the UI to the corresponding property in the SpecialCategory object.  If the user is creating a new SpecialCategory (i.e.
     /// the existingCat property is nil) then a new object is created and the properties are mapped to that before calling the DataController's save function.

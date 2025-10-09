@@ -35,6 +35,8 @@ struct CredentialSheet: View {
     @State private var issueDate: Date?
     @State private var credIssuer: Issuer?
 
+    // Show an alert if a credential type has not been selected by the user
+    @State private var showNoCredTypeAlert: Bool = false
     
     // MARK: - COMPUTED PROPERTIES
     var allDAIs: [DisciplinaryActionItem] {
@@ -110,7 +112,6 @@ struct CredentialSheet: View {
                         Spacer()
                         Button {
                             mapAndSave()
-                            dismiss()
                         } label: {
                             Label("Save", systemImage: "internaldrive.fill")
                                 .font(.title)
@@ -133,9 +134,7 @@ struct CredentialSheet: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        // Action
                         mapAndSave()
-                        dismiss()
                     } label: {
                         Text("Save")
                     }
@@ -143,6 +142,13 @@ struct CredentialSheet: View {
                     
                 
             }//: TOOLBAR
+            // MARK: - ALERTS
+            .alert("Need Credential Type", isPresented: $showNoCredTypeAlert) {
+                Button("OK") {}
+            } message: {
+                Text("Unable to save credential since no credential type has been selected.  Please select a credential type and try saving again.")
+            }//: ALERT
+                
             
             //: MARK: - ON APPEAR
             // If an existing credential is being edited, map its properties to the state variables
@@ -200,15 +206,23 @@ struct CredentialSheet: View {
     /// This function first maps the UI control fields to either an existing Credential object or new Credential object,
     /// then saves the changes to Core Data.
     func mapAndSave() {
-        // If editing an existing credential, map changes to that object
-        if let existingCred = credential {
-            mapToFields(for: existingCred)
+        // Checking to make sure a credential type has been selected
+        if type == ""  {
+            showNoCredTypeAlert = true
+            return
         } else {
-            // Creating a new credential object
-            let newCred = dataController.createNewCredential()
-            mapToFields(for: newCred)
+            // If editing an existing credential, map changes to that object
+            if let existingCred = credential {
+                mapToFields(for: existingCred)
+            } else {
+                // Creating a new credential object
+                let newCred = dataController.createNewCredential()
+                mapToFields(for: newCred)
+            }
+            
+            dataController.save()
+            dismiss()
         }
-        dataController.save()
     }//: MAP & SAVE
     
 }

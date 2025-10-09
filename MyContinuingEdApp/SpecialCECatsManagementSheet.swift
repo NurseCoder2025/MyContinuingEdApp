@@ -95,7 +95,7 @@ struct SpecialCECatsManagementSheet: View {
                     .buttonStyle(.borderedProminent)
                     
                 }//: VSTACK
-                .navigationTitle("Assign CE Categories")
+                .navigationTitle("Assign CE Category")
                 // MARK: - TOOLBAR
                 .toolbar {
                     // Adding a new Special Category

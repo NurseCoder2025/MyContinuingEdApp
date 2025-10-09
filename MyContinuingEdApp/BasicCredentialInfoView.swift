@@ -30,6 +30,7 @@ struct BasicCredentialInfoView: View {
     // Property for bringing up the Issuer List sheet
     @State private var showIssuerListSheet: Bool = false
     
+    
     // MARK: - CORE DATA FETCHES
     @FetchRequest(sortDescriptors: [SortDescriptor(\.issuerName)]) var allIssuers: FetchedResults<Issuer>
     
