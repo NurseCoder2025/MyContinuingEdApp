@@ -54,16 +54,16 @@ struct CredentialManagementSheet: View {
                     LazyVGrid(columns: columns, alignment: .center, spacing: 10) {
                         // See the Enums-General file for the enum definition (CredentialType)
                         // Need to show the "All" category for this grid, so using allCases
-                        ForEach(CredentialType.allCases, id: \.self) { type in
+                        ForEach(CredentialType.addableTypes, id: \.self) { type in
                             Button {
                                 selectedCat = CredentialCatWrapper(
-                                    value: type.displaySingularName.lowercased()
+                                    value: type.rawValue
                                 )
                             } label: {
                                 CredentialCatBoxView(
                                     icon: type.typeIcon,
                                     text: type.displayPluralName,
-                                    badgeCount: getCatBadgeCount(category: type.displaySingularName.lowercased())
+                                    badgeCount: getCatBadgeCount(category: type.rawValue)
                                 )
                             }//: BUTTON
                         }//: LOOP

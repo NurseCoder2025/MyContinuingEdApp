@@ -96,7 +96,7 @@ class DataController: ObservableObject {
     /// - Returns: whole number (Int) representing the number of credentials of a specific type stored in persistent storage
     func getNumberOfCredTypes(type: String) -> Int {
         let request = Credential.fetchRequest()
-        if type != "all" {
+        if type != "all" && type != "" {
             request.predicate = NSPredicate(format: "credentialType == %@", type)
         }
         let count = (try? container.viewContext.count(for: request)) ?? 0
@@ -461,8 +461,9 @@ class DataController: ObservableObject {
         newCredential.name = "New Credential"
         newCredential.isActive = true
         newCredential.credentialID = UUID()
-        // Setting the default credential type to license upon creation
-        newCredential.credentialType = "license"
+        // Setting the default credential type to an empty string upon creation
+        // so that the user will be prompted to select a type in the picker control
+        newCredential.credentialType = ""
         
         save()
         return newCredential

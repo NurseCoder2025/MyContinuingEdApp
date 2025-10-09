@@ -19,11 +19,26 @@ enum SheetType {
 /// to allow for easy access to display names (singular and plural) and SF Symbols icons for each type.  The string values within this enum
 /// will be used to populate the credentialType property in the Credential entity object.
 enum CredentialType: String, CaseIterable {
-    case all, license, certification, endorsement, membership, other
+    case all
+    // Added a placeholder value, "", to the enum in order to allow for an empty selection
+    // in a picker control.
+    case placeholder = ""
+    case license
+    case certification
+    case endorsement
+    case membership
+    case other
     
     // Computed property for pickers and other controls where the all case is not needed
-    static var pickerChoices: [String] {
-        CredentialType.allCases.filter { $0 != .all }.map { $0.displaySingularName }
+    static var pickerChoices: [CredentialType] {
+        CredentialType.allCases.filter {$0 != .all}
+    }
+    
+    // Computed property for displaying only those types that users can add credentials to
+    //  i.e. not the placeholder
+    static var addableTypes: [CredentialType] {
+        // Will create an array for all, license, certification, endorsement, membership, other
+        CredentialType.allCases.filter {$0 != .placeholder}
     }
         
     
@@ -31,6 +46,8 @@ enum CredentialType: String, CaseIterable {
         switch self {
         case .all:
             return "All"
+        case .placeholder:
+            return "Select Type"
         case .license:
             return "License"
         case .certification:
@@ -48,6 +65,8 @@ enum CredentialType: String, CaseIterable {
         switch self {
         case .all:
             return "All"
+        case .placeholder:
+            return ""
         case .license:
             return "Licenses"
         case .certification:
@@ -58,6 +77,7 @@ enum CredentialType: String, CaseIterable {
             return "Memberships"
         case .other:
             return "Others"
+        
         }
     }//: DISPLAY PLURAL NAME
     
@@ -65,6 +85,8 @@ enum CredentialType: String, CaseIterable {
         switch self {
         case .all:
             return "folder.fill"
+        case .placeholder:
+            return "questionmark.app.fill"
         case .license:
             return "person.text.rectangle.fill"
         case .certification:

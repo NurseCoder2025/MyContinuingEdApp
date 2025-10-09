@@ -48,7 +48,7 @@ struct BasicCredentialInfoView: View {
                 // MARK: Credential type
                 Picker("Type", selection: $type) {
                     ForEach(CredentialType.pickerChoices, id: \.self) { type in
-                        Text(type).tag(type.lowercased())
+                        Text(type.displaySingularName).tag(type.rawValue)
                     }//: LOOP
                 }//: PICKER
                 
