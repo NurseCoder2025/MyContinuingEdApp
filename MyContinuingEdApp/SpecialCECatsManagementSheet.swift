@@ -47,7 +47,7 @@ struct SpecialCECatsManagementSheet: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, 15)
-                    List(allSpecialCats, selection: $activity.specialCat) { cat in
+                    List(allSpecialCats) { cat in
                         HStack {
                             Text(cat.specialName)
                             Spacer()
@@ -75,6 +75,14 @@ struct SpecialCECatsManagementSheet: View {
                             }
                             
                         }//: SWIPE
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if activity.specialCat == cat {
+                                activity.specialCat = nil
+                            } else {
+                                activity.specialCat = cat
+                            }
+                        }
                         
                     }//: LIST
                     // MARK: - Dismiss BUTTON
@@ -117,6 +125,7 @@ struct SpecialCECatsManagementSheet: View {
                     SpecialCategorySheet(existingCat: nil)
                 }
                 
+                // TODO: Fix bug where passed in cat data doesn't show up in sheet
                 .sheet(item: $specialCatToEdit) { category in
                     SpecialCategorySheet(existingCat: category)
                 }

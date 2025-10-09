@@ -1,37 +1,43 @@
 //
-//  NoCredentialsView.swift
+//  BasicCredentialInfoView.swift
 //  MyContinuingEdApp
 //
-//  Created by Kamino on 9/9/25.
+//  Created by Kamino on 10/09/2025.
 //
+
+// Purpose: To notify the user that no credentials are currently saved in persistent storage
+// and to provide a button for adding a credential.
 
 import SwiftUI
 
-// Purpose of this file is to display a button whenever no credentials are stored in persistent
-// storage (ex. first run of app or user deletion of all credentials).
-
 struct NoCredentialsView: View {
     // MARK: - PROPERTIES
+    
+    // Property to toggle the CredentialSheet for adding a new credential
     @State private var showCredentialSheet: Bool = false
     
     // MARK: - BODY
     var body: some View {
-        HStack {
+        Group {
             Button {
+                // TODO: Add action(s)
                 showCredentialSheet = true
             } label: {
                 Label("Add Credential", systemImage: "person.text.rectangle.fill")
                     .foregroundStyle(.white)
-            }
+                    .font(.title3)
+            }//: BUTTON
             .buttonStyle(.borderedProminent)
-            Spacer()
-        }//: HSTACK
-        .sheet(isPresented: $showCredentialSheet) {
-            CredentialSheet(credential: nil)
-        }
-    }
+        }//: GROUP
+         // MARK: - SHEETS
+             .sheet(isPresented: $showCredentialSheet) {
+                 CredentialSheet(credential: nil)
+             }
         
-}
+    }//: BODY
+    
+}//: STRUCT
+
 
 // MARK: - PREVIEW
 #Preview {

@@ -21,8 +21,8 @@ struct HeaderNoteView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
-                .backgroundStyle(.translucentGreyGradient)
-                .frame(width: 320, height: 150)
+                .fill(.translucentGreyGradient)
+                .frame(width: 350, height: 180)
             
             VStack {
                 Text(titleText)
@@ -32,9 +32,12 @@ struct HeaderNoteView: View {
                     Text(messageText)
                         .font(.caption)
                 }//: SCROLL
+                .frame(width: 300)
                 .frame(maxHeight: 100)
-                
+              
             }//: VSTACK
+            .padding(.top, 35)
+            
             
         }//: ZSTACK
     }

@@ -64,7 +64,6 @@ struct ActivityView_Previews: PreviewProvider {
         let controller = DataController(inMemory: true)
         ActivityView(activity: .example)
             .environmentObject(controller)
-            .environment(\.managedObjectContext, controller.container.viewContext)
     }
 }
 

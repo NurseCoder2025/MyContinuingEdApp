@@ -25,9 +25,23 @@ struct DisciplinaryActionItemSheet: View {
     // using the DisciplineType enum value as a String
     @State private var type: String = DisciplineType.warning.rawValue.capitalized
     
+    // Properties related to the start and (possibly) end date of the
+    // disciplinary action
     @State private var startDate: Date = Date.now
     @State private var endDate: Date = .probationaryEndDate
+    
+    // Properties related to any required continuing education hours
     @State private var requiredCEHours: Double = 15.00
+    @State private var ceDeadlineDate: Date = Date.now.addingTimeInterval(60*60*24*30)
+    
+    // Properties related to fines imposed
+    @State private var fineAmount: Double = 0.00
+    @State private var fineDeadline: Date = Date.now.addingTimeInterval(60*60*24*30)
+    
+    // Properties related to community service hours imposed
+    @State private var communityServiceHours: Double = 0.00
+    @State private var communityServiceDeadline: Date = Date.now.addingTimeInterval(60*60*24*30)
+    
     @State private var selectedActions: [DisciplineAction] = []
     @State private var isTempOnly: Bool = true
     @State private var resolutionNotes: String = ""
@@ -39,7 +53,7 @@ struct DisciplinaryActionItemSheet: View {
     
     // Properties for sheet header shape
     let title: String = "Disciplinary Action"
-    let messageText: String  = "We hope this doesn't happen to you, but if it does then you may find this feature useful./n Document whatever actions your credential's governing body has taken against you.  If you decide to appeal the ruling then there is a section below for you to do that. If the action taken, such as a probationary period, has an end date, be sure to toggle the switch by 'Temporary?' to indicate that."
+    let messageText: String  = "We hope this doesn't happen to you, but if it does then document whatever actions your credential's governing body has taken. If the action taken, such as a probationary period, has an end date, be sure to toggle the switch by 'Temporary?' to indicate that."
     
     // MARK: - BODY
     var body: some View {
@@ -86,9 +100,7 @@ struct DisciplinaryActionItemSheet: View {
                             }//: LOOP
                         }//: PICKER
                         
-                        // Any required CE hours
-                        TextField("Required CE Hours", value: $requiredCEHours, formatter: ceHourFormatter)
-
+                       // MARK: Actions Taken section
                         // Multi-selection for actions taken
                         Section("Actions Taken - Select All That Apply") {
                             MultipleSelectionGridView(actions: DisciplineAction.allCases, selectedActions: $selectedActions)
@@ -98,6 +110,89 @@ struct DisciplinaryActionItemSheet: View {
                         
                     }//: SECTION (ACTIONS)
                     
+                    
+                    // MARK: Fines Section
+                    if selectedActions.contains(.fines) {
+                        Section("Fine Details") {
+                            HStack {
+                                Text("Fine Amount: ")
+                                TextField(
+                                    "Fine Amount",
+                                    value: $fineAmount,
+                                    formatter: currencyFormatter
+                                )
+                                    .keyboardType(.decimalPad)
+                                    
+                            }//: HSTACK
+                            
+                            DatePicker(
+                                "Due By:",
+                                selection: $fineDeadline,
+                                displayedComponents: .date
+                            )
+                        }//: SECTION (Fines)
+                    }//: IF (FINES)
+                    
+                    // MARK: Remedial CE Section
+                    if selectedActions.contains(.continuingEd) {
+                        // Only show this section if remedial CE is one of the selected actions
+                        
+                        Section("Remedial Continuing Education") {
+                            // Any required CE hours
+                            HStack {
+                                Text("Required CEs: ")
+                                TextField(
+                                    "Required CE Hours",
+                                    value: $requiredCEHours,
+                                    formatter: ceHourFormatter
+                                )
+                                .keyboardType(.decimalPad)
+                            }//: HSTACK
+                            
+                            // ONLY show the deadline date picker IF remedial
+                            // CE hours are required (> 0)
+                            if requiredCEHours > 0 {
+                                DatePicker(
+                                    "Deadline:",
+                                    selection: $ceDeadlineDate,
+                                    displayedComponents: .date
+                                )
+                            }//: IF
+                            
+                        }//: CE SECTION
+                    }//: IF (REMEDIAL CE)
+                    
+                    // MARK: Community Service Section
+                    if selectedActions.contains(.community) {
+                        // Only show this section if community service is one of the selected actions
+                        
+                        Section("Community Service Details") {
+                            // Any required community service hours
+                            HStack {
+                                Text("Required Hours: ")
+                                TextField(
+                                    "Required Community Service Hours",
+                                    value: $communityServiceHours,
+                                    formatter: hoursFormatter
+                                )
+                                .keyboardType(.decimalPad)
+                            }//: HSTACK
+                            
+                            // ONLY show the deadline date picker IF community
+                            // service hours are required (> 0)
+                            if communityServiceHours > 0 {
+                                DatePicker(
+                                    "Deadline:",
+                                    selection: $communityServiceDeadline,
+                                    displayedComponents: .date
+                                )
+                            }//: IF
+                            
+                        }//: COMMUNITY SERVICE SECTION
+                    }//: IF
+                    
+                    
+                    // MARK: Appeal Section
                     Section("Appeal") {
                         Toggle("Appealed Decision", isOn: $isAppealed)
                         if isAppealed {
@@ -122,12 +217,13 @@ struct DisciplinaryActionItemSheet: View {
             }//: VSTACK
             // MARK: - TOOLBAR
             .toolbar {
-                Button {
-                    dismiss()
-                } label: {
-                    DismissButtonLabel()
-                }.applyDismissStyle()
-                
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        DismissButtonLabel()
+                    }.applyDismissStyle()
+                }//: TOOLBAR ITEM
             }//: TOOLBAR
             
             // MARK: - SHEETS
@@ -150,6 +246,11 @@ struct DisciplinaryActionItemSheet: View {
                     isAppealed = existingItem.appealedActionYN
                     appealedOnDate = existingItem.appealDate ?? Date.now
                     appealNotes = existingItem.daiAppealNotes
+                    ceDeadlineDate = existingItem.daiCEDeadlineDate
+                    fineAmount = existingItem.fineAmount
+                    fineDeadline = existingItem.daiFinesDueDate
+                    communityServiceHours = existingItem.commServiceHours
+                    communityServiceDeadline = existingItem.daiCommunityServiceDeadline
                 }
                 
             }//: ON APPEAR
@@ -174,6 +275,12 @@ struct DisciplinaryActionItemSheet: View {
             existingItem.appealedActionYN = isAppealed
             existingItem.appealDate = appealedOnDate
             existingItem.appealNotes = appealNotes
+            existingItem.ceDeadline = ceDeadlineDate
+            existingItem.fineAmount = fineAmount
+            existingItem.fineDeadline = fineDeadline
+            existingItem.commServiceHours = communityServiceHours
+            existingItem.commServiceDeadline = communityServiceDeadline
+            
         } else {
             // creating a new object if an existing one wasn't passed in
             let container = dataController.container
@@ -192,6 +299,11 @@ struct DisciplinaryActionItemSheet: View {
             newDAI.appealedActionYN = isAppealed
             newDAI.appealDate = appealedOnDate
             newDAI.appealNotes = appealNotes
+            newDAI.ceDeadline = ceDeadlineDate
+            newDAI.fineAmount = fineAmount
+            newDAI.fineDeadline = fineDeadline
+            newDAI.commServiceHours = communityServiceHours
+            newDAI.commServiceDeadline = communityServiceDeadline
         }
         
         dataController.save()

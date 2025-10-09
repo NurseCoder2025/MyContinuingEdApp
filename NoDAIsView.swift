@@ -17,14 +17,17 @@ struct NoDAIsView: View {
     // MARK: - BODY
     var body: some View {
         VStack {
-            Text("No Disciplinary Actions Saved")
-                .font(.largeTitle)
-            
-            Image(systemName: "circle.slash")
-                .font(.largeTitle)
-                .foregroundStyle(.red)
-            
-            Spacer()
+            Group {
+                Image(systemName: "circle.slash")
+                    .font(.largeTitle)
+                    .foregroundStyle(.gray)
+                
+                Text("No Disciplinary Actions Saved")
+                    .font(.largeTitle)
+                    .foregroundStyle(.secondary)
+                
+            }//: GROUP
+            .padding(.bottom, 20)
             
             Button {
                 showDAISheet = true
@@ -33,8 +36,7 @@ struct NoDAIsView: View {
                     .foregroundStyle(.white)
             }
             .buttonStyle(.borderedProminent)
-            
-            Spacer()
+        
             
         }//: VSTACK
         // MARK: - SHEETS

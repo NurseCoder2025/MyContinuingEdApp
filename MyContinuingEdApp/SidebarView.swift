@@ -30,7 +30,7 @@ struct SidebarView: View {
     @State private var renewalToDelete: RenewalPeriod?
     
     // MARK: Credential sheets
-    @State private var showCredentialListView: Bool = false  // show ALL entered credentials
+    @State private var showCredentialManagementSheet: Bool = false  // show ALL entered credentials
     @State private var showCredentialSheet:Bool = false // for adding a brand new credential only
     
     // MARK: Property for displaying the Awards sheet
@@ -225,14 +225,24 @@ struct SidebarView: View {
                     Label("Show awards", systemImage: "rosette")
                 }//: BUTTON
                 
-#if DEBUG
+                Button {
+                    // Action
+                    showCredentialManagementSheet = true
+                } label: {
+                    Label(
+                        "Manage Credentials",
+                        systemImage: "person.text.rectangle.fill"
+                    )
+                }//: BUTTON
+                
+            #if DEBUG
                 Button {
                     dataController.deleteAll()
                     dataController.createSampleData()
                 } label: {
                     Label("Add Samples", systemImage: "flame")
                 }
-#endif
+            #endif
                 
             } //: TOOLBAR
             // MARK: - Alerts
@@ -270,6 +280,12 @@ struct SidebarView: View {
                 }
                 
             }//: SHEET
+            .sheet(isPresented: $showCredentialManagementSheet) {
+                CredentialManagementSheet()
+            }//: SHEET
+        
+        
+        //: MARK: - ON APPEAR
             .onAppear {
                 renewalToEdit = nil
                 renewalToDelete = nil

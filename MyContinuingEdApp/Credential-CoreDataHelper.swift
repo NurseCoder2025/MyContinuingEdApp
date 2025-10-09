@@ -24,6 +24,14 @@ extension Credential {
         set {credentialType = newValue}
     }
     
+    // Adding a new computed property that returns a capitalized version of the credentialType property
+    // The reason for this is because the credential type picker control saves only the lowercased string
+    // value for each CredentialType (enum) in CredentialSheet.  Therefore, the credentialCreType only returns
+    // the lowercased version.
+    var capitalizedCreType: String {
+        return credentialType?.capitalized ?? ""
+    }
+    
     var credentialCreID: UUID {
         credentialID ?? UUID()
     }
@@ -31,6 +39,11 @@ extension Credential {
     var credentialRestrictions: String {
         get {restrictions ?? ""}
         set {restrictions = newValue}
+    }
+    
+    var credentialInactiveReason: String {
+        get {inactiveReason ?? ""}
+        set {inactiveReason = newValue}
     }
     
     
@@ -80,6 +93,7 @@ extension Credential: Comparable {
 // MARK: - Adding all credential types
 extension Credential {
     
+    // TODO: Delete this property after replacing all cred types with the enum
     static var allTypes: [String] {
         // Defining credential types in a set array
         ["License", "Certification", "Endorsement", "Membership", "Other"]

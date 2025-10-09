@@ -128,5 +128,8 @@ struct DisciplinaryActionListSheet: View {
 
 // MARK: - PREVIEW
 #Preview {
+    let controller = DataController(inMemory: true)
     DisciplinaryActionListSheet()
+        .environmentObject(controller)
+        .environment(\.managedObjectContext, controller.container.viewContext)
 }

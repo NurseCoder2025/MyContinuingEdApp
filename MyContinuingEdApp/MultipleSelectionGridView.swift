@@ -19,17 +19,21 @@ struct DAButtonView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 8)
+                .fill(.translucentGreyGradient) // TODO: Update background color based on selection
                 .frame(width: 150, height: 44)
             Button(action: action) {
                 HStack {
                     Text(title)
+                        .font(.caption)
                     Spacer()
                     if isSelected {
                         Image(systemName: "checkmark")
+                            .padding(.trailing, 10)
                     }
                 }//: HSTACK
             }//: BUTTON
             .foregroundColor(.primary)
+            .padding(.leading, 10)
         }//: ZSTACK
     }
 }

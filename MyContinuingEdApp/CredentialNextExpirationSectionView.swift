@@ -12,6 +12,8 @@
 // to either create a renewal period for the credential or add a new one that reflects the
 // current renewal period.
 
+// Note: This view will only be shown if an existing Credential object exists
+
 import CoreData
 import SwiftUI
 
@@ -26,10 +28,7 @@ struct CredentialNextExpirationSectionView: View {
     
     let credential: Credential?
     let renewalLength: Double
-    
-    // Binding properties to parent view
-    @Binding var newCredential: Credential?
-    
+
     // Property to display RenewalPeriod sheet
     @State private var showRenewalPeriodView: Bool = false
     
@@ -90,26 +89,25 @@ struct CredentialNextExpirationSectionView: View {
                         }//: INNER IF-ELSE
                     } //: ELSE
                 }//: SECTION
-            }//: IF not NIL
+            }//: IF
         }//: GROUP
         // MARK: - SHEETS
         // Renewal Period sheet
         // Calling this sheet is ONLY for adding new RenewalPeriod objects
         .sheet(isPresented: $showRenewalPeriodView) {
-            if let cred = credential ?? newCredential {
+            if let cred = credential {
                 RenewalPeriodView(renewalCredential: cred, renewalPeriod: nil)
             } else {
                 Text("Unable to create credential. Please close and save the credential being entered first, then try again.")
             }
-        }
-    }
-}
+        }//: SHEET
+    }//: BODY
+}//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
     CredentialNextExpirationSectionView(
         credential: .example,
-        renewalLength: 24.0,
-        newCredential: .constant(nil)
+        renewalLength: 24.0
     )
 }

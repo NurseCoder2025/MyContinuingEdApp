@@ -47,8 +47,8 @@ struct BasicCredentialInfoView: View {
                 
                 // MARK: Credential type
                 Picker("Type", selection: $type) {
-                    ForEach(Credential.allTypes, id:\.self) { type in
-                        Text(type)
+                    ForEach(CredentialType.pickerChoices, id: \.self) { type in
+                        Text(type).tag(type.lowercased())
                     }//: LOOP
                 }//: PICKER
                 
@@ -79,6 +79,11 @@ struct BasicCredentialInfoView: View {
             }//: SECTION
             
         }//: GROUP
+        // MARK: - ON APPEAR
+        // Using this for testing/debugging purposes
+        .onAppear {
+            print("type value: \(type)")
+        }
         // MARK: - SHEET
         // Issuer Sheet
         .sheet(isPresented: $showIssuerListSheet) {

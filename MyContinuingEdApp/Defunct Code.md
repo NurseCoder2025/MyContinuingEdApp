@@ -157,3 +157,48 @@
         
         return allCredCats
     }
+
+
+### From the CredentialManagementSheet:
+    // Computed property that adds the "All" type to the front of the Credential.allTypes array,
+    // as well as adding an "s" to the end of all other types
+    var allCredentialTypes: [String] {
+        var types = [String]()
+        let pluralTypes = Credential.allTypes.map { $0 + "s" }
+        types.append("All")
+        
+        for type in pluralTypes {
+            types.append(type)
+        }
+        
+        return types
+    }
+    
+    // Computed property that returns a specific icon for each credential type
+    var credentialIcons: [String: String] {
+        [
+            "All": "folder.fill",
+            "Licenses": "person.text.rectangle.fill",
+            "Certifications": "checkmark.seal.fill",
+            "Endorsements": "rectangle.fill.badge.plus",
+            "Memberships": "person.2.fill",
+            "Others": "questionmark.circle.fill"
+        ]
+    }
+
+
+### From the CredentialSheet:
+#### Diagnostic code to print out all Credential objects:
+        // Print out number of credential objects and their name
+//        print("------------------Diagnostic: Credential Objects --------------")
+//        let context = dataController.container.viewContext
+//        let request = Credential.fetchRequest()
+//        let allCreds = (try? context.fetch(request)) ?? []
+//        
+//        let count = (try? context.count(for: request)) ?? 0
+//        print("Total Credential objects: \(count)")
+//        print("")
+//        
+//        for cred in allCreds {
+//            print(cred.credentialName)
+//        }

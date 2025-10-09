@@ -17,7 +17,7 @@ struct CredentialSheet: View {
     
     @EnvironmentObject var dataController: DataController
     
-    // License related properties
+    // Existing credential object being passed in for editing
     let credential: Credential?
     
     // MARK: Credential properties
@@ -35,8 +35,20 @@ struct CredentialSheet: View {
     @State private var issueDate: Date?
     @State private var credIssuer: Issuer?
 
-    // Hold the newly created Credential for sheet presentation
-    @State private var newCredential: Credential?
+    
+    // MARK: - COMPUTED PROPERTIES
+    var allDAIs: [DisciplinaryActionItem] {
+        var actions: [DisciplinaryActionItem] = []
+        // ONLY fetch disciplinary actions if an existing credential is being edited
+        if let cred = credential {
+            let request = DisciplinaryActionItem.fetchRequest()
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \DisciplinaryActionItem.actionName, ascending: true)]
+            request.predicate = NSPredicate(format: "credential == %@", cred)
+            actions = (try? dataController.container.viewContext.fetch(request)) ?? []
+        }
+        
+        return actions
+    }
     
   
     // MARK: - BODY
@@ -67,10 +79,23 @@ struct CredentialSheet: View {
                 // Will be shown to the user ONLY if editing an existing credential
                 CredentialNextExpirationSectionView(
                     credential: credential,
-                    renewalLength: renewalLength,
-                    newCredential: $newCredential
+                    renewalLength: renewalLength
                 )
-               
+                
+                // TODO: Pass credential to DisciplinaryActionListSheet
+                Section("Disciplinary Actions") {
+                    List {
+                        NavigationLink {
+                            DisciplinaryActionListSheet()
+                        } label: {
+                            HStack {
+                                Text("Disciplinary Actions:")
+                            }//: HSTACK
+                        }//: NAV LINK
+                        .badge(allDAIs.count)
+                    }//: LIST
+                }//: SECTION
+                
                 
                 // MARK: RESTRICTIONS
                 CredentialRestrictionsSectionView(
@@ -78,7 +103,6 @@ struct CredentialSheet: View {
                     restrictionsDetails: $restrictionsDetails
                 )
                 
-                // TODO: Add Disciplinary Action Hx section
                 
                 // MARK: SAVE Button
                 Section {
@@ -101,17 +125,42 @@ struct CredentialSheet: View {
            
             // MARK: - TOOLBAR
             .toolbar {
-                Button(action: {dismiss()}){
-                    DismissButtonLabel()
-                }.applyDismissStyle()
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(action: {dismiss()}){
+                        Text("Dismiss")
+                    }
+                }//: TOOLBAR ITEM
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        // Action
+                        mapAndSave()
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                    }
+                }//: TOOLBAR ITEM
+                    
+                
             }//: TOOLBAR
+            
+            //: MARK: - ON APPEAR
+            // If an existing credential is being edited, map its properties to the state variables
+            .onAppear {
+                if let existingCred = credential {
+                    mapToEntity(for: existingCred)
+                }
+                    
+            }// ON APPEAR
             
         }//: NAV VIEW
     }//: BODY
     
     // MARK: - METHODS
     
-    func mapCredProperties(for cred: Credential) {
+    /// Function maps Credential entity properties to fields in the UI for saving changes.
+    /// - Parameter cred: Credential object that is being edited
+    func mapToFields(for cred: Credential) {
         cred.name = name
         cred.credentialType = type
         cred.credentialNumber = number
@@ -126,44 +175,40 @@ struct CredentialSheet: View {
         if let selectedIssuer = credIssuer {
             cred.issuer = selectedIssuer
         }
-    }
+    }//: MAP TO FIELDS
     
+    /// This function maps UI controls to an existing Credential entity's properties for editing.  Use when loading
+    /// a sheet or view which is receiving an existing Credential object as an argument.  This way existing values will
+    /// appear in the UI controls.
+    /// - Parameter existingCred: Credential object being passed in for editing
+    func mapToEntity(for existingCred: Credential) {
+        name = existingCred.credentialName
+        type = existingCred.credentialCreType
+        number = existingCred.credentialCreNumber
+        issueDate = existingCred.issueDate
+        renewalLength = existingCred.renewalPeriodLength
+        activeYN = existingCred.isActive
+        restrictedYN = existingCred.isRestricted
+        restrictionsDetails = existingCred.credentialRestrictions
+        whyInactive = existingCred.credentialInactiveReason
+        
+        if let issuer = existingCred.issuer {
+            credIssuer = issuer
+        }
+    }//: MAP To ENTITY
+    
+    /// This function first maps the UI control fields to either an existing Credential object or new Credential object,
+    /// then saves the changes to Core Data.
     func mapAndSave() {
-        // IF an existing Credential is being edited
+        // If editing an existing credential, map changes to that object
         if let existingCred = credential {
-            mapCredProperties(for: existingCred)
-            
-            dataController.save()
-            // IF a new Credential object was created prior to tapping on the save button
-        } else if let createdCred = newCredential {
-            mapCredProperties(for: createdCred)
-            dataController.save()
+            mapToFields(for: existingCred)
         } else {
-            // Don't make a new Credential object unless none was passed in and a new object
-            // wasn't created earlier (see CredentialSpecialCECatSelectionView)
-            let context = dataController.container.viewContext
-            let newCredential = Credential(context: context)
-            
-            mapCredProperties(for: newCredential)
-            
-            dataController.save()
-            
+            // Creating a new credential object
+            let newCred = dataController.createNewCredential()
+            mapToFields(for: newCred)
         }
-        
-        // Print out number of credential objects and their name
-        print("------------------Diagnostic: Credential Objects --------------")
-        let context = dataController.container.viewContext
-        let request = Credential.fetchRequest()
-        let allCreds = (try? context.fetch(request)) ?? []
-        
-        let count = (try? context.count(for: request)) ?? 0
-        print("Total Credential objects: \(count)")
-        print("")
-        
-        for cred in allCreds {
-            print(cred.credentialName)
-        }
-        
+        dataController.save()
     }//: MAP & SAVE
     
 }
@@ -171,4 +216,5 @@ struct CredentialSheet: View {
  // MARK: - PREVIEW
 #Preview {
     CredentialSheet(credential: .example)
+        .environmentObject(DataController(inMemory: true))
 }

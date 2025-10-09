@@ -48,8 +48,17 @@ extension DisciplinaryActionItem {
         set {appealNotes = newValue}
     }
     
-       
+    var daiCEDeadlineDate: Date {
+        return ceDeadline ?? Date.now
+    }
     
+    var daiFinesDueDate: Date {
+        return fineDeadline ?? Date.now
+    }
+       
+    var daiCommunityServiceDeadline: Date {
+        return commServiceDeadline ?? Date.now
+    }
 }
 
 // Setting the actionsTaken and actionsTakenRaw property so I can save an array of
@@ -83,9 +92,15 @@ extension DisciplinaryActionItem {
         
         let actionOne: DisciplineAction = .continuingEd
         let actionTwo: DisciplineAction = .fines
+        // Creating array of actions for assigning to the actionsTakenRaw property
+        let actionsArray: [DisciplineAction] = [actionOne, actionTwo]
         
+        sampleAction.actionsTakenRaw = try? JSONEncoder().encode(actionsArray) as NSObject
         
-        sampleAction.disciplinaryCEHours = 5
+        sampleAction.disciplinaryCEHours = 5.0
+        sampleAction.ceDeadline = Date.now.addingTimeInterval(60*60*24*90)
+        sampleAction.fineAmount = 150.00
+        sampleAction.fineDeadline = Date.now.addingTimeInterval(60*60*24*30)
         
         return sampleAction
     }

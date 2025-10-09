@@ -15,8 +15,8 @@ extension ShapeStyle where Self == LinearGradient {
     static var translucentGreyGradient: LinearGradient {
         LinearGradient(
             gradient: Gradient(colors: [
-                Color(.systemGray5).opacity(0.7),
-                Color(.systemGray3).opacity(0.7)
+                Color(.systemGray5).opacity(0.3),
+                Color(.systemGray3).opacity(0.8)
             ]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing
