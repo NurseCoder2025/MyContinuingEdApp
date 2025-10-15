@@ -257,6 +257,9 @@ class DataController: ObservableObject {
     
     /// Save function that will save the context to disk only when changes are made and the function is called.
     func save() {
+        // Cancel any saves that have been, or are in, the queue
+        saveTask?.cancel()
+        
         if container.viewContext.hasChanges {
             try? container.viewContext.save()
         }

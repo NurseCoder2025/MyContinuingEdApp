@@ -110,16 +110,25 @@ struct SidebarView: View {
                             Label(filter.name, systemImage: filter.icon)
                                 .badge(filter.tag?.tagActiveActivities.count ?? 0)
                                 .contextMenu {
+                                    // Renaming tag button
                                     Button {
                                         renameTag(filter)
                                     } label: {
                                         Label("Rename", systemImage: "pencil")
                                     }
+                                    
+                                    // Deleting tag button
+                                    Button {
+                                        deleteTag(filter)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }//: BUTTON
+                                    
                                 }//: CONTEXT MENU
                             
                         } //: NAV LINK
                     } //: LOOP
-                    .onDelete(perform: delete)
+                    
                     
                 } header: {
                     HStack {
@@ -218,6 +227,7 @@ struct SidebarView: View {
                 
                 
             } //: LIST
+            .navigationTitle("CE Filters")
         // MARK: - ON CHANGE OF
             // Adding this code to prevent a stale state between times
             // when the user decides to edit a renewal period
@@ -319,6 +329,15 @@ struct SidebarView: View {
             dataController.delete(item)
         }
     } //: DELETE method
+    
+    /// This function is for deleting individual tag objects that the user created in SidebarView.  A single filter object with
+    /// a tag property is to be passed into the function, which in turn will delete the filter IF there is a tag property.
+    /// - Parameter filter: Filter object representing a user-created Tag that is to be deleted
+    func deleteTag(_ filter: Filter) {
+        guard let tag = filter.tag else {return}
+        dataController.delete(tag)
+        dataController.save()
+    }
     
     func renameTag(_ selectedFilter: Filter) {
         tagToRename = selectedFilter.tag

@@ -91,7 +91,7 @@ struct IssuerSheet: View {
                         dataController.save()
                         dismiss()
                     } label: {
-                        Label("Save & Dismiss", systemImage: "internaldrive.fill")
+                        Label("Save", systemImage: "internaldrive.fill")
                             .foregroundStyle(.white)
                     }
                     .buttonStyle(.borderedProminent)
@@ -119,6 +119,12 @@ struct IssuerSheet: View {
             .onAppear {
                 issuerNameText = issuer.issuerIssuerName
             }//: ON APPEAR
+            // MARK: - AUTO SAVING FUNCTIONS
+            .onReceive(issuer.objectWillChange) { _ in
+                dataController.queueSave()
+            }//: ON RECEIVE
+            
+            .onSubmit {dataController.save()}
             
         }//: NAV VIEW
     }//: BODY

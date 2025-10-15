@@ -222,9 +222,12 @@ struct DisciplinaryActionItemSheet: View {
                 }//: TOOLBAR ITEM
             }//: TOOLBAR
             
-            // MARK: - SHEETS
-            
-            // MARK: - ALERTS
+            // MARK: - AUTO SAVE
+            .onReceive(disciplinaryAction.objectWillChange) { _ in
+                dataController.queueSave()
+            }//: ON RECEIVE
+            .onSubmit {mapANDSave()}
+           
             
             // MARK: - ON APPEAR
             .onAppear {

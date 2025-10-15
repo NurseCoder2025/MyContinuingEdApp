@@ -25,6 +25,7 @@ struct MyContinuingEdAppApp: App {
             }
             .environment(\.managedObjectContext, dataController.container.viewContext)
             .environmentObject(dataController)
+            // Saves changes if the app is moved to the background by the user
             .onChange(of: scenePhase) { phase in
                 if phase != .active {
                     dataController.save()

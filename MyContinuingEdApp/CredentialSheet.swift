@@ -126,8 +126,12 @@ struct CredentialSheet: View {
                 Text("Unable to save credential since no credential type has been selected.  Please select a credential type and try saving again.")
             }//: ALERT
                 
+            // MARK: - ON RECEIVE
+            .onReceive(credential.objectWillChange) { _ in
+                dataController.queueSave()
+            }//: ON RECEIVE
             
-            
+            .onSubmit {dataController.save()}
         }//: NAV VIEW
     }//: BODY
     

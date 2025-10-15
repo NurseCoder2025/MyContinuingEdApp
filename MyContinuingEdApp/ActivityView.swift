@@ -53,7 +53,7 @@ struct ActivityView: View {
         .onReceive(activity.objectWillChange) { _ in
             dataController.queueSave()
         } //: onReceive
-        
+        .onSubmit {dataController.save()}//: ON SUBMIT
     }//: BODY
     
 }//: STRUCT

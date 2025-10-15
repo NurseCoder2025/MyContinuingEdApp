@@ -27,15 +27,6 @@ struct SpecialCategorySheet: View {
     // MARK: - BODY
     var body: some View {
         // MARK: Formmatters
-        var ceHourFormat: NumberFormatter {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-            
-            return formatter
-        }
-        
         NavigationView {
             VStack {
                 Form {
@@ -49,7 +40,7 @@ struct SpecialCategorySheet: View {
                         HStack {
                             Text("Hours Required:")
                                 .bold()
-                            TextField("CE Hours Required:", value: $hoursRequired, formatter: ceHourFormat)
+                            TextField("CE Hours Required:", value: $hoursRequired, formatter: ceHourFormatter)
                                 .keyboardType(.decimalPad)
                         }//: HSTACK
                     }
@@ -90,6 +81,8 @@ struct SpecialCategorySheet: View {
                     hoursRequired = passedInCat.requiredHours
                 }//: IF LET
             }//: ON APPEAR
+            // MARK: - AUTO SAVE
+          
             
         }//: NAV VIEW
     }//: BODY
