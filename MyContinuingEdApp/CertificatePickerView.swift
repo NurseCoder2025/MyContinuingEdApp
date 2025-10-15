@@ -27,9 +27,9 @@ struct CertificatePickerView: View {
     // MARK: - BODY
     var body: some View {
         VStack {
-            
             if certificateData == nil {
                 NoItemView(noItemTitleText: "Add Certificate", noItemMessage: "You haven't yet added your CE certificate for this completed activity.")
+                    .accessibilityLabel("No CE Certificates have been added for this activity yet.")
             }
             
             Menu(activity.completionCertificate == nil ? "Add Certificate" : "Change Certificate") {
@@ -42,10 +42,8 @@ struct CertificatePickerView: View {
                     if let data = data {
                         certificateData = data
                     }
-                }
-            }
-            
-            
+                }//: CameraPickerView
+            }//: SHEETE
             
         } //: VSTACK
         .photosPicker(

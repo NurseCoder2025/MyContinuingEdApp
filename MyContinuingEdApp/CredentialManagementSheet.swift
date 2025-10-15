@@ -68,6 +68,9 @@ struct CredentialManagementSheet: View {
                                     text: type.displayPluralName,
                                     badgeCount: getCatBadgeCount(category: type.rawValue)
                                 )
+                                .accessibilityElement()
+                                .accessibilityLabel("\(type.displayPluralName)")
+                                .accessibilityHint("^[\(getCatBadgeCount(category: type.rawValue)) \(type.rawValue)] (inflect: true)")
                             }//: BUTTON
                         }//: LOOP
                     }//: GRID

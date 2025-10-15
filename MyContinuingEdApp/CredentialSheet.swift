@@ -73,6 +73,9 @@ struct CredentialSheet: View {
                                 Text("Disciplinary Actions:")
                             }//: HSTACK
                             .badge(allDAIs.count)
+                            .accessibilityElement()
+                            .accessibilityLabel("Disciplinary actions taken against this credential")
+                            .accessibilityHint("^[\(allDAIs.count) action taken] (inflect: true)")
                         }//: NAV LINK
                        
                     }//: LIST

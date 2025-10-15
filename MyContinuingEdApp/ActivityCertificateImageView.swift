@@ -42,11 +42,13 @@ struct ActivityCertificateImageView: View {
                         if isPDF(data) {
                             PDFKitView(data: data)
                                 .frame(height: 300)
+                                .accessibilityLabel("PDF view of your CE Certificate for this activity.")
                         } else if let uiImage = UIImage(data: data) {
                             Image(uiImage: uiImage)
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: 300)
+                                .accessibilityLabel("Picture of the CE certificate you received for this activity.")
                         } else {
                             Text("Unsupported file format - must be either an image (.png, .jpg) or PDF only.")
                                 .foregroundStyle(.secondary)

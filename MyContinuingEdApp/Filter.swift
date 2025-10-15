@@ -16,6 +16,10 @@ struct Filter: Identifiable, Hashable {
     var renewalPeriod: RenewalPeriod?
     var credential: Credential?
     
+    // MARK: - OTHER COMPUTED PROPERTIES
+    var tagActivitiesCount: Int {tag?.tagActiveActivities.count ?? 0}
+    var renewalActivitiesCount: Int {renewalPeriod?.renewalCurrentActivities.count ?? 0}
+    
     // MARK: - "Smart Filter" properties
     static var recentActivities = Filter(
         name: "Recent",

@@ -46,6 +46,8 @@ struct CeDesignationSelectionSheet: View {
                                 designation: designation,
                                 selectedYN: selectedDesignation == designation
                             )
+                            .accessibilityElement()
+                            .accessibilityLabel("\(designation.ceDesignationName)")
                         }
                         .listRowBackground(Color.clear)
                         .swipeActions {
@@ -87,7 +89,7 @@ struct CeDesignationSelectionSheet: View {
                         selectedDesignation = nil
                         showAddEdit = true
                     } label: {
-                        Image(systemName: "plus")
+                        Label("Add Designation", systemImage: "plus")
                     }
                 }//: TOOLBAR ITEM
                 

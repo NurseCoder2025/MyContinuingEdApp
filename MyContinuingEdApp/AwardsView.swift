@@ -43,6 +43,8 @@ struct AwardsView: View {
                                 .frame(width: 100, height: 100)
                                 .foregroundColor(dataController.hasEarned(award: award) ? Color(award.color) : .secondary.opacity(0.5))
                         }
+                        .accessibilityLabel(dataController.hasEarned(award: award) ? "\(award.name)" : "Locked")
+                        .accessibilityHint(award.description)
                         
                         
                         
@@ -50,7 +52,7 @@ struct AwardsView: View {
                 } //: LAZY V GRID
                 
             }//: SCROLL VIEW
-            .navigationTitle("Achievements")
+            .navigationTitle("CE Achievements")
         } //: NAV VIEW
         
         .alert(awardTitle, isPresented: $showingAwardDetails) {

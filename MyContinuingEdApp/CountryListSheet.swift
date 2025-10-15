@@ -55,6 +55,8 @@ struct CountryListSheet: View {
                         Text(country.countryName)
                             .foregroundStyle(.secondary)
                     }//: HSTACK
+                    .accessibilityElement()
+                    .accessibilityLabel("\(country.countryName)")
                     
                     // MARK: SWIPE ACTIONS
                     .swipeActions(edge: .trailing) {

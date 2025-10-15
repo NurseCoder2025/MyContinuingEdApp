@@ -81,10 +81,13 @@ struct CredentialNextExpirationSectionView: View {
                         } else {
                             VStack {
                                 Text(renewalName)
-                                Text("\(NSNumber(value: daysToRenew), formatter: wholeNumFormatter) days before the credential expires")
+                                Text("^[\(NSNumber(value: daysToRenew), formatter: wholeNumFormatter) day before the credential expires] (inflect: true)")
                                     .font(.title)
                                     .bold()
                             }//: VSTACK
+                            .accessibilityElement()
+                            .accessibilityLabel("Days Until Credential Expires")
+                            .accessibilityHint("^[\(NSNumber(value: daysToRenew)) day] (inflect: true)")
                         }
                     }//: INNER IF-ELSE
                 } //: ELSE

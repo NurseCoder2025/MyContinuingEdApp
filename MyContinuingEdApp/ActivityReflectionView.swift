@@ -14,8 +14,6 @@ struct ActivityReflectionView: View {
     var activity: CeActivity
     @ObservedObject var reflection: ActivityReflection
     
-   
-    
     // MARK: - BODY
     var body: some View {
                 Form {
@@ -73,9 +71,16 @@ struct ActivityReflectionView: View {
                     
                     
                 }//: FORM
+        // MARK: - AUTO SAVING FUNCTIONS
+                .onSubmit {dataController.save()}
+                .onReceive(reflection.objectWillChange) { _ in
+                    dataController.queueSave()
+                }//: ON RECEIVE
+        
+        // MARK: - ON DISAPPEAR
                 .onDisappear {
                     dataController.save()
-                }
+                }//: ON DISAPPEAR
             
     } //: BODY
 }

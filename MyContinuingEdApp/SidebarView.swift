@@ -108,28 +108,29 @@ struct SidebarView: View {
                     ForEach(convertedTagFilters) { filter in
                         NavigationLink(value: filter) {
                             Label(filter.name, systemImage: filter.icon)
-                                .badge(filter.tag?.tagActiveActivities.count ?? 0)
+                                .badge(filter.tagActivitiesCount)
                                 .contextMenu {
                                     // Renaming tag button
                                     Button {
                                         renameTag(filter)
                                     } label: {
-                                        Label("Rename", systemImage: "pencil")
+                                        Label("Rename tag", systemImage: "pencil")
                                     }
                                     
                                     // Deleting tag button
                                     Button {
                                         deleteTag(filter)
                                     } label: {
-                                        Label("Delete", systemImage: "trash")
+                                        Label("Delete tag", systemImage: "trash")
                                     }//: BUTTON
                                     
                                 }//: CONTEXT MENU
+                                .accessibilityElement()
+                                .accessibilityLabel("Tag: \(filter.name)")
+                                .accessibilityHint("^[\(filter.tagActivitiesCount) activity] (inflect: true)")
                             
                         } //: NAV LINK
                     } //: LOOP
-                    
-                    
                 } header: {
                     HStack {
                         Text("Tags")
@@ -166,15 +167,13 @@ struct SidebarView: View {
                         ForEach(convertedRenewalFilters.filter{$0.credential == credential}) { filter in
                             NavigationLink(value: filter) {
                                 Label(filter.name, systemImage: "calendar.badge.clock")
-                                    .badge(
-                                        filter.renewalPeriod?.renewalCurrentActivities.count ?? 0
-                                    )
+                                    .badge(filter.renewalActivitiesCount)
                                     .contextMenu {
                                         // Edit Renewal Period
                                         Button {
                                             editRenewalPeriod(filter)
                                         } label: {
-                                            Label("Edit", systemImage: "pencil")
+                                            Label("Edit Renewal Period", systemImage: "pencil")
                                         }
                                         
                                         // Delete Renewal Period
@@ -182,9 +181,12 @@ struct SidebarView: View {
                                             renewalToDelete = filter.renewalPeriod
                                             showDeletingRenewalAlert = true
                                         } label: {
-                                            Label("Delete", systemImage: "trash.fill")
+                                            Label("Delete Renewal Period", systemImage: "trash.fill")
                                         }
-                                    }
+                                    }//: CONTEXT MENU
+                                    .accessibilityElement()
+                                    .accessibilityLabel("Renewal period: \(filter.name)")
+                                    .accessibilityHint("^[\(filter.renewalActivitiesCount) CE activity] (inflect: true)")
                                     
                             }//: NAV LINK
                         }//: LOOP

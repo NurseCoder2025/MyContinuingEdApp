@@ -90,16 +90,6 @@ extension Credential: Comparable {
 }//: EXTENSION
 
 
-// MARK: - Adding all credential types
-extension Credential {
-    
-    // TODO: Delete this property after replacing all cred types with the enum
-    static var allTypes: [String] {
-        // Defining credential types in a set array
-        ["License", "Certification", "Endorsement", "Membership", "Other"]
-    }
-}//: EXTENSION
-
 // MARK: - One To Many Relationship Object Arrays
 extension Credential {
     

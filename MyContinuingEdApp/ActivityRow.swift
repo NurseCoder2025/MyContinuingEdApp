@@ -31,6 +31,7 @@ struct ActivityRow: View {
                         Image(systemName: "checkmark.seal.fill")
                             .imageScale(.large)
                             .foregroundColor(Color.green)
+                            .accessibilityLabel("Activity completed")
                     }
                     if expiration == .expiringSoon {
                         // Extra padding was required for this icon due to it
@@ -40,16 +41,20 @@ struct ActivityRow: View {
                             .imageScale(.large)
                             .padding(.trailing, 8)
                             .padding(.leading, 2)
+                            .accessibilityLabel("Expires soon")
                     } else if expiration == .expired {
                         Image(systemName: "x.circle.fill")
                             .imageScale(.large)
+                            .accessibilityLabel("Expired")
                     } else if expiration == .finalDay {
                         Image(systemName: "clock.badge.exclamation")
                             .imageScale(.large)
+                            .accessibilityLabel("Activity expires after today")
                     } else if expiration == .stillValid {
                         Image(systemName: "book.fill")
                             .imageScale(.large)
                             .opacity(0)
+                            .accessibilityLabel("Activity currently valid")
                     } //: IF - ELSE Block
                 } //: VSTACK
                 .padding(.trailing, 4)
@@ -81,6 +86,7 @@ struct ActivityRow: View {
                     
                     if let completionDate = activity.dateCompleted {
                         Text("on \(completionDate.formatted(date: .numeric, time: .omitted))")
+                            .accessibilityLabel("completed on \(completionDate.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption)
                             .italic()
                     } else {
@@ -93,6 +99,7 @@ struct ActivityRow: View {
                         Text("Expires on")
                             .foregroundStyle(.red)
                         Text("\(expiration.formatted(date: .numeric, time: .omitted))")
+                            .accessibilityLabel(Text("Expires on \(expiration.formatted(date: .abbreviated, time: .omitted))"))
                             .foregroundStyle(.red)
                             .font(.subheadline)
                             .bold()

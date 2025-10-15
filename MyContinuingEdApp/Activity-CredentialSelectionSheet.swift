@@ -46,6 +46,9 @@ struct Activity_CredentialSelectionSheet: View {
                                 Image(systemName: "checkmark")
                             }
                         }//: HSTACK
+                        .accessibilityElement()
+                        .accessibilityLabel("\(credential.credentialName)")
+                        .accessibilityHint(selectedCredentials.contains(credential) ? "Selected" : "Not selected")
                     }
                 }//: LIST
                 .navigationTitle("Select Credential(s)")

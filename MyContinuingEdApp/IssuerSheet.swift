@@ -66,6 +66,8 @@ struct IssuerSheet: View {
                             Picker("State:", selection: $issuer.state) {
                                 ForEach(allStates) { state in
                                     StatePickerRowView(state: state).tag(state)
+                                        .accessibilityElement()
+                                        .accessibilityLabel("\(state.USStateName)")
                                 }//: LOOP
                             }//: STATE PICKER
                             .pickerStyle(.navigationLink)
