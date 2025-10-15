@@ -63,17 +63,18 @@ struct CredentialSheet: View {
                 CredentialNextExpirationSectionView(credential: credential)
                     
                 
-                // TODO: Pass credential to DisciplinaryActionListSheet
+               // MARK: Disciplinary Actions
                 Section("Disciplinary Actions") {
                     List {
                         NavigationLink {
-                            DisciplinaryActionListSheet()
+                            DisciplinaryActionListSheet(credential: credential)
                         } label: {
                             HStack {
                                 Text("Disciplinary Actions:")
                             }//: HSTACK
+                            .badge(allDAIs.count)
                         }//: NAV LINK
-                        .badge(allDAIs.count)
+                       
                     }//: LIST
                 }//: SECTION
                 

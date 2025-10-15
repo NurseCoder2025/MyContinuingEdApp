@@ -12,7 +12,11 @@ import SwiftUI
 
 struct NoDAIsView: View {
     // MARK: - PROPERTIES
-    @State private var showDAISheet: Bool = false
+    @EnvironmentObject var dataController: DataController
+    @ObservedObject var credential: Credential
+    
+    // Closure to handle adding a new DAI and presenting the sheet in parent
+    var onAddDAI: () -> Void
     
     // MARK: - BODY
     var body: some View {
@@ -30,7 +34,7 @@ struct NoDAIsView: View {
             .padding(.bottom, 20)
             
             Button {
-                showDAISheet = true
+                onAddDAI()
             } label: {
                 Label("Add Disciplinary Action", systemImage: "plus")
                     .foregroundStyle(.white)
@@ -39,14 +43,10 @@ struct NoDAIsView: View {
         
             
         }//: VSTACK
-        // MARK: - SHEETS
-        .sheet(isPresented: $showDAISheet) {
-            DisciplinaryActionItemSheet(disciplinaryAction: nil)
-        }
-    }
+    }//: BODY
 }
 
 // MARK: - PREVIEW
 #Preview {
-    NoDAIsView()
+    NoDAIsView(credential: .example, onAddDAI: {})
 }

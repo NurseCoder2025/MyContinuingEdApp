@@ -469,6 +469,9 @@ class DataController: ObservableObject {
         return newCredential
     }
     
+    /// Function to create a new Issuer object and save it to persistent storage
+    /// - Returns: Issuer object with a UUID and name property set to "New Issuer", along
+    ///   with a default country of the United States and state (Alabama)
     func createNewIssuer() -> Issuer {
         let context = container.viewContext
         let newIssuer = Issuer(context: context)
@@ -484,6 +487,23 @@ class DataController: ObservableObject {
         
         save()
         return newIssuer
+    }
+    
+    
+    /// Function to create a new DisciplinaryActionItem object to be associated with a given Credential. Object creation will take place
+    ///  in the DisciplinaryActionListSheet or from the NoDAI view when the appropriate button is tapped.
+    /// - Returns: DisciplinaryActionItem object with a default name of "New Action", auto-generated UUID, and default setting of
+    ///  temporary action (temporaryOnly)
+    func createNewDAI(for credential: Credential) -> DisciplinaryActionItem {
+        let context = container.viewContext
+        let newDAI = DisciplinaryActionItem(context: context)
+        newDAI.disciplineID = UUID()
+        newDAI.actionName = "New Action"
+        newDAI.temporaryOnly = true
+        newDAI.credential = credential
+        
+        save()
+        return newDAI
     }
     
     

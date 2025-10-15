@@ -50,3 +50,21 @@ var wholeNumFormatter: NumberFormatter {
     formatter.numberStyle = .none
     return formatter
 }
+
+
+// Creating a date formatter to show dates in mm/dd/yyyy format
+var tradDateFormatter: DateFormatter {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "MM/dd/yyyy"
+    return formatter
+}
+
+
+var ceHourFormatter: NumberFormatter {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.minimumFractionDigits = 2
+    formatter.maximumFractionDigits = 2
+    
+    return formatter
+}

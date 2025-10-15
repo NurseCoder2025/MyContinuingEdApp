@@ -5,6 +5,9 @@
 //  Created by Kamino on 9/15/25.
 //
 
+// 10-14-25 update: originally used an optional let property to hold a DisciplinaryActionItem but am changing to
+// an @ObservableObject
+
 import SwiftUI
 
 // Purpose: For creating or editing DisciplinaryActionItems from within the DisciplinaryActionListSheet
@@ -16,7 +19,7 @@ struct DisciplinaryActionItemSheet: View {
     @EnvironmentObject var dataController: DataController
     
     // Property to hold an existing object that the user wishes to edit
-    let disciplinaryAction: DisciplinaryActionItem?
+    @ObservedObject var disciplinaryAction: DisciplinaryActionItem
     
     // DisciplinaryActionItem properties for UI controls
     @State private var name: String = ""
@@ -57,16 +60,6 @@ struct DisciplinaryActionItemSheet: View {
     
     // MARK: - BODY
     var body: some View {
-        // MARK: - FORMATTERS
-        var ceHourFormatter: NumberFormatter {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-            
-            return formatter
-        }
-        
         NavigationView {
             VStack {
                 HeaderNoteView(titleText: title, messageText: messageText)
@@ -209,7 +202,7 @@ struct DisciplinaryActionItemSheet: View {
                     mapANDSave()
                     dismiss()
                 } label: {
-                    Label("Save & Dismiss", systemImage: "internaldrive.fill")
+                    Label("Save", systemImage: "internaldrive.fill")
                         .foregroundStyle(.white)
                 }
                 .buttonStyle(.borderedProminent)
@@ -219,10 +212,13 @@ struct DisciplinaryActionItemSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
+                        if disciplinaryAction.actionName == "New Action" {
+                            dataController.delete(disciplinaryAction)
+                        }//: IF
                         dismiss()
                     } label: {
-                        DismissButtonLabel()
-                    }.applyDismissStyle()
+                        Text("Dismiss")
+                    }
                 }//: TOOLBAR ITEM
             }//: TOOLBAR
             
@@ -233,25 +229,23 @@ struct DisciplinaryActionItemSheet: View {
             // MARK: - ON APPEAR
             .onAppear {
                 // Initialize fields from the disciplinaryAction object if it exists
-                if let existingItem = disciplinaryAction {
-                    name = existingItem.daiActionName
-                    descript = existingItem.daiActionDescription
-                    type = existingItem.daiActionType
-                    startDate = existingItem.actionStartDate ?? Date.now
-                    endDate = existingItem.actionEndDate ?? .probationaryEndDate
-                    selectedActions = existingItem.actionsTaken
-                    requiredCEHours = existingItem.disciplinaryCEHours
-                    isTempOnly = existingItem.temporaryOnly
-                    resolutionNotes = existingItem.daiResolutionActions
-                    isAppealed = existingItem.appealedActionYN
-                    appealedOnDate = existingItem.appealDate ?? Date.now
-                    appealNotes = existingItem.daiAppealNotes
-                    ceDeadlineDate = existingItem.daiCEDeadlineDate
-                    fineAmount = existingItem.fineAmount
-                    fineDeadline = existingItem.daiFinesDueDate
-                    communityServiceHours = existingItem.commServiceHours
-                    communityServiceDeadline = existingItem.daiCommunityServiceDeadline
-                }
+                name = disciplinaryAction.daiActionName
+                descript = disciplinaryAction.daiActionDescription
+                type = disciplinaryAction.daiActionType
+                startDate = disciplinaryAction.actionStartDate ?? Date.now
+                endDate = disciplinaryAction.actionEndDate ?? .probationaryEndDate
+                selectedActions = disciplinaryAction.actionsTaken
+                requiredCEHours = disciplinaryAction.disciplinaryCEHours
+                isTempOnly = disciplinaryAction.temporaryOnly
+                resolutionNotes = disciplinaryAction.daiResolutionActions
+                isAppealed = disciplinaryAction.appealedActionYN
+                appealedOnDate = disciplinaryAction.appealDate ?? Date.now
+                appealNotes = disciplinaryAction.daiAppealNotes
+                ceDeadlineDate = disciplinaryAction.daiCEDeadlineDate
+                fineAmount = disciplinaryAction.fineAmount
+                fineDeadline = disciplinaryAction.daiFinesDueDate
+                communityServiceHours = disciplinaryAction.commServiceHours
+                communityServiceDeadline = disciplinaryAction.daiCommunityServiceDeadline
                 
             }//: ON APPEAR
             
@@ -262,50 +256,24 @@ struct DisciplinaryActionItemSheet: View {
     /// Function for saving any input that the user has made in the controls for either an existing or new disciplinary action item (which is created when
     ///  the disciplinaryAction property is nil).  After mapping all of the properties the dataController's save method is then called to save the object.
     func mapANDSave() {
-        if let existingItem = disciplinaryAction {
-            existingItem.actionName = name
-            existingItem.actionDescription = descript
-            existingItem.actionType = type
-            existingItem.actionStartDate = startDate
-            existingItem.actionEndDate = endDate
-            existingItem.disciplinaryCEHours = requiredCEHours
-            existingItem.actionsTaken = selectedActions
-            existingItem.temporaryOnly = isTempOnly
-            existingItem.resolutionActions = resolutionNotes
-            existingItem.appealedActionYN = isAppealed
-            existingItem.appealDate = appealedOnDate
-            existingItem.appealNotes = appealNotes
-            existingItem.ceDeadline = ceDeadlineDate
-            existingItem.fineAmount = fineAmount
-            existingItem.fineDeadline = fineDeadline
-            existingItem.commServiceHours = communityServiceHours
-            existingItem.commServiceDeadline = communityServiceDeadline
+            disciplinaryAction.actionName = name
+            disciplinaryAction.actionDescription = descript
+            disciplinaryAction.actionType = type
+            disciplinaryAction.actionStartDate = startDate
+            disciplinaryAction.actionEndDate = endDate
+            disciplinaryAction.disciplinaryCEHours = requiredCEHours
+            disciplinaryAction.actionsTaken = selectedActions
+            disciplinaryAction.temporaryOnly = isTempOnly
+            disciplinaryAction.resolutionActions = resolutionNotes
+            disciplinaryAction.appealedActionYN = isAppealed
+            disciplinaryAction.appealDate = appealedOnDate
+            disciplinaryAction.appealNotes = appealNotes
+            disciplinaryAction.ceDeadline = ceDeadlineDate
+            disciplinaryAction.fineAmount = fineAmount
+            disciplinaryAction.fineDeadline = fineDeadline
+            disciplinaryAction.commServiceHours = communityServiceHours
+            disciplinaryAction.commServiceDeadline = communityServiceDeadline
             
-        } else {
-            // creating a new object if an existing one wasn't passed in
-            let container = dataController.container
-            let viewContext = container.viewContext
-            
-            let newDAI = DisciplinaryActionItem(context: viewContext)
-            newDAI.actionName = name
-            newDAI.actionDescription = descript
-            newDAI.actionType = type
-            newDAI.actionStartDate = startDate
-            newDAI.actionEndDate = endDate
-            newDAI.disciplinaryCEHours = requiredCEHours
-            newDAI.actionsTaken = selectedActions
-            newDAI.temporaryOnly = isTempOnly
-            newDAI.resolutionActions = resolutionNotes
-            newDAI.appealedActionYN = isAppealed
-            newDAI.appealDate = appealedOnDate
-            newDAI.appealNotes = appealNotes
-            newDAI.ceDeadline = ceDeadlineDate
-            newDAI.fineAmount = fineAmount
-            newDAI.fineDeadline = fineDeadline
-            newDAI.commServiceHours = communityServiceHours
-            newDAI.commServiceDeadline = communityServiceDeadline
-        }
-        
         dataController.save()
         
     }//: MAP & SAVE
