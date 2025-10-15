@@ -5,6 +5,7 @@
 //  Created by Manann on 7/8/25.
 //
 
+import CoreData
 import SwiftUI
 
 struct ContentView: View {
@@ -36,6 +37,9 @@ struct ContentView: View {
     var sortedKeys: [String] {
         alphabeticalCEGroupings.keys.sorted()
     }
+    
+    // MARK: - CORE DATA FETCHES
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     
     // MARK: - BODY
     var body: some View {
@@ -86,6 +90,19 @@ struct ContentView: View {
                         Divider()
                     
                         Menu("Filter by") {
+                            // Credential
+                            // ONLY show the credential picker filter if there is more than 1 credential
+                            if allCredentials.count > 1 {
+                                Picker("Credential", selection: $dataController.filterCredential) {
+                                    ForEach(allCredentials) {cred in
+                                        Text(cred.credentialName).tag(cred.credentialName)
+                                    }//: LOOP
+                                }//: PICKER
+                                
+                                Divider()
+                            }//: IF
+                            
+                            // Activity Status
                             Picker("Activity Status", selection: $dataController.filterExpirationStatus) {
                                 Text("All Activities").tag(ExpirationType.all)
                                 Text("Currently Valid").tag(ExpirationType.stillValid)
@@ -98,6 +115,7 @@ struct ContentView: View {
                             
                             Divider()
                             
+                            // Activity Rating
                             Picker("Activity Rating", selection: $dataController.filterRating) {
                                 Text("All").tag(-1)
                                 Text(ActivityRating.terrible.rawValue).tag(0)

@@ -47,6 +47,7 @@ class DataController: ObservableObject {
         @Published var filterEnabled: Bool = false
         @Published var filterRating: Int = -1
         @Published var filterExpirationStatus: ExpirationType = .all
+        @Published var filterCredential: String = ""
    
     
     // Task property for controlling how often the app saves changes to disk
@@ -354,6 +355,12 @@ class DataController: ObservableObject {
         
         // if the user activates the filter feature, add the selected filters to the compound NSPredicate
         if filterEnabled {
+            // Credential filter
+            if filterCredential != "" {
+                let credPredicate = NSPredicate(format: "ANY credentials IN %@", filterCredential)
+                predicates.append(credPredicate)
+            }
+            
             // Rating filter
             if filterRating >= 0 {
                 let ratingPredicate = NSPredicate(format: "evalRating = %d", filterRating)
