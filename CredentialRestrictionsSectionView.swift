@@ -8,27 +8,23 @@
 // Purpose: To display the UI controls for properties related to a Credential's restrictions
 // from within the parent view (CredentialSheet).
 
+// 10-13-25 update: replaced @State local properties with @ObservedObject credential from parent
+
 import SwiftUI
 
 struct CredentialRestrictionsSectionView: View {
     // MARK: - PROPERTIES
     
-    // Needed properties
-    // - restrictedYN (Bool)
-    // - restrictionsDetails (String)
-    
-    // Binding properties to the parent view
-    @Binding var restrictedYN: Bool
-    @Binding var restrictionsDetails: String
+    @ObservedObject var credential: Credential
     
     // MARK: - BODY
     var body: some View {
         Section("Credential Restrictions"){
-            Toggle("Any Restrictions?", isOn: $restrictedYN)
+            Toggle("Any Restrictions?", isOn: $credential.isRestricted)
             
             // Details for any restrictions IF true
-            if restrictedYN {
-                TextField("Restriction details:", text: $restrictionsDetails)
+            if credential.isRestricted {
+                TextField("Restriction details:", text: $credential.credentialRestrictions)
             }
         }//: SECTION
     }
@@ -36,8 +32,6 @@ struct CredentialRestrictionsSectionView: View {
 
 // MARK: - PREVIEW
 #Preview {
-    CredentialRestrictionsSectionView(
-        restrictedYN: .constant(false),
-        restrictionsDetails: .constant("N/A")
-    )
+    CredentialRestrictionsSectionView(credential: .example)
+    
 }

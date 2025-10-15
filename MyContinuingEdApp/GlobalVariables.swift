@@ -33,3 +33,20 @@ let currencyFormatter: NumberFormatter = {
     
     return formatter
 }()
+
+// For formatting numbers to 2 decimal places
+var twoDigitDecimalFormatter: NumberFormatter {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.minimumFractionDigits = 2
+    formatter.maximumFractionDigits = 2
+    return formatter
+}
+
+
+// Formatting a decimal number as a whole number
+var wholeNumFormatter: NumberFormatter {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .none
+    return formatter
+}

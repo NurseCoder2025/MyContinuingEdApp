@@ -9,16 +9,18 @@ import SwiftUI
 
 struct IssuerRowView: View {
     // MARK: - PROPERTIES
-    let issuer: Issuer
-    let selectedIssuer: Issuer?
+    @ObservedObject var issuer: Issuer
+    
+    // Property for determining if the row was selected
+    var isSelected: Bool = false
     
     // MARK: - BODY
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
                 // Issuer name
-                Text(issuer.name)
-                    .font(.title)
+                Text(issuer.issuerIssuerName)
+                    .font(.title2)
                     .bold()
                 // Issuer country: USA if United States,
                 // full name if other country
@@ -38,11 +40,18 @@ struct IssuerRowView: View {
                     }
                 }
             }//: VSTACK
-            if issuer == selectedIssuer {
+            
+            Spacer()
+            
+            if isSelected {
                 Image(systemName: "checkmark.circle.fill")
-            }
+                    .font(.largeTitle)
+                    .foregroundStyle(.yellow)
+                    .padding(.trailing, 10)
+            }//: IF isSelected
+            
         }//: HSTACK
         
     }//: BODY
     
-}
+}//: ---------------- STRUCT ---------------------

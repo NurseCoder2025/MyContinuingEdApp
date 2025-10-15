@@ -12,15 +12,19 @@ import SwiftUI
 
 struct NoCredentialsView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     
     // Property to toggle the CredentialSheet for adding a new credential
     @State private var showCredentialSheet: Bool = false
+    
+    // Property to hold a newly created credential
+    @State private var newCredential: Credential?
     
     // MARK: - BODY
     var body: some View {
         Group {
             Button {
-                // TODO: Add action(s)
+                newCredential = dataController.createNewCredential()
                 showCredentialSheet = true
             } label: {
                 Label("Add Credential", systemImage: "person.text.rectangle.fill")
@@ -31,8 +35,15 @@ struct NoCredentialsView: View {
         }//: GROUP
          // MARK: - SHEETS
              .sheet(isPresented: $showCredentialSheet) {
-                 CredentialSheet(credential: nil)
-             }
+                 if let createdCred = newCredential {
+                     CredentialSheet(credential: createdCred)
+                         .onDisappear {
+                             if createdCred.credentialName == "New Credential" {
+                                 dataController.delete(createdCred)
+                             }
+                         }//: ON DISAPPEAR
+                 }//: IF LET
+             }//: SHEET
         
     }//: BODY
     

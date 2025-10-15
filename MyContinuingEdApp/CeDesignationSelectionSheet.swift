@@ -24,8 +24,6 @@ struct CeDesignationSelectionSheet: View {
     // Alert properties
     @State private var showDeleteWarning: Bool = false
     
-
-    
     // MARK: - Fetch Requests
     @FetchRequest(sortDescriptors: [SortDescriptor(\.designationAbbreviation)]) var allDesignations: FetchedResults<CeDesignation>
     
@@ -33,8 +31,12 @@ struct CeDesignationSelectionSheet: View {
     var body: some View {
         NavigationView {
             VStack {
+                Text("A variety of designations have been pre-loaded to cover the more common professions, but you can add your own as needed.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .padding()
                 // Designation List
-                ScrollView {
+                List {
                     ForEach(allDesignations) { designation in
                         Button {
                             selectedDesignation = designation
@@ -45,7 +47,8 @@ struct CeDesignationSelectionSheet: View {
                                 selectedYN: selectedDesignation == designation
                             )
                         }
-                        .contextMenu {
+                        .listRowBackground(Color.clear)
+                        .swipeActions {
                             // MARK: Editing designation button
                             Button {
                                 selectedDesignation = designation
@@ -62,31 +65,40 @@ struct CeDesignationSelectionSheet: View {
                                 Label("Delete", systemImage: "trash.fill")
                             }
                             
-                        } //: CONTEXT MENU
+                        } //: SWIPE ACTIONS
                     } //: LOOP
                     
-                }//: ScrollView
+                }//: List
+                .scrollContentBackground(.hidden)
+                .listRowSeparator(.hidden)
+                .background(Color.clear)
                 .padding(.leading, 15)
                 
                 Spacer()
                 
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Dismiss")
-                }
-                .buttonStyle(.borderedProminent)
                 
             }//: VSTACK
             .navigationTitle("CE Designation")
             // MARK: - TOOLBAR
             .toolbar {
+                // Add new designation button
+                ToolbarItem(placement: .confirmationAction) {
                     Button {
                         selectedDesignation = nil
                         showAddEdit = true
                     } label: {
                         Image(systemName: "plus")
                     }
+                }//: TOOLBAR ITEM
+                
+                // Dismiss button
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Dismiss")
+                    }//: BUTTON
+                }//: TOOLBAR ITEM
                
             }//: TOOLBAR
             

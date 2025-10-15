@@ -33,6 +33,9 @@ struct SidebarView: View {
     @State private var showCredentialManagementSheet: Bool = false  // show ALL entered credentials
     @State private var showCredentialSheet:Bool = false // for adding a brand new credential only
     
+    // Property for editing an existing credential in the sidebar view
+    @State private var credentialToEdit: Credential?
+    
     // MARK: Property for displaying the Awards sheet
     @State private var showAwardsSheet: Bool = false
     
@@ -181,6 +184,14 @@ struct SidebarView: View {
                             Text("\(credential.credentialName) Renewals")
                             Spacer()
                             
+                            // Edit Credential button
+                            Button {
+                                credentialToEdit = credential
+                            } label: {
+                                Label("Edit Credential", systemImage: "pencil")
+                                    .labelStyle(.iconOnly)
+                            }//: BUTTON
+                            
                             // Add Renewal Period button
                             Button {
                                 selectedCredential = credential
@@ -269,7 +280,9 @@ struct SidebarView: View {
                 Text("You are about to delete the \(renewalToDelete?.renewalPeriodName ?? "selected") renewal period. This ONLY removes the renewal period and NOT the CE Activities assigned to it. This action cannot be undone.")
             }//: ALERT
             // MARK: - SHEETS
+                // Achievements SHEET
             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
+                // Renewal Period SHEET
             .sheet(isPresented: $showRenewalPeriodView){
                 if let renewal = renewalToEdit, let cred = selectedCredential {
                     RenewalPeriodView(renewalCredential: cred, renewalPeriod: renewal)
@@ -280,10 +293,16 @@ struct SidebarView: View {
                 }
                 
             }//: SHEET
+                
+                // Credential management SHEET
             .sheet(isPresented: $showCredentialManagementSheet) {
                 CredentialManagementSheet()
             }//: SHEET
         
+                // Credential sheet for editing credential
+            .sheet(item: $credentialToEdit) { cred in
+                CredentialSheet(credential: cred)
+            }//: SHEET
         
         //: MARK: - ON APPEAR
             .onAppear {
@@ -319,8 +338,8 @@ struct SidebarView: View {
     /// - Parameter selectedFilter: RenewalPeriod object as selected by the user
     func editRenewalPeriod(_ selectedFilter: Filter) {
         guard let renewal = selectedFilter.renewalPeriod, renewals.contains(renewal) else {return}
-        
         renewalToEdit = selectedFilter.renewalPeriod
+        selectedCredential = renewal.credential // Ensure credential is set for sheet
         showRenewalPeriodView = true
     }
     

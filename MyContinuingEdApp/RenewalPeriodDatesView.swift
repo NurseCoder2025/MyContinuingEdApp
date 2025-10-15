@@ -22,19 +22,32 @@ struct RenewalPeriodDatesView: View {
     // MARK: - BODY
     var body: some View {
         
-        // MARK: - Currency formatter
-        var dollarFormat: NumberFormatter {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .currency
-            return formatter
-        }
-
         // MARK: - Renewal START
         Group {
             VStack{
-                // LATE FEE INFO
-                DatePicker("Late Fee Starts", selection: $lateFeeDate, displayedComponents: .date)
-                TextField("Late Fee Amount:", value: $lateFeeAmount, formatter: dollarFormat)
+                // MARK: - LATE FEE INFO
+                Group {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(.yellow.opacity(0.2))
+                            .frame(width: 325, height: 75)
+                            
+                        VStack {
+                            DatePicker("Late Fee Starts", selection: $lateFeeDate, displayedComponents: .date)
+                                .padding(.trailing, 30)
+                                .bold()
+                            HStack {
+                                Text("Late Fee:")
+                                TextField("Late Fee Amount:", value: $lateFeeAmount, formatter: currencyFormatter)
+                                    .keyboardType(.decimalPad)
+                                    .foregroundStyle(.red)
+                            }//: HSTACK
+                        }//: VSTACK
+                        .padding(.leading, 10)
+                        
+                    }//: ZSTACK
+                }//: GROUP
+                .frame(width: 325, height: 75)
                 
                 Text("Enter the date the renewal period begins:")
                     .font(.headline)

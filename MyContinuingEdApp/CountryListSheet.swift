@@ -45,7 +45,6 @@ struct CountryListSheet: View {
     var body: some View {
         NavigationView {
             List(selection: $selectedCountry) {
-                // Debug printout to verify loaded countries
                 ForEach(allCountries.filter { country in
                     searchText.isEmpty || country.countryName.localizedCaseInsensitiveContains(searchText) || country.countryAbbrev.localizedCaseInsensitiveContains(searchText)
                 }) { country in

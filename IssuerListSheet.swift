@@ -19,15 +19,20 @@ struct IssuerListSheet: View {
     
     @EnvironmentObject var dataController: DataController
     
+    // Passing in a credential object to allow the user to select from this view which issuer is
+    // assigned to the given credential
+    @ObservedObject var credential: Credential
+    
+    // Property for storing a newly created Issuer
+    @State private var newIssuer: Issuer?
+    
+    // Property related to the selection of an issuer object
+    @State private var selectedIssuer: Issuer?
+    
     // Property for adding a new issuer
     @State private var showIssuerSheet: Bool = false
     
-    // Properties for editing an existing issuer
-    @State private var selectedIssuer: Issuer?
-    @State private var issuerToEdit: Issuer?
-    
     // Properties for deleting an issuer
-    @State private var issuerToDelete: Issuer?
     @State private var showDeletionWarning: Bool = false
     
     // MARK: - CORE DATA FETCH REQUESTS
@@ -39,61 +44,95 @@ struct IssuerListSheet: View {
             if allIssuers.isEmpty {
                NoIssuersView()
             } else {
-                List(selection: $selectedIssuer) {
+                List {
                     ForEach(allIssuers) { issuer in
-                        IssuerRowView(issuer: issuer, selectedIssuer: selectedIssuer)
+                        Button {
+                            selectedIssuer = issuer
+                            credential.issuer = issuer
+                        } label: {
+                            IssuerRowView(
+                                issuer: issuer,
+                                isSelected: selectedIssuer == issuer
+                            )
+                        }//: BUTTON
                             .swipeActions {
+                                
                                 // MARK: Edit Issuer
                                 Button {
-                                    issuerToEdit = issuer
+                                    selectedIssuer = issuer
+                                    showIssuerSheet = true
                                 } label: {
                                     Label("Edit Issuer", systemImage: "pencil")
                                         .labelStyle(.iconOnly)
                                 }
+                                
                                 // MARK: Delete Issuer
                                 Button(role: .destructive) {
-                                    issuerToDelete = issuer
+                                    selectedIssuer = issuer
                                     showDeletionWarning = true
                                 } label: {
                                     Label("Delete Issuer", systemImage: "trash.fill")
                                         .labelStyle(.iconOnly)
                                 }
-                            }
+                            }//: SWIPE ACTIONS
+                        
                     }//: LOOP
                 }//: LIST
                 .navigationTitle("Credential Issuers")
                 // MARK: - TOOLBAR
                 .toolbar {
                     // MARK: Adding a new Issuer
-                    Button {
-                        showIssuerSheet = true
-                    } label: {
-                        Label("Add Issuer", systemImage: "plus")
-                    }
-                    Button(action: {dismiss()}) {
-                        DismissButtonLabel()
-                    }.applyDismissStyle()
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button {
+                            selectedIssuer = nil
+                            newIssuer = dataController.createNewIssuer()
+                            showIssuerSheet = true
+                        } label: {
+                            Label("Add Issuer", systemImage: "plus")
+                        }
+                    }//: TOOLBAR ITEM
+                    
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(action: {dismiss()}) {
+                            Text("Dismiss")
+                        }
+                    }//: TOOLBAR ITEM
+                    
                 }//: TOOLBAR
+                
                 // MARK: - SHEETS
                 .sheet(isPresented: $showIssuerSheet) {
-                    IssuerSheet(issuer: nil)
-                }
-                .sheet(item: $issuerToEdit) { issuer in
-                    IssuerSheet(issuer: issuer)
-                }
+                    if let createdIssuer = newIssuer {
+                        IssuerSheet(issuer: createdIssuer)
+                        // Delete object if user cancels/dismisses sheet before saving it
+                            .onDisappear {
+                                if createdIssuer.issuerName == "New Issuer" {
+                                    dataController.delete(createdIssuer)
+                                }
+                            }//: ON DISAPPEAR
+                    } else {
+                        if let issuerToEdit = selectedIssuer {
+                            IssuerSheet(issuer: issuerToEdit)
+                        }//: IF LET
+                    }//: IF LET
+                    
+                }//: SHEET
+                
+                // MARK: - ALERTS
                 .alert("Delete Issuer?", isPresented: $showDeletionWarning) {
                     Button("DELETE", role: .destructive) {
                         deleteIssuer()
-                        issuerToDelete = nil
+                        selectedIssuer = nil
                         showDeletionWarning = false
                     }
                     Button("Cancel", role: .cancel) {
-                        issuerToDelete = nil
+                        selectedIssuer = nil
                         showDeletionWarning = false
                     }
                 } message: {
                     Text("Deleting the selected issuer will delete all associated data with it, including any disciplinary actions recorded.  Are you sure you wish to delete it?")
                 }//: DELETION WARNING
+                
             }//: IF - ELSE
         }//: NAV VIEW
     }
@@ -101,7 +140,7 @@ struct IssuerListSheet: View {
     /// Deletes the swipped issuer object from the viewContext and, if saved, persistent
     /// storage.
     func deleteIssuer() {
-        if let unwantedIssuer = issuerToDelete {
+        if let unwantedIssuer = selectedIssuer {
             dataController.delete(unwantedIssuer)
         }
         dataController.save()
@@ -110,5 +149,5 @@ struct IssuerListSheet: View {
 
 // MARK: - PREVIEW
 #Preview {
-    IssuerListSheet()
+    IssuerListSheet(credential: .example)
 }

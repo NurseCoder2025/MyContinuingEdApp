@@ -13,7 +13,7 @@ import Foundation
 extension Issuer {
     // Computed properties to handle Core Data optionals for Strings
     
-    var name: String {
+    var issuerIssuerName: String {
         get {issuerName ?? ""}
         set {issuerName = newValue}
     }
@@ -66,7 +66,7 @@ extension Issuer {
         
         
         let exampleIssuer = Issuer(context: context)
-        exampleIssuer.name = "Ohio Board of Nursing"
+        exampleIssuer.issuerIssuerName = "Ohio Board of Nursing"
         exampleIssuer.abbreviation = "OBN"
         exampleIssuer.website = "https://nursing.ohio.gov/verification.htm"
         exampleIssuer.country = sampleCountry
@@ -85,7 +85,7 @@ extension Issuer {
 extension Issuer {
     var issuerLabel: String {
         if issuerAbbrev == "" {
-            return name
+            return issuerIssuerName
         } else {
             return issuerAbbrev
         }

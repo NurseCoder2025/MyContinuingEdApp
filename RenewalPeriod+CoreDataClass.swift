@@ -46,4 +46,10 @@ public class RenewalPeriod: NSManagedObject {
         
     } //: updatePeriodName()
 
-}
+    
+    
+    
+} //: CLASS
+
+
+

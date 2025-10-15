@@ -8,29 +8,26 @@
 // Purpose: To display the UI Controls for indicating whether a given Credential object is
 // currently active or not
 
+// 10-13-25 update: Replaced @State properties with a single @ObservedObject property (credential)
+
 import SwiftUI
 
 struct ActiveCredentialSectionView: View {
     // MARK: - PROPERTIES
     
-    // Needed properties/bindings
-    // - activeYN (Bool)
-    // - whyInactive (String)
-    
-    @Binding var activeYN: Bool
-    @Binding var whyInactive: String
+    @ObservedObject var credential: Credential
     
     // MARK: - BODY
     var body: some View {
         // MARK: ACTIVE Y or N?
         Group {
             Section {
-                Toggle("Credential Active?", isOn: $activeYN)
+                Toggle("Credential Active?", isOn: $credential.isActive)
                 
                 // ONLY show the following fields if credential is inactive
-                if activeYN == false {
+                if credential.isActive == false {
                     Text("Why Is the Credential Inactive?")
-                    Picker("Inactive Reason", selection: $whyInactive) {
+                    Picker("Inactive Reason", selection: $credential.inactiveReason) {
                         ForEach(InactiveReasons.defaultReasons) { reason in
                             Text(reason.reasonName).tag(reason.reasonName)
                         }//: LOOP
@@ -43,9 +40,9 @@ struct ActiveCredentialSectionView: View {
         // MARK: - ON CHANGE
         // If the user changes the credential active switch to true from
         // false, reset the inactiveReason property to an empty string.
-        .onChange(of: activeYN) { _ in
-            if activeYN == true {
-                whyInactive = ""
+        .onChange(of: credential.isActive) { _ in
+            if credential.isActive == true {
+                credential.inactiveReason = ""
             }
         }//: ON CHANGE OF
     }
@@ -53,5 +50,5 @@ struct ActiveCredentialSectionView: View {
 
 // MARK: - PREVIEW
 #Preview {
-    ActiveCredentialSectionView(activeYN: .constant(true), whyInactive: .constant("No reason"))
+    ActiveCredentialSectionView(credential: .example)
 }

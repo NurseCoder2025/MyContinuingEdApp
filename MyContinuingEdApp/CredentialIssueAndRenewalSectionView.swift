@@ -8,42 +8,44 @@
 // Purpose: To display the UI controls for the Credential object's issuance and renewal section
 // properties
 
+// 10-13-25 update: replaced @State property with single @ObservableObject credential
+
 import SwiftUI
 
 struct CredentialIssueAndRenewalSectionView: View {
     // MARK: - PROPERTIES
     
-    // Credential property from parent view
-    let credential: Credential?
-    
-    // Binding properties to parent view
-    @Binding var renewalLength: Double
-    
+    @ObservedObject var credential: Credential
     
     // MARK: - BODY
     var body: some View {
-        Section("Issue & Renewal") {
+        Section {
             // MARK: Issued Date
             DatePicker("Issued On", selection: Binding(
-                get: {credential?.issueDate ?? Date.now},
-                set: {credential?.issueDate = $0}
+                get: {credential.issueDate ?? Date.now},
+                set: {credential.issueDate = $0}
             ), displayedComponents: [.date])
             
             // MARK: Renewal Period Length
             HStack(spacing: 4) {
                 Label("Renews every: ", systemImage: "calendar.badge.clock")
-                TextField("Renews in months", value: $renewalLength, formatter: singleDecimalFormatter )
+                TextField("Renews in months", value: $credential.renewalPeriodLength, formatter: singleDecimalFormatter )
                     .frame(maxWidth: 25)
                     .bold()
                     .foregroundStyle(.red)
                 Text("months")
             }//: HSTACK
             
+        } header: {
+            Text("Issue & Renewal")
+        } footer: {
+            Text("Enter the date on which the credential was originally issued.  Specify the renewal period in months (e.g., 24 months = 2 years). Each renewal period will keep track of subsequent renewals for this credential.")
+                
         }//: SECTION
     }
 }
 
 // MARK: - PREVIEW
 #Preview {
-    CredentialIssueAndRenewalSectionView(credential: .example, renewalLength: .constant(24.0))
+    CredentialIssueAndRenewalSectionView(credential: .example)
 }

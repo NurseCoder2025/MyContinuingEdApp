@@ -8,25 +8,15 @@
 // Purpose: To display the UI controls for the user to enter basic information (ex. name,
 // credential type, number, etc.) for a given credential object
 
+// 10-13-25 update: Changed from having an optional Credential property to a non-optional
+
 import CoreData
 import SwiftUI
 
 struct BasicCredentialInfoView: View {
     // MARK: - PROPERTIES
-    
-    // Needed properties:
-    // - name (string)
-    // - type (string)
-    // - number (string)
-    // - credIssuer (Issuer?)
-    // - allIssuers (CoreData)
-    
-    // Bindings to parent view (CredentialSheet)
-    @Binding var name: String
-    @Binding var type: String
-    @Binding var number: String
-    @Binding var credIssuer: Issuer?
-    
+    @ObservedObject var credential: Credential
+        
     // Property for bringing up the Issuer List sheet
     @State private var showIssuerListSheet: Bool = false
     
@@ -44,61 +34,47 @@ struct BasicCredentialInfoView: View {
             
             Section("Basic Info") {
                 // MARK: Credential name
-                TextField("Credential name", text: $name)
+                TextField("Credential name", text: $credential.credentialName)
                 
                 // MARK: Credential type
-                Picker("Type", selection: $type) {
+                Picker("Type", selection: $credential.credentialCreType) {
                     ForEach(CredentialType.pickerChoices, id: \.self) { type in
                         Text(type.displaySingularName).tag(type.rawValue)
                     }//: LOOP
                 }//: PICKER
                 
                 // MARK: Credential number
-                TextField("Number", text: $number)
+                TextField("Number", text: $credential.credentialCreNumber)
+                    
                 
                 // MARK: Credential issuer
-                // ONLY show the picker if at least 1 issuer has been entered
-                if allIssuers.isNotEmpty {
-                    Picker("Issuer", selection: $credIssuer) {
-                        ForEach(allIssuers) { issuer in
-                            HStack {
-                                Text(issuer.issuerLabel)
-                                Text(issuer.country?.countryAbbrev ?? "No Country Selected")
-                                    .foregroundStyle(.secondary)
-                            }//: HSTACK
-                            .tag(issuer)
-                        }//: LOOP
-                    } //: PICKER
-                }//: IF
-                
                 Button {
                     showIssuerListSheet = true
                 } label: {
-                    Text(allIssuers.isEmpty ? "Add Issuer" : "Edit Issuers")
+                    HStack {
+                        Text("Issuer: ")
+                        if let selectedIssuer = credential.issuer {
+                            Text(selectedIssuer.issuerIssuerName)
+                                .lineLimit(1)
+                        } else {
+                            Text("Select")
+                        }
+                    }//: HSTACK
                 }
                 
             }//: SECTION
             
         }//: GROUP
-        // MARK: - ON APPEAR
-        // Using this for testing/debugging purposes
-        .onAppear {
-            print("type value: \(type)")
-        }
         // MARK: - SHEET
         // Issuer Sheet
         .sheet(isPresented: $showIssuerListSheet) {
-            IssuerListSheet()
-        }
+            IssuerListSheet(credential: credential)
+        }//: SHEET
     }
 }
 
 // MARK: - PREVIEW
 #Preview {
-    BasicCredentialInfoView(
-        name: .constant("RN License"),
-        type: .constant("License"),
-        number: .constant("ARY29859"),
-        credIssuer: .constant(.example)
-    )
+    BasicCredentialInfoView(credential: .example)
+    
 }

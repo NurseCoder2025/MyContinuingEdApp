@@ -10,29 +10,27 @@ import SwiftUI
 
 // This file is for the purpose of creating a sheet where they user can add or edit
 // a credential issuer, such as a licensing board or other governing body.
+//
+// This view is presented from within the CredentialSheet view
+
+// 10-13-25 update: changing issuer property to @ObservedObject non-optional in order to help
+// address major bug with Issuer country and state selection properties not being saved upon change.
 
 struct IssuerSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    
     @EnvironmentObject var dataController: DataController
     
-    let issuer: Issuer?
+    @ObservedObject var issuer: Issuer
     
-    // Properties for edting the values of an Issuer object
-    @State private var name: String = ""
-    @State private var issuerAbbreviation: String = ""
-    @State private var country: Country?
-    @State private var state: USState?
-    @State private var webSite: String = ""
-    @State private var issuerPhone: String = ""
-    @State private var issuerEmailAddress: String = ""
-
+    // Property for editing the issuer's name
+    // Data sync issue appears in the IssuerListSheet
+    // iff trying to bind entity properties directly.
+    @State private var issuerNameText: String = ""
+ 
+    
     // Property for showing the Country List
     @State private var showCountryListSheet: Bool = false
-    
-    // MARK: - Computed Properties
-        
     
     // MARK: - CORE DATA Fetch Requests
     @FetchRequest(sortDescriptors: [SortDescriptor(\.sortOrder), SortDescriptor(\.name)]) var allCountries: FetchedResults<Country>
@@ -45,22 +43,17 @@ struct IssuerSheet: View {
             VStack {
                 Form {
                     Section("Basic Information") {
-                        TextField("Issuer Name", text: $name)
-                        TextField("Abbreviation:", text: $issuerAbbreviation)
+                        TextField("Issuer Name", text: $issuerNameText)
+                        TextField("Abbreviation:", text: $issuer.issuerAbbrev)
+                        
                         // MARK: Country Selection
-                        Picker("Country", selection: $country) {
-                            ForEach(allCountries) {country in
-                                VStack(alignment: .leading, spacing: 0) {
-                                    Text(country.countryAbbrev)
-                                        .bold()
-                                        .foregroundStyle(.primary)
-                                    Text(country.countryName)
-                                        .foregroundStyle(.secondary)
-                                }//: VSTACK
-                                .tag(country)
-                            }//: LOOP
-                        }//: COUNTRY PICKER
+                        Picker("Country", selection: $issuer.country) {
+                            ForEach(allCountries) { country in
+                                Text(country.countryName).tag(country)
+                            }// LOOP
+                        }//: PICKER (Country)
                         .pickerStyle(.navigationLink)
+                       
                         
                         // MARK: Show Country List (for editing)
                         Button {
@@ -68,129 +61,70 @@ struct IssuerSheet: View {
                         } label: {
                             Text("Edit Country List")
                         }
-                        
                         // MARK: State Selection (US ONLY)
-                        if let chosenCountry = issuer?.country {
-                            if chosenCountry.name == "United States of America" {
-                                Picker("State:", selection: $state) {
-                                    ForEach(allStates) {state in
-                                        StatePickerRowView(state: state).tag(state)
-                                    }//: LOOP
-                                }//: STATE PICKER
-                                .pickerStyle(.navigationLink)
-                            } //: if country is the US
-                        //: If a country has been chosen for the issuer
-                        } else {
-                            // If creating a new country and no object has been saved yet
-                            if let pickedCountry = country {
-                                if pickedCountry.countryAbbrev == "USA" {
-                                    Picker("State:", selection: $state) {
-                                        ForEach(allStates) {state in
-                                            StatePickerRowView(state: state).tag(state)
-                                        }//: LOOP
-                                    }//: STATE PICKER
-                                    .pickerStyle(.navigationLink)
-                                } // If the selected country in the picker is the US
-                            } //: IF-LET
-                        }//: ELSE (no country object yet)
-                        
+                        if let selectedCountry = issuer.country, selectedCountry.alpha3 == "USA" {
+                            Picker("State:", selection: $issuer.state) {
+                                ForEach(allStates) { state in
+                                    StatePickerRowView(state: state).tag(state)
+                                }//: LOOP
+                            }//: STATE PICKER
+                            .pickerStyle(.navigationLink)
+                        }
                     }//: SECTION
-                    
                     // MARK: Website
                     Section("Contact Information") {
-                        TextField("Phone", text: $issuerPhone)
-                        TextField("Email", text: $issuerEmailAddress)
-                        TextField("Website", text: $webSite)
+                        TextField("Phone", text: $issuer.issuerPhoneNumber)
+                        TextField("Email", text: $issuer.issuerEmail)
+                        TextField("Website", text: $issuer.website)
                     }//: SECTION
-                    
-                    
                 }//: FORM
                 .navigationTitle("Credential Issuer")
                 // MARK: - SHEETS
                 .sheet(isPresented: $showCountryListSheet) {
                     CountryListSheet()
                 }
-                
                 // MARK: SAVE Button
-                    HStack {
-                        Spacer()
-                        Button {
-                            mapAndSave()
-                            dismiss()
-                        } label: {
-                            Label("Save & Dismiss", systemImage: "internaldrive.fill")
-                                .foregroundStyle(.white)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        Spacer()
-                    }//: HSTACK
-                
+                HStack {
+                    Spacer()
+                    Button {
+                        issuer.issuerName = issuerNameText
+                        dataController.save()
+                        dismiss()
+                    } label: {
+                        Label("Save & Dismiss", systemImage: "internaldrive.fill")
+                            .foregroundStyle(.white)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    Spacer()
+                }//: HSTACK
             }//: VSTACK
             // MARK: - TOOLBAR
             .toolbar {
                 // Dismiss button
-                Button(action: {dismiss()}){
-                    DismissButtonLabel()
-                }.applyDismissStyle()
-            }
-            
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(action: {dismiss()}){
+                        Text("Dismiss")
+                    }
+                }//: TOOLBAR ITEM
+                            
+            }//: TOOLBAR
+            // MARK: - ON DISAPPEAR
+            .onDisappear {
+                // Ensure that all data has been saved so that the issuer list view will display
+                // all values properly
+                issuer.issuerName = issuerNameText
+                dataController.save()
+            }//: ON DISAPPEAR
             // MARK: - ON APPEAR
             .onAppear {
-                // If editing an existing Issuer object, assign property values to each of the
-                // view's @State properties
-                if let editingIssuer = issuer {
-                    name = editingIssuer.name
-                    issuerAbbreviation = editingIssuer.issuerAbbrev
-                    country = editingIssuer.country
-                    state = editingIssuer.state
-                    webSite = editingIssuer.website
-                    issuerPhone = editingIssuer.issuerPhoneNumber
-                    issuerEmailAddress = editingIssuer.issuerEmail
-                } else {
-                    // Setting the country to the U.S. as default value if creating
-                    // a new Issuer object
-                    if country == nil {
-                        country = allCountries.first(where: { $0.name == "United States of America" })
-                    }
-                }
+                issuerNameText = issuer.issuerIssuerName
             }//: ON APPEAR
-            
             
         }//: NAV VIEW
     }//: BODY
     
-    
-    // MARK: - Custom functions
-    /// Saves the current state of what is in the Issuer sheet fields (except for country as that has already been
-    /// mapped by the showCountrySheetList.
-    func mapAndSave() {
-        if let passedInIssuer = issuer {
-            passedInIssuer.name = name
-            passedInIssuer.issuerAbbrev = issuerAbbreviation
-            passedInIssuer.country = country
-            passedInIssuer.state = state
-            passedInIssuer.website = webSite
-            passedInIssuer.email = issuerEmailAddress
-            passedInIssuer.phoneNumber = issuerPhone
-        } else {
-            let viewContext = dataController.container.viewContext
-            let newIssuer = Issuer(context: viewContext)
-            
-            // mapping fields to new object
-            newIssuer.name = name
-            newIssuer.issuerAbbrev = issuerAbbreviation
-            newIssuer.country = country
-            newIssuer.state = state
-            newIssuer.website = webSite
-            newIssuer.email = issuerEmailAddress
-            newIssuer.phoneNumber = issuerPhone
-        }
-        
-        dataController.save()
-    }
-    
-    
-    // MARK: - Custom INIT
+    // MARK: - FUNCTIONS
+
     
     
 }//: ISSUER SHEET STRUCT
@@ -198,5 +132,8 @@ struct IssuerSheet: View {
 
 // MARK: - PREVIEW
 #Preview {
+    let controller = DataController(inMemory: true)
     IssuerSheet(issuer: .example)
+        .environmentObject(controller)
+        .environment(\.managedObjectContext, controller.container.viewContext)
 }

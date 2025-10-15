@@ -149,7 +149,8 @@ struct CredentialSubCatListSheet: View {
                 }
                 //: MARK: - SHEETS
                 .sheet(isPresented: $showCredentialSheet) {
-                    CredentialSheet(credential: nil)
+                    let newCred = dataController.createNewCredential()
+                    CredentialSheet(credential: newCred)
                 }// : SHEET
                 
                 .sheet(item: $credentialToEdit) { cred in

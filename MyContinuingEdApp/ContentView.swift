@@ -50,8 +50,9 @@ struct ContentView: View {
             } message: {
                 Text(activityDeleteWarning)
             }
-            // Advanced sorting and filtering menu
+            // MARK: - TOOLBAR
             .toolbar {
+                // MARK: Filter
                 Menu {
                     Button(dataController.filterEnabled ? "Turn filter off" : "Turn filter on") {
                         dataController.filterEnabled.toggle()
@@ -59,6 +60,7 @@ struct ContentView: View {
                     
                     Divider()
                     
+                    // MARK: - SORT
                     Menu("Sort by") {
                         // Name
                         Picker("Name", selection: $dataController.sortType) {
@@ -120,7 +122,7 @@ struct ContentView: View {
                         }//: OTHER SORTS MENU
                         
                     }//: MENU - Sort By
-                    
+                    // MARK: - FILTERS
                     Menu("Filter by") {
                         Picker("Activity Status", selection: $dataController.filterExpirationStatus) {
                             Text("All Activities").tag(ExpirationType.all)

@@ -469,6 +469,23 @@ class DataController: ObservableObject {
         return newCredential
     }
     
+    func createNewIssuer() -> Issuer {
+        let context = container.viewContext
+        let newIssuer = Issuer(context: context)
+        newIssuer.issuerID = UUID()
+        newIssuer.issuerName = "New Issuer"
+        
+        // Set default country to United States
+        let countryRequest: NSFetchRequest<Country> = Country.fetchRequest()
+        countryRequest.predicate = NSPredicate(format: "alpha3 == %@", "USA")
+        
+        let defaultCountry = (try? context.fetch(countryRequest).first) ?? nil
+        newIssuer.country = defaultCountry
+        
+        save()
+        return newIssuer
+    }
+    
     
     // MARK: - ACHIEVEMENTS Related Functions
     
@@ -569,9 +586,11 @@ class DataController: ObservableObject {
     
     // MARK: - Automation Related Methods
     
-    /// Function that finds the appropriate renewal period for each CE activity, if applicable, and assigns the activity to that period.
+    /// Function that finds the appropriate renewal period for each CE activity, if applicable, and assigns the activity to that period. The activity
+    /// must be completed and have a dateCompleted value in order to be assigned to a renewal period.
     func assignActivitiesToRenewalPeriod() {
         let viewContext = container.viewContext
+        
         // Fetching only all completed CE Activities
         let activityRequest: NSFetchRequest<CeActivity> = CeActivity.fetchRequest()
         activityRequest.predicate = NSPredicate(format: "activityCompleted = true")
@@ -643,19 +662,22 @@ class DataController: ObservableObject {
         
         // Creating Issuer object for the sample Credential
         let sampleIssuer = Issuer(context: viewContext)
-        sampleIssuer.name = "Ohio Board of Nursing"
+        sampleIssuer.issuerName = "Ohio Board of Nursing"
         sampleIssuer.country = sampleCountry
         sampleIssuer.state = sampleState
         
         // Creating Credential object for all sample credentials
         let sampleCredential = Credential(context: viewContext)
         sampleCredential.name = "Ohio RN License"
-        sampleCredential.credentialType = "License"
+        sampleCredential.credentialType = "license"
         sampleCredential.isActive = true
         sampleCredential.issueDate = Date.renewalStartDate
         sampleCredential.renewalPeriodLength = 24
         sampleCredential.credentialNumber = "RN123456"
         sampleCredential.issuer = sampleIssuer
+        
+        // Assigning sample renewal period to the sample credential
+        sampleCredential.addToRenewals(sampleRenewalPeriod)
         
         // Creating 5 sample activities, and 10 tags per activity
         for i in 1...5 {
@@ -664,6 +686,7 @@ class DataController: ObservableObject {
             tag.tagID = UUID()
             tag.tagName = "Tag #\(i)"
             
+            // Activities for each tag
             for j in 1...10 {
                 let randomFutureExpirationDate: Double = 86400 * Double(Int.random(in: 1...730))
                 let randomPastDate: Double = -(86400 * Double.random(in: 7...180))
@@ -749,16 +772,14 @@ class DataController: ObservableObject {
                     activity.reflection = reflection
                 }
                 
-                // assigning each activity to the sample renewal period
-                if activity.activityCompleted {
-                    activity.renewal = sampleRenewalPeriod
-                }
-                
             } //: J LOOP
             
         } //: I LOOP
         
         try? viewContext.save()
+        
+        // assigning each activity to the sample renewal period
+        assignActivitiesToRenewalPeriod()
         
     } //: createSampelData()
     

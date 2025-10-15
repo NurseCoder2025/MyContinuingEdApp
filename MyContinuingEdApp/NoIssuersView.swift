@@ -12,6 +12,7 @@ import SwiftUI
 
 struct NoIssuersView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @Environment(\.dismiss) var dismiss
     
     let titleText: String = "Add Credential Issuer"
@@ -56,7 +57,8 @@ struct NoIssuersView: View {
             }
             // MARK: - SHEETS
             .sheet(isPresented: $showIssuerSheet) {
-                IssuerSheet(issuer: nil)
+                let newIssuer = dataController.createNewIssuer()
+                IssuerSheet(issuer: newIssuer)
             }
         } //: IF AVAILABLE
     }

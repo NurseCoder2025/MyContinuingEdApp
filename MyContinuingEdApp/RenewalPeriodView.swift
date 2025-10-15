@@ -127,13 +127,30 @@ struct RenewalPeriodView: View {
         dataController.save()
         dataController.assignActivitiesToRenewalPeriod()
     }
-    
 }
 
 
 // MARK: - Preview
 struct RenewalPeriodView_Previews: PreviewProvider {
     static var previews: some View {
-        RenewalPeriodView(renewalCredential: .example, renewalPeriod: .example)
+        let controller = DataController(inMemory: true)
+        let context = controller.container.viewContext
+        
+        // Create and save a Credential in the preview context
+        let credential = Credential(context: context)
+        credential.name = "Example Credential"
+        try? context.save()
+        
+        // Create a RenewalPeriod assigned to the credential
+        let renewalPeriod = RenewalPeriod(context: context)
+        renewalPeriod.periodStart = Date.renewalStartDate
+        renewalPeriod.periodEnd = Date.renewalEndDate
+        renewalPeriod.credential = credential
+        
+        try? context.save()
+        
+        return RenewalPeriodView(renewalCredential: credential, renewalPeriod: renewalPeriod)
+            .environmentObject(controller)
+            .environment(\.managedObjectContext, context)
     }
 }

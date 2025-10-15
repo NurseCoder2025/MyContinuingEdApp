@@ -20,6 +20,9 @@ struct CredentialManagementSheet: View {
     // Property to pull up the CredentialSheet for adding a new credential
     @State private var showAddCredentialSheet: Bool = false
     
+    // Property to store a newly created Credential object
+    @State private var newCredential: Credential?
+    
     // Property to show the CredentialSubCatListSheet as a pop-up
     @State private var showCredSubCatListSheet: Bool = false
     
@@ -96,6 +99,7 @@ struct CredentialManagementSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        newCredential = dataController.createNewCredential()
                         showAddCredentialSheet = true
                     } label: {
                         Label("Add Credential", systemImage: "plus")
@@ -114,7 +118,16 @@ struct CredentialManagementSheet: View {
             //: MARK: - SHEETS
             // For adding a new Credential
             .sheet(isPresented: $showAddCredentialSheet) {
-                CredentialSheet(credential: nil)
+                if let cred = newCredential {
+                    CredentialSheet(credential: cred)
+                        .onDisappear {
+                            if cred.name == "New Credential" {
+                                dataController.delete(cred)
+                            }//: IF
+                            
+                        }//: ON DISAPPEAR
+                }//: IF LET
+                
             }//: SHEET
             
             // For showing the list of credentials of the selected type

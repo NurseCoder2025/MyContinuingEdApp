@@ -19,14 +19,6 @@ struct RenewalTopEditingView: View {
     
     // MARK: - BODY
     var body: some View {
-        // MARK: Number & Currency Formatters
-        var generalDecimal: NumberFormatter {
-            let formatter = NumberFormatter()
-            formatter.numberStyle = .decimal
-            formatter.maximumFractionDigits = 2
-            return formatter
-        }
-        
         Group {
             VStack {
                 // Name of specified credential
@@ -41,9 +33,18 @@ struct RenewalTopEditingView: View {
                 Toggle(isOn: $reinstatingYN) {
                     Text("Reinstating Credential?")
                 }
+                .padding([.leading, .trailing], 30)
                 
                 if reinstatingYN {
-                    TextField("CE Hours Needed:", value: $reinstateHours, formatter: generalDecimal)
+                    HStack {
+                        Text("CE Hours Required:")
+                            .bold()
+                        TextField("CE Hours Needed:",
+                                  value: $reinstateHours,
+                                  formatter: twoDigitDecimalFormatter
+                        )
+                    }//: HSTACK
+                    .padding(.leading, 30)
                 }
             }//: VSTACK
             .padding()
@@ -54,5 +55,5 @@ struct RenewalTopEditingView: View {
 
 // MARK: - PREVIEW
 #Preview {
-    RenewalTopEditingView(credential: .example, reinstatingYN: .constant(false), reinstateHours: .constant(1.0))
+    RenewalTopEditingView(credential: .example, reinstatingYN: .constant(true), reinstateHours: .constant(1.0))
 }

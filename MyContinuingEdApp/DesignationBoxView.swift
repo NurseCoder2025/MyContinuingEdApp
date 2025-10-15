@@ -18,17 +18,18 @@ struct DesignationBoxView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
-                .foregroundStyle(.purple)
+                .fill(.black.opacity(0.7))
     
             HStack(alignment: .center) {
                 VStack(alignment: .leading) {
                     Text(designation.ceDesignationAbbrev)
                         .font(.title2)
-                        .foregroundStyle(.white)
+                        .foregroundColor(.yellow)
                         .bold()
                     Text(designation.ceDesignationName)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.gray)
                         .italic()
+                        .lineLimit(1)
                 }//: VSTACK
                 .padding(.leading, 25)
                 Spacer()
@@ -36,14 +37,14 @@ struct DesignationBoxView: View {
                 if selectedYN {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.largeTitle)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.yellow)
                         .padding(.trailing, 10)
                 }
 
             }//: HSTACK
             
         } //: ZSTACK
-        .frame(height: 120)
+        .frame(height: 85)
         .frame(maxWidth: 350)
     }
 }
