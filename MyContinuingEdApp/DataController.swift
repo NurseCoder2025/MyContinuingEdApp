@@ -9,6 +9,9 @@ import Foundation
 import CoreData
 
 // MARK: - ENUMS
+
+/// This enum is used in ContentView for the Sorting menu as a way to easily tag sort values.  Each enum type has a raw String
+/// value that corresponds to a CeActivity property that the user can sort on.
 enum SortType: String {
     case name = "activityTitle"
     case dateCreated = "activityAddedDate"
@@ -158,8 +161,6 @@ class DataController: ObservableObject {
         let encumberedCredentials = (try? container.viewContext.fetch(credFetch)) ?? []
         return encumberedCredentials
     }
-    
-    
     
     // MARK: - PRELOADING  METHODS
     // MARK: CE Designations METHODS
@@ -375,12 +376,11 @@ class DataController: ObservableObject {
         let request = CeActivity.fetchRequest()
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
-        // TODO: Fix sorting problem (sorting doesn't appear to be occurring)
         // For sorting the selected filter/sort items:
         request.sortDescriptors = [NSSortDescriptor(key: sortType.rawValue, ascending: sortNewestFirst)]
         
         let allActivities = (try? container.viewContext.fetch(request)) ?? []
-        return allActivities.sorted()
+        return allActivities
     }
     
     
