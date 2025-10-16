@@ -202,3 +202,29 @@
 //        for cred in allCreds {
 //            print(cred.credentialName)
 //        }
+
+
+### From SidebarCredentialsSectionView:
+    // Converting all fetched credentials to Filter objects
+    var convertedCredentialFilters: [Filter] {
+        allCredentials.map { credential in
+            Filter(
+                name: credential.credentialName,
+                icon: "person.text.rectangle.fill",
+                credential: credential
+            )
+        }
+    }//: convertedCredentialFilters
+
+
+### Another code snipper from SidebarView:
+
+    // Function for deleting a renewal period
+    // Not sure if this function is needed:
+//    func deleteRenewalPeriod(_ offsets: IndexSet) {
+//        if let selectedPeriodIndex = offsets.first {
+//            renewalToDelete = renewals[selectedPeriodIndex]
+//            showDeletingRenewalAlert = true
+//        }
+//    }
+//    

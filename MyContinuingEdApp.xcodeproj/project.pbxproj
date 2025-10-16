@@ -13,6 +13,11 @@
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
+		3FFE836B2EA06A6400C7E815 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 3FFE836A2EA06A6400C7E815 /* Localizable.xcstrings */; };
+		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
+		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
+		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
+		3FFE83732EA0968900C7E815 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83722EA0968900C7E815 /* SidebarTagsSectionView.swift */; };
 		F2011DBD2E62415500D5DF92 /* Inactive Reasons.json in Resources */ = {isa = PBXBuildFile; fileRef = F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */; };
 		F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */; };
 		F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */; };
@@ -123,6 +128,11 @@
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCredSubTypeView.swift; sourceTree = SOURCE_ROOT; };
+		3FFE836A2EA06A6400C7E815 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
+		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
+		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialsSectionView.swift; sourceTree = SOURCE_ROOT; };
+		3FFE83722EA0968900C7E815 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = SOURCE_ROOT; };
 		F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Inactive Reasons.json"; sourceTree = "<group>"; };
 		F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InactiveReasons-Defaults.swift"; sourceTree = "<group>"; };
 		F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Issuer-CoreDataHelper.swift"; sourceTree = "<group>"; };
@@ -265,6 +275,8 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				3FFE83722EA0968900C7E815 /* SidebarTagsSectionView.swift */,
+				3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */,
 				3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */,
 				F2B9379C2E836F5600AF9155 /* Enums-General.swift */,
 				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
@@ -326,8 +338,11 @@
 				F2B580152E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift */,
 				F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */,
 				F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */,
+				3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */,
+				3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */,
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
 				F2BDFC102E83657A00A8CDAA /* RenewalPeriodDatesView.swift */,
+				3FFE836A2EA06A6400C7E815 /* Localizable.xcstrings */,
 				F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */,
 				F2B580172E7B84510073BCA7 /* NoSpecialCatsView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
@@ -422,6 +437,7 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
 			);
 			mainGroup = F2772B862E1DDA9F006A94BD;
 			productRefGroup = F2772B902E1DDA9F006A94BD /* Products */;
@@ -444,6 +460,7 @@
 				F2BC94A32E32DA1000926B3D /* Colors.xcassets in Resources */,
 				F243B4222E6905500072419D /* Country List.json in Resources */,
 				F2BC94A22E32DA1000926B3D /* Awards.json in Resources */,
+				3FFE836B2EA06A6400C7E815 /* Localizable.xcstrings in Resources */,
 				F2011DC32E62527800D5DF92 /* USStatesList.json in Resources */,
 				F2772B972E1DDAA2006A94BD /* Assets.xcassets in Resources */,
 				F2FBAAE12E5FABE900348AAA /* Activity Formats.json in Resources */,
@@ -487,6 +504,7 @@
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
+				3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */,
 				F2612A1D2E87275000CC463D /* ActivityViewHeader.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
@@ -517,6 +535,7 @@
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
 				F2612A1F2E872AC100CC463D /* TagMenuView.swift in Sources */,
 				F27259192E78C3B300210F11 /* DisciplinaryActionItemSheet.swift in Sources */,
+				3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */,
 				F22940A32E764EE200BFE78A /* Enums-DisciplinaryActionItem.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
@@ -551,6 +570,8 @@
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
+				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
+				3FFE83732EA0968900C7E815 /* SidebarTagsSectionView.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,
 				F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */,
 				F28E6BB62E7A095E003F4C95 /* DisciplinaryActionListSheet.swift in Sources */,
@@ -617,6 +638,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -670,6 +692,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};

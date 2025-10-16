@@ -31,7 +31,7 @@ struct RenewalPeriodDatesView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(.yellow.opacity(0.2))
                             .frame(width: 325, height: 75)
-                            
+                            .accessibilityHidden(true)
                             
                         VStack {
                             DatePicker("Late Fee Starts", selection: $lateFeeDate, displayedComponents: .date)
