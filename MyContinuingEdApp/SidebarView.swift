@@ -38,11 +38,7 @@ struct SidebarView: View {
             List(selection: $dataController.selectedFilter) {
                 // MARK: - SMART FILTERS SECTION
                 Section("Smart Filters") {
-                    ForEach(smartFilters) { filter in
-                        NavigationLink(value: filter) {
-                            Label(filter.name, systemImage: filter.icon)
-                        } //: NAV LINK
-                    } //: LOOP
+                    ForEach(smartFilters, content: SidebarSmartFilterRow.init)
                 } //: SECTION (smart filters)
                 
                 // MARK: - TAGS SECTION
@@ -53,9 +49,7 @@ struct SidebarView: View {
                         newTagName = filter.name
                         showRenamingAlert = true
                     }
-                
                 )
-                
                 // MARK: - CREDENTIALS SECTION
                 SidebarCredentialsSectionView(
                     onEditRenewal: { cred, renewal in
@@ -108,8 +102,8 @@ struct SidebarView: View {
         newTagName = selectedFilter.name
     }
     
-    /// When called, this method assigns a String value that the user typed in an alert box (presented when showRenamingAlert is toggled to true)
-    ///  to the selected tag's name property then saves the change to persistent storage.
+    /// When called, this method assigns a String value that the user typed in an alert box (presented when showRenamingAlert is
+    ///  toggled to true) to the selected tag's name property then saves the change to persistent storage.
     func confirmTagRename() {
         tagToRename?.tagName = newTagName
         dataController.save()
@@ -127,12 +121,6 @@ struct SidebarView: View {
  
         
 } //: STRUCT
-
-struct RenewalSheetData: Identifiable {
-    let id = UUID()
-    let credential: Credential
-    let renewal: RenewalPeriod?
-}
 
 // MARK: - PREVIEW
 struct SidebarView_Previews: PreviewProvider {

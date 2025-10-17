@@ -24,6 +24,9 @@ enum SortType: String {
 }
 
 
+/// A class that handles the creatiion, saving, and deletion of all major objects in this app, including sample data.  It also manages
+/// data syncing between iCloud and local storage. Additional functionality such as activity searching and filtering is also handled by
+/// methods within this class.
 class DataController: ObservableObject {
     // MARK: - PROPERTIES
     // container for holding the data in memory

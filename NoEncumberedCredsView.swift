@@ -34,7 +34,7 @@ struct NoEncumberedCredsView: View {
             
         }//: VSTACK
         .frame(maxHeight: .infinity)
-        .alignmentGuide(.top) { d in d[VerticalAlignment.center] }
+        .alignmentGuide(.top) { dim in dim[VerticalAlignment.center] }
         
     }//: BODY
 }//: STRUCT

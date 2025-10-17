@@ -42,7 +42,11 @@ struct NoCredSubTypeView: View {
         } else if credentialType == "all" {
             return "Currently there are no credentials saved yet. Please add a credential using the button below."
         } else if credentialType == "other" {
-            return "Currently there are no other kinds of credentials saved yet. If you possess a credential that is not a license, certification, endorsement, or membership, then please add it using the button below."
+            return """
+            Currently there are no other kinds of credentials saved yet.
+            If you possess a credential that is not a license, certification,
+            endorsement, or membership, then please add it using the button below.
+            """
         } else {
             return "Currently there are no \(credentialType)s saved yet. If you have credentials of this type, please add them using the button below."
         }

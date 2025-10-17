@@ -41,12 +41,10 @@ struct AwardsView: View {
                                 .scaledToFit()
                                 .padding()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(dataController.hasEarned(award: award) ? Color(award.color) : .secondary.opacity(0.5))
+                                .foregroundColor(getAwardColor(award: award))
                         }
-                        .accessibilityLabel(dataController.hasEarned(award: award) ? "\(award.name)" : "Locked")
+                        .accessibilityLabel(createAwardLabel(award: award))
                         .accessibilityHint(award.description)
-                        
-                        
                         
                     } //: LOOP
                 } //: LAZY V GRID
@@ -62,6 +60,14 @@ struct AwardsView: View {
        
         
     }//: BODY
+    // MARK: - FUNCTIONS
+    func getAwardColor(award: Award) -> Color {
+        dataController.hasEarned(award: award) ? Color(award.color) : .secondary.opacity(0.5)
+    }
+    
+    func createAwardLabel(award: Award) -> LocalizedStringKey {
+        dataController.hasEarned(award: award) ? "\(award.name)" : "Locked"
+    }
 }
 
 

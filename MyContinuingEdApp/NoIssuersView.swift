@@ -16,12 +16,15 @@ struct NoIssuersView: View {
     @Environment(\.dismiss) var dismiss
     
     let titleText: String = "Add Credential Issuer"
-    let message: String = "You haven't added a credential issuer yet. This is a governing body like a licensing board or similar entity that has the authority to issue a credential. Add one by tapping on the button below."
+    let message: String = """
+    You haven't added a credential issuer yet.
+    This is a governing body like a licensing board or similar entity 
+    that has the authority to issue a credential. 
+    Add one by tapping on the button below.
+    """
     let image: String = "questionmark.app.fill"
-    
     // Property to bring up the IssuerSheet
     @State private var showIssuerSheet: Bool = false
-    
     // MARK: - BODY
     var body: some View {
         if #available(iOS 17, *) {
@@ -50,8 +53,10 @@ struct NoIssuersView: View {
                 .buttonStyle(.borderedProminent)
             } //: VSTACK
             // MARK: - TOOLBAR
-            .toolbar {
-                Button(action: {dismiss()}){
+            .toolbar{
+                Button {
+                    dismiss()
+                } label: {
                     DismissButtonLabel()
                 }.applyDismissStyle()
             }

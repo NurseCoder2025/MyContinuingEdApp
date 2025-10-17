@@ -75,7 +75,7 @@ struct CertificatePickerView: View {
 
 
 // MARK: PREVIEW
-struct CertificatePickerView_Preview: PreviewProvider {
+struct CertificatePickerViewPreview: PreviewProvider {
     static var previews: some View {
         CertificatePickerView(activity: .example, certificateData: .constant(nil))
     }

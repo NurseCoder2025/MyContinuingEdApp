@@ -145,7 +145,12 @@ struct CredentialSubCatListSheet: View {
                         selectedCredential = nil
                     }
                 } message: { cred in
-                    Text("Are you sure you want to delete \(cred.credentialName)? This will delete any associated disciplinary actions and renewal periods. However, any CE activities entered under this credential will remain.")
+                    Text("""
+                    Are you sure you want to delete \(cred.credentialName)? 
+                    This will delete any associated disciplinary actions and 
+                    renewal periods. However, any CE activities entered under 
+                    this credential will remain.
+                    """)
                 }
                 //: MARK: - SHEETS
                 .sheet(isPresented: $showCredentialSheet) {

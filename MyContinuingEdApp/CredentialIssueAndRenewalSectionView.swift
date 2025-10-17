@@ -14,7 +14,6 @@ import SwiftUI
 
 struct CredentialIssueAndRenewalSectionView: View {
     // MARK: - PROPERTIES
-    
     @ObservedObject var credential: Credential
     
     // MARK: - BODY
@@ -29,7 +28,11 @@ struct CredentialIssueAndRenewalSectionView: View {
             // MARK: Renewal Period Length
             HStack(spacing: 4) {
                 Label("Renews every: ", systemImage: "calendar.badge.clock")
-                TextField("Renews in months", value: $credential.renewalPeriodLength, formatter: singleDecimalFormatter )
+                TextField(
+                    "Renews in months",
+                    value: $credential.renewalPeriodLength,
+                    formatter: singleDecimalFormatter
+                )
                     .frame(maxWidth: 25)
                     .bold()
                     .foregroundStyle(.red)
