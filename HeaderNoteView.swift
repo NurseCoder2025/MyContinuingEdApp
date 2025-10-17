@@ -11,7 +11,6 @@ import SwiftUI
 // shown to the user on a given sheet or screen.
 
 
-
 struct HeaderNoteView: View {
     // MARK: - PROPERTIES
     let titleText: String

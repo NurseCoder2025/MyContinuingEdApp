@@ -10,38 +10,10 @@ import SwiftUI
 // Purpose: To display all of the DisciplinaryAction buttons in a grid view that the user can tap on
 
 
-// MARK: - GRID ITEM
-struct DAButtonView: View {
-    var title: String
-    var isSelected: Bool
-    var action: () -> Void
-
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(.translucentGreyGradient) // TODO: Update background color based on selection
-                .frame(width: 150, height: 44)
-            Button(action: action) {
-                HStack {
-                    Text(title)
-                        .font(.caption)
-                    Spacer()
-                    if isSelected {
-                        Image(systemName: "checkmark")
-                            .padding(.trailing, 10)
-                    }
-                }//: HSTACK
-            }//: BUTTON
-            .foregroundColor(.primary)
-            .padding(.leading, 10)
-        }//: ZSTACK
-    }
-}
-
-
-
-// MARK: - GRID VIEW
-
+/// The MultipleSelectionGrivView struct creates a 2 row grid of fixed column width (44 pixels) for use
+/// as a form row item within DisciplinaryActionItem.  It is designed to hold and display DisciplinaryActions.
+///
+/// This view also uses the DAButtonView for displaying each element within the grid.
 struct MultipleSelectionGridView: View {
     let actions: [DisciplineAction]
     @Binding var selectedActions: [DisciplineAction]
@@ -67,11 +39,11 @@ struct MultipleSelectionGridView: View {
                         }
                     }
                     .frame(width: 150)
-                }
-            }
+                }//: LOOP
+            }//: LAZY H GRID
             .padding(.vertical, 8)
-        }
-    }
-}
+        }//: SCROLL VIEW
+    }//: BODY
+}//: STRUCT
 
 
