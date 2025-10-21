@@ -32,6 +32,23 @@ class DataController: ObservableObject {
     // container for holding the data in memory
     let container: NSPersistentCloudKitContainer
     
+    // MARK: Managed Object Model (for init)
+    /// The static model property creates a singleton for the app's data model so it can be used across DataController instances
+    /// during testing, previewing, or working code.  This helps avoid Core Data related fatal errors where a "fetch request must have
+    /// an entity" is triggered.
+    static let model: NSManagedObjectModel = {
+        guard let url = Bundle.main.url(forResource: "CEActivityModel", withExtension: "momd") else {
+            fatalError("Failed to locate the app's primary data model.")
+        }
+        
+        guard let managedObjectModel = NSManagedObjectModel(contentsOf: url) else {
+            fatalError("Failed to load the app's primary data model")
+        }
+        
+        return managedObjectModel
+    }()
+    
+    
     // Properties for storing the current activity or filter/tag that the user has selected
     @Published var selectedFilter: Filter? = Filter.allActivities
     @Published var selectedActivity: CeActivity?
@@ -319,6 +336,11 @@ class DataController: ObservableObject {
         let tagFetch: NSFetchRequest<NSFetchRequestResult> = Tag.fetchRequest()
         delete(tagFetch)
         
+        let activityReflectionFetch: NSFetchRequest<NSFetchRequestResult> = ActivityReflection.fetchRequest()
+        delete(activityReflectionFetch)
+        
+        
+        
         save()
     }
     
@@ -522,7 +544,8 @@ class DataController: ObservableObject {
     
     // MARK: - ACHIEVEMENTS Related Functions
     
-    /// Function to count a given object
+    /// Using a passed in NSFetchRequest, this function will call the request on the view context
+    /// , returning an integer value representing the result of the fetch request's count method
     func count<T>(for fetchRequest: NSFetchRequest<T>) -> Int {
         (try? container.viewContext.count(for: fetchRequest)) ?? 0
     }
@@ -565,12 +588,15 @@ class DataController: ObservableObject {
             // # of hours earned achievements
         case "CEs":
             let fetchRequest = CeActivity.fetchRequest()
+            // Retrieves all CeActivities where hours were awarded
             fetchRequest.predicate = NSPredicate(format: "ceAwarded > %d", 0.0)
+            // ONLY retrieve the ceAwarded property so all values can be added
             fetchRequest.propertiesToFetch = ["ceAwarded"]
             
             let totalHours = addAwardedCE(for: fetchRequest)
             return totalHours >= Double(award.value)
             
+            // # of completed CEs
         case "completed":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "activityCompleted = true")
@@ -578,29 +604,34 @@ class DataController: ObservableObject {
             let totalCompleted = count(for: fetchRequest)
             return totalCompleted >= award.value
             
+            // # tags created
         case "tags":
             let fetchRequest = Tag.fetchRequest()
             let totalTags = count(for: fetchRequest)
             return totalTags >= award.value
             
+            // # activities rated as "loved"
         case "loved":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 4)
             let totalLoved = count(for: fetchRequest)
             return totalLoved >= award.value
             
+            // # activities rated as "interesting"
         case "howInteresting":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 3)
             let totalUnliked = count(for: fetchRequest)
             return totalUnliked >= award.value
             
+            // # of activity reflections completed
         case "reflections":
             let fetchRequest = ActivityReflection.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "completedYN = true")
             let totalReflections = count(for: fetchRequest)
             return totalReflections >= award.value
             
+            // # of activity reflections where something surprising was learned
         case "surprises":
             let fetchRequest = ActivityReflection.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "surpriseEntered = true")
@@ -712,7 +743,7 @@ class DataController: ObservableObject {
         // Assigning sample renewal period to the sample credential
         sampleCredential.addToRenewals(sampleRenewalPeriod)
         
-        // Creating 5 sample activities, and 10 tags per activity
+        // Creating 5 sample tags, and 10 activities per tag
         for i in 1...5 {
             let tag = Tag(context: viewContext)
             
@@ -826,7 +857,9 @@ class DataController: ObservableObject {
     
     init(inMemory: Bool = false) {
         // Assigning initial value for container
-        container = NSPersistentCloudKitContainer(name: "CEActivityModel")
+        // Also...assigning the model singleton property to prevent errors coming from multiple
+        // DataController instances (due to testing, previewing, etc.)
+        container = NSPersistentCloudKitContainer(name: "CEActivityModel", managedObjectModel: Self.model)
         
         // identifying the name of the stored data to load and use
         if inMemory {

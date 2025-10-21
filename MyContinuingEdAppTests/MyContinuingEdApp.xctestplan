@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "FC69D3E4-36BD-4EF8-8254-F99E0B89AB86",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MyContinuingEdApp.xcodeproj",
+      "identifier" : "F2772B8E2E1DDA9F006A94BD",
+      "name" : "MyContinuingEdApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MyContinuingEdApp.xcodeproj",
+        "identifier" : "3F69189B2EA6C05C00435E02",
+        "name" : "MyContinuingEdAppTests"
+      }
+    }
+  ],
+  "version" : 1
+}
