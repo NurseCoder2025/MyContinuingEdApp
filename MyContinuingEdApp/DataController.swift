@@ -339,7 +339,17 @@ class DataController: ObservableObject {
         let activityReflectionFetch: NSFetchRequest<NSFetchRequestResult> = ActivityReflection.fetchRequest()
         delete(activityReflectionFetch)
         
+        let renewalPeriodFetch: NSFetchRequest<NSFetchRequestResult> = RenewalPeriod.fetchRequest()
+        delete(renewalPeriodFetch)
         
+        let credentialFetch: NSFetchRequest<NSFetchRequestResult> = Credential.fetchRequest()
+        delete(credentialFetch)
+        
+        let issuerFetch: NSFetchRequest<NSFetchRequestResult> = Issuer.fetchRequest()
+        delete(issuerFetch)
+        
+        let daiFetch: NSFetchRequest<NSFetchRequestResult> = DisciplinaryActionItem.fetchRequest()
+        delete(daiFetch)
         
         save()
     }
@@ -429,6 +439,23 @@ class DataController: ObservableObject {
     // MARK: - Creating NEW objects
     /// createActivity() makes a new instance of a CeActivity object with certain default values
     /// put into place for the activity title, description, expiration date, and such...
+    func createTag() {
+        let newTag = Tag(context: container.viewContext)
+        newTag.tagID = UUID()
+        newTag.tagName = "New Tag"
+        
+        save()
+    }
+    
+    // Alternative createTag function for specifying the name
+    func createTagWithName(_ name: String) {
+        let newTag = Tag(context: container.viewContext)
+        newTag.tagID = UUID()
+        newTag.tagName = name
+        
+        save()
+    }
+    
     func createActivity() {
         // creating new object in memory
         let newActivity = CeActivity(context: container.viewContext)
