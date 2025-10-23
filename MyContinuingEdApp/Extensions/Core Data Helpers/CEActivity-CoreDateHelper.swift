@@ -128,21 +128,31 @@ extension CeActivity {
     var expirationStatus: ExpirationType {
         if let expiration = expirationDate {
             let monthOut: Double = 86400 * 30
-            
+
+            // When running a unit test on this computed property the test
+            // failed on the first run when trying to assign the final day
+            // value to an activity where the expiration date was set to
+            // Date.now.  Using the startOfDay method to set both the
+            // activity expiration date and current date to the same day at
+            // midnight so comparisons can be made between them.
+            let calendar = Calendar.current
+            let expirationDate = calendar.startOfDay(for: expiration)
+            let currentDate = calendar.startOfDay(for: Date.now)
+
             if activityCompleted {
                 return .finishedActivity
-            } else if expiration < Date.now {
+            } else if expirationDate < currentDate {
                 return .expired
-            } else if expiration == Date.now {
+            } else if expirationDate == currentDate {
                 return .finalDay
-            } else if expiration <= Date.now.addingTimeInterval(monthOut) {
+            } else if expirationDate <= calendar.startOfDay(for: Date.now.addingTimeInterval(monthOut)) {
                 return .expiringSoon
             } else {
                 return .stillValid
             }
-            
+
         } //: IF LET
-        
+
         // If there is NO expiration date for an activity, return either
         // that it has been completed or it is still valid
         if activityCompleted {
@@ -150,12 +160,15 @@ extension CeActivity {
         } else {
             return .stillValid
         }
-        
-    }
+
+    }//: expirationStatus
     
+    
+    /// Computed property that returns the result of the expirationStatus computed property back
+    /// as a String, using the enum's raw value.
     var expirationStatusString: String {
         return expirationStatus.rawValue
-    }
+    }//: expirationStatusString
     
 }
 
@@ -184,4 +197,3 @@ extension CeActivity {
         return result.sorted()
     }
 }
-

@@ -353,7 +353,6 @@
 				F2612A202E874D6500CC463D /* ActivityDescriptionSectionView.swift */,
 				F2612A222E874FB900CC463D /* ActivityHoursAndCostView.swift */,
 				F2612A1C2E87275000CC463D /* ActivityViewHeader.swift */,
-				F2892B032E5D20DB00DA392A /* Default CE Designations.json */,
 				3F2A42D22EA2E2F800B095CB /* CE Designation */,
 				F2FBAAE02E5FABE900348AAA /* Activity Formats.json */,
 				F2FBAADE2E5FAB8A00348AAA /* ActivityFormats.swift */,
@@ -495,6 +494,7 @@
 				F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */,
 				F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */,
 				F2892B052E5D2BC100DA392A /* CeDesignationJSON.swift */,
+				F2892B032E5D20DB00DA392A /* Default CE Designations.json */,
 			);
 			path = "CE Designation";
 			sourceTree = "<group>";
@@ -849,7 +849,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = theEmpire.MyContinuingEdAppTests;
@@ -876,7 +876,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = theEmpire.MyContinuingEdAppTests;
@@ -1024,7 +1024,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1055,7 +1055,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
