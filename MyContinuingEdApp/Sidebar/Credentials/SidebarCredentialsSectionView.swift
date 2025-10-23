@@ -15,12 +15,9 @@ import SwiftUI
 
 struct SidebarCredentialsSectionView: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var dataController: DataController
+    @StateObject private var viewModel: ViewModel
     
-    // Deleting renewal periods
-    @State private var showDeletingRenewalAlert: Bool = false
-    @State private var renewalToDelete: RenewalPeriod?
-    
+    // MARK: - CLOSURES
    // Closure for editing a renewal period
     var onEditRenewal: (Credential, RenewalPeriod) -> Void
     
@@ -30,50 +27,27 @@ struct SidebarCredentialsSectionView: View {
     // Closure for adding a new renewal period
     var onAddRenewal: (Credential) -> Void
     
-    // Credential for adding a new renewal period
-    @State private var credForRenewal: Credential?
-    
-    
-    // MARK: - COMPUTED PROPERTIES
-
-    // Converting all fetched renewal periods to Filter objects
-    var convertedRenewalFilters: [Filter] {
-        renewals.map { renewal in
-            Filter(
-                name: renewal.renewalPeriodName,
-                icon: "timer.square",
-                renewalPeriod: renewal,
-                credential: renewal.credential
-            )
-        }
-    }//: convertedRenewalFilters
-    
-    // MARK: - CORE DATA FETCHES
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
-    
-    // Retrieving all saved renewal periods
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.periodName)]) var renewals: FetchedResults<RenewalPeriod>
-    
+   
     // MARK: - BODY
     var body: some View {
             // IF NO credentials have yet been entered (or have been deleted)
-            if allCredentials.isEmpty {
+        if viewModel.allCredentials.isEmpty {
                 Section("Add License, Certification, or Other Credential") {
                     NoCredentialsView()
                 }//: SECTION
             } else {
                Group {
-                ForEach(allCredentials) { credential in
+                   ForEach(viewModel.allCredentials) { credential in
                     // Creating a section for each renewal period for the credential
                     Section {
-                        ForEach(convertedRenewalFilters.filter{$0.credential == credential}) { filter in
+                        ForEach(viewModel.convertedRenewalFilters.filter{$0.credential == credential}) { filter in
                             NavigationLink(value: filter) {
                                 Label(filter.name, systemImage: "calendar.badge.clock")
                                     .badge(filter.renewalActivitiesCount)
                                     .contextMenu {
-                                        // Edit Renewal Period
+                                        // MARK: Edit Renewal Period Button
                                         Button {
-                                            guard let renewal = filter.renewalPeriod, renewals.contains(renewal) else { return }
+                                            guard let renewal = filter.renewalPeriod, viewModel.renewals.contains(renewal) else { return }
                                             guard let selectedCred = renewal.credential else {return}
                                             // Print statements work OK as of 10/15/25
                                             print("Renewal being edited: \(renewal.renewalPeriodName)")
@@ -83,10 +57,10 @@ struct SidebarCredentialsSectionView: View {
                                             Label("Edit Renewal Period", systemImage: "pencil")
                                         }
                                         
-                                        // Delete Renewal Period
+                                        // MARK: Delete Renewal Period Button
                                         Button(role: .destructive) {
-                                            renewalToDelete = filter.renewalPeriod
-                                            if let deletingRenewal = renewalToDelete {
+                                            viewModel.renewalToDelete = filter.renewalPeriod
+                                            if let deletingRenewal = viewModel.renewalToDelete {
                                                 onRenewalDelete(deletingRenewal)
                                             }
                                         } label: {
@@ -101,6 +75,7 @@ struct SidebarCredentialsSectionView: View {
                         }//: LOOP
                     } header: {
                         SidebarCredentialSectionHeader(
+                            dataController: viewModel.dataController,
                             credential: credential,
                             addNewRenewal: { cred in
                                 onAddRenewal(cred)
@@ -113,13 +88,28 @@ struct SidebarCredentialsSectionView: View {
             
             // MARK: - ON APPEAR
             .onAppear {
-                renewalToDelete = nil
+                viewModel.renewalToDelete = nil
             }//: ON APPEAR
                 
         }//: IF - ELSE
         
     }//: BODY
-    // MARK: - FUNCTIONS
     
-    
+    // MARK: - INIT
+    init(
+        dataController: DataController,
+        onEditRenewal: @escaping (Credential, RenewalPeriod) -> Void,
+        onAddRenewal: @escaping (Credential) -> Void,
+        onRenewalDelete: @escaping (RenewalPeriod) -> Void
+    ) {
+        
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
+        
+        self.onEditRenewal = onEditRenewal
+        self.onAddRenewal = onAddRenewal
+        self.onRenewalDelete = onRenewalDelete
+        
+    }//: INIT
+
 }//: STRUCT

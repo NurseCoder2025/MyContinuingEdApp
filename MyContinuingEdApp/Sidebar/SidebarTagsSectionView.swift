@@ -8,35 +8,20 @@
 
 // Purpose: To encapsulate UI and behavior related to user-created tags in SidebarView
 
-import CoreData
 import SwiftUI
 
 struct SidebarTagsSectionView: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var dataController: DataController
+    @StateObject private var viewModel: ViewModel
     
     // Callback for renaming tag
     var onRenameTag: (Filter) -> Void
-    
-
-    // MARK: - COMPUTED PROPERTIES
-    
-    // Converting all fetched tags to Filter objects
-    var convertedTagFilters: [Filter] {
-        tags.map { tag in
-            Filter(name: tag.tagTagName, icon: "tag", tag: tag)
-        }
-    }//: convertedTagFilters
-    
-    // MARK: - CORE DATA FETCHES
-    // All tags sorted by name
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.tagName)]) var tags: FetchedResults<Tag>
     
     // MARK: - BODY
     var body: some View {
         Group {
             Section {
-                ForEach(convertedTagFilters) { filter in
+                ForEach(viewModel.convertedTagFilters) { filter in
                     NavigationLink(value: filter) {
                         Label(filter.name, systemImage: filter.icon)
                             .badge(filter.tagActivitiesCount)
@@ -50,7 +35,7 @@ struct SidebarTagsSectionView: View {
                                 
                                 // Deleting tag button
                                 Button(role: .destructive) {
-                                    deleteTag(filter)
+                                    viewModel.deleteTag(filter)
                                 } label: {
                                     Label("Delete tag", systemImage: "trash")
                                 }//: BUTTON
@@ -69,7 +54,7 @@ struct SidebarTagsSectionView: View {
                     
                     // New tag creation button
                     Button{
-                        dataController.createNewTag()
+                        viewModel.dataController.createNewTag()
                     } label: {
                         Label("New tag", systemImage:"plus")
                             .labelStyle(.iconOnly)
@@ -83,24 +68,15 @@ struct SidebarTagsSectionView: View {
         
     }//: BODY
     
-    // MARK: - FUNCTIONS
-    func delete(_ offsets: IndexSet) {
-        for offset in offsets {
-            let item = tags[offset]
-            dataController.delete(item)
-        }
-    } //: DELETE method
+   
     
-    /// This function is for deleting individual tag objects that the user created in SidebarView.  A single filter object with
-    /// a tag property is to be passed into the function, which in turn will delete the filter IF there is a tag property.
-    /// - Parameter filter: Filter object representing a user-created Tag that is to be deleted
-    func deleteTag(_ filter: Filter) {
-        guard let tag = filter.tag else {return}
-        dataController.delete(tag)
-        dataController.save()
-    }
-    
-    
+    // MARK: - INIT
+    init(dataController: DataController, onRenameTag: @escaping (Filter) -> Void) {
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
+        
+        self.onRenameTag = onRenameTag
+    }//:INIT
     
 }//: STRUCT
 

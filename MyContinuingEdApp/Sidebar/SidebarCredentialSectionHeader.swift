@@ -12,13 +12,7 @@ import SwiftUI
 
 struct SidebarCredentialSectionHeader: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var dataController: DataController
-    
-    @ObservedObject var credential: Credential
-    
-    // Property to hold the credential which the user wants to edit
-    @State private var selectedCredential: Credential?  // needed for DEBUG function
-    @State private var credentialToEdit: Credential?
+    @StateObject private var viewModel: ViewModel
         
     // Closure for adding a new renewal period
     var addNewRenewal: (Credential) -> Void
@@ -26,12 +20,12 @@ struct SidebarCredentialSectionHeader: View {
     // MARK: - BODY
     var body: some View {
         HStack {
-            Text("\(credential.credentialName) Renewals")
+            Text("\(viewModel.credential.credentialName) Renewals")
             Spacer()
             
             // MARK: Edit Credential button
             Button {
-                credentialToEdit = credential
+                viewModel.credentialToEdit = viewModel.credential
             } label: {
                 Label("Edit Credential", systemImage: "pencil")
                     .labelStyle(.iconOnly)
@@ -39,7 +33,7 @@ struct SidebarCredentialSectionHeader: View {
             
             // MARK: Add Renewal Period button
             Button {
-                addNewRenewal(credential)
+                addNewRenewal(viewModel.credential)
             }label: {
                 Label("Add Renewal Period", systemImage: "plus")
                     .labelStyle(.iconOnly)
@@ -48,7 +42,10 @@ struct SidebarCredentialSectionHeader: View {
             #if DEBUG
             // Debugging button
             Button {
-                diagnoseRenewalNotShowing(dataController: dataController, for: selectedCredential)
+                diagnoseRenewalNotShowing(
+                    dataController: viewModel.dataController,
+                    for: viewModel.selectedCredential
+                )
             } label: {
                 Label("Dx", systemImage: "sparkle.magnifyingglass")
                     .labelStyle(.iconOnly)
@@ -59,13 +56,22 @@ struct SidebarCredentialSectionHeader: View {
         // MARK: - SHEETS
         
         // Credential sheet for editing credential
-        .sheet(item: $credentialToEdit) { cred in
+        .sheet(item: $viewModel.credentialToEdit) { cred in
             CredentialSheet(credential: cred)
         }//: SHEET
         
        
         
     }//: BODY
+    
+    // MARK: - INIT
+    init(dataController: DataController, credential: Credential, addNewRenewal: @escaping (Credential) -> Void) {
+        let viewModel = ViewModel(dataController: dataController, credential: credential)
+        _viewModel = StateObject(wrappedValue: viewModel)
+        
+        self.addNewRenewal = addNewRenewal
+    }//: INIT
+    
 }//: STRUCT
 
 
