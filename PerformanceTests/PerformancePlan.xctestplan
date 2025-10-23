@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "24E6E3E2-0F81-4141-9873-12274F71E36A",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:MyContinuingEdApp.xcodeproj",
+        "identifier" : "3F44C8392EA9BDD500645B13",
+        "name" : "PerformanceTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -33,6 +33,9 @@
             reference = "container:MyContinuingEdAppTests/MyContinuingEdApp.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:PerformanceTests/PerformancePlan.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
@@ -43,6 +46,17 @@
                BlueprintIdentifier = "3F69189B2EA6C05C00435E02"
                BuildableName = "MyContinuingEdAppTests.xctest"
                BlueprintName = "MyContinuingEdAppTests"
+               ReferencedContainer = "container:MyContinuingEdApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3F44C8392EA9BDD500645B13"
+               BuildableName = "PerformanceTests.xctest"
+               BlueprintName = "PerformanceTests"
                ReferencedContainer = "container:MyContinuingEdApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
