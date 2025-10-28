@@ -11,22 +11,19 @@ import SwiftUI
 struct ContentView: View {
     // MARK: - Properties
     @StateObject private var viewModel: ViewModel
-   
-    let activityDeleteWarning: String = """
-    WARNING: You are about to delete a CE activity along with 
-    any reflections attached to it.  Are you sure you want to delete?  
-    This cannot be undone.
-    """
     
+    var deletionWarningMessage: String = ""
     
     // MARK: - BODY
     var body: some View {
             /// The List section displays the ActivityROW and not the ActivityView. The
             /// ActivityView struct is for showing the details of each activity.
         List(selection: $viewModel.dataController.selectedActivity) {
+            
                 // MARK: Header section
             ForEach(viewModel.sortedKeys, id: \.self) { key in
                     Section(header: Text(key)) {
+                        
                         // MARK: Ce Activity row under the key header
                         ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
                             ActivityRow(activity: activity)
@@ -38,6 +35,7 @@ struct ContentView: View {
                                     }//: BUTTON
                                 }//: SWIPE
                         } //: LOOP
+                        
                     }//: SECTION
                 }//: LOOP
             } //: LIST
@@ -49,6 +47,7 @@ struct ContentView: View {
                 prompt: "Filter CE activities, or type # to add tags") { tag in
                 Text(tag.tagTagName)
             }
+        // MARK: - ALERTS
                 .alert("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
                 Button("Delete", role: .destructive) {
                     if let activity = viewModel.activityToDelete {
@@ -61,7 +60,9 @@ struct ContentView: View {
                     viewModel.activityToDelete = nil
                 }
             } message: {
-                Text(activityDeleteWarning)
+                if let activity = viewModel.activityToDelete {
+                    Text("Warning! You are about to delete the activity '\(activity.ceTitle)'.  This will delete its certificate along with any reflections.  This action cannot be undone.")
+                }
             }
             // MARK: - TOOLBAR
             .toolbar {ContentViewToolbarView()} //: TOOLBAR
