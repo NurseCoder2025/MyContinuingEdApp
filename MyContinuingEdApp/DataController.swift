@@ -722,7 +722,7 @@ class DataController: ObservableObject {
     }
     
     
-    // MARK: - PREVIEW SAMPLE DATA
+    // MARK: - CREATE SAMPLE DATA
     
     // Creating sample data for testing and previewing
     func createSampleData() {
@@ -874,6 +874,7 @@ class DataController: ObservableObject {
         
     } //: createSampelData()
     
+    // MARK: - PREVIEW
     static var preview: DataController = {
         let controller = DataController(inMemory: true)
         controller.createSampleData()

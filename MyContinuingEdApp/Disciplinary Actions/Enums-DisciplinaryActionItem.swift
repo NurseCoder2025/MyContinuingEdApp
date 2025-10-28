@@ -22,6 +22,9 @@ enum DisciplineType: String, CaseIterable {
 /// The values for this enum are intended to be placed in the actionsTaken property for each
 ///  DisciplinaryActionItem entity object.  They will be added in a text box like the tags search field in
 ///  the CeActivity view.
+///
+///  Enum needs to conform to Codable because these values are used as a Transformable data
+///  type in CoreData, so they must be saved as JSON objects.
 enum DisciplineAction: String, CaseIterable, Codable {
     case fines = "fine(s)"
     case probation

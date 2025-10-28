@@ -24,10 +24,10 @@ struct DesignationBoxView: View {
                 VStack(alignment: .leading) {
                     Text(designation.ceDesignationAbbrev)
                         .font(.title2)
-                        .foregroundColor(.yellow)
+                        .foregroundStyle(.yellow)
                         .bold()
                     Text(designation.ceDesignationName)
-                        .foregroundColor(.gray)
+                        .foregroundStyle(.gray)
                         .italic()
                         .lineLimit(1)
                 }//: VSTACK

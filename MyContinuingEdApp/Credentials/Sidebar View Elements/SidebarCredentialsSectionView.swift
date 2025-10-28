@@ -49,9 +49,6 @@ struct SidebarCredentialsSectionView: View {
                                         Button {
                                             guard let renewal = filter.renewalPeriod, viewModel.renewals.contains(renewal) else { return }
                                             guard let selectedCred = renewal.credential else {return}
-                                            // Print statements work OK as of 10/15/25
-                                            print("Renewal being edited: \(renewal.renewalPeriodName)")
-                                            print("For credential: \(selectedCred.credentialName)")
                                             onEditRenewal(selectedCred, renewal)
                                         } label: {
                                             Label("Edit Renewal Period", systemImage: "pencil")

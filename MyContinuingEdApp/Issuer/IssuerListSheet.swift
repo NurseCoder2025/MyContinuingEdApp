@@ -5,7 +5,6 @@
 //  Created by Kamino on 9/4/25.
 //
 
-import CoreData
 import SwiftUI
 
 // This file creates a sheet containing a list of all entered credential issuers.  The user
@@ -17,50 +16,35 @@ struct IssuerListSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
     
-    @EnvironmentObject var dataController: DataController
+    @StateObject private var viewModel: ViewModel
     
-    // Passing in a credential object to allow the user to select from this view which issuer is
-    // assigned to the given credential
+    // Passing in a credential object to allow the user to select from
+    // this view which issuer is assigned to the given credential
     @ObservedObject var credential: Credential
     
-    // Property for storing a newly created Issuer
-    @State private var newIssuer: Issuer?
-    
-    // Property related to the selection of an issuer object
-    @State private var selectedIssuer: Issuer?
-    
-    // Property for adding a new issuer
-    @State private var showIssuerSheet: Bool = false
-    
-    // Properties for deleting an issuer
-    @State private var showDeletionWarning: Bool = false
-    
-    // MARK: - CORE DATA FETCH REQUESTS
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.issuerName)]) var allIssuers: FetchedResults<Issuer>
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
-            if allIssuers.isEmpty {
+            if viewModel.allIssuers.isEmpty {
                NoIssuersView()
             } else {
                 List {
-                    ForEach(allIssuers) { issuer in
+                    ForEach(viewModel.allIssuers) { issuer in
                         Button {
-                            selectedIssuer = issuer
-                            credential.issuer = issuer
+                            // Add action
+                            viewModel.tapSelectsAndAssignsIssuer(someIssuer: issuer, someCred: credential)
                         } label: {
                             IssuerRowView(
                                 issuer: issuer,
-                                isSelected: selectedIssuer == issuer
+                                isSelected: viewModel.selectedIssuer == issuer
                             )
                         }//: BUTTON
                             .swipeActions {
                                 
                                 // MARK: Edit Issuer
                                 Button {
-                                    selectedIssuer = issuer
-                                    showIssuerSheet = true
+                                    viewModel.editSelectedIssuer(issuer)
                                 } label: {
                                     Label("Edit Issuer", systemImage: "pencil")
                                         .labelStyle(.iconOnly)
@@ -68,8 +52,7 @@ struct IssuerListSheet: View {
                                 
                                 // MARK: Delete Issuer
                                 Button(role: .destructive) {
-                                    selectedIssuer = issuer
-                                    showDeletionWarning = true
+                                    viewModel.deleteIssuer(issuer)
                                 } label: {
                                     Label("Delete Issuer", systemImage: "trash.fill")
                                         .labelStyle(.iconOnly)
@@ -84,9 +67,7 @@ struct IssuerListSheet: View {
                     // MARK: Adding a new Issuer
                     ToolbarItem(placement: .confirmationAction) {
                         Button {
-                            selectedIssuer = nil
-                            newIssuer = dataController.createNewIssuer()
-                            showIssuerSheet = true
+                            viewModel.addNewIssuer()
                         } label: {
                             Label("Add Issuer", systemImage: "plus")
                         }
@@ -101,33 +82,30 @@ struct IssuerListSheet: View {
                 }//: TOOLBAR
                 
                 // MARK: - SHEETS
-                .sheet(isPresented: $showIssuerSheet) {
-                    if let createdIssuer = newIssuer {
-                        IssuerSheet(issuer: createdIssuer)
+                .sheet(isPresented: $viewModel.showIssuerSheet) {
+                    if let createdIssuer = viewModel.newIssuer {
+                        IssuerSheet(dataController: viewModel.dataController, issuer: createdIssuer)
                         // Delete object if user cancels/dismisses sheet before saving it
                             .onDisappear {
                                 if createdIssuer.issuerName == "New Issuer" {
-                                    dataController.delete(createdIssuer)
+                                    viewModel.dataController.delete(createdIssuer)
                                 }
                             }//: ON DISAPPEAR
                     } else {
-                        if let issuerToEdit = selectedIssuer {
-                            IssuerSheet(issuer: issuerToEdit)
+                        if let issuerToEdit = viewModel.selectedIssuer {
+                            IssuerSheet(dataController: viewModel.dataController, issuer: issuerToEdit)
                         }//: IF LET
                     }//: IF LET
                     
                 }//: SHEET
                 
                 // MARK: - ALERTS
-                .alert("Delete Issuer?", isPresented: $showDeletionWarning) {
+                .alert("Delete Issuer?", isPresented: $viewModel.showDeletionWarning) {
                     Button("DELETE", role: .destructive) {
-                        deleteIssuer()
-                        selectedIssuer = nil
-                        showDeletionWarning = false
+                        viewModel.confirmedDeleteIssuer()
                     }
                     Button("Cancel", role: .cancel) {
-                        selectedIssuer = nil
-                        showDeletionWarning = false
+                        viewModel.cancelIssuerDelete()
                     }
                 } message: {
                     Text("Deleting the selected issuer will delete all associated data with it, including any disciplinary actions recorded.  Are you sure you wish to delete it?")
@@ -136,18 +114,20 @@ struct IssuerListSheet: View {
             }//: IF - ELSE
         }//: NAV VIEW
     }
-    // MARK: - View METHODS
-    /// Deletes the swipped issuer object from the viewContext and, if saved, persistent
-    /// storage.
-    func deleteIssuer() {
-        if let unwantedIssuer = selectedIssuer {
-            dataController.delete(unwantedIssuer)
-        }
-        dataController.save()
-    } //: DELETE Function
-}
+    
+    
+    // MARK: - INIT
+    init(dataController: DataController, credential: Credential) {
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
+        
+        self.credential = credential
+        
+    }//: INIT
+    
+}//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    IssuerListSheet(credential: .example)
+    IssuerListSheet(dataController: .preview, credential: .example)
 }

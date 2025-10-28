@@ -10,64 +10,18 @@
 
 import CoreData
 import SwiftUI
+import UIKit
 
 struct CredentialSubCatListSheet: View {
     //: MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
     
-    // Property for storing a selected Credential from the list
-    @State private var selectedCredential: Credential?
-    
-    // Property for storing a Credential to edit
-    @State private var credentialToEdit: Credential?
-    
-    // Alert properties for deleting a credential object
-    @State private var showDeleteAlert: Bool = false
-    
-    // Property for adding a new Credential object
-    @State private var showCredentialSheet: Bool = false
-
-    // The singular, lowercased, string value from the CredentialType enum is passed in here
-    let credentialType: String
-    
-    //: MARK: - COMPUTED PROPERTIES
-    
-    /// Computed property that returns an array of all Credential objects that match
-    /// the passed-in credentialType string.  Sorted by name.
-    var credentialsOfType: [Credential] {
-        let fetchRequest: NSFetchRequest<Credential> = Credential.fetchRequest()
-        
-        // IF a specific type of credential is being requested, filter by that type
-        if credentialType != "all" {
-            fetchRequest.predicate = NSPredicate(format: "credentialType == %@", credentialType)
-        }
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        
-        let context = dataController.container.viewContext
-        let creds = (try? context.fetch(fetchRequest)) ?? []
-        
-        return creds
-    }
-    
-    
-    /// Computed property which returns a dictionary of credentials grouped by the first letter of their name
-    var alphabeticalCredentialGroupings: [String: [Credential]] {
-        Dictionary(grouping: credentialsOfType) { cred in
-            String(cred.credentialName.prefix(1).uppercased())
-        }
-    }
-    
-    /// Creates an array of all first letters of the credential names for section headers
-    var sortedSectionKeys: [String] {
-        alphabeticalCredentialGroupings.keys.sorted()
-    }
-    
+    @StateObject private var viewModel: ViewModel
     
     //: MARK: - BODY
     var body: some View {
-            if credentialsOfType.isEmpty {
-                NoCredSubTypeView(credentialType: credentialType)
+        if viewModel.credentialsOfType.isEmpty {
+            NoCredSubTypeView(credentialType: viewModel.credentialType)
             } else {
                 VStack {
                     // MARK: - TOP BAR
@@ -82,7 +36,7 @@ struct CredentialSubCatListSheet: View {
                         Spacer()
                         
                         Button {
-                            showCredentialSheet = true
+                            viewModel.showCredentialSheet = true
                         } label: {
                             Label("Add Credential", systemImage: "plus")
                                 .labelStyle(.iconOnly)
@@ -95,7 +49,7 @@ struct CredentialSubCatListSheet: View {
                     Spacer()
                     // MARK: - Heading
                     HStack {
-                        Text(credentialType == "all" ? "All Credentials" : "\(credentialType.capitalized)s")
+                        Text(viewModel.credentialType == "all" ? "All Credentials" : "\(viewModel.credentialType.capitalized)s")
                             .font(.title)
                             .bold()
                             .padding(.leading, 20)
@@ -104,13 +58,13 @@ struct CredentialSubCatListSheet: View {
                     
                     // MARK: - LIST
                     List {
-                        ForEach(sortedSectionKeys, id: \.self) { key in
+                        ForEach(viewModel.sortedSectionKeys, id: \.self) { key in
                             Section(header: Text(key)) {
                                 
                                 // Rows for each credential in that letter section
-                                ForEach(alphabeticalCredentialGroupings[key] ?? []) { cred in
+                                ForEach(viewModel.alphabeticalCredentialGroupings[key] ?? []) { cred in
                                     Button {
-                                        credentialToEdit = cred
+                                        viewModel.credentialToEdit = cred
                                     } label: {
                                         HStack {
                                             Text(cred.credentialName)
@@ -121,8 +75,11 @@ struct CredentialSubCatListSheet: View {
                                     //: MARK: - SWIPE ACTIONS
                                     .swipeActions {
                                         Button(role: .destructive) {
-                                            selectedCredential = cred
-                                            showDeleteAlert = true
+                                            viewModel.selectedCredential = cred
+                                            viewModel.showDeleteAlert = true
+                                            if viewModel.showDeleteAlert {
+                                                UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                                            }
                                         } label: {
                                             Label("Delete", systemImage: "trash")
                                         }
@@ -137,12 +94,12 @@ struct CredentialSubCatListSheet: View {
                     }//: LIST
                 }//: VSTACK
                 //: MARK: - ALERTS
-                .alert("Delete Credential?", isPresented: $showDeleteAlert, presenting: selectedCredential) { cred in
+                .alert("Delete Credential?", isPresented: $viewModel.showDeleteAlert, presenting: viewModel.selectedCredential) { cred in
                     Button("Delete", role: .destructive) {
-                        deleteCredential(cred)
+                        viewModel.deleteCredential(cred)
                     }
                     Button("Cancel", role: .cancel) {
-                        selectedCredential = nil
+                        viewModel.selectedCredential = nil
                     }
                 } message: { cred in
                     Text("""
@@ -153,26 +110,24 @@ struct CredentialSubCatListSheet: View {
                     """)
                 }
                 //: MARK: - SHEETS
-                .sheet(isPresented: $showCredentialSheet) {
-                    let newCred = dataController.createNewCredential()
+                .sheet(isPresented: $viewModel.showCredentialSheet) {
+                    let newCred = viewModel.dataController.createNewCredential()
                     CredentialSheet(credential: newCred)
                 }// : SHEET
                 
-                .sheet(item: $credentialToEdit) { cred in
+                .sheet(item: $viewModel.credentialToEdit) { cred in
                     CredentialSheet(credential: cred)
                 }//: SHEET
                 
             }//: IF-ELSE
         
     }//: BODY
-    
-    //: MARK: - FUNCTIONS
-    func deleteCredential(_ credential: Credential) {
-        let context = dataController.container.viewContext
-        context.delete(credential)
-        try? context.save()
-        selectedCredential = nil
-    }
+
+   // MARK: - INIT
+    init(dataController: DataController, type: String) {
+        let viewModel = ViewModel(dataController: dataController, credType: type)
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }//: INIT
     
     
 }//: STRUCT
@@ -180,15 +135,5 @@ struct CredentialSubCatListSheet: View {
 
 //: MARK: - PREVIEW
 #Preview {
-    let controller = DataController(inMemory: true)
-    let context = controller.container.viewContext
-
-    // Adding sample data for preview
-    let sampleCred1 = controller.createNewCredential()
-    sampleCred1.credentialName = "Sample License A"
-    sampleCred1.credentialType = "license"
-    try? context.save()
-
-    return CredentialSubCatListSheet(credentialType: "license")
-        .environmentObject(controller)
+    CredentialSubCatListSheet(dataController: .preview, type: "license")
 }

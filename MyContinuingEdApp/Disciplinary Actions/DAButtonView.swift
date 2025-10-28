@@ -31,7 +31,7 @@ struct DAButtonView: View {
                     }
                 }//: HSTACK
             }//: BUTTON
-            .foregroundColor(.primary)
+            .foregroundStyle(.primary)
             .padding(.leading, 10)
         }//: ZSTACK
     }

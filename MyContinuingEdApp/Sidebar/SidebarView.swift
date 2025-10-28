@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // The primary (initial) view when first launching the app. Provides different ways of filtering
 // CE activities that have been entered: via 2 "smart" filters, user-created tags, and by
@@ -48,7 +49,10 @@ struct SidebarView: View {
                     onRenewalDelete: { renewal in
                         viewModel.renewalToDelete = renewal
                         viewModel.showDeleteRenewalWarning = true
-                    }
+                        if viewModel.showDeleteRenewalWarning {
+                            UINotificationFeedbackGenerator().notificationOccurred(.warning)
+                        }
+                    }//: OnRENEWAL
                     
                 )
             } //: LIST

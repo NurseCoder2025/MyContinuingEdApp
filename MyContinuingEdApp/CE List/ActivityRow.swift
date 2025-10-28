@@ -30,7 +30,7 @@ struct ActivityRow: View {
                     if activity.activityCompleted == true {
                         Image(systemName: "checkmark.seal.fill")
                             .imageScale(.large)
-                            .foregroundColor(Color.green)
+                            .foregroundStyle(Color.green)
                             .accessibilityLabel("Activity completed")
                     }
                     if expiration == .expiringSoon {
@@ -82,7 +82,7 @@ struct ActivityRow: View {
                 if activity.activityCompleted {
                     Text("Completed")
                         .font(.body.smallCaps())
-                        .foregroundColor(Color.green)
+                        .foregroundStyle(Color.green)
                     
                     if let completionDate = activity.dateCompleted {
                         Text("on \(completionDate.formatted(date: .numeric, time: .omitted))")

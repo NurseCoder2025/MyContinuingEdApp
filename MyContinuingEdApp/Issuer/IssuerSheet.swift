@@ -5,7 +5,6 @@
 //  Created by Kamino on 8/29/25.
 //
 
-import CoreData
 import SwiftUI
 
 // This file is for the purpose of creating a sheet where they user can add or edit
@@ -19,7 +18,8 @@ import SwiftUI
 struct IssuerSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
+   
+    @StateObject private var viewModel: ViewModel
     
     @ObservedObject var issuer: Issuer
     
@@ -32,10 +32,6 @@ struct IssuerSheet: View {
     // Property for showing the Country List
     @State private var showCountryListSheet: Bool = false
     
-    // MARK: - CORE DATA Fetch Requests
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.sortOrder), SortDescriptor(\.name)]) var allCountries: FetchedResults<Country>
-    
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.stateName)]) var allStates: FetchedResults<USState>
                                      
     // MARK: - BODY
     var body: some View {
@@ -48,7 +44,7 @@ struct IssuerSheet: View {
                         
                         // MARK: Country Selection
                         Picker("Country", selection: $issuer.country) {
-                            ForEach(allCountries) { country in
+                            ForEach(viewModel.allCountries) { country in
                                 Text(country.countryName).tag(country)
                             }// LOOP
                         }//: PICKER (Country)
@@ -64,7 +60,7 @@ struct IssuerSheet: View {
                         // MARK: State Selection (US ONLY)
                         if let selectedCountry = issuer.country, selectedCountry.alpha3 == "USA" {
                             Picker("State:", selection: $issuer.state) {
-                                ForEach(allStates) { state in
+                                ForEach(viewModel.allStates) { state in
                                     StatePickerRowView(state: state).tag(state)
                                         .accessibilityElement()
                                         .accessibilityLabel("\(state.USStateName)")
@@ -90,7 +86,7 @@ struct IssuerSheet: View {
                     Spacer()
                     Button {
                         issuer.issuerName = issuerNameText
-                        dataController.save()
+                        viewModel.dataController.save()
                         dismiss()
                     } label: {
                         Label("Save", systemImage: "internaldrive.fill")
@@ -115,7 +111,7 @@ struct IssuerSheet: View {
                 // Ensure that all data has been saved so that the issuer list view will display
                 // all values properly
                 issuer.issuerName = issuerNameText
-                dataController.save()
+                viewModel.dataController.save()
             }//: ON DISAPPEAR
             // MARK: - ON APPEAR
             .onAppear {
@@ -123,16 +119,21 @@ struct IssuerSheet: View {
             }//: ON APPEAR
             // MARK: - AUTO SAVING FUNCTIONS
             .onReceive(issuer.objectWillChange) { _ in
-                dataController.queueSave()
+                viewModel.dataController.queueSave()
             }//: ON RECEIVE
             
-            .onSubmit {dataController.save()}
+            .onSubmit {viewModel.dataController.save()}
             
         }//: NAV VIEW
     }//: BODY
     
-    // MARK: - FUNCTIONS
-
+    // MARK: - INIT
+    init(dataController: DataController, issuer: Issuer) {
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
+        
+        self.issuer = issuer
+    }//: INIT
     
     
 }//: ISSUER SHEET STRUCT
@@ -140,8 +141,5 @@ struct IssuerSheet: View {
 
 // MARK: - PREVIEW
 #Preview {
-    let controller = DataController(inMemory: true)
-    IssuerSheet(issuer: .example)
-        .environmentObject(controller)
-        .environment(\.managedObjectContext, controller.container.viewContext)
+   
 }

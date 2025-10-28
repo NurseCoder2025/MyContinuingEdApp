@@ -15,19 +15,8 @@ import SwiftUI
 struct CredentialManagementSheet: View {
     //: MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
     
-    // Property to pull up the CredentialSheet for adding a new credential
-    @State private var showAddCredentialSheet: Bool = false
-    
-    // Property to store a newly created Credential object
-    @State private var newCredential: Credential?
-    
-    // Property to show the CredentialSubCatListSheet as a pop-up
-    @State private var showCredSubCatListSheet: Bool = false
-    
-    // Property to hold the selected credential subcategory
-    @State private var selectedCat: CredentialCatWrapper? = nil
+    @StateObject private var viewModel: ViewModel
     
     //: MARK: - COMPUTED PROPERTIES
     // Computed property returning array of Grid items for the credential
@@ -37,16 +26,7 @@ struct CredentialManagementSheet: View {
          GridItem(.fixed(150))
         ]
     }
-    
-    
-    /// Returning any encumbered credentials as determined by the getEncumberedCredentials() method
-    /// in the Data Controller class.  Will be used to determine whether to show a navigation link to the
-    /// EncumberedCredentialListSheet or not.
-    var encumberedCreds: [Credential] {
-        dataController.getEncumberedCredentials()
-    }
         
-    
     //: MARK: - BODY
     var body: some View {
         NavigationView {
@@ -56,21 +36,20 @@ struct CredentialManagementSheet: View {
                     // MARK: Credential Category Grid View
                     LazyVGrid(columns: columns, alignment: .center, spacing: 10) {
                         // See the Enums-General file for the enum definition (CredentialType)
-                        // Need to show the "All" category for this grid, so using allCases
                         ForEach(CredentialType.addableTypes, id: \.self) { type in
                             Button {
-                                selectedCat = CredentialCatWrapper(
+                                viewModel.selectedCat = CredentialCatWrapper(
                                     value: type.rawValue
                                 )
                             } label: {
                                 CredentialCatBoxView(
                                     icon: type.typeIcon,
                                     text: type.displayPluralName,
-                                    badgeCount: getCatBadgeCount(category: type.rawValue)
+                                    badgeCount: viewModel.getCatBadgeCount(category: type.rawValue)
                                 )
                                 .accessibilityElement()
                                 .accessibilityLabel("\(type.displayPluralName)")
-                                .accessibilityHint("^[\(getCatBadgeCount(category: type.rawValue)) \(type.rawValue)] (inflect: true)")
+                                .accessibilityHint("^[\(viewModel.getCatBadgeCount(category: type.rawValue)) \(type.rawValue)] (inflect: true)")
                             }//: BUTTON
                         }//: LOOP
                     }//: GRID
@@ -81,12 +60,12 @@ struct CredentialManagementSheet: View {
                 // MARK: Encumberance status view
                 // Navigation link to EncumberedCredentialListSheet IF there are
                 // encumbered credentials
-                if encumberedCreds.isNotEmpty {
+                if viewModel.encumberedCreds.isNotEmpty {
                     NavigationLink {
                         EncumberedCredentialListSheet()
                     } label: {
                         // TODO: Enhance this view to make it more prominent
-                        Text("Encumbered Credentials (\(encumberedCreds.count))")
+                        Text("Encumbered Credentials (\(viewModel.encumberedCreds.count))")
                             .foregroundStyle(.red)
                     }
                 }//: IF
@@ -102,8 +81,8 @@ struct CredentialManagementSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        newCredential = dataController.createNewCredential()
-                        showAddCredentialSheet = true
+                        viewModel.newCredential = viewModel.dataController.createNewCredential()
+                        viewModel.showAddCredentialSheet = true
                     } label: {
                         Label("Add Credential", systemImage: "plus")
                     }
@@ -120,12 +99,12 @@ struct CredentialManagementSheet: View {
             }//: TOOLBAR
             //: MARK: - SHEETS
             // For adding a new Credential
-            .sheet(isPresented: $showAddCredentialSheet) {
-                if let cred = newCredential {
+            .sheet(isPresented: $viewModel.showAddCredentialSheet) {
+                if let cred = viewModel.newCredential {
                     CredentialSheet(credential: cred)
                         .onDisappear {
                             if cred.name == "New Credential" {
-                                dataController.delete(cred)
+                                viewModel.dataController.delete(cred)
                             }//: IF
                             
                         }//: ON DISAPPEAR
@@ -134,32 +113,27 @@ struct CredentialManagementSheet: View {
             }//: SHEET
             
             // For showing the list of credentials of the selected type
-            .sheet(item: $selectedCat) { cat in
-                CredentialSubCatListSheet(credentialType: cat.value)
+            .sheet(item: $viewModel.selectedCat) { cat in
+                CredentialSubCatListSheet(dataController: viewModel.dataController, type: cat.value)
             }//: SHEET
             
         }//: NAV VIEW
     } //: BODY
     
     //: MARK: - FUNCTIONS
-    /// Function takes in a String which represents one of the CategoryType enum raw values (see Enums-General file for details)
-    /// and calls the data controller's getNumberOfCredTypes method on that string to return an integer value from the fetch request
-    /// that the method uses.
-    /// - Parameter category: String value representing one of the CategoryType raw values
-    /// - Returns: Number of Credential objects with that matching category value
-    func getCatBadgeCount(category: String) -> Int {
-        let count = dataController.getNumberOfCredTypes(type: category)
-        return count
-    }
-    
+   
+    // MARK: - INIT
+    init(dataController: DataController) {
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }//: INIT
     
 }//: STRUCT
 
 
 //: MARK: - PREVIEW
 #Preview {
-    CredentialManagementSheet()
-        .environmentObject(DataController(inMemory: true))
+    CredentialManagementSheet(dataController: .preview)
 }
 
 

@@ -33,7 +33,7 @@ struct CeDesignationSelectionSheet: View {
             VStack {
                 Text("A variety of designations have been pre-loaded to cover the more common professions, but you can add your own as needed.")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                     .padding()
                 // Designation List
                 List {

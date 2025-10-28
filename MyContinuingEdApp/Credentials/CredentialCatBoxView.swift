@@ -36,7 +36,7 @@ struct CredentialCatBoxView: View {
                                         .fill(Color.blue)
                                         .frame(width: 24, height: 24)
                                     Text("\(badgeCount)")
-                                        .foregroundColor(.white)
+                                        .foregroundStyle(.white)
                                         .font(.caption)
                                         .bold()
                                 }

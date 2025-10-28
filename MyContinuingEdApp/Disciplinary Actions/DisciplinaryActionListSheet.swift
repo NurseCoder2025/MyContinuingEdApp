@@ -17,49 +17,24 @@ import SwiftUI
 struct DisciplinaryActionListSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
+    
+    @StateObject private var viewModel: ViewModel
     
     // Passing in a credential object for which all associated disciplinary actions will be assigned to
     @ObservedObject var credential: Credential
-    
-    // For adding a new DAI (Disciplinary Action Item)
-    @State private var addNewDAI: Bool = false
-    @State private var newDAI: DisciplinaryActionItem?
-    
-    // For editing an existing DAI
-    @State private var daiTOEdit: DisciplinaryActionItem?
-    
-    // For deleting an existing DAI
-    @State private var daiToDelete: DisciplinaryActionItem?
-    
-    // Showing the deletion alert
-    @State private var showDeletionWarning: Bool = false
-    
-    // MARK: - COMPUTED PROPERTIES
-    /// The allDAIs computed property returns an array of DisciplinaryActionItems that are associated with whichever credential was passed into the view.  If none
-    /// are related, then an empty array will be returned.
-    var allDAIs: [DisciplinaryActionItem] {
-        let context = dataController.container.viewContext
-        let request: NSFetchRequest<DisciplinaryActionItem> = DisciplinaryActionItem.fetchRequest()
-        request.predicate = NSPredicate(format: "credential == %@", credential)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \DisciplinaryActionItem.actionStartDate, ascending: true)]
-        
-        let fetchedDAIs: [DisciplinaryActionItem] = (try? context.fetch(request)) ?? []
-        return fetchedDAIs
-    }
     
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
-            if allDAIs.isEmpty {
+            if viewModel.allDAIs.isEmpty {
                 NoDAIsView(credential: credential, onAddDAI: {
-                    newDAI = dataController.createNewDAI(for: credential)
-                    addNewDAI = true
+                    viewModel.newDAI = viewModel.dataController.createNewDAI(for: credential)
+                    viewModel.addNewDAI = true
                 })
             } else {
                 List {
-                    ForEach(allDAIs) {dai in
+                    ForEach(viewModel.allDAIs) {dai in
                         Group {
                             VStack {
                                 HStack {
@@ -74,14 +49,13 @@ struct DisciplinaryActionListSheet: View {
                         .swipeActions {
                             // Edit
                             Button {
-                                daiTOEdit = dai
+                                viewModel.editExistingDAI(someDAI: dai)
                             } label: {
                                 Label("Edit", systemImage: "pencil")
                             }
                             // Delete
                             Button(role: .destructive) {
-                                daiToDelete = dai
-                                showDeletionWarning = true
+                                viewModel.deleteDAI(someDAI: dai)
                             } label: {
                                 Label("Delete", systemImage: "trash.fill")
                             }
@@ -93,8 +67,7 @@ struct DisciplinaryActionListSheet: View {
                 .toolbar {
                     // Add new DAI
                     Button {
-                        newDAI = dataController.createNewDAI(for: credential)
-                        addNewDAI = true
+                        viewModel.addNewDAIObject()
                     } label: {
                         Label("Add Disciplinary Action", systemImage: "plus")
                     }
@@ -102,20 +75,20 @@ struct DisciplinaryActionListSheet: View {
                 }//: TOOLBAR
                 // MARK: - SHEETS
                 // For adding a new DAI item
-                .sheet(isPresented: $addNewDAI) {
-                    if let createdDAI = newDAI {
+                .sheet(isPresented: $viewModel.addNewDAI) {
+                    if let createdDAI = viewModel.newDAI {
                         DisciplinaryActionItemSheet(disciplinaryAction: createdDAI)
                     }
                 }//: SHEET
                 // For editing a DAI item
-                .sheet(item: $daiTOEdit) {_ in
-                    if let selectedDAI = daiTOEdit {
+                .sheet(item: $viewModel.daiTOEdit) {_ in
+                    if let selectedDAI = viewModel.daiTOEdit {
                         DisciplinaryActionItemSheet(disciplinaryAction: selectedDAI)
                     }//: IF LET
                 }//: SHEET
                 // MARK: - ALERTS
-                .alert("Delete Disciplinary Action", isPresented: $showDeletionWarning) {
-                    Button("Delete", role: .destructive, action: {deleteDAI()})
+                .alert("Delete Disciplinary Action", isPresented: $viewModel.showDeletionWarning) {
+                    Button("Delete", role: .destructive, action: {viewModel.confirmedDeleteDAI()})
                     Button("Cancel", role: .cancel) {}
                 } message: {
                     Text("Are you sure you want to delete this disciplinary action?  Once deleted it cannot be undone.")
@@ -124,20 +97,16 @@ struct DisciplinaryActionListSheet: View {
         }//: NAV VIEW
     }
     
-    // MARK: - FUNCTIONS
-    func deleteDAI() {
-        if let selectedDAI = daiToDelete {
-            dataController.delete(selectedDAI)
-        }
+    // MARK: - INIT
+    init(dataController: DataController, credential: Credential) {
+        self.credential = credential
         
-        dataController.save()
-    }
+        let viewModel = ViewModel(dataController: dataController, credential: credential)
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }//: INIT
 }
 
 // MARK: - PREVIEW
 #Preview {
-    let controller = DataController(inMemory: true)
-    DisciplinaryActionListSheet(credential: .example)
-        .environmentObject(controller)
-        .environment(\.managedObjectContext, controller.container.viewContext)
+    DisciplinaryActionListSheet(dataController: .preview, credential: .example)
 }

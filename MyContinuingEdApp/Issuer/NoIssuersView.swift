@@ -63,7 +63,7 @@ struct NoIssuersView: View {
             // MARK: - SHEETS
             .sheet(isPresented: $showIssuerSheet) {
                 let newIssuer = dataController.createNewIssuer()
-                IssuerSheet(issuer: newIssuer)
+                IssuerSheet(dataController: dataController, issuer: newIssuer)
             }
         } //: IF AVAILABLE
     }

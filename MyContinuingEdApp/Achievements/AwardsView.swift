@@ -41,7 +41,7 @@ struct AwardsView: View {
                                 .scaledToFit()
                                 .padding()
                                 .frame(width: 100, height: 100)
-                                .foregroundColor(getAwardColor(award: award))
+                                .foregroundStyle(getAwardColor(award: award))
                         }
                         .accessibilityLabel(createAwardLabel(award: award))
                         .accessibilityHint(award.description)

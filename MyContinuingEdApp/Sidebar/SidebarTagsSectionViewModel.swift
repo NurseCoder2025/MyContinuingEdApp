@@ -65,7 +65,7 @@ extension SidebarTagsSectionView {
             // it is necessary to utilize the NSFetchedResultsController and delegate for fetching
             // tags and updating the fetch as objects change.
             let tagRequest = Tag.fetchRequest()
-            tagRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Tag.tagTagName, ascending: true)]
+            tagRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Tag.tagName, ascending: true)]
             
             tagsController = NSFetchedResultsController(
                 fetchRequest: tagRequest,

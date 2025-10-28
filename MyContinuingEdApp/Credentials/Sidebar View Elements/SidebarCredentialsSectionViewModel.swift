@@ -54,6 +54,7 @@ extension SidebarCredentialsSectionView {
         }//: controllerDidChangeContent
         
         
+        
         // MARK: - INIT
         init(dataController: DataController) {
             self.dataController = dataController

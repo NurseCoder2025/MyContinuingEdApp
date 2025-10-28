@@ -11,7 +11,7 @@ import SwiftUI
 // Purpose: To serve as the holding screen for various UI controls whereby
 // the user adds or edits credential objects
 
-// 10/13/25 update: changed credential property from optional to @ObservedObject non-optional in order
+// 10/13/25 update: changed credential property from optional let property to @ObservedObject non-optional in order
 // to help address major bug with Issuer country and state selection properties not being saved upon change.
 
 struct CredentialSheet: View {
@@ -67,7 +67,10 @@ struct CredentialSheet: View {
                 Section("Disciplinary Actions") {
                     List {
                         NavigationLink {
-                            DisciplinaryActionListSheet(credential: credential)
+                            DisciplinaryActionListSheet(
+                                dataController: dataController,
+                                credential: credential
+                            )
                         } label: {
                             HStack {
                                 Text("Disciplinary Actions:")

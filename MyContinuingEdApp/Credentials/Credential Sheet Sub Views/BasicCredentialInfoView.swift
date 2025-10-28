@@ -15,14 +15,11 @@ import SwiftUI
 
 struct BasicCredentialInfoView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @ObservedObject var credential: Credential
         
     // Property for bringing up the Issuer List sheet
     @State private var showIssuerListSheet: Bool = false
-    
-    
-    // MARK: - CORE DATA FETCHES
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.issuerName)]) var allIssuers: FetchedResults<Issuer>
     
     
     // MARK: - BODY
@@ -68,7 +65,7 @@ struct BasicCredentialInfoView: View {
         // MARK: - SHEET
         // Issuer Sheet
         .sheet(isPresented: $showIssuerListSheet) {
-            IssuerListSheet(credential: credential)
+            IssuerListSheet(dataController: dataController, credential: credential)
         }//: SHEET
     }
 }

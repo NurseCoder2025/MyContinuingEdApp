@@ -41,7 +41,7 @@ struct SidebarViewTopToolbar: View {
             )
         }//: BUTTON
         .sheet(isPresented: $showCredentialManagementSheet) {
-            CredentialManagementSheet()
+            CredentialManagementSheet(dataController: dataController)
         }//: SHEET
         
     #if DEBUG
