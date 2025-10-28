@@ -29,7 +29,9 @@ struct Activity_CredentialSelectionSheet: View {
     var body: some View {
         NavigationView {
             if allCredentials.isEmpty {
-                NoCredentialsView()
+                NoCredentialsButtonView {
+                    
+                }
             } else {
                 List(allCredentials, selection: $selectedCredentials) { credential in
                     Button {

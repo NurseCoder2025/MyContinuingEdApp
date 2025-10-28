@@ -52,9 +52,13 @@ struct SidebarView: View {
                         if viewModel.showDeleteRenewalWarning {
                             UINotificationFeedbackGenerator().notificationOccurred(.warning)
                         }
-                    }//: OnRENEWAL
+                    },
+                    addInitialCredential: {
+                       let newCred = viewModel.dataController.createNewCredential()
+                        viewModel.newlyCreatedCredential = newCred
+                    }
                     
-                )
+                )//: SidebarCredentialsSectionView
             } //: LIST
             .navigationTitle("CE Filters")
             // MARK: - Toolbar
@@ -80,6 +84,12 @@ struct SidebarView: View {
         // MARK: - SHEETS
         .sheet(item: $viewModel.renewalSheetData) { data in
             RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+        }//: SHEET
+        
+        .sheet(item: $viewModel.newlyCreatedCredential) { _ in
+            if let addedCred = viewModel.newlyCreatedCredential {
+                CredentialSheet(credential: addedCred)
+            }
         }//: SHEET
         
     } //: BODY

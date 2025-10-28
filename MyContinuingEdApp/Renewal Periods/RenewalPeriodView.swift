@@ -37,12 +37,7 @@ struct RenewalPeriodView: View {
                 RenewalPeriodSheetTitleView(renewalPeriod: renewalPeriod)
                 
                 // MARK: - Credential Selection
-                // Becuase renewal periods are dependent upon having a credential object,
-                // if no credentials exist yet prompt the user to create one first.
-                if allCredentials.isEmpty {
-                    NoCredentialsView()
-                } else {
-                    VStack{
+                VStack{
                         RenewalTopEditingView(
                             credential: renewalCredential,
                             reinstatingYN: $reinstatingYN,
@@ -66,7 +61,6 @@ struct RenewalPeriodView: View {
                         .buttonStyle(.borderedProminent)
                         
                     } //: VSTACK
-                }//: IF-ELSE
                     
             } //: SCROLLVIEW
             

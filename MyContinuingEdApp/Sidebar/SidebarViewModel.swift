@@ -15,6 +15,9 @@ extension SidebarView {
         // MARK: - PROPERTIES
         var dataController: DataController
         
+        // Holder property for creating a new Credential
+        @Published var newlyCreatedCredential: Credential?
+        
         // Properties for renaming tags
         @Published var showRenamingAlert: Bool = false
         @Published var newTagName: String = ""

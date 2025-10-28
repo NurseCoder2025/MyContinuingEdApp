@@ -124,7 +124,7 @@
 		F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */; };
 		F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */; };
 		F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CE98412E7C99C100B6A627 /* CredentialSelectionPopOver.swift */; };
-		F2CFCE622E70D41D00443C5C /* NoCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */; };
+		F2CFCE622E70D41D00443C5C /* NoCredentialsButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CFCE612E70D41D00443C5C /* NoCredentialsButtonView.swift */; };
 		F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CFCE632E7119DA00443C5C /* CredentialListSheet.swift */; };
 		F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */; };
 		F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */; };
@@ -183,7 +183,7 @@
 		3FFE836A2EA06A6400C7E815 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
-		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Credentials/Sidebar View Elements/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
+		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
 		F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Inactive Reasons.json"; sourceTree = "<group>"; };
 		F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InactiveReasons-Defaults.swift"; sourceTree = "<group>"; };
 		F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Issuer-CoreDataHelper.swift"; sourceTree = "<group>"; };
@@ -277,7 +277,7 @@
 		F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CEActivity-CoreDateHelper.swift"; sourceTree = "<group>"; };
 		F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Tag-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		F2CE98412E7C99C100B6A627 /* CredentialSelectionPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CredentialSelectionPopOver.swift; path = MyContinuingEdApp/Credentials/CredentialSelectionPopOver.swift; sourceTree = SOURCE_ROOT; };
-		F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCredentialsView.swift; sourceTree = "<group>"; };
+		F2CFCE612E70D41D00443C5C /* NoCredentialsButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCredentialsButtonView.swift; sourceTree = "<group>"; };
 		F2CFCE632E7119DA00443C5C /* CredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CredentialListSheet.swift; path = MyContinuingEdApp/Credentials/CredentialListSheet.swift; sourceTree = SOURCE_ROOT; };
 		F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoActivityView.swift; sourceTree = "<group>"; };
 		F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
@@ -341,7 +341,7 @@
 			path = "Credential Sheet Sub Views";
 			sourceTree = "<group>";
 		};
-		3F2064592EB0363D0036C4B1 /* Sidebar View Elements */ = {
+		3F2064592EB0363D0036C4B1 /* Credential Section */ = {
 			isa = PBXGroup;
 			children = (
 				3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */,
@@ -349,7 +349,7 @@
 				3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */,
 				3F09F7642EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift */,
 			);
-			path = "Sidebar View Elements";
+			path = "Credential Section";
 			sourceTree = "<group>";
 		};
 		3F2A42C32EA2C72B00B095CB /* Extensions */ = {
@@ -385,14 +385,13 @@
 		3F2A42C62EA2C74400B095CB /* Sidebar */ = {
 			isa = PBXGroup;
 			children = (
+				3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */,
 				F2B521C12E1F5E63000AB6E6 /* SidebarView.swift */,
+				3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */,
 				3F09F75E2EAAA94400FE5277 /* SidebarViewModel.swift */,
 				F2B521C72E1F65A9000AB6E6 /* Filter.swift */,
-				F2612A1E2E872AC100CC463D /* TagMenuView.swift */,
-				3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */,
-				3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */,
-				3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */,
-				3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */,
+				3F9520A32EB167AF00F1B498 /* Tags Section */,
+				3F2064592EB0363D0036C4B1 /* Credential Section */,
 			);
 			path = Sidebar;
 			sourceTree = "<group>";
@@ -458,12 +457,11 @@
 		3F2A42CB2EA2C79900B095CB /* Credentials */ = {
 			isa = PBXGroup;
 			children = (
-				F2CFCE612E70D41D00443C5C /* NoCredentialsView.swift */,
+				F2CFCE612E70D41D00443C5C /* NoCredentialsButtonView.swift */,
 				3F0095DA2E944A5800101310 /* CredentialManagementSheet.swift */,
 				3F2064552EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift */,
 				3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */,
 				3F2064572EB035390036C4B1 /* Sub Category Cat Sheet */,
-				F2B580132E7B39000073BCA7 /* Activity-CredentialSelectionSheet.swift */,
 				F2506F602E610BC700D25D33 /* CredentialSheet.swift */,
 				3F2064582EB035CA0036C4B1 /* Credential Sheet Sub Views */,
 				F2CE98412E7C99C100B6A627 /* CredentialSelectionPopOver.swift */,
@@ -471,7 +469,6 @@
 				F2B937A82E83999300AF9155 /* CredentialRestrictionsSectionView.swift */,
 				3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */,
 				3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */,
-				3F2064592EB0363D0036C4B1 /* Sidebar View Elements */,
 				F2011DBE2E62417200D5DF92 /* InactiveReasons-Defaults.swift */,
 				F2011DBC2E62415500D5DF92 /* Inactive Reasons.json */,
 			);
@@ -579,6 +576,7 @@
 			children = (
 				F266C57D2E4AFBE500D0832D /* Defunct Code.md */,
 				F202F7C52E4410AB00504F43 /* Ditched Code.md */,
+				F2B580132E7B39000073BCA7 /* Activity-CredentialSelectionSheet.swift */,
 			);
 			path = "Removed Code";
 			sourceTree = "<group>";
@@ -610,6 +608,16 @@
 				F21A7F2E2E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift */,
 			);
 			path = "Custom Classes";
+			sourceTree = "<group>";
+		};
+		3F9520A32EB167AF00F1B498 /* Tags Section */ = {
+			isa = PBXGroup;
+			children = (
+				F2612A1E2E872AC100CC463D /* TagMenuView.swift */,
+				3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */,
+				3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */,
+			);
+			path = "Tags Section";
 			sourceTree = "<group>";
 		};
 		F2772B862E1DDA9F006A94BD = {
@@ -836,7 +844,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2CFCE622E70D41D00443C5C /* NoCredentialsView.swift in Sources */,
+				F2CFCE622E70D41D00443C5C /* NoCredentialsButtonView.swift in Sources */,
 				F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */,
 				F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */,
 				F2B937A72E83961E00AF9155 /* GlobalVariables.swift in Sources */,

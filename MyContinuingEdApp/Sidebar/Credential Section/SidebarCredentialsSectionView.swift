@@ -27,13 +27,17 @@ struct SidebarCredentialsSectionView: View {
     // Closure for adding a new renewal period
     var onAddRenewal: (Credential) -> Void
     
+    // Closure for creating a Credential object
+    var addInitalCredential: () -> Void
    
     // MARK: - BODY
     var body: some View {
             // IF NO credentials have yet been entered (or have been deleted)
         if viewModel.allCredentials.isEmpty {
                 Section("Add License, Certification, or Other Credential") {
-                    NoCredentialsView()
+                    NoCredentialsButtonView {
+                        addInitalCredential()
+                    }
                 }//: SECTION
             } else {
                Group {
@@ -97,7 +101,8 @@ struct SidebarCredentialsSectionView: View {
         dataController: DataController,
         onEditRenewal: @escaping (Credential, RenewalPeriod) -> Void,
         onAddRenewal: @escaping (Credential) -> Void,
-        onRenewalDelete: @escaping (RenewalPeriod) -> Void
+        onRenewalDelete: @escaping (RenewalPeriod) -> Void,
+        addInitialCredential: @escaping () -> Void
     ) {
         
         let viewModel = ViewModel(dataController: dataController)
@@ -106,6 +111,7 @@ struct SidebarCredentialsSectionView: View {
         self.onEditRenewal = onEditRenewal
         self.onAddRenewal = onAddRenewal
         self.onRenewalDelete = onRenewalDelete
+        self.addInitalCredential = addInitialCredential
         
     }//: INIT
 
