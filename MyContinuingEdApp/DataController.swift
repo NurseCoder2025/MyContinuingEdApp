@@ -429,6 +429,23 @@ class DataController: ObservableObject {
     }
     
     
+    /// Function that filters all activities from the activitiesForSelectedFilter method by a specified letter so they can
+    /// be grouped alphabetically in ContentView or wherever else needed.
+    /// - Parameter letter: single String character representing the letter to filter activities by
+    /// - Returns: array of CeActivities that all start with the specified letter
+    func activitiesBeginningWith(letter: String) -> [CeActivity] {
+        guard letter.count == 1 else { return [] }
+        
+        let loweredLetter = letter.lowercased()
+        
+        let allActivities = activitiesForSelectedFilter()
+        let activitiesWithLetter = allActivities.filter {
+            $0.ceTitle.lowercased().hasPrefix(loweredLetter)
+        }
+        
+        return activitiesWithLetter
+    }//: activitiesBeginningWith(letter)
+    
     
     
     // MARK: - Cloud storage syncronization methods

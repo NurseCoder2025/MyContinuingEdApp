@@ -36,14 +36,8 @@ extension ContentView {
         }
         
         // MARK: - FUNCTIONS
-        func delete(_ offsets: IndexSet) {
-            let activities = dataController.activitiesForSelectedFilter()
-            
-            for offset in offsets {
-                let item = activities[offset]
-                activityToDelete = item
-            }
-            
+        func delete(activity: CeActivity) {
+            activityToDelete = activity
             showDeleteWarning = true
             
             if showDeleteWarning {

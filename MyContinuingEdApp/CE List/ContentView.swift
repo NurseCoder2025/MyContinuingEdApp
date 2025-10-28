@@ -28,10 +28,16 @@ struct ContentView: View {
             ForEach(viewModel.sortedKeys, id: \.self) { key in
                     Section(header: Text(key)) {
                         // MARK: Ce Activity row under the key header
-                        ForEach(viewModel.dataController.activitiesForSelectedFilter()) { activity in
+                        ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
                             ActivityRow(activity: activity)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.delete(activity: activity)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash.fill")
+                                    }//: BUTTON
+                                }//: SWIPE
                         } //: LOOP
-                        .onDelete(perform: viewModel.delete)
                     }//: SECTION
                 }//: LOOP
             } //: LIST
