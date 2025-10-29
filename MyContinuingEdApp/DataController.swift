@@ -53,6 +53,10 @@ class DataController: ObservableObject {
     @Published var selectedFilter: Filter? = Filter.allActivities
     @Published var selectedActivity: CeActivity?
     
+    // Property for storing an ActivityReflection that a user may be searching
+    // for in Spotlight
+    @Published var selectedReflection: ActivityReflection?
+    
     // Properties for holding search terms the user enters for either straight text or tokens
     @Published var filterText: String = ""
     @Published var filterTokens: [Tag] = []
@@ -73,6 +77,10 @@ class DataController: ObservableObject {
     // Task property for controlling how often the app saves changes to disk
     private var saveTask: Task<Void, Error>?
     
+    // MARK: Spotlight
+    var spotlightDelegate: NSCoreDataCoreSpotlightDelegate?
+    
+    // MARK: - COMPUTED PROPERTIES
     // Computed property to return an array of tokens for use in the search field in ContentView
     var suggestedFilterTokens: [Tag] {
         guard filterText.starts(with: "#") else {return []}
@@ -108,6 +116,7 @@ class DataController: ObservableObject {
         
         save()
     }
+    
     
     //: MARK: - Credentials Related Methods
     /// This function counts the number of credentials of a given type that have been entered  into the app and returns the number as an Int
@@ -478,6 +487,7 @@ class DataController: ObservableObject {
         let newActivity = CeActivity(context: container.viewContext)
         
         // setting up initial values
+        newActivity.activityID = UUID()
         newActivity.ceTitle = "New CE Activity"
         newActivity.activityAddedDate = Date.now
         newActivity.ceAwarded = 1.0
@@ -509,6 +519,7 @@ class DataController: ObservableObject {
     /// Creating a new renewal period for which CEs need to be earned
     func createRenewalPeriod() -> RenewalPeriod {
         let newRenewalPeriod = RenewalPeriod(context: container.viewContext)
+        newRenewalPeriod.periodID = UUID()
         
         // setting up renewal period initial values
         newRenewalPeriod.periodStart = Date.now
@@ -537,9 +548,9 @@ class DataController: ObservableObject {
     func createNewCredential() -> Credential {
         let newCredential = Credential(context: container.viewContext)
         
+        newCredential.credentialID = UUID()
         newCredential.name = "New Credential"
         newCredential.isActive = true
-        newCredential.credentialID = UUID()
         // Setting the default credential type to an empty string upon creation
         // so that the user will be prompted to select a type in the picker control
         newCredential.credentialType = ""
@@ -800,6 +811,7 @@ class DataController: ObservableObject {
                 let randomPastDate: Double = -(86400 * Double.random(in: 7...180))
                 let activity = CeActivity(context: viewContext)
                 
+                activity.activityID = UUID()
                 activity.activityAddedDate = Date.now.addingTimeInterval(randomPastDate)
                 activity.activityTitle = "Activity # \(j)-\(i)"
                 activity.activityDescription = "A fun and educational CE activity!"
@@ -922,39 +934,54 @@ class DataController: ObservableObject {
                 using: remoteStorageChanged
             )
         }
+        
+        // Spotlight configuration & setup
+        // Configuring persistent history tracking
+        if let description = self.container.persistentStoreDescriptions.first {
+            description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        
+            // Creating indexing delegate
+            let coordinator = self.container.persistentStoreCoordinator
+            self.spotlightDelegate = NSCoreDataCoreSpotlightDelegate(
+                    forStoreWith: description,
+                    coordinator: coordinator
+                )
+                
+        }//: IF LET description
 
         // Loading data from local storage
-        container.loadPersistentStores { storeDescription, error in
+        container.loadPersistentStores { [weak self] storeDescription, error in
             if let error = error {
                 print("Core Data store failed to load: \(error.localizedDescription)")
                 fatalError("Failed to load data from local storage: \(error)")
             }
             // for first time app use load "Default CE Designations"
             let request = CeDesignation.fetchRequest()
-            let count = (try? self.container.viewContext.count(for: request))
+            let count = (try? self?.container.viewContext.count(for: request))
             if count == 0 {
-                self.preloadCEDesignations()
+                self?.preloadCEDesignations()
             }
             // for first time app use or install load default Activity Types
             let typeRequest = ActivityType.fetchRequest()
-            let typeCount = (try? self.container.viewContext.count(for: typeRequest))
+            let typeCount = (try? self?.container.viewContext.count(for: typeRequest))
             if typeCount == 0 {
-                self.preloadActivityTypes()
+                self?.preloadActivityTypes()
             }
             // First-time use/install of app for loading default Countries
             let countryRequest = Country.fetchRequest()
-            let countryCount = (try? self.container.viewContext.count(for: countryRequest))
+            let countryCount = (try? self?.container.viewContext.count(for: countryRequest))
             if countryCount == 0 {
-                self.preloadCountries()
+                self?.preloadCountries()
             }
             // First-time loading of U.S. states list
             let statesRequest = USState.fetchRequest()
-            let stateCount = (try? self.container.viewContext.count(for: statesRequest))
+            let stateCount = (try? self?.container.viewContext.count(for: statesRequest))
             if stateCount == 0 {
-                self.preloadStatesList()
+                self?.preloadStatesList()
             }
             
-        }
+            self?.spotlightDelegate?.startSpotlightIndexing()
+        }//: loadPersistentStores
     } //: INIT
     
    

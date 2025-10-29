@@ -7,12 +7,12 @@
 
 import SwiftUI
 import CoreData
+import CoreSpotlight
 
 @main
 struct MyContinuingEdAppApp: App {
     @StateObject var dataController = DataController()
     @Environment(\.scenePhase) var scenePhase
-    
     
     var body: some Scene {
         WindowGroup {
@@ -31,7 +31,20 @@ struct MyContinuingEdAppApp: App {
                     dataController.save()
                 }
             } //: ONCHANGE
+            // MARK: - ON APPEAR
+           
+            
+            // MARK: - SPOTLIGHT
+            .onContinueUserActivity(CSSearchableItemActionType, perform: { action in
+                }
+            )//: ON CONTINUE USER ACTIVITY
             
         } //: WINDOW GROUP
     } //: BODY
+    
+    // MARK: - FUNCTIONS
+    
+    
+    // MARK: - INIT
+    
 }

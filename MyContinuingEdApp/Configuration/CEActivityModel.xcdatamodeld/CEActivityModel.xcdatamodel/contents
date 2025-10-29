@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24G231" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G231" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="ActivityReflection" representedClassName="ActivityReflection" syncable="YES" codeGenerationType="class">
         <attribute name="completedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="generalReflection" optional="YES" attributeType="String"/>
+        <attribute name="generalReflection" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="learnMoreAbout" optional="YES" attributeType="String"/>
+        <attribute name="learnMoreAbout" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="reflectionID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="surpriseEntered" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="surprises" optional="YES" attributeType="String"/>
-        <attribute name="threeMainPoints" optional="YES" attributeType="String"/>
+        <attribute name="surprises" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
+        <attribute name="threeMainPoints" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="wasSurprised" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ceToReflectUpon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="reflection" inverseEntity="CeActivity"/>
     </entity>
@@ -18,18 +18,18 @@
         <attribute name="typeName" optional="YES" attributeType="String"/>
         <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="type" inverseEntity="CeActivity"/>
     </entity>
-    <entity name="CeActivity" representedClassName="CeActivity" syncable="YES" codeGenerationType="class">
+    <entity name="CeActivity" representedClassName="CeActivity" syncable="YES" codeGenerationType="class" coreSpotlightDisplayNameExpression="activityTitle">
         <attribute name="activityAddedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="activityCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="activityDescription" optional="YES" attributeType="String"/>
+        <attribute name="activityDescription" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="activityExpires" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="activityFormat" optional="YES" attributeType="String"/>
+        <attribute name="activityFormat" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="activityID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="activityTitle" optional="YES" attributeType="String"/>
+        <attribute name="activityTitle" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="ceAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="completionCertificate" optional="YES" attributeType="Binary"/>
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="currentStatus" optional="YES" attributeType="String"/>
+        <attribute name="currentStatus" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
