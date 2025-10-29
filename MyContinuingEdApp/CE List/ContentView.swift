@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     // MARK: - Properties
+    @Environment(\.spotlightCentral) var spotlightCentral
     @StateObject private var viewModel: ViewModel
     
     var deletionWarningMessage: String = ""
@@ -51,8 +52,14 @@ struct ContentView: View {
                 .alert("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
                 Button("Delete", role: .destructive) {
                     if let activity = viewModel.activityToDelete {
-                        viewModel.dataController.delete(activity)
-                    }
+                        if #available(iOS 17, *) {
+                            viewModel.dataController.delete(activity)
+                        } else {
+                            spotlightCentral?.removeCeActivityFromDefaultIndex(activity)
+                            viewModel.dataController.delete(activity)
+                        }//: IF AVAILABLE
+                    }//: IF LET
+                    
                     viewModel.activityToDelete = nil
                 } //: DELETE button
                 

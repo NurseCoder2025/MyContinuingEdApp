@@ -13,6 +13,7 @@ import SwiftUI
 
 struct ContentViewToolbarView: View {
     // MARK: - PROPERTIES
+    @Environment(\.spotlightCentral) var spotlightCentral
     @EnvironmentObject var dataController: DataController
     
     let allDateSortTypes: [SortType] = [.dateCompleted, .dateCreated, .dateModified]
@@ -159,7 +160,17 @@ struct ContentViewToolbarView: View {
         
         // MARK: ADD ACTIVITY
         Group {
-            Button(action: dataController.createActivity) {
+            Button {
+                if #available(iOS 17, *) {
+                    // Use the dataController's createActivity method and item
+                    // will be automatically added to Spotlight's index
+                    dataController.createActivity()
+                } else {
+                    // Manually add CeActivity to Spotlight's index
+                    let newCe = dataController.createNewCeActivityIOs16()
+                    spotlightCentral?.addCeActivityToDefaultIndex(newCe)
+                }
+            } label: {
                 Label("New Activity", systemImage: "square.and.pencil")
             }
         }//: GROUP

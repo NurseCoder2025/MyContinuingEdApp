@@ -77,7 +77,7 @@ class DataController: ObservableObject {
     // Task property for controlling how often the app saves changes to disk
     private var saveTask: Task<Void, Error>?
     
-    // MARK: Spotlight
+    // MARK: -  Spotlight
     var spotlightDelegate: NSCoreDataCoreSpotlightDelegate?
     
     // MARK: - COMPUTED PROPERTIES
@@ -482,6 +482,8 @@ class DataController: ObservableObject {
         save()
     }
     
+    /// Method for creating a new CeActivity object and saving it to the view context.  This particular method will
+    /// be used when the user's device iOS is 17 or later due to Spotlight integration requirements.
     func createActivity() {
         // creating new object in memory
         let newActivity = CeActivity(context: container.viewContext)
@@ -515,6 +517,42 @@ class DataController: ObservableObject {
         
         selectedActivity = newActivity
     }
+    
+    /// Method for creating a new CeActivity, saving it to the view context, and returning it as an object
+    /// that can be passed into a manual Spotlight index adding function.  This particular method will only
+    /// be called on devices running iOS 16 or earlier.
+    /// - Returns: new CeActivity object with default values entered for key properties
+    func createNewCeActivityIOs16() -> CeActivity {
+        let newActivity = CeActivity(context: container.viewContext)
+        
+        newActivity.activityID = UUID()
+        newActivity.ceTitle = "New CE Activity"
+        newActivity.activityAddedDate = Date.now
+        newActivity.ceAwarded = 1.0
+        newActivity.ceDescription = "An exciting learning opportunity!"
+        newActivity.activityFormat = "Virtual"
+        newActivity.cost = 0.0
+        newActivity.specialCat = nil
+        
+        // if user creates a new activity while a specific tag has been selected
+        // assign that tag to the new activity
+        if let tag = selectedFilter?.tag {
+            newActivity.addToTags(tag)
+        }
+        
+        // if the user creates a new activity while a specific renewal period has been
+        // selected then the corresponding Credential object will automatically
+        // be assigned to the new activity as well as the Renewal Period
+        if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
+            newActivity.addToCredentials(credential)
+            newActivity.renewal = renewal
+        }
+        
+        save()
+        selectedActivity = newActivity
+        return newActivity
+    }
+    
     
     /// Creating a new renewal period for which CEs need to be earned
     func createRenewalPeriod() -> RenewalPeriod {
@@ -917,6 +955,7 @@ class DataController: ObservableObject {
         // Also...assigning the model singleton property to prevent errors coming from multiple
         // DataController instances (due to testing, previewing, etc.)
         container = NSPersistentCloudKitContainer(name: "CEActivityModel", managedObjectModel: Self.model)
+        
         
         // identifying the name of the stored data to load and use
         if inMemory {

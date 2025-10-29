@@ -5,17 +5,13 @@
 //  Created by Ilum on 10/28/25.
 //
 
-import CoreData
 import CoreSpotlight
 import Foundation
 
 final class SpotlightCentral: ObservableObject {
     // MARK: - PROPERTIES
-    var dataController: DataController
-    var spotlightDelegate: NSCoreDataCoreSpotlightDelegate?
-    
-    // MARK: - CORE DATA
-    
+    let dataController: DataController
+    let defaultIndex: CSSearchableIndex
     // MARK: - METHODS
     
     /// Method for retrieving a specific CeActivity object that Core Spotlight located from a user search and then presenting that object to user in the UI
@@ -34,7 +30,7 @@ final class SpotlightCentral: ObservableObject {
         return try? container.viewContext.existingObject(with: id) as? CeActivity
     }//: findCe(String)
     
-    func addCeActivityToIndex(_ item: CeActivity) {
+    func addCeActivityToDefaultIndex(_ item: CeActivity) {
         let attributeSet = CSSearchableItemAttributeSet(contentType: .data)
         attributeSet.title = item.activityTitle
         attributeSet.contentDescription = item.activityDescription
@@ -49,19 +45,30 @@ final class SpotlightCentral: ObservableObject {
         // with Spotlight if needed.
         searchableItem.expirationDate = Date().addingTimeInterval(60 * 60 * 24 * 2190)
         
-        // Creating the indexes
-        let genIndex = CSSearchableIndex.default
-        let secureIndex = CSSearchableIndex(name: "secure-index", protectionClass: .complete)
-        
         // Adding the item to the secure index
-        secureIndex.indexSearchableItems([searchableItem]) { error in
-            if error != nil {
-                print("Error adding item to secure index: \(error!.localizedDescription)")
+        defaultIndex.indexSearchableItems([searchableItem]) { error in
+            if let error = error  {
+                print("Error adding item to secure index: \(error.localizedDescription)")
             } else {
-                print("\(item.ceTitle) was successfully added to secure index")
+                print("\(item.ceTitle) was successfully added to the default index")
             }
         }//: secureIndex
+        
     }//: addCeActivityToIndex(CeActivity)
+    
+    func updateCeActivityInDefaultIndex(_ item: CeActivity) {
+        // For Spotlight, updating is the same as re-adding with the same uniqueIdentifier
+        addCeActivityToDefaultIndex(item)
+    }
+    
+    func removeCeActivityFromDefaultIndex(_ item: CeActivity) {
+        let ceIDString = item.activityID?.uuidString ?? ""
+        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [ceIDString]) { error in
+            if let error = error {
+                print("Error removing CeActivity from index: \(error.localizedDescription)")
+            }//: IF LET
+        }//: CSSearchableIndex
+    }//: removeCeActivityFromIndex(CeActivity)
     
     func loadSpotlightItem(_ userActivity: NSUserActivity) {
         if let uniqueIdentifier = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String {
@@ -75,21 +82,8 @@ final class SpotlightCentral: ObservableObject {
     init(dataController: DataController) {
         self.dataController = dataController
         
-        // Configuring persisten history tracking
-        if let description = dataController.container.persistentStoreDescriptions.first {
-            description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-            
-            // Creating indexing delegate
-            let coordinator = dataController.container.persistentStoreCoordinator
-            spotlightDelegate = NSCoreDataCoreSpotlightDelegate(
-                forStoreWith: description,
-                coordinator: coordinator
-            )
-            
-            spotlightDelegate?.startSpotlightIndexing()
-        }//: IF-LET
-        
-        
+        // Creating the secure index
+        defaultIndex = CSSearchableIndex.default()
     }//: INIT
     
     

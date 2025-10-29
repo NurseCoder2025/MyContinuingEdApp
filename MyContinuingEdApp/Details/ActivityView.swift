@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ActivityView: View {
     // MARK: - Properties
+    @Environment(\.spotlightCentral) var spotlightCentral
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
@@ -51,9 +52,23 @@ struct ActivityView: View {
         // MARK: - ON RECEIVE
         // Stays with ActivityView
         .onReceive(activity.objectWillChange) { _ in
-            dataController.queueSave()
+            if #available(iOS 17, *) {
+                dataController.queueSave()
+            } else {
+                dataController.queueSave()
+                spotlightCentral?.updateCeActivityInDefaultIndex(activity)
+            }
+        
         } //: onReceive
-        .onSubmit {dataController.save()}//: ON SUBMIT
+        .onSubmit {
+            if #available(iOS 17, *) {
+                dataController.save()
+            } else {
+                dataController.save()
+                spotlightCentral?.updateCeActivityInDefaultIndex(activity)
+            }
+            
+        }//: ON SUBMIT
     }//: BODY
     
 }//: STRUCT
