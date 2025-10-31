@@ -33,6 +33,7 @@
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="expirationReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="whatILearned" optional="YES" attributeType="String"/>
@@ -89,12 +90,14 @@
         <attribute name="appealedActionYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="appealNotes" optional="YES" attributeType="String"/>
         <attribute name="ceDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="commServiceCompletedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="commServiceDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="commServiceHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="disciplinaryCEHours" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="disciplineID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="fineAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="fineDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="finePaidOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="resolutionActions" optional="YES" attributeType="String"/>
         <attribute name="temporaryOnly" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ces" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="disciplinaryAction" inverseEntity="CeActivity"/>
@@ -122,12 +125,6 @@
         <attribute name="reinstatementHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewal" inverseEntity="CeActivity"/>
         <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="renewals" inverseEntity="Credential"/>
-    </entity>
-    <entity name="Settings" representedClassName="Settings" syncable="YES" codeGenerationType="class">
-        <attribute name="ceEquivalence" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="hoursRequired" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="useCEUs" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="userProfession" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SpecialCategory" representedClassName="SpecialCategory" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>

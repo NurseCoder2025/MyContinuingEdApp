@@ -15,7 +15,6 @@ struct ActivityView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
-    
     // MARK: - BODY
     var body: some View {
         Form {
@@ -49,6 +48,7 @@ struct ActivityView: View {
         // Stays with ActivityView
         .disabled(activity.isDeleted)
         
+        
         // MARK: - ON RECEIVE
         // Stays with ActivityView
         .onReceive(activity.objectWillChange) { _ in
@@ -71,6 +71,7 @@ struct ActivityView: View {
         }//: ON SUBMIT
     }//: BODY
     
+
 }//: STRUCT
 
 // MARK: - Preview

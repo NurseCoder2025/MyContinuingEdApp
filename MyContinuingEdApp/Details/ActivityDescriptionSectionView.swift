@@ -23,8 +23,11 @@ struct ActivityDescriptionSectionView: View {
                 
                 // MARK: Expiration Toggle
                 Toggle("Expires?", isOn: $activity.activityExpires)
+                    
                 
                 if activity.activityExpires {
+                    Toggle("Remind Me?", isOn: $activity.expirationReminderYN)
+                    
                     DatePicker("Expires On", selection: Binding(
                         get: { activity.expirationDate ?? Date.now },
                         set: { activity.expirationDate = $0 }),
@@ -39,6 +42,7 @@ struct ActivityDescriptionSectionView: View {
                 
             } //: Description Subsection
         }//: GROUP
+        .animation(.default, value: activity.activityExpires)
         // MARK: - ON APPEAR
         .onAppear {
             updateActivityStatus(status: activity.expirationStatus)

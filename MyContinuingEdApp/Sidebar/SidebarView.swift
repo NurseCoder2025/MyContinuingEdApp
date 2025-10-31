@@ -14,7 +14,11 @@ import UIKit
 
 struct SidebarView: View {
     // MARK: - PROPERTIES
+    @AppStorage("firstRun") var firstRun: Bool = false
+    @Environment(\.openURL) var openURL
+    
     @StateObject private var viewModel: ViewModel
+    @State private var showEnableRemindersAlert: Bool = false
     
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
@@ -63,7 +67,20 @@ struct SidebarView: View {
             .navigationTitle("CE Filters")
             // MARK: - Toolbar
             .toolbar(content: SidebarViewTopToolbar.init)
-        
+        // MARK: - ON APPEAR
+            .onAppear {
+                // First time running of app only
+                if firstRun == false {
+                    firstRun = true
+                    showEnableRemindersAlert = true
+                }
+                
+                // Updating notifications
+                Task { @MainActor in
+                    await viewModel.dataController.updateAllReminders()
+                }//: TASK
+                
+            }//: ON APPEAR
         // MARK: - Alerts
         // RENAMING TAG ALERT
             .alert("Rename Tag", isPresented: $viewModel.showRenamingAlert) {
@@ -80,6 +97,14 @@ struct SidebarView: View {
             Text("Deleting the \(viewModel.renewalToDelete?.renewalPeriodName ?? "renewal period") will NOT delete any associated CE activities or credentials, but may impact renewal reminders and alerts. Are you sure you wish to delete it? ")
         }//: ALERT
         
+        // Notifications disabled alert
+        .alert("Enable Notifications",isPresented: $showEnableRemindersAlert) {
+            Button("Settings", action: showAppSettings)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Hello there! To help you stay on top of renewal deadlines and CE expirations, please ensure that notifications are enabled for this app.")
+        }
+        
         
         // MARK: - SHEETS
         .sheet(item: $viewModel.renewalSheetData) { data in
@@ -93,6 +118,14 @@ struct SidebarView: View {
         }//: SHEET
         
     } //: BODY
+    
+    // MARK: - METHODS
+    
+    /// Method that opens the Settings app so that the user can adjust notification settings if needed
+    func showAppSettings() {
+        guard let settingsURL = URL(string: UIApplication.openNotificationSettingsURLString) else { return }
+        openURL(settingsURL)
+    }
     
     
  // MARK: - INIT

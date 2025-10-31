@@ -36,7 +36,13 @@ extension DisciplinaryActionItem {
     }
     
     var daiActionEndDate: Date {
-        return actionEndDate ?? Date.now
+        // Because the actionEndDate as well as other deadline dates will be used for comparison
+        // purposes within various functions in the app (specifically, the notification-related ones)
+        // it is important to set the nil collasced value to be a standard value (date with 12:00:00
+        // components) so that two dates can be evenly compared by the date value alone.
+        let calendar = Calendar.current
+        let now = calendar.startOfDay(for: Date())
+        return actionEndDate ?? now
     }
     
     var daiAppealedActionDate: Date {
@@ -49,15 +55,21 @@ extension DisciplinaryActionItem {
     }
     
     var daiCEDeadlineDate: Date {
-        return ceDeadline ?? Date.now
+        let calendar = Calendar.current
+        let now = calendar.startOfDay(for: Date())
+        return ceDeadline ?? now
     }
     
     var daiFinesDueDate: Date {
-        return fineDeadline ?? Date.now
+        let calendar = Calendar.current
+        let now = calendar.startOfDay(for: Date())
+        return fineDeadline ?? now
     }
        
     var daiCommunityServiceDeadline: Date {
-        return commServiceDeadline ?? Date.now
+        let calendar = Calendar.current
+        let now = calendar.startOfDay(for: Date())
+        return commServiceDeadline ?? now
     }
 }
 

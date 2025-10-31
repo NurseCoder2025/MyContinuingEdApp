@@ -39,12 +39,13 @@ extension CeActivity {
 //        set {dateCompleted = newValue}
 //    }
     
-    // Removing this part of the helper so activities that don't have
-    // an expiration date don't get assigned a random value
-//    var ceActivityExpirationDate: Date {
-//        get {expirationDate ?? .futureExpiration }
-//        set {expirationDate = newValue}
-//    }
+//
+    var ceActivityExpirationDate: Date {
+        let calendar = Calendar.current
+        let futureExpDate = calendar.startOfDay(for: .futureExpiration)
+        let dateToUse = (expirationDate == nil ? futureExpDate : calendar.startOfDay(for: expirationDate!))
+        return dateToUse
+    }
     
     var ceActivityModifiedDate: Date {
         modifiedDate ?? .now

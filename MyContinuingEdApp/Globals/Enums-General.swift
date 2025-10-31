@@ -8,6 +8,21 @@
 import Foundation
 
 
+// MARK: Sort TYPE
+/// This enum is used in ContentView for the Sorting menu as a way to easily tag sort values.  Each enum type has a raw String
+/// value that corresponds to a CeActivity property that the user can sort on.
+enum SortType: String {
+    case name = "activityTitle"
+    case dateCreated = "activityAddedDate"
+    case dateModified = "modifiedDate"
+    case dateCompleted = "dateCompleted"
+    case activityCost = "cost"
+    case awardedCEAmount = "ceAwarded"
+    case typeOfCE = "ceType"
+    case format = "formatType"
+}
+
+
 // MARK: Enum for sheet types
 enum SheetType {
     case renewal, issuer, specialCat

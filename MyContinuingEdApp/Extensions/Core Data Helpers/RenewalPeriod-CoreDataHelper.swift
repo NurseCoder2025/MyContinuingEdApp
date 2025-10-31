@@ -9,19 +9,39 @@ import Foundation
 
 // MARK: CoreData Helpers
 extension RenewalPeriod {
+    // For each of the dates connected with each RenewalPeriod object, a custom getter was needed in
+    // order to more easily compare just the date components (MM/DD/YYYY) with another date in
+    // various functions throughout the app, especially the notification ones.  All date values
+    // returned will have standardized time components (12:00:00) which will allow for the comparing
+    // of dates.
     
     var renewalPeriodStart: Date {
-        get { periodStart ?? Date.renewalStartDate}
+        get {
+            let calendar = Calendar.current
+            let renewalStart = calendar.startOfDay(for: periodStart ?? Date.renewalStartDate)
+            return renewalStart
+        }
+        
         set { periodStart = newValue }
     }
     
     var renewalPeriodEnd: Date {
-        get { periodEnd ?? Date.renewalEndDate }
+        get {
+            let calendar = Calendar.current
+            let renewalEnd = calendar.startOfDay(for: periodEnd ?? Date.renewalEndDate)
+            return renewalEnd
+        }
+        
         set { periodEnd = newValue }
     }
     
     var renewalLateFeeStartDate: Date {
-        get {lateFeeStartDate ?? Date.renewalLateFeeStartDate}
+        get {
+            let calendar = Calendar.current
+            let lateFeeStart = calendar.startOfDay(for: lateFeeStartDate ?? Date.renewalLateFeeStartDate)
+            return lateFeeStart
+        }
+        
         set {lateFeeStartDate = newValue}
     }
     
@@ -55,7 +75,7 @@ extension RenewalPeriod {
 }
 
 
-// MARK: Renewal Period EXAMPLE
+// MARK: - Renewal Period EXAMPLE
 extension RenewalPeriod {
     
     // Creating an example for previewing purposes
