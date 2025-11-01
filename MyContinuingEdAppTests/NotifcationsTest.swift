@@ -48,8 +48,6 @@ final class NotifcationsTest: BaseTestCase {
         
     }//: testLocalNotificationSetup
     
-    
-    
     /// The purpose of this test is to make sure that the scheduleExpiringCEsNotification and child functions work properly in
     /// creating a notifcation for a test CeActivity that meets all of the criteria for notification creation.
     func testExpiringActivityNotification() async throws {
@@ -141,6 +139,10 @@ final class NotifcationsTest: BaseTestCase {
     }//: testExpiringAndNonExpiringActivityNotifications()
     
     
+    /// Use this test to ensure that notifications are created for CeActivity objects which meet the inclusion
+    /// criteria (has an expiration date, not yet completed by the user, and is marked for notifications by the
+    /// user).  For the purpose of this test, two sample CE activities were created with one meeting the criteria
+    /// and the other not meeting them.  A successful test should produce a single notification.
     func testUpdateAllRemindersForCeActivities() async throws {
         let center = UNUserNotificationCenter.current()
         
@@ -186,7 +188,10 @@ final class NotifcationsTest: BaseTestCase {
     }//: testUpdateAllRemindersForCeActivities
     
     
-    
+    /// Use this test to ensure that notifications are properly scheduled for any RenewalPeriod objects
+    /// which meet the criteria for notification scheduling (renewal end date approaching & late fee period
+    /// starting).  A successful test should generate a total of 4 notifications given the sample RenewalPeriod
+    /// object created within the test.
     func testRenewalPeriodEndingNotifications() async throws {
          let center = UNUserNotificationCenter.current()
          let calendar = Calendar.current
@@ -217,13 +222,26 @@ final class NotifcationsTest: BaseTestCase {
         // TEST results here
         // Identifier for each object should be: "\(uuIDString)-\(notificationType.rawValue)"
         XCTAssertTrue(requests.contains {
-            $0.identifier == String("\(sampleRenewal.renewalPeriodUID.uuidString)-\(NotificationType.renewalEnding.rawValue)")
+            $0.identifier.starts(with:  String("\(sampleRenewal.renewalPeriodUID.uuidString)-\(NotificationType.renewalEnding.rawValue)"))
         }, "Sample Renewal Period notification should be scheduled")
         
         print("---------------------------OBJECT PRINTOUT---------------------------------------")
         for request in requests {
             print("Object: \(request.identifier)")
             print("Notification title: \(request.content.title)")
+            print("Notice body: \(request.content.body)")
+            
+            // Checking to make sure each notification is scheduled to appear at the
+            // proper time (30 days ahead and 7 days ahead)
+            if let trigger = request.trigger as? UNTimeIntervalNotificationTrigger {
+                let seconds = trigger.timeInterval
+                
+                let scheduledDate = Date()
+                let triggerDate = scheduledDate.addingTimeInterval(seconds)
+                let formattedDate = triggerDate.formatted(date: .abbreviated, time: .omitted)
+                
+                print("Notification scheduled to appear on: \(formattedDate)")
+            }
         }
         
         XCTAssertTrue(requests.count == 4, "Should have 4 pending requests, but there are actually \(requests.count)")
@@ -233,6 +251,90 @@ final class NotifcationsTest: BaseTestCase {
         await fulfillment(of: [pendingExpectation], timeout: 5)
         
     }//: testRenewalPeriodEndingNotifications()
+    
+    
+    /// Use this test for ensuring that notifications are properly scheduled for any credential disciplinary
+    /// actions that meet the inclusion criteria for notification scheduling.  This test creates a single
+    /// DisciplinaryActionItem (DAI) object which meets all four criteria and should generate 8 total notifications.
+    func testDAINotifications() async throws {
+        let center = UNUserNotificationCenter.current()
+        let calendar = Calendar.current
+        
+        // Creating sample credential to which DAIs can be assigned to
+        let sampleCred = Credential(context: context)
+        sampleCred.credentialID = UUID()
+        sampleCred.credentialName = "Test Cred"
+        
+        // Creating sample DAI item that meets notification criteria for all
+        // notifications
+        let sampleDAI = DisciplinaryActionItem(context: context)
+        sampleDAI.disciplineID = UUID()
+        sampleDAI.actionName = "Sample Credential Warning"
+        sampleDAI.temporaryOnly = true
+        sampleDAI.actionEndDate = calendar.date(byAdding: .day, value: 90, to: Date())!
+        sampleDAI.commServiceHours = 50
+        sampleDAI.commServiceDeadline = calendar.date(byAdding: .day, value: 60, to: Date())!
+        sampleDAI.fineAmount = 250.00
+        sampleDAI.fineDeadline = calendar.date(byAdding: .day, value: 75, to: Date())!
+        sampleDAI.disciplinaryCEHours = 25
+        sampleDAI.ceDeadline = calendar.date(byAdding: .day, value: 85, to: Date())!
+        sampleDAI.credential = sampleCred
+        
+        controller.save()
+        
+        await controller.updateAllReminders()
+        
+        let pendingExpectation = self.expectation(description: "Pending Notifications")
+        let requests = await center.pendingNotificationRequests()
+        
+        // Disciplinary Action ending notifications
+        XCTAssertTrue(requests.contains {
+            $0.identifier.starts(with:  String("\(sampleDAI.daiDisciplineID.uuidString)-\(NotificationType.disciplineEnding.rawValue)"))
+        }, "Disciplinary Action Ending notification should be scheduled")
+        
+        // Community service hours deadline notifications
+        XCTAssertTrue(requests.contains {
+            $0.identifier.starts(with:  String("\(sampleDAI.daiDisciplineID.uuidString)-\(NotificationType.serviceDeadlineApproaching.rawValue)"))
+        }, "Community service deadline notification should be scheduled")
+        
+        // Fine deadline notifications
+        XCTAssertTrue(requests.contains {
+            $0.identifier.starts(with:  String("\(sampleDAI.daiDisciplineID.uuidString)-\(NotificationType.fineDeadlineApproaching.rawValue)"))
+        }, "Disciplinary fine deadline notification should be scheduled")
+        
+        // Mandated CE hours deadline notifications
+        XCTAssertTrue(requests.contains {
+            $0.identifier.starts(with:  String("\(sampleDAI.daiDisciplineID.uuidString)-\(NotificationType.ceHoursDeadlineApproaching.rawValue)"))
+        }, "Disciplinary Action Ending notification should be scheduled")
+        
+        
+        print("---------------------------OBJECT PRINTOUT---------------------------------------")
+        for request in requests {
+            print("Object: \(request.identifier)")
+            print("Notification title: \(request.content.title)")
+            print("Notice body: \(request.content.body)")
+            
+            // Checking to make sure each notification is scheduled to appear at the
+            // proper time (30 days ahead and 7 days ahead)
+            if let trigger = request.trigger as? UNTimeIntervalNotificationTrigger {
+                let seconds = trigger.timeInterval
+                
+                let scheduledDate = Date()
+                let triggerDate = scheduledDate.addingTimeInterval(seconds)
+                let formattedDate = triggerDate.formatted(date: .abbreviated, time: .omitted)
+                
+                print("Notification scheduled to appear on: \(formattedDate)")
+            }
+        }//: LOOP
+        
+        // Verifying total number of notifications
+        XCTAssertTrue(requests.count == 8, "There should be 8 notifications scheduled, but there are \(requests.count) instead.")
+        
+        pendingExpectation.fulfill()
+        
+        await fulfillment(of: [pendingExpectation], timeout: 10)
+        
+    }//: testDAINotifications()
     
 
 }//: NotificationsTest

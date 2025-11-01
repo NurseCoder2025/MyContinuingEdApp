@@ -49,7 +49,8 @@ extension DataController {
         title: String,
         body: String,
         triggerDate: Date,
-        notificationType: NotificationType
+        notificationType: NotificationType,
+        noticeNum: Int
     ) async throws {
         let center = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
@@ -73,7 +74,7 @@ extension DataController {
         // of the unique identifier.  Decided to use the UUID instead of objectID
         // to make testing notification functions easier.
         if let uuIDString = getUUIDString(for: object) {
-            let identifier = "\(uuIDString)-\(notificationType.rawValue)"
+            let identifier = "\(uuIDString)-\(notificationType.rawValue).\(noticeNum)"
             
             let request = UNNotificationRequest(
                 identifier: identifier,
@@ -100,7 +101,8 @@ extension DataController {
         title: String,
         body: String,
         onDate: Date,
-        notificationType: NotificationType
+        notificationType: NotificationType,
+        noticeNum: Int
     ) async{
         do {
             let center = UNUserNotificationCenter.current()
@@ -112,7 +114,7 @@ extension DataController {
                 let isAuthorized = try await requestNotifications()
                 
                 if isAuthorized {
-                    try await scheduleSingleNotification(for: object, title: title, body: body, triggerDate: onDate, notificationType: notificationType)
+                    try await scheduleSingleNotification(for: object, title: title, body: body, triggerDate: onDate, notificationType: notificationType, noticeNum: noticeNum)
                 } else {
                     print("Sorry, but notifications are not yet enabled")
                 }
@@ -123,7 +125,8 @@ extension DataController {
                     title: title,
                     body: body,
                     triggerDate: onDate,
-                    notificationType: notificationType
+                    notificationType: notificationType,
+                    noticeNum: noticeNum
                 )
             default:
                 print("Unable to add notification - check settings.")
@@ -243,6 +246,7 @@ extension DataController {
         daiANDPredicates.append(endDatePredicate)
         
         let daiANDCombinedPredicates = NSCompoundPredicate(andPredicateWithSubpredicates: daiANDPredicates)
+        
         let permanentActionPredicate = NSPredicate(format: "temporaryOnly == false")
         
         let combinedPredicates = NSCompoundPredicate(orPredicateWithSubpredicates: [
@@ -281,8 +285,9 @@ extension DataController {
                     let triggerDate = (
                         ce.ceActivityExpirationDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .upcomingExpiration
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: ce, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: ce, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -312,8 +317,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) days left before your credential expires if you haven't renewed yet!"
                     let triggerDate = (period.renewalPeriodEnd).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .renewalEnding
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -330,8 +336,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) days left before renewing your \(credName) will cost you $\(period.lateFeeAmount) extra - renew soon!"
                     let triggerDate = (period.renewalLateFeeStartDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .lateFeeStarting
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -361,8 +368,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.daiActionType) period taken against your credential ends.  Be sure that you have completed all required actions by the governing body by this date."
                     let triggerDate = (dai.daiActionEndDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .disciplineEnding
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -377,8 +385,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.commServiceHours) hours of community service must be completed.  Be sure that you have completed all required hours by this date."
                     let triggerDate = (dai.daiCommunityServiceDeadline).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .serviceDeadlineApproaching
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -395,8 +404,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) day(s) left before the $\(dai.fineAmount) fine levied against your credential is due to the \(credIssuer).  Be sure that you have paid it  by this date."
                     let triggerDate = (dai.daiFinesDueDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .fineDeadlineApproaching
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -413,8 +423,9 @@ extension DataController {
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.disciplinaryCEHours) hours of required continuing education hours must be completed for your \(credName).  Be sure that all hours are completed by this day."
                     let triggerDate = (dai.daiCEDeadlineDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .ceHoursDeadlineApproaching
+                    let noticeNumber: Int = i
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
                 }//: INNER LOOP
             }//: LOOP
             

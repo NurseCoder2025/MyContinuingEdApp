@@ -11,6 +11,10 @@ import Foundation
 
 extension DisciplinaryActionItem {
     
+    var daiDisciplineID: UUID {
+        disciplineID ?? UUID()
+    }
+    
     var daiActionName: String {
         get {actionName ?? ""}
         set {actionName = newValue}
