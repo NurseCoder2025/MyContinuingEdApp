@@ -9,8 +9,8 @@ import Foundation
 
 extension Country {
     
-    var countryID: UUID {
-        return id ?? UUID()
+    var countryRealID: UUID {
+        return countryID ?? UUID()
     }
     
     var countryName: String {

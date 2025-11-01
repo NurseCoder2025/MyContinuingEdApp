@@ -105,6 +105,23 @@ extension DataController {
     }
     
     
+    /// Method for creating, saving, and returning a new SpecialCategory object with general default properties
+    /// - Returns: SpecialCategory object
+    func createNewSpecialCategory() -> SpecialCategory {
+        let context = container.viewContext
+        let newSpecialCategory = SpecialCategory(context: context)
+        newSpecialCategory.specialCatID = UUID()
+        newSpecialCategory.name = "New Special Category"
+        newSpecialCategory.abbreviation = "NSC"
+        newSpecialCategory.catDescription = "A new special category for things like ethics or other area that your credential's governing body may require for each renewal period."
+        newSpecialCategory.requiredHours = 1.0
+        save()
+        
+        return newSpecialCategory
+        
+    }//: SpecialCategory
+    
+    
     /// Creating a new renewal period for which CEs need to be earned
     func createRenewalPeriod() -> RenewalPeriod {
         let newRenewalPeriod = RenewalPeriod(context: container.viewContext)

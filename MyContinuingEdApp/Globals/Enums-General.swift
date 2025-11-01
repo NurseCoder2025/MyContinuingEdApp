@@ -8,7 +8,7 @@
 import Foundation
 
 
-// MARK: Sort TYPE
+// MARK: - Sort TYPE
 /// This enum is used in ContentView for the Sorting menu as a way to easily tag sort values.  Each enum type has a raw String
 /// value that corresponds to a CeActivity property that the user can sort on.
 enum SortType: String {
@@ -23,13 +23,13 @@ enum SortType: String {
 }
 
 
-// MARK: Enum for sheet types
+// MARK: - Enum for sheet types
 enum SheetType {
     case renewal, issuer, specialCat
 }
 
 
-// MARK: Enum for credential types
+// MARK: - Enum for credential types
 /// Enum for handling the different types of credentials that can be added to the app.  Within this enum are several computed properties
 /// to allow for easy access to display names (singular and plural) and SF Symbols icons for each type.  The string values within this enum
 /// will be used to populate the credentialType property in the Credential entity object.
@@ -126,3 +126,16 @@ enum CredentialType: String, CaseIterable {
 }
     
 
+// MARK: - Notification Type ENUM
+/// Enum used primarily for creating suffix values that will be appended to the string UUID values of Core Data
+/// entities as part of their unique NotificationCenter identifier value. This will allow for multiple notifications for the same
+/// object to be created.
+enum NotificationType: String, CaseIterable {
+    case upcomingExpiration
+    case renewalEnding
+    case lateFeeStarting
+    case disciplineEnding
+    case serviceDeadlineApproaching
+    case fineDeadlineApproaching
+    case ceHoursDeadlineApproaching
+}

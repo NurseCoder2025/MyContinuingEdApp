@@ -49,7 +49,7 @@ extension DataController {
         
         for country in defaultCountries {
             let place = Country(context: container.viewContext)
-            place.id = UUID() // Ensure unique identifier
+            place.countryID = UUID() // Ensure unique identifier
             place.name = country.name
             place.alpha2 = country.alpha2
             place.alpha3 = country.alpha3
@@ -95,7 +95,7 @@ extension DataController {
         
         for state in defaultStates {
             let item = USState(context: viewContext)
-            item.id = UUID()
+            item.stateID = UUID()
             item.stateName = state.stateName
             item.abbreviation = state.abbreviation
         }

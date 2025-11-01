@@ -56,7 +56,7 @@
     <entity name="Country" representedClassName="Country" syncable="YES" codeGenerationType="class">
         <attribute name="alpha2" optional="YES" attributeType="String"/>
         <attribute name="alpha3" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="countryID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="sortOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="userAbbrev" optional="YES" attributeType="String"/>
@@ -131,6 +131,7 @@
         <attribute name="catDescription" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="requiredHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="specialCatID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="specialCat" inverseEntity="CeActivity"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
@@ -140,7 +141,7 @@
     </entity>
     <entity name="USState" representedClassName="USState" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="stateID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="stateName" optional="YES" attributeType="String"/>
         <relationship name="issuer" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Issuer" inverseName="state" inverseEntity="Issuer"/>
     </entity>

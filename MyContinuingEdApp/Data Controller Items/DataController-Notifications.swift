@@ -36,6 +36,7 @@ extension DataController {
         
     }
     
+    // MARK: SCHEDULE SINGLE NOTIFICATION
     /// PRIVATE function for creating a notification of any kind for any type of object in the app.  The notification trigger is
     /// determined by the amount of time remaining between the present date value and the triggerDate value.
     /// - Parameters:
@@ -47,27 +48,45 @@ extension DataController {
         for object: NSManagedObject,
         title: String,
         body: String,
-        triggerDate: Date
+        triggerDate: Date,
+        notificationType: NotificationType
     ) async throws {
         let center = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
-
+        
+        // Making sure that the number of seconds being passed in to the trigger is a positive number
+        // only and not negative. In running a test it was discovered that negative values were being
+        // passed in and that was causing a fatal error.
+        let interval = triggerDate.timeIntervalSinceNow
+        print("trigger date time interval: \(triggerDate.timeIntervalSinceNow)")
+        guard interval > 0 else {
+            print("Trigger date is now in the past. Notification will not be scheduled.")
+            return
+        }
+        
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: triggerDate.timeIntervalSinceNow, repeats: false)
         
-        let identifier = object.objectID.uriRepresentation().absoluteString
-
-        let request = UNNotificationRequest(
-            identifier: identifier,
-            content: content,
-            trigger: trigger
-        )
+        // Getting the UUID string for the object being passed in so it can be part
+        // of the unique identifier.  Decided to use the UUID instead of objectID
+        // to make testing notification functions easier.
+        if let uuIDString = getUUIDString(for: object) {
+            let identifier = "\(uuIDString)-\(notificationType.rawValue)"
+            
+            let request = UNNotificationRequest(
+                identifier: identifier,
+                content: content,
+                trigger: trigger
+            )
+            
+            return try await center.add(request)
+        }
         
-        return try await center.add(request)
     }//: scheduleSingleNotification()
     
+    // MARK: ADD REMINDER
     /// The public function for adding notifications to various objects in the app.  Structured generally so each
     /// notification can be customized based on the object and specific circumstances surrounding the notification.
     /// - Parameters:
@@ -76,7 +95,13 @@ extension DataController {
     ///   - body: text describing details relvant to the notification
     ///   - onDate: when the notification is to be shown to the user
     /// - Returns: True or False, based on whether the notifcation was successfully scheduled or not
-    private func addReminder<T: NSManagedObject>(for object: T, title: String, body: String, onDate: Date) async{
+    private func addReminder<T: NSManagedObject>(
+        for object: T,
+        title: String,
+        body: String,
+        onDate: Date,
+        notificationType: NotificationType
+    ) async{
         do {
             let center = UNUserNotificationCenter.current()
             let settings = await center.notificationSettings()
@@ -87,7 +112,7 @@ extension DataController {
                 let isAuthorized = try await requestNotifications()
                 
                 if isAuthorized {
-                    try await scheduleSingleNotification(for: object, title: title, body: body, triggerDate: onDate)
+                    try await scheduleSingleNotification(for: object, title: title, body: body, triggerDate: onDate, notificationType: notificationType)
                 } else {
                     print("Sorry, but notifications are not yet enabled")
                 }
@@ -97,7 +122,8 @@ extension DataController {
                     for: object,
                     title: title,
                     body: body,
-                    triggerDate: onDate
+                    triggerDate: onDate,
+                    notificationType: notificationType
                 )
             default:
                 print("Unable to add notification - check settings.")
@@ -111,30 +137,28 @@ extension DataController {
     }//: addReminder()
     
     
-    /// PRIVATE method that removes all reminders/notifications assigned to any specific  object
+    /// Method that removes all reminders/notifications assigned to any specific  object, but because
+    /// the unique id for each notification is based on both the object's UUID string value and NotificationType
+    /// enum (raw value), the notification type must also be passed in.
     /// - Parameter object: NSManagedObject whose notifications are to be removed
-    private func removeReminders<T: NSManagedObject>(for object: T) {
+    func removeReminders<T: NSManagedObject>(for object: T, type: NotificationType) {
         let center = UNUserNotificationCenter.current()
-        let objIDString = object.objectID.uriRepresentation().absoluteString
-        center.removePendingNotificationRequests(withIdentifiers: [objIDString])
-    }
+        
+        if let objIDString = getUUIDString(for: object) {
+            let identifier = "\(objIDString)-\(type.rawValue)"
+            
+            center.removePendingNotificationRequests(withIdentifiers: [identifier])
+        }//: IF LET
+    }//: removeReminders(object)
     
     
     /// This method removes any pending notifications for all eligible objects in the UNNotificationCenter.  Specifically,
     /// those objects are CeActivities set to be expiring in the near future, any RenewalPeriods that are about to end, and
     /// any DisciplinaryActionItems that are temporary or have a requirement with a time-sensitive deadline (ex. for extra CE hours
     /// or community service requirement).
-    private func removeAllReminders() async {
-        let eligibleActivities = fetchUpcomingExpiringCeActivities()
-        let eligibleRenewals = getCurrentRenewalPeriods()
-        let eligibleDAIs = fetchActiveDisciplinaryActions()
-        
-        let allObjects: [NSManagedObject] = eligibleActivities + eligibleRenewals + eligibleDAIs
-        
-        for object in allObjects {
-            removeReminders(for: object)
-        }
-        
+    func removeAllReminders() async {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
     }//: removeAllReminders
     
     func updateAllReminders() async {
@@ -250,13 +274,15 @@ extension DataController {
             for ce in expiringCes {
                 for i in 1...2 {
                     let title = ce.ceTitle
-                    let daysToExpiration = (ce.expirationDate?.timeIntervalSinceNow ?? 0) / 86400
-                    let targetDaysAhead: Double = -(
+                    let daysToExpiration = (ce.ceActivityExpirationDate.timeIntervalSinceNow) / 86400
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let body = "This CE activity is scheduled to expire \(Int(daysToExpiration)) day(s) from now! Make sure you complete it before then if you wish to count it for the current renewal peroid."
                     let triggerDate = (
-                        ce.ceActivityExpirationDate).addingTimeInterval(targetDaysAhead)
-                    await addReminder(for: ce, title: title, body: body, onDate: triggerDate)
+                        ce.ceActivityExpirationDate).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .upcomingExpiration
+                    
+                    await addReminder(for: ce, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -276,16 +302,18 @@ extension DataController {
             
             // Scheduling notifications related to the renewal period end date
             for period in endingRenewalPeriods {
+                guard period.periodEnd != nil else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
-                    let title = "The \(period.renewalPeriodName) renewal for \(credName) ends soon!"
-                    let targetDaysAhead: Double = -(
+                    let title = "The \(period.renewalPeriodName) for \(credName) ends soon!"
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let daysRemaining = Int((period.renewalPeriodEnd).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) days left before your credential expires if you haven't renewed yet!"
-                    let triggerDate = (period.renewalPeriodEnd).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (period.renewalPeriodEnd).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .renewalEnding
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -295,14 +323,15 @@ extension DataController {
                 guard period.lateFeeAmount > 0, period.lateFeeStartDate != nil else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
-                    let title = "The renewal late for the \(period.renewalPeriodName) renewal approaches!"
-                    let targetDaysAhead: Double = -(
+                    let title = "The late fee for the \(period.renewalPeriodName) approaches!"
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let daysRemaining = Int((period.renewalLateFeeStartDate).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) days left before renewing your \(credName) will cost you $\(period.lateFeeAmount) extra - renew soon!"
-                    let triggerDate = (period.renewalLateFeeStartDate).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (period.renewalLateFeeStartDate).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .lateFeeStarting
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -326,13 +355,14 @@ extension DataController {
                 let credName = dai.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
                     let title = "The \(dai.daiActionName) for \(credName) ends soon!"
-                    let targetDaysAhead: Double = -(
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.actionEndDate ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.daiActionType) period taken against your credential ends.  Be sure that you have completed all required actions by the governing body by this date."
-                    let triggerDate = (dai.daiActionEndDate).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (dai.daiActionEndDate).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .disciplineEnding
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -341,13 +371,14 @@ extension DataController {
                 guard dai.commServiceDeadline != nil, dai.daiCommunityServiceDeadline > todaysDate, dai.commServiceCompletedOn == nil else { continue }
                 for i in 1...2 {
                     let title = "Community service hours due soon!"
-                    let targetDaysAhead: Double = -(
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.commServiceDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.commServiceHours) hours of community service must be completed.  Be sure that you have completed all required hours by this date."
-                    let triggerDate = (dai.daiCommunityServiceDeadline).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (dai.daiCommunityServiceDeadline).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .serviceDeadlineApproaching
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -358,13 +389,14 @@ extension DataController {
                 let credIssuer = dai.credential?.issuer?.issuerName ?? "governing body"
                 for i in 1...2 {
                     let title = "Fine due soon!"
-                    let targetDaysAhead: Double = -(
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.fineDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) day(s) left before the $\(dai.fineAmount) fine levied against your credential is due to the \(credIssuer).  Be sure that you have paid it  by this date."
-                    let triggerDate = (dai.daiFinesDueDate).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (dai.daiFinesDueDate).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .fineDeadlineApproaching
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -375,13 +407,14 @@ extension DataController {
                 let credName = dai.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
                     let title = "Mandated CE hours due soon!"
-                    let targetDaysAhead: Double = -(
+                    let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.ceDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
                     let body = "You have \(daysRemaining) day(s) left before the \(dai.disciplinaryCEHours) hours of required continuing education hours must be completed for your \(credName).  Be sure that all hours are completed by this day."
-                    let triggerDate = (dai.daiCEDeadlineDate).addingTimeInterval(targetDaysAhead)
+                    let triggerDate = (dai.daiCEDeadlineDate).addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .ceHoursDeadlineApproaching
                     
-                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate)
+                    await addReminder(for: dai, title: title, body: body, onDate: triggerDate, notificationType: noticeType)
                 }//: INNER LOOP
             }//: LOOP
             
@@ -406,4 +439,5 @@ extension DataController {
         return try? JSONDecoder().decode(AppSettings.self, from: data)
     }//: accessUserSettings()
     
-}
+    
+}//: DATA CONTROLLER

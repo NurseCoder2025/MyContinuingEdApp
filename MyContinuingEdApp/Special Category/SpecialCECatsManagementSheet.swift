@@ -121,8 +121,10 @@ struct SpecialCECatsManagementSheet: View {
                     
                 }//: TOOLBAR
                 // MARK: - SHEETS
+                // Adding Special Category
                 .sheet(isPresented: $addNewSpecialCat){
-                    SpecialCategorySheet(existingCat: nil)
+                    let newSpecialCat = dataController.createNewSpecialCategory()
+                    SpecialCategorySheet(existingCat: newSpecialCat)
                 }
                 
                 // TODO: Fix bug where passed in cat data doesn't show up in sheet
