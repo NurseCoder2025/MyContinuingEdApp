@@ -78,7 +78,7 @@ struct CredentialSheet: View {
                             .badge(allDAIs.count)
                             .accessibilityElement()
                             .accessibilityLabel("Disciplinary actions taken against this credential")
-                            .accessibilityHint("^[\(allDAIs.count) action taken] (inflect: true)")
+                            .accessibilityHint("^[\(allDAIs.count) action taken](inflect: true)")
                         }//: NAV LINK
                        
                     }//: LIST
@@ -88,20 +88,6 @@ struct CredentialSheet: View {
                 // MARK: RESTRICTIONS
                 CredentialRestrictionsSectionView(credential: credential)
                    
-                
-                // MARK: SAVE Button
-                Section {
-                    HStack {
-                        Spacer()
-                        Button {
-                            saveChanges()
-                        } label: {
-                            Label("Save", systemImage: "internaldrive.fill")
-                                .font(.title)
-                        }
-                        Spacer()
-                    }//: HSTACK
-                }//: SECTION
                 
             }//: FORM
         // MARK: - NAV TITLE

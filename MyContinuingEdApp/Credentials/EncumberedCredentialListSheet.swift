@@ -22,8 +22,6 @@ struct EncumberedCredentialListSheet: View {
         dataController.getEncumberedCredentials()
     }
     
-    
-    
     //: MARK: - BODY
     var body: some View {
         NavigationView {

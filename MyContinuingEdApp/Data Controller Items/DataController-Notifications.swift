@@ -281,7 +281,7 @@ extension DataController {
                     let daysToExpiration = (ce.ceActivityExpirationDate.timeIntervalSinceNow) / 86400
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
-                    let body = "This CE activity is scheduled to expire \(Int(daysToExpiration)) day(s) from now! Make sure you complete it before then if you wish to count it for the current renewal peroid."
+                    let body = "This CE activity ^[is scheduled to expire \(Int(daysToExpiration)) day](inflect:true) from now! Make sure you complete it before then if you wish to count it for the current renewal period."
                     let triggerDate = (
                         ce.ceActivityExpirationDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .upcomingExpiration
@@ -305,6 +305,30 @@ extension DataController {
             
             let endingRenewalPeriods = getCurrentRenewalPeriods()
             
+            // Scheduling a 6 month renewal notification
+            for period in endingRenewalPeriods {
+                guard period.periodEnd != nil else { continue }
+                let credName = period.credential?.credentialName ?? "your credential"
+                let timeRemaining = calculateRemainingTimeUntilExpiration(renewal: period).days
+                if timeRemaining == 180 {
+                    let title = "6 months remaining until renewal!"
+                    let body = "^[You have \(timeRemaining) day](inflect:true) left before your \(credName) expires. Now is the time to start working on getting all your required CEs if you haven't done so yet."
+                    let targetDaysAhead: Double = Double(timeRemaining) * 86400
+                    let triggerDate = period.renewalPeriodEnd.addingTimeInterval(-targetDaysAhead)
+                    let noticeType: NotificationType = .renewalEnding
+                    let noticeNumber: Int = 666
+                    
+                    await addReminder(
+                        for: period,
+                        title: title,
+                        body: body,
+                        onDate: triggerDate,
+                        notificationType: noticeType,
+                        noticeNum: noticeNumber)
+                }//: IF
+            }//: LOOP
+            
+            
             // Scheduling notifications related to the renewal period end date
             for period in endingRenewalPeriods {
                 guard period.periodEnd != nil else { continue }
@@ -314,7 +338,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let daysRemaining = Int((period.renewalPeriodEnd).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) days left before your credential expires if you haven't renewed yet!"
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left before your credential expires if you haven't renewed yet!"
                     let triggerDate = (period.renewalPeriodEnd).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .renewalEnding
                     let noticeNumber: Int = i
@@ -333,7 +357,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let daysRemaining = Int((period.renewalLateFeeStartDate).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) days left before renewing your \(credName) will cost you $\(period.lateFeeAmount) extra - renew soon!"
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left before renewing your \(credName) will cost you $\(period.lateFeeAmount) extra - renew soon!"
                     let triggerDate = (period.renewalLateFeeStartDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .lateFeeStarting
                     let noticeNumber: Int = i
@@ -365,7 +389,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.actionEndDate ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) day(s) left before the \(dai.daiActionType) period taken against your credential ends.  Be sure that you have completed all required actions by the governing body by this date."
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left before the \(dai.daiActionType) period taken against your credential ends.  Be sure that you have completed all required actions by the governing body by this date."
                     let triggerDate = (dai.daiActionEndDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .disciplineEnding
                     let noticeNumber: Int = i
@@ -382,7 +406,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.commServiceDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) day(s) left before the \(dai.commServiceHours) hours of community service must be completed.  Be sure that you have completed all required hours by this date."
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left ^[before the \(dai.commServiceHours) hour](inflect:true) of community service must be completed.  Be sure that you have completed all required hours by this date."
                     let triggerDate = (dai.daiCommunityServiceDeadline).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .serviceDeadlineApproaching
                     let noticeNumber: Int = i
@@ -401,7 +425,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.fineDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) day(s) left before the $\(dai.fineAmount) fine levied against your credential is due to the \(credIssuer).  Be sure that you have paid it  by this date."
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left before the $\(dai.fineAmount) fine levied against your credential is due to the \(credIssuer).  Be sure that you have paid it  by this date."
                     let triggerDate = (dai.daiFinesDueDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .fineDeadlineApproaching
                     let noticeNumber: Int = i
@@ -420,7 +444,7 @@ extension DataController {
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotice : secondNotice)) * 86400
                     let daysRemaining = Int((dai.ceDeadline ?? Date.probationaryEndDate).timeIntervalSinceNow / 86400)
-                    let body = "You have \(daysRemaining) day(s) left before the \(dai.disciplinaryCEHours) hours of required continuing education hours must be completed for your \(credName).  Be sure that all hours are completed by this day."
+                    let body = "^[You have \(daysRemaining) day](inflect:true) left ^[before the \(dai.disciplinaryCEHours) hour](inflect:true) of required continuing education hours must be completed for your \(credName).  Be sure that all hours are completed by this day."
                     let triggerDate = (dai.daiCEDeadlineDate).addingTimeInterval(-targetDaysAhead)
                     let noticeType: NotificationType = .ceHoursDeadlineApproaching
                     let noticeNumber: Int = i

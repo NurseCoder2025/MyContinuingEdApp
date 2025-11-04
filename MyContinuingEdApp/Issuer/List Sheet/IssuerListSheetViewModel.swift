@@ -22,12 +22,18 @@ extension IssuerListSheet {
         // Property for storing a newly created Issuer
         @Published var newIssuer: Issuer?
         
+        // Property for editing an existing Issuer
+        @Published var issuerToEdit: Issuer?
+        
         // Property for adding a new issuer
         @Published var showIssuerSheet: Bool = false
         
         // Properties for deleting an issuer
         @Published var showDeletionWarning: Bool = false
         
+        // MARK: - CORE DATA
+       let issuersController: NSFetchedResultsController<Issuer>
+       @Published var allIssuers: [Issuer] = []
         
         // MARK: - FUNCTIONS
         
@@ -53,14 +59,27 @@ extension IssuerListSheet {
         /// selected Issuer so the user can edit it.
         /// - Parameter someIssuer: an Issuer object passed in after the user swipes to edit in IssuerListSheet
         func editSelectedIssuer(_ someIssuer: Issuer) {
-            selectedIssuer = someIssuer
-            showIssuerSheet = true
+            issuerToEdit = someIssuer
         }
         
+        /// Method adds a temporary Issuer object to the view context so the user can then edit it as
+        /// desired.  Do not use the dataController's createNewIssuer method here because it will
+        /// save the new Issuer object to persistent storage and that will cause issues with UI updating
+        /// (the sheet with the new Issuer will not be shown until the view is dismissed and brought up again).
         func addNewIssuer() {
-            selectedIssuer = nil
-            newIssuer = dataController.createNewIssuer()
-            showIssuerSheet = true
+            let context = dataController.container.viewContext
+            let issuerToAdd = Issuer(context: context)
+            issuerToAdd.issuerID = UUID()
+            issuerToAdd.issuerName = "New Issuer"
+            
+            // Set default country to United States
+            let countryRequest: NSFetchRequest<Country> = Country.fetchRequest()
+            countryRequest.predicate = NSPredicate(format: "alpha3 == %@", "USA")
+            
+            let defaultCountry = (try? context.fetch(countryRequest).first) ?? nil
+            issuerToAdd.country = defaultCountry
+            
+            newIssuer = issuerToAdd
         }
         
         func deleteIssuer(_ issuer: Issuer) {
@@ -88,10 +107,6 @@ extension IssuerListSheet {
             selectedIssuer = nil
             showDeletionWarning = false
         }
-        
-         // MARK: - CORE DATA
-        let issuersController: NSFetchedResultsController<Issuer>
-        @Published var allIssuers: [Issuer] = []
         
         // MARK: - INIT
         init(dataController: DataController) {

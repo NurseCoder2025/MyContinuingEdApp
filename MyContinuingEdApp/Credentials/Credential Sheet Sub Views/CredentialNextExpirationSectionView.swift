@@ -64,8 +64,8 @@ struct CredentialNextExpirationSectionView: View {
                         }
                     } else {
                         // Calculate the number of days until the credential expires
-                        let daysToRenew = calcTimeUntilNextExpiration(renewals: renewalsSorted).days
-                        let renewalName = calcTimeUntilNextExpiration(renewals: renewalsSorted).name
+                        let daysToRenew = dataController.calcTimeUntilNextExpiration(renewals: renewalsSorted).days
+                        let renewalName = dataController.calcTimeUntilNextExpiration(renewals: renewalsSorted).name
                         
                         // If the daysToRenew is -1, then today's date doesn't fall within any of the
                         // renewal periods that have been entered thus far, so prompt the user to create
@@ -81,13 +81,17 @@ struct CredentialNextExpirationSectionView: View {
                         } else {
                             VStack {
                                 Text(renewalName)
-                                Text("^[\(NSNumber(value: daysToRenew), formatter: wholeNumFormatter) day before the credential expires] (inflect: true)")
-                                    .font(.title)
-                                    .bold()
+                                    .font(.title2).bold()
+                                HStack {
+                                    Spacer()
+                                    Text("^[\(NSNumber(value: daysToRenew), formatter: wholeNumFormatter) day before the credential expires](inflect: true)")
+                                        .font(.title3)
+                                    Spacer()
+                                }//: HSTACK
                             }//: VSTACK
                             .accessibilityElement()
                             .accessibilityLabel("Days Until Credential Expires")
-                            .accessibilityHint("^[\(NSNumber(value: daysToRenew)) day] (inflect: true)")
+                            .accessibilityHint("^[\(NSNumber(value: daysToRenew)) day](inflect: true)")
                         }
                     }//: INNER IF-ELSE
                 } //: ELSE
@@ -102,32 +106,7 @@ struct CredentialNextExpirationSectionView: View {
         }//: SHEET
         
     }//: BODY
-     // MARK: - FUNCTIONS
-    /// Function for calculating the number of days between the current date and the end date for a given renewal period.  This funciton is
-    /// intended to be used within the CredentialNextExpirationSectionView and only take the most recent renewal period object.
-    /// - Parameter renewals: array of RenewalPeriod objects (should be the renewalsSorted computed property)
-    /// - Returns: a tuple with the number of days until expiration (Int) and the name of the renewal period (String)
-    func calcTimeUntilNextExpiration(renewals: [RenewalPeriod]) -> (days:Int, name:String) {
-        // Return a -1 if no renewal periods currently exist (and nothing was passed in)
-        guard renewals.isNotEmpty else {return (-1, "")}
-        
-        // Get today's date
-        let todaysDate: Date = Date.now
-        
-        // Find the renewal period that today's date falls within
-        let currentRenewalArray = renewals.filter {
-            $0.renewalPeriodStart <= todaysDate && $0.renewalPeriodEnd >= todaysDate
-        }
-        
-        // Convert the array to a single object (if it exists)
-        guard let currentRenewal = currentRenewalArray.first else {return (-1, "")}
-        
-        // Calculate the number of days between today's date and the end date for the current renewal period
-        let daysUntilExpiration = Calendar.current.dateComponents([.day], from: todaysDate, to: currentRenewal.renewalPeriodEnd).day ?? -1
-        
-        return (daysUntilExpiration, currentRenewal.renewalPeriodName)
-        
-     }//: FUNC
+    
     
 }//: STRUCT
 

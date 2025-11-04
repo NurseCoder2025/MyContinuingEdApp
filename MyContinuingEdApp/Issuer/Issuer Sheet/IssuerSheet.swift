@@ -18,7 +18,7 @@ import SwiftUI
 struct IssuerSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-   
+    
     @StateObject private var viewModel: ViewModel
     
     @ObservedObject var issuer: Issuer
@@ -27,11 +27,9 @@ struct IssuerSheet: View {
     // Data sync issue appears in the IssuerListSheet
     // iff trying to bind entity properties directly.
     @State private var issuerNameText: String = ""
- 
     
     // Property for showing the Country List
     @State private var showCountryListSheet: Bool = false
-    
                                      
     // MARK: - BODY
     var body: some View {
@@ -45,10 +43,10 @@ struct IssuerSheet: View {
                         // MARK: Country Selection
                         Picker("Country", selection: $issuer.country) {
                             ForEach(viewModel.allCountries) { country in
-                                Text(country.countryName).tag(country)
-                            }// LOOP
-                        }//: PICKER (Country)
-                        .pickerStyle(.navigationLink)
+                                Text(country.countryName).tag(Optional(country))
+                            }
+                        }
+                        .pickerStyle(.menu) // Changed from .navigationLink for better sheet appearance
                        
                         
                         // MARK: Show Country List (for editing)
@@ -61,12 +59,12 @@ struct IssuerSheet: View {
                         if let selectedCountry = issuer.country, selectedCountry.alpha3 == "USA" {
                             Picker("State:", selection: $issuer.state) {
                                 ForEach(viewModel.allStates) { state in
-                                    StatePickerRowView(state: state).tag(state)
+                                    Text("\(state.USStateName) (\(state.USStateAbbreviation))").tag(Optional(state))
                                         .accessibilityElement()
                                         .accessibilityLabel("\(state.USStateName)")
-                                }//: LOOP
-                            }//: STATE PICKER
-                            .pickerStyle(.navigationLink)
+                                }
+                            }
+                            .pickerStyle(.menu) // Changed from .navigationLink for better sheet appearance
                         }
                     }//: SECTION
                     // MARK: Website
@@ -104,26 +102,23 @@ struct IssuerSheet: View {
                         Text("Dismiss")
                     }
                 }//: TOOLBAR ITEM
+                
+                // Save button
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: {
+                        issuer.issuerName = issuerNameText
+                        viewModel.dataController.save()
+                        dismiss()
+                    }) {
+                        Text("Save")
+                    }
+                }//: TOOLBAR ITEM
                             
             }//: TOOLBAR
-            // MARK: - ON DISAPPEAR
-            .onDisappear {
-                // Ensure that all data has been saved so that the issuer list view will display
-                // all values properly
-                issuer.issuerName = issuerNameText
-                viewModel.dataController.save()
-            }//: ON DISAPPEAR
             // MARK: - ON APPEAR
             .onAppear {
                 issuerNameText = issuer.issuerIssuerName
             }//: ON APPEAR
-            // MARK: - AUTO SAVING FUNCTIONS
-            .onReceive(issuer.objectWillChange) { _ in
-                viewModel.dataController.queueSave()
-            }//: ON RECEIVE
-            
-            .onSubmit {viewModel.dataController.save()}
-            
         }//: NAV VIEW
     }//: BODY
     

@@ -5,6 +5,7 @@
 //  Created by Kamino on 9/4/25.
 //
 
+import CoreData
 import SwiftUI
 
 // This file creates a sheet containing a list of all entered credential issuers.  The user
@@ -22,24 +23,36 @@ struct IssuerListSheet: View {
     // this view which issuer is assigned to the given credential
     @ObservedObject var credential: Credential
     
+    // MARK: - CORE DATA
+    // Using the @FetchRequest for the List because when the viewModel's
+    // allIssuers published property was used there was syncing issues in the
+    // UI where deleting an issue would show an empty row with no values instead
+    // of disappearing completely, which is the expected behavior.
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Issuer.issuerName, ascending: true)]) var allIssuers: FetchedResults<Issuer>
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
-            if viewModel.allIssuers.isEmpty {
-               NoIssuersView()
+            if allIssuers.isEmpty {
+                NoIssuersView {
+                    viewModel.addNewIssuer()
+                }
             } else {
-                List {
-                    ForEach(viewModel.allIssuers) { issuer in
-                        Button {
-                            // Add action
-                            viewModel.tapSelectsAndAssignsIssuer(someIssuer: issuer, someCred: credential)
-                        } label: {
-                            IssuerRowView(
-                                issuer: issuer,
-                                isSelected: viewModel.selectedIssuer == issuer
-                            )
-                        }//: BUTTON
+                VStack {
+                    Text("Tap on an issuer to assign it to the credential being edited")
+                        .font(.title3)
+                        .padding()
+                    List {
+                        ForEach(allIssuers) { issuer in
+                            Button {
+                                // Add action
+                                viewModel.tapSelectsAndAssignsIssuer(someIssuer: issuer, someCred: credential)
+                            } label: {
+                                IssuerRowView(
+                                    issuer: issuer,
+                                    isSelected: viewModel.selectedIssuer == issuer
+                                )
+                            }//: BUTTON
                             .swipeActions {
                                 
                                 // MARK: Edit Issuer
@@ -58,9 +71,10 @@ struct IssuerListSheet: View {
                                         .labelStyle(.iconOnly)
                                 }
                             }//: SWIPE ACTIONS
-                        
-                    }//: LOOP
-                }//: LIST
+                            
+                        }//: LOOP
+                    }//: LIST
+                }//: VSTACK
                 .navigationTitle("Credential Issuers")
                 // MARK: - TOOLBAR
                 .toolbar {
@@ -82,21 +96,18 @@ struct IssuerListSheet: View {
                 }//: TOOLBAR
                 
                 // MARK: - SHEETS
-                .sheet(isPresented: $viewModel.showIssuerSheet) {
-                    if let createdIssuer = viewModel.newIssuer {
-                        IssuerSheet(dataController: viewModel.dataController, issuer: createdIssuer)
-                        // Delete object if user cancels/dismisses sheet before saving it
-                            .onDisappear {
-                                if createdIssuer.issuerName == "New Issuer" {
-                                    viewModel.dataController.delete(createdIssuer)
-                                }
-                            }//: ON DISAPPEAR
-                    } else {
-                        if let issuerToEdit = viewModel.selectedIssuer {
-                            IssuerSheet(dataController: viewModel.dataController, issuer: issuerToEdit)
-                        }//: IF LET
+                .sheet(item: $viewModel.newIssuer) {_ in
+                    if let addedIssuer = viewModel.newIssuer {
+                        IssuerSheet(
+                            dataController: viewModel.dataController,
+                            issuer: addedIssuer)
                     }//: IF LET
-                    
+                }//: SHEET
+                
+                .sheet(item: $viewModel.issuerToEdit) {item in
+                        IssuerSheet(
+                            dataController: viewModel.dataController,
+                            issuer: item)
                 }//: SHEET
                 
                 // MARK: - ALERTS
@@ -122,6 +133,10 @@ struct IssuerListSheet: View {
         _viewModel = StateObject(wrappedValue: viewModel)
         
         self.credential = credential
+        
+        if let currentAssignment = credential.issuer {
+            viewModel.selectedIssuer = currentAssignment
+        }
         
     }//: INIT
     

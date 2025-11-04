@@ -43,7 +43,7 @@ struct SidebarTagsSectionView: View {
                             }//: CONTEXT MENU
                             .accessibilityElement()
                             .accessibilityLabel("Tag: \(filter.name)")
-                            .accessibilityHint("^[\(filter.tagActivitiesCount) activity] (inflect: true)")
+                            .accessibilityHint("^[\(filter.tagActivitiesCount) activity](inflect: true)")
                         
                     } //: NAV LINK
                 } //: LOOP

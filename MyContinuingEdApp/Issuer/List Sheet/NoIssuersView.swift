@@ -23,8 +23,9 @@ struct NoIssuersView: View {
     Add one by tapping on the button below.
     """
     let image: String = "questionmark.app.fill"
-    // Property to bring up the IssuerSheet
-    @State private var showIssuerSheet: Bool = false
+  
+    
+    var addNewIssuer: () -> Void
     // MARK: - BODY
     var body: some View {
         if #available(iOS 17, *) {
@@ -46,7 +47,7 @@ struct NoIssuersView: View {
                 
                 // Add issuer button
                 Button {
-                    showIssuerSheet = true
+                    addNewIssuer()
                 } label: {
                     Label("Add Credential Issuer", systemImage: "person.text.rectangle.fill")
                 }
@@ -61,15 +62,12 @@ struct NoIssuersView: View {
                 }.applyDismissStyle()
             }
             // MARK: - SHEETS
-            .sheet(isPresented: $showIssuerSheet) {
-                let newIssuer = dataController.createNewIssuer()
-                IssuerSheet(dataController: dataController, issuer: newIssuer)
-            }
+           
         } //: IF AVAILABLE
     }
 }
 
 // MARK: - PREVIEw
 #Preview {
-    NoIssuersView()
+    NoIssuersView(addNewIssuer: {})
 }

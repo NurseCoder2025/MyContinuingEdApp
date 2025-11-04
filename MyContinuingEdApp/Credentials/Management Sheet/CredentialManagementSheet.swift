@@ -49,7 +49,7 @@ struct CredentialManagementSheet: View {
                                 )
                                 .accessibilityElement()
                                 .accessibilityLabel("\(type.displayPluralName)")
-                                .accessibilityHint("^[\(viewModel.getCatBadgeCount(category: type.rawValue)) \(type.rawValue)] (inflect: true)")
+                                .accessibilityHint("^[\(viewModel.getCatBadgeCount(category: type.rawValue)) \(type.rawValue)](inflect: true)")
                             }//: BUTTON
                         }//: LOOP
                     }//: GRID
