@@ -62,13 +62,17 @@ struct DisciplinaryActionItemSheet: View {
     If the action taken, such as a probationary period, has an end date,
     be sure to toggle the switch by 'Temporary?' to indicate that.
     """
+    @State private var showHeaderShape: Bool = true
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
             VStack {
-                HeaderNoteView(titleText: title, messageText: messageText)
-                
+                if showHeaderShape {
+                    HeaderNoteView(titleText: title, messageText: messageText, dismissAction: {
+                        showHeaderShape.toggle()
+                    })
+                }
                 // MARK: FORM
                 Form {
                     // MARK: - General Info Section
