@@ -93,6 +93,9 @@ extension DataController {
         // Calculating the number of hours earned
         var totalCEAwarded: Double = 0.0
         for activity in renewalActivities {
+            // Need to make sure that the CE units entered in the Credential
+            // renewalCEsRequired property is the same as what was entered for the CeActivity,
+            // and if not, convert accordingly.
             if activity.hoursOrUnits == requirementUnit {
                 totalCEAwarded += activity.ceAwarded
             } else if requirementUnit == 1 && activity.hoursOrUnits == 2 {
@@ -124,7 +127,7 @@ extension DataController {
     /// - Returns: a dictionary composed of a String key and a Double value, representing each SpecialCategory for a given Credential,
     ///     with the name of the SpecialCategory serving as the String key and the computed hours/units still needed as the Double value
     func calculateRemainingSpecialCECatHoursFor(renewal: RenewalPeriod) -> [String: Double] {
-        guard let renewalCred = renewal.credential else { return ["No Values": 0.0]}
+        guard let renewalCred = renewal.credential else { return [:]}
         
         // Defining the dictionary to hold values for each special category assigned
         var remainingSpecialCatHours: [String: Double] = [:]
@@ -154,6 +157,9 @@ extension DataController {
                 guard requiredCatHours > 0.0 else { continue }
                 var catTotal: Double = 0.0
                 for activity in renewalActivities {
+                    // Need to make sure that the CE units entered in the SpecialCategory
+                    // requiredHours property is the same as what was entered for the CeActivity,
+                    // and if not, convert accordingly.
                     if activity.specialCat == specialCat {
                         if specialCat.measurementDefault == activity.hoursOrUnits {
                             catTotal += activity.ceAwarded
