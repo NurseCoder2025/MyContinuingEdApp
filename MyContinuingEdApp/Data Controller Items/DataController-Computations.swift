@@ -38,7 +38,6 @@ extension DataController {
      }//: FUNC
     
     
-    
     /// Function that returns a tuple with the number of days remaining in a given renewal period.
     /// Designed to be called from anywhere within the app where needed as it evaluates only
     /// a single renewal period.
@@ -55,6 +54,8 @@ extension DataController {
         return (daysTilRenewal, renewal.renewalPeriodName)
         
     }//: calculateRemainingTimeUntilExpiration(renewal)
+    
+    
     
     
     

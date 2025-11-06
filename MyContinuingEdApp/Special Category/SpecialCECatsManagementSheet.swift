@@ -1,5 +1,5 @@
 //
-//  Credential-SpecialCatsSelectionSheet.swift
+//  SpecialCECatsManagementSheet.swift
 //  MyContinuingEdApp
 //
 //  Created by Kamino on 9/17/25.
@@ -11,88 +11,90 @@
 import CoreData
 import SwiftUI
 
+/// This struct is intended for use in both ActivityView as well as in CredentialSheet so that the user can create/assign special
+/// CE categories to both Credential and CeActivity objects.  While the struct is initialized with optional activity and credential
+/// properties set to nil by default, one of those two properties should be assigned an object in order for things to work properly.
+///
+/// - Parameters:
+///     - credential: [Optional] Credential object if the user is to be assigning a special ce catetory to a particular Credential
+///     - activity: [Optional] CeActivity object if the user is to designate a specific CE activity as counting towards the special CE category
 struct SpecialCECatsManagementSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var dataController: DataController
     
-    // Passing in the CeActivity object for which special categories will be assigned
-    @ObservedObject var activity: CeActivity
+    private var dataController: DataController
     
-    // Property for adding a new SpecialCategory object if the user needs to
-    @State private var addNewSpecialCat: Bool = false
-    
-    // Property for showing the SpecialCategorySheet for editing a category
-    @State private var editSpecialCategory: Bool = false
-    
-    // Properties for holding a special category for editing or deleting purposes
-    @State private var specialCatToEdit: SpecialCategory?
-    @State private var specialCatToDelete: SpecialCategory?
-    
-    // Deletion alert property
-    @State private var showDeleteWarning: Bool = false
+    @StateObject private var viewModel: ViewModel
     
     // MARK: - CORE DATA FETCHES
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allSpecialCats: FetchedResults<SpecialCategory>
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
             if allSpecialCats.isEmpty {
-                NoSpecialCatsView()
+                NoSpecialCatsView(dataController: dataController) {
+                    viewModel.addNewSpecialCategory()
+                }
             } else {
                 VStack {
-                    Text("For: \(activity.ceTitle)")
+                    Text(viewModel.sheetForString)
                         .font(.title)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, 15)
-                    List(allSpecialCats) { cat in
-                        HStack {
-                            Text(cat.specialName)
-                            Spacer()
-                            if activity.specialCat == cat {
-                                Image(systemName: "checkmark")
-                            }
-                        }//: HSTACK (ROW)
-                        // MARK: - SWIPE ACTIONS
-                        .swipeActions {
-                            // EDIT button
-                            Button {
-                                specialCatToEdit = cat
-                                editSpecialCategory = true  // may not need this line of code
-                            } label: {
-                                Label("Edit", systemImage: "pencil")
-                            }
-                            
-                            
-                            // DELETE button
-                            Button(role: .destructive) {
-                                specialCatToDelete = cat
-                                showDeleteWarning = true
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            
-                        }//: SWIPE
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if activity.specialCat == cat {
-                                activity.specialCat = nil
-                            } else {
-                                activity.specialCat = cat
-                            }
-                        }
+                    List() {
+                        // MARK: ASSIGNED SPECIAL CATS - HEADER
+                        ForEach(allCredentials) { credential in
+                            Section(header: Text(credential.credentialName)) {
+                                // MARK: ROWS
+                                ForEach(viewModel.specialCatsAssignedTo(credential: credential)) { specialCat in
+                                    SpecialCatRowView(
+                                        specialCat: specialCat,
+                                        credential: viewModel.credential,
+                                        activity: viewModel.activity,
+                                        onTap: {
+                                            viewModel.tapToAddOrRemove(category: specialCat)
+                                        },
+                                        onEdit: {
+                                            viewModel.specialCatToEdit = specialCat
+                                        },
+                                        onDelete: {
+                                            viewModel.specialCatToDelete = specialCat
+                                            viewModel.showDeleteWarning = true
+                                        }
+                                    )
+                                }//: LOOP
+                                
+                            }//: SECTION
+                        }//: LOOP
+                        
+                        // MARK: UNASSIGNED
+                        Section(
+                            header: Text("Unassigned to Any Credential"),
+                            footer: Text("To assign any of these categories to a Credential, swipe left and tap on the edit button. Then, at the bottom of the screen tap on the assignment picker to select the desired Credential.")
+                        ){
+                            ForEach(viewModel.specialCatsAssignedTo(credential: nil)) { specialCat in
+                                SpecialCatRowView(
+                                    specialCat: specialCat,
+                                    credential: viewModel.credential,
+                                    activity: viewModel.activity,
+                                    onTap: {
+                                        viewModel.tapToAddOrRemove(category: specialCat)
+                                    },
+                                    onEdit: {
+                                        viewModel.specialCatToEdit = specialCat
+                                    },
+                                    onDelete: {
+                                        viewModel.specialCatToDelete = specialCat
+                                        viewModel.showDeleteWarning = true
+                                    }
+                                )
+                            }//: LOOP
+                        }//:SECTION
                         
                     }//: LIST
-                    // MARK: - Dismiss BUTTON
-                    // Save assignments to credential object
-                    Button {
-                        dismiss()
-                    } label: {
-                        Label("Dismiss", systemImage: "internaldrive.fill")
-                    }
-                    .buttonStyle(.borderedProminent)
                     
                 }//: VSTACK
                 .navigationTitle("Assign CE Category")
@@ -101,7 +103,7 @@ struct SpecialCECatsManagementSheet: View {
                     // Adding a new Special Category
                     ToolbarItem {
                         Button {
-                            addNewSpecialCat = true
+                            viewModel.addNewSpecialCategory()
                         } label: {
                             Label("Add Special Category", systemImage: "plus")
                                 .labelStyle(.iconOnly)
@@ -122,61 +124,38 @@ struct SpecialCECatsManagementSheet: View {
                 }//: TOOLBAR
                 // MARK: - SHEETS
                 // Adding Special Category
-                .sheet(isPresented: $addNewSpecialCat){
-                    let newSpecialCat = dataController.createNewSpecialCategory()
-                    SpecialCategorySheet(existingCat: newSpecialCat)
-                }
+                .sheet(item: $viewModel.addedSpecialCategory){ _ in
+                    if let newSpecialCat = viewModel.addedSpecialCategory {
+                        SpecialCategorySheet(existingCat: newSpecialCat)
+                    }
+                }//: SHEET
                 
-                // TODO: Fix bug where passed in cat data doesn't show up in sheet
-                .sheet(item: $specialCatToEdit) { category in
-                    SpecialCategorySheet(existingCat: category)
-                }
-                
-                // MARK: - ON APPEAR
+                .sheet(item: $viewModel.specialCatToEdit) { _ in
+                    if let specialCatForEditing = viewModel.specialCatToEdit {
+                        SpecialCategorySheet(existingCat: specialCatForEditing)
+                    }
+                }//: SHEET
                 
                 
                 // MARK: - ALERTS
-                .alert("Delete Special CE Category", isPresented: $showDeleteWarning) {
-                    Button("Delete", role: .destructive, action: {deleteSelectedCategory()})
+                .alert("Delete Special CE Category", isPresented: $viewModel.showDeleteWarning) {
+                    Button("Delete", role: .destructive, action: {viewModel.deleteSelectedCategory()})
                     Button("Cancel", role: .cancel) {}
                 } message: {
-                    Text("You are about to delete the \(specialCatToDelete?.specialName ?? "selected") category. Are you sure?")
+                    Text("You are about to delete the \(viewModel.specialCatToDelete?.specialName ?? "selected") category. Are you sure?")
                 }
             }//: IF - ELSE
             
         }//: NAV VIEW
     } //: BODY
     
-    // MARK: - FUNCTIONS
     
-    /// Deletes the selected special CE category object once confirmed by the user
-    func deleteSelectedCategory() {
-        if let category = specialCatToDelete {
-            dataController.delete(category)
-        }
+   // MARK: - INIT
+    init(dataController: DataController, credential: Credential? = nil, activity: CeActivity? = nil) {
+       self.dataController = dataController
+       let viewModel = ViewModel(dataController: dataController, cred: credential, activity: activity)
+        _viewModel = StateObject(wrappedValue: viewModel)
         
-        dataController.save()
-    }
+    }//: INIT()
     
 }//: STRUCT
-
-// MARK: - PREVIEW
-#Preview {
-    let controller = DataController(inMemory: true)
-    let context = controller.container.viewContext
-
-    let specialCat = SpecialCategory(context: context)
-    specialCat.name = "Category A"
-    specialCat.abbreviation = "Cat A"
-
-    let someActivity = CeActivity(context: context)
-    someActivity.activityTitle = "A Great CE!"
-    someActivity.ceAwarded = 1.0
-    someActivity.specialCat = specialCat
-
-    try? context.save()
-
-    return SpecialCECatsManagementSheet(activity: someActivity)
-        .environmentObject(controller)
-        .environment(\.managedObjectContext, context) // Ensure fetch request sees preview data
-}

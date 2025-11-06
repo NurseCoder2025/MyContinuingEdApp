@@ -62,6 +62,7 @@ extension DataController {
         if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
             newActivity.addToCredentials(credential)
             newActivity.renewal = renewal
+            newActivity.hoursOrUnits = credential.measurementDefault
         }
         
         save()
@@ -97,6 +98,7 @@ extension DataController {
         if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
             newActivity.addToCredentials(credential)
             newActivity.renewal = renewal
+            newActivity.hoursOrUnits = credential.measurementDefault
         }
         
         save()
@@ -115,7 +117,6 @@ extension DataController {
         newSpecialCategory.abbreviation = "NSC"
         newSpecialCategory.catDescription = "A new special category for things like ethics or other area that your credential's governing body may require for each renewal period."
         newSpecialCategory.requiredHours = 1.0
-        save()
         
         return newSpecialCategory
         

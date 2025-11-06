@@ -56,12 +56,7 @@ struct DisciplinaryActionItemSheet: View {
     
     // Properties for sheet header shape
     let title: String = "Disciplinary Action"
-    let messageText: String  = """
-    We hope this doesn't happen to you, but if it does then document
-    whatever actions your credential's governing body has taken.
-    If the action taken, such as a probationary period, has an end date,
-    be sure to toggle the switch by 'Temporary?' to indicate that.
-    """
+    let messageText: String  = "We hope this doesn't happen to you, but if it does then document whatever actions your credential's governing body has taken. If the action taken, such as a probationary period, has an end date, be sure to toggle the switch by 'Temporary?' to indicate that."
     @State private var showHeaderShape: Bool = true
     
     // MARK: - BODY

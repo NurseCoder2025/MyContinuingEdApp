@@ -13,6 +13,7 @@ import SwiftUI
 
 struct ActivityCEDetailsView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
     // Bindings to parent view (ActivityView)
@@ -74,7 +75,7 @@ struct ActivityCEDetailsView: View {
         
         // CE Category selection
         .sheet(isPresented: $showSpecialCECatAssignmentSheet) {
-            SpecialCECatsManagementSheet(activity: activity)
+            SpecialCECatsManagementSheet(dataController: dataController, activity: activity)
         }//: SHEET (SpecialCECatASsignmentManagementSheet)
                 
     }//: BODY

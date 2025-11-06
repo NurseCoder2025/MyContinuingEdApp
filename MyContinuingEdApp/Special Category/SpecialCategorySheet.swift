@@ -5,6 +5,7 @@
 //  Created by Kamino on 9/13/25.
 //
 
+import CoreData
 import SwiftUI
 
 // Purpose: To serve as the interface from which a user can create a new special CE category or edit an existing one
@@ -12,17 +13,14 @@ import SwiftUI
 struct SpecialCategorySheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
-    
     @EnvironmentObject var dataController: DataController
     
     // IF editing an existing special category...
-    let existingCat: SpecialCategory?
+    @ObservedObject var existingCat: SpecialCategory
     
-    // Properties for each special category object
-    @State private var catName: String = ""
-    @State private var description: String = ""
-    @State private var catAbbrev: String = ""
-    @State private var hoursRequired: Double = 5.0
+    // MARK: - CORE DATA
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(keyPath: \Credential.name, ascending: true)]) var allCredentials: FetchedResults<Credential>
+    
     
     // MARK: - BODY
     var body: some View {
@@ -31,30 +29,36 @@ struct SpecialCategorySheet: View {
             VStack {
                 Form {
                     Section("Name & Abbreviation") {
-                        TextField("Category Name:", text: $catName)
-                        TextField("Abbreviation:", text: $catAbbrev)
+                        TextField("Category Name:", text: $existingCat.specialName)
+                        TextField("Abbreviation:", text: $existingCat.specialAbbreviation)
                     }//: SECTION
                     
                     Section(header: Text("Details"), footer: Text("Enter how many hours you are required to obtain for activities of this category in any given renewal period.")) {
-                        TextField("Description:", text: $description)
+                        TextField("Description:", text: $existingCat.specialCatDescription)
                         HStack {
                             Text("Hours Required:")
                                 .bold()
-                            TextField("CE Hours Required:", value: $hoursRequired, formatter: ceHourFormatter)
+                            TextField("CE Hours Required:", value: $existingCat.requiredHours, formatter: ceHourFormatter)
                                 .keyboardType(.decimalPad)
                         }//: HSTACK
-                    }
+                    }//: Section
+                    
+                    Section("Credential Assignment") {
+                        Group {
+                            VStack(alignment: .leading) {
+                                Text("Select the credential that requires CE contact hours/units for this particular category.")
+                                Picker("Credential", selection: $existingCat.credential) {
+                                    Text("Select Credential").tag(nil as Credential?)
+                                    ForEach(allCredentials) { credential in
+                                        Text(credential.credentialName).tag(credential)
+                                    }//: LOOP
+                                }//: PICKER
+                            }//: VSTACK
+                            
+                        }//: GROUP
+                    }//: SECTION
                     
                 }//: FORM
-                
-                // Save Button
-                Button {
-                    mapAndSave()
-                    dismiss()
-                } label: {
-                    Label("Save", systemImage: "internaldrive.fill")
-                }
-                .buttonStyle(.borderedProminent)
                 
                 
             }//: VSTACK
@@ -69,45 +73,37 @@ struct SpecialCategorySheet: View {
                         Text("Dismiss")
                     }
                 }//: TOOLBAR ITEM
-            }
-            // MARK: - ON APPEAR
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                    }//: BUTTON
+                }//: TOOLBAR ITEM
+                
+            }//: TOOLBAR
+            
+            // MARK: - ON APPEAR / DISAPPEAR
             .onAppear {
-                // Mapping existing special cat properties to UI
-                // control values
-                if let passedInCat = existingCat {
-                    catName = passedInCat.specialName
-                    catAbbrev = passedInCat.specialAbbreviation
-                    description = passedInCat.specialCatDescription
-                    hoursRequired = passedInCat.requiredHours
-                }//: IF LET
+               
             }//: ON APPEAR
+            
+            .onDisappear {
+                dataController.save()
+            }
             // MARK: - AUTO SAVE
-          
+            .onReceive(existingCat.objectWillChange) { _ in
+                dataController.queueSave()
+            }
+            .onSubmit {
+                dataController.save()
+            }
             
         }//: NAV VIEW
     }//: BODY
     // MARK: - FUNCTIONS
-    /// Function which maps each control in the UI to the corresponding property in the SpecialCategory object.  If the user is creating a new SpecialCategory (i.e.
-    /// the existingCat property is nil) then a new object is created and the properties are mapped to that before calling the DataController's save function.
-    func mapAndSave() {
-        if let passedInCat = existingCat {
-            passedInCat.name = catName
-            passedInCat.catDescription = description
-            passedInCat.abbreviation = catAbbrev
-            passedInCat.requiredHours = hoursRequired
-        } else {
-            let container = dataController.container
-            let context = container.viewContext
-            
-            let newCategory = SpecialCategory(context: context)
-            newCategory.name = catName
-            newCategory.catDescription = description
-            newCategory.abbreviation = catAbbrev
-            newCategory.requiredHours = hoursRequired
-        }
-        
-        dataController.save()
-    }//: MAP & SAVE
+    
 }
 
 // MARK: - PREVIEW

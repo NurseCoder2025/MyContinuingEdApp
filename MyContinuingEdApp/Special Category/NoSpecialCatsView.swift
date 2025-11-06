@@ -12,7 +12,10 @@ import SwiftUI
 
 struct NoSpecialCatsView: View {
     // MARK: - PROPERTIES
-    @State private var showSpecialCatsSheet: Bool = false
+    @StateObject private var viewModel: ViewModel
+    
+    // Closure for triggering the sheet to add a new SpecialCategory
+    var onPressAddSpecialCatButton: () -> Void
     
     // MARK: - BODY
     var body: some View {
@@ -43,7 +46,7 @@ struct NoSpecialCatsView: View {
                 .padding(20)
             
             Button {
-                showSpecialCatsSheet = true
+                onPressAddSpecialCatButton()
             } label: {
                 Label("Add Special Category", systemImage: "plus")
                     .font(.title)
@@ -51,14 +54,18 @@ struct NoSpecialCatsView: View {
             .buttonStyle(.borderedProminent)
             
         }//: VSTACK
-        // MARK: - SHEETS
-        .sheet(isPresented: $showSpecialCatsSheet) {
-            SpecialCategorySheet(existingCat: nil)
-        }
+        
+    }//: BODY
+    
+    // MARK: - INIT
+    init(dataController: DataController, buttonPress: @escaping () -> Void) {
+        self.onPressAddSpecialCatButton = buttonPress
+        let viewModel = ViewModel(dataController: dataController)
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
-}
+}//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    NoSpecialCatsView()
+    NoSpecialCatsView(dataController: .preview, buttonPress: {})
 }

@@ -71,13 +71,16 @@
         <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isRestricted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="issueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="measurementDefault" optional="YES" attributeType="Integer 16" minValueString="1" maxValueString="2" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="renewalCEsRequired" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="renewalPeriodLength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="restrictions" optional="YES" attributeType="String"/>
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="credentials" inverseEntity="CeActivity"/>
         <relationship name="disciplinaryActions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DisciplinaryActionItem" inverseName="credential" inverseEntity="DisciplinaryActionItem"/>
         <relationship name="issuer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Issuer" inverseName="credential" inverseEntity="Issuer"/>
         <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="RenewalPeriod" inverseName="credential" inverseEntity="RenewalPeriod"/>
+        <relationship name="specialCats" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="credential" inverseEntity="SpecialCategory"/>
     </entity>
     <entity name="DisciplinaryActionItem" representedClassName="DisciplinaryActionItem" syncable="YES" codeGenerationType="class">
         <attribute name="actionDescription" optional="YES" attributeType="String"/>
@@ -133,6 +136,7 @@
         <attribute name="requiredHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="specialCatID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="specialCat" inverseEntity="CeActivity"/>
+        <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="specialCats" inverseEntity="Credential"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

@@ -26,21 +26,6 @@ struct CredentialSheet: View {
     // Show an alert if a credential type has not been selected by the user
     @State private var showNoCredTypeAlert: Bool = false
     
-    // MARK: - COMPUTED PROPERTIES
-    var allDAIs: [DisciplinaryActionItem] {
-        // Create empty array to hold results
-        var actions: [DisciplinaryActionItem] = []
-            
-        // Create fetch request and sort by action name
-            let request = DisciplinaryActionItem.fetchRequest()
-            request.sortDescriptors = [NSSortDescriptor(keyPath: \DisciplinaryActionItem.actionName, ascending: true)]
-            request.predicate = NSPredicate(format: "credential == %@", credential)
-            actions = (try? dataController.container.viewContext.fetch(request)) ?? []
-        
-        return actions
-    }
-    
-  
     // MARK: - BODY
     var body: some View {
     
@@ -64,25 +49,7 @@ struct CredentialSheet: View {
                     
                 
                // MARK: Disciplinary Actions
-                Section("Disciplinary Actions") {
-                    List {
-                        NavigationLink {
-                            DisciplinaryActionListSheet(
-                                dataController: dataController,
-                                credential: credential
-                            )
-                        } label: {
-                            HStack {
-                                Text("Disciplinary Actions:")
-                            }//: HSTACK
-                            .badge(allDAIs.count)
-                            .accessibilityElement()
-                            .accessibilityLabel("Disciplinary actions taken against this credential")
-                            .accessibilityHint("^[\(allDAIs.count) action taken](inflect: true)")
-                        }//: NAV LINK
-                       
-                    }//: LIST
-                }//: SECTION
+               CredentialDAISectionView(credential: credential)
                 
                 
                 // MARK: RESTRICTIONS

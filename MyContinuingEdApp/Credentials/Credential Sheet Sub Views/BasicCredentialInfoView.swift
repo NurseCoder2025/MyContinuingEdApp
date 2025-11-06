@@ -21,6 +21,9 @@ struct BasicCredentialInfoView: View {
     // Property for bringing up the Issuer List sheet
     @State private var showIssuerListSheet: Bool = false
     
+    @State private var showSpecialCECatsManagementSheet: Bool = false
+    
+    @State private var showCEMeasurementHelpAlert: Bool = false
     
     // MARK: - BODY
     var body: some View {
@@ -61,14 +64,81 @@ struct BasicCredentialInfoView: View {
                 
             }//: SECTION
             
+            // MARK: Credential Settings
+            Section("Credential Settings") {
+                Text("Set default values for the credential in this section.")
+                Group {
+                    VStack(alignment: .leading) {
+                        Text("Default CE Units:")
+                            .bold()
+                        HStack {
+                            Picker("Default CE Units", selection: $credential.measurementDefault) {
+                                Text("Hours").tag(Int16(1))
+                                Text("Units").tag(Int16(2))
+                            }//: PICKER
+                            .pickerStyle(.segmented)
+                            
+                            Button {
+                                showCEMeasurementHelpAlert = true
+                            } label: {
+                                Label("Help me choose", systemImage: "questionmark.circle.fill")
+                                    .labelStyle(.iconOnly)
+                                    .font(.title3)
+                            }//: BUTTON
+                            .padding()
+                            
+                        }//: HSTACK
+                    }//: VSTACK
+                }//: GROUP
+                
+                Group {
+                    VStack(alignment: .leading) {
+                        Text("Special CE Category Assignments")
+                            .bold()
+                            .padding(.bottom, 5)
+                        Text("If your licensing/credentialing body requires a certain number of hours of a particular type of continuing education each renewal period, like ethics or law, use this section to create and assign those types so that the app can track your progress in meeting any requirements.")
+                            .font(.caption)
+                        
+                        Button {
+                            showSpecialCECatsManagementSheet = true
+                        } label: {
+                            if let anyAssignedSpecialCats = credential.specialCats as? Set<SpecialCategory> {
+                                if anyAssignedSpecialCats.isEmpty {
+                                    Text("Assign Special Category")
+                                } else {
+                                    let allAssignments = anyAssignedSpecialCats.map(\.specialName).joined(separator: ", ")
+                                    Text("Assigned: \(allAssignments)")
+                                }
+                            }
+                        }//: BUTTON
+                        .padding(.top, 5)
+                        
+                    }//: VSTACK
+                    
+                }//: GROUP
+                
+            }//: SECTION
+            
         }//: GROUP
-        // MARK: - SHEET
+        // MARK: - SHEETS
         // Issuer Sheet
         .sheet(isPresented: $showIssuerListSheet) {
             IssuerListSheet(dataController: dataController, credential: credential)
         }//: SHEET
-    }
-}
+        
+        .sheet(isPresented: $showSpecialCECatsManagementSheet) {
+            SpecialCECatsManagementSheet(dataController: dataController, credential: credential)
+        }//: SHEET
+        
+        // MARK: - ALERTS
+        .alert("Choosing Default CE Units", isPresented: $showCEMeasurementHelpAlert) {
+            Button("OK", role: .cancel, action: {})
+        } message: {
+            Text("When you complete a CE activity you are awarded credit, which is either the amount of time spent in the activity (contact hours) or units, which is a predetermined amount of clock time hours. For example, completing a one hour activity would earn you either 1 contact hour or 0.1 units (assuming the standard of 10 hours per unit). If unsure which to choose, stay with hours and check with your credential issuer as to what they require.")
+        }
+        
+    }//: BODY
+}//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
