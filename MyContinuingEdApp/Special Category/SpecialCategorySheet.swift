@@ -36,11 +36,17 @@ struct SpecialCategorySheet: View {
                     Section(header: Text("Details"), footer: Text("Enter how many hours you are required to obtain for activities of this category in any given renewal period.")) {
                         TextField("Description:", text: $existingCat.specialCatDescription)
                         HStack {
-                            Text("Hours Required:")
+                            Text("CEs Required:")
                                 .bold()
-                            TextField("CE Hours Required:", value: $existingCat.requiredHours, formatter: ceHourFormatter)
+                            TextField("CEs Required:", value: $existingCat.requiredHours, formatter: ceHourFormatter)
                                 .keyboardType(.decimalPad)
                         }//: HSTACK
+                        
+                        Picker("CEs Awarded As", selection: $existingCat.measurementDefault) {
+                            Text("Hours").tag(Int16(1))
+                            Text("Units").tag(Int16(2))
+                        }
+                        .pickerStyle(.segmented)
                     }//: Section
                     
                     Section("Credential Assignment") {

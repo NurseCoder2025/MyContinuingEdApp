@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension Collection {
     var isNotEmpty: Bool {
@@ -40,4 +41,16 @@ extension Date {
         let year = calendar.component(.year, from: self)
         return String(year)
     }
+}
+
+
+extension View {
+    func dismissKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+        )
+    }//: dismissKeyboard
 }

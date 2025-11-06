@@ -35,6 +35,10 @@ struct BasicCredentialInfoView: View {
             Section("Basic Info") {
                 // MARK: Credential name
                 TextField("Credential name", text: $credential.credentialName)
+                    .submitLabel(.done)
+                    .onSubmit {
+                        dismissKeyboard()
+                    }
                 
                 // MARK: Credential type
                 Picker("Type", selection: $credential.credentialCreType) {
@@ -69,7 +73,7 @@ struct BasicCredentialInfoView: View {
                 Text("Set default values for the credential in this section.")
                 Group {
                     VStack(alignment: .leading) {
-                        Text("Default CE Units:")
+                        Text("CEs Earned As")
                             .bold()
                         HStack {
                             Picker("Default CE Units", selection: $credential.measurementDefault) {
@@ -88,6 +92,25 @@ struct BasicCredentialInfoView: View {
                             .padding()
                             
                         }//: HSTACK
+                        
+                        if credential.measurementDefault == 2 {
+                            HStack {
+                                Text("Clock Hours Per Unit:").accessibilityHidden(true)
+                                    .font(.system(size: 12))
+                                    .bold()
+                                TextField(
+                                    "Hours Per Unit",
+                                    value: $credential.defaultCesPerUnit,
+                                    formatter: twoDigitDecimalFormatter
+                                )
+                                .frame(maxWidth: 45)
+                                .keyboardType(.decimalPad)
+                                .submitLabel(.done)
+                                .onSubmit {
+                                    dismissKeyboard()
+                                }
+                            }//: HSTACK
+                        }//: IF
                     }//: VSTACK
                 }//: GROUP
                 

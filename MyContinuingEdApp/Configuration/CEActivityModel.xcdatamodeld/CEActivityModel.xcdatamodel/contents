@@ -66,6 +66,7 @@
         <attribute name="credentialID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="credentialNumber" optional="YES" attributeType="String"/>
         <attribute name="credentialType" optional="YES" attributeType="String"/>
+        <attribute name="defaultCesPerUnit" optional="YES" attributeType="Double" minValueString="0" defaultValueString="10" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="inactiveReason" optional="YES" attributeType="String"/>
         <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -132,6 +133,7 @@
     <entity name="SpecialCategory" representedClassName="SpecialCategory" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>
         <attribute name="catDescription" optional="YES" attributeType="String"/>
+        <attribute name="measurementDefault" optional="YES" attributeType="Integer 16" minValueString="1" maxValueString="2" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="requiredHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="specialCatID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
