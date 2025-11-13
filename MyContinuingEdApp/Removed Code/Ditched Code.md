@@ -22,3 +22,22 @@ For reference use ONLY
         
     }
 
+
+## Unneccessary function from the DataController's calculateCEsEarnedByMonth method:
+    /// Method for deleting any and all created placeholder Credentials.  This method was specifically created to handle the potential outcome of
+    /// the private method convertCesAwardedToHoursFor(activity), but can be used elsewhere as needed.  However, in order to work only
+    /// Credential objects with the name of "Placeholder" will be fetched and deleted.
+    private func deleteAllPlaceholderCredentials() {
+        let request: NSFetchRequest<Credential> = Credential.fetchRequest()
+        request.predicate = NSPredicate(format: "name == %@", "Placeholder")
+        
+        do {
+            let credsToDelete: [Credential] = try container.viewContext.fetch(request)
+            for cred in credsToDelete {
+                delete(cred)
+            }
+        } catch {
+            print("Failed to fetch placeholder Credentials, and, therefore, can't delete them.")
+        }
+        
+    }//: deleteAllPlaceholderCredentials

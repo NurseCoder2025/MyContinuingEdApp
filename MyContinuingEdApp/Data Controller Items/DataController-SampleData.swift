@@ -56,6 +56,8 @@ extension DataController {
         sampleCredential.isActive = true
         sampleCredential.issueDate = Date.renewalStartDate
         sampleCredential.renewalPeriodLength = 24
+        sampleCredential.renewalCEsRequired =  36
+        sampleCredential.measurementDefault = 1
         sampleCredential.credentialNumber = "RN123456"
         sampleCredential.issuer = sampleIssuer
         
@@ -79,8 +81,12 @@ extension DataController {
                 activity.activityAddedDate = Date.now.addingTimeInterval(randomPastDate)
                 activity.activityTitle = "Activity # \(j)-\(i)"
                 activity.activityDescription = "A fun and educational CE activity!"
-                activity.ceAwarded = Double.random(in: 0.5...10)
-                activity.hoursOrUnits = Int16.random(in: 1...2)
+                activity.ceAwarded = Double.random(in: 0.5...4)
+                if activity.ceAwarded < 2 {
+                    activity.hoursOrUnits = Int16.random(in: 1...2)
+                } else {
+                    activity.hoursOrUnits = 1
+                }
                 activity.evalRating = Int16.random(in: 0...4)
                 
                 // MARK: Credential assignment

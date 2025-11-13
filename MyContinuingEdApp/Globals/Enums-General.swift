@@ -139,3 +139,54 @@ enum NotificationType: String, CaseIterable {
     case fineDeadlineApproaching
     case ceHoursDeadlineApproaching
 }
+
+
+// MARK: - Calendar Related
+enum Month: Int, CaseIterable {
+    case january = 1
+    case february = 2
+    case march = 3
+    case april = 4
+    case may = 5
+    case june = 6
+    case july = 7
+    case august = 8
+    case september = 9
+    case october = 10
+    case november = 11
+    case december = 12
+    
+    var monthName: String {
+        switch self {
+            case .january: return "January"
+            case .february: return "February"
+            case .march: return "March"
+            case .april: return "April"
+            case .may: return "May"
+            case .june: return "June"
+            case .july: return "July"
+            case .august: return "August"
+            case .september: return "September"
+            case .october: return "October"
+            case .november: return "November"
+            case .december: return "December"
+        }//: SWITCH
+    }//: MONTH NAME
+    
+    var abbreviatedMonthName: String {
+        switch self {
+            case .january: return "Jan"
+            case .february: return "Feb"
+            case .march: return "Mar"
+            case .april: return "Apr"
+            case .may: return "May"
+            case .june: return "Jun"
+            case .july: return "Jul"
+            case .august: return "Aug"
+            case .september: return "Sept"
+            case .october: return "Oct"
+            case .november: return "Nov"
+            case .december: return "Dec"
+        }
+    }//: abbreviatedMonthName
+}

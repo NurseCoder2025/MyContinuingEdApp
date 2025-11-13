@@ -58,8 +58,14 @@ extension DataController {
             // # of hours earned achievements
         case "CEs":
             let fetchRequest = CeActivity.fetchRequest()
+            var cePredicates: [NSPredicate] = []
             // Retrieves all CeActivities where hours were awarded
-            fetchRequest.predicate = NSPredicate(format: "ceAwarded > %d", 0.0)
+            let awardedAmountPredicate = NSPredicate(format: "ceAwarded > %f", 0.0)
+            let completedPredicate = NSPredicate(format: "activityCompleted == true")
+            cePredicates.append(awardedAmountPredicate)
+            cePredicates.append(completedPredicate)
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: cePredicates)
+            
             // ONLY retrieve the ceAwarded property so all values can be added
             fetchRequest.propertiesToFetch = ["ceAwarded"]
             
@@ -69,7 +75,7 @@ extension DataController {
             // # of completed CEs
         case "completed":
             let fetchRequest = CeActivity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "activityCompleted = true")
+            fetchRequest.predicate = NSPredicate(format: "activityCompleted == true")
             
             let totalCompleted = count(for: fetchRequest)
             return totalCompleted >= award.value
@@ -83,28 +89,28 @@ extension DataController {
             // # activities rated as "loved"
         case "loved":
             let fetchRequest = CeActivity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 4)
+            fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 4)
             let totalLoved = count(for: fetchRequest)
             return totalLoved >= award.value
             
             // # activities rated as "interesting"
         case "howInteresting":
             let fetchRequest = CeActivity.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "evalRating = %d", 3)
+            fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 3)
             let totalUnliked = count(for: fetchRequest)
             return totalUnliked >= award.value
             
             // # of activity reflections completed
         case "reflections":
             let fetchRequest = ActivityReflection.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "completedYN = true")
+            fetchRequest.predicate = NSPredicate(format: "completedYN == true")
             let totalReflections = count(for: fetchRequest)
             return totalReflections >= award.value
             
             // # of activity reflections where something surprising was learned
         case "surprises":
             let fetchRequest = ActivityReflection.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "surpriseEntered = true")
+            fetchRequest.predicate = NSPredicate(format: "surpriseEntered == true")
             let totalSurprises = count(for: fetchRequest)
             return totalSurprises >= award.value
             

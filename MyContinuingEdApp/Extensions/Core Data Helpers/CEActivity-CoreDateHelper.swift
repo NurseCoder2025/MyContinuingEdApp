@@ -34,12 +34,12 @@ extension CeActivity {
     
     // Removing this part of the helper as activities that aren't completed
     // shouldn't have a date value at all (should be nil)
-//    var ceActivityCompletedDate: Date {
-//        get {dateCompleted ?? .futureCompletion }
-//        set {dateCompleted = newValue}
-//    }
+    //    var ceActivityCompletedDate: Date {
+    //        get {dateCompleted ?? .futureCompletion }
+    //        set {dateCompleted = newValue}
+    //    }
     
-//
+    //
     var ceActivityExpirationDate: Date {
         let calendar = Calendar.current
         let futureExpDate = calendar.startOfDay(for: .futureExpiration)
@@ -53,6 +53,10 @@ extension CeActivity {
     
     var ceActivityAddedDate: Date {
         activityAddedDate ?? .now
+    }
+    
+    var ceActivityCompletedDate: Date {
+        dateCompleted ?? .futureCompletion
     }
     
     // MARK: - Tag-related properties

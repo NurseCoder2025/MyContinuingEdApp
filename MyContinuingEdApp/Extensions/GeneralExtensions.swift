@@ -12,6 +12,13 @@ extension Collection {
     var isNotEmpty: Bool {
         return !self.isEmpty
     }
+    
+}
+
+extension Collection where Element: Equatable {
+    func doesNOTContain(_ element: Element) -> Bool {
+        return !self.contains(element)
+    }
 }
 
 
