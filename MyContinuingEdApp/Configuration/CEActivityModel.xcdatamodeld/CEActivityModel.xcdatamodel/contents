@@ -133,7 +133,6 @@
     <entity name="SpecialCategory" representedClassName="SpecialCategory" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>
         <attribute name="catDescription" optional="YES" attributeType="String"/>
-        <attribute name="measurementDefault" optional="YES" attributeType="Integer 16" minValueString="1" maxValueString="2" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="requiredHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="specialCatID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

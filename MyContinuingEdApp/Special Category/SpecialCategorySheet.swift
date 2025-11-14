@@ -33,21 +33,26 @@ struct SpecialCategorySheet: View {
                         TextField("Abbreviation:", text: $existingCat.specialAbbreviation)
                     }//: SECTION
                     
-                    Section(header: Text("Details"), footer: Text("Enter how many hours you are required to obtain for activities of this category in any given renewal period.")) {
+                    Section {
                         TextField("Description:", text: $existingCat.specialCatDescription)
-                        HStack {
+                        HStack(spacing: 2) {
                             Text("CEs Required:")
                                 .bold()
                             TextField("CEs Required:", value: $existingCat.requiredHours, formatter: ceHourFormatter)
                                 .keyboardType(.decimalPad)
+                            // Whether the CE value is in clock hours or units is dependent upon the
+                            // Credential to which it is assigned since each special category can only
+                            // have one Credential.  If none are assigned, clock hours will be assumed.
+                            Text(existingCat.credential?.measurementDefault == 2 ? "units" : "hours")
+                                .foregroundStyle(.secondary)
                         }//: HSTACK
-                        
-                        Picker("CEs Awarded As", selection: $existingCat.measurementDefault) {
-                            Text("Hours").tag(Int16(1))
-                            Text("Units").tag(Int16(2))
-                        }
-                        .pickerStyle(.segmented)
-                    }//: Section
+                        Text("Whether the CEs for this category are in clock ('contact') hours or units depends on whether a credential was assigned to this category, and if so, how CEs are measured for that credential. Edit the respective Credential to view and change that setting.")
+                            .font(.caption)
+                    } header: {
+                        Text("Details")
+                    } footer: {
+                        Text("Enter how many hours you are required to obtain for activities of this category in any given renewal period.")
+                    }
                     
                     Section("Credential Assignment") {
                         Group {

@@ -91,7 +91,6 @@ final class ChartDataExtraction: BaseTestCase {
         // Create sample special CE category
         let sampleSpecialCat = SpecialCategory(context: context)
         sampleSpecialCat.name = "Test Special Cat"
-        sampleSpecialCat.measurementDefault = 1
         sampleSpecialCat.requiredHours = 1
         sampleSpecialCat.credential = sampleCred
         
@@ -279,7 +278,6 @@ final class ChartDataExtraction: BaseTestCase {
             sampleSpecialCat.name = "Category \(specCat)"
             sampleSpecialCat.credential = sampleCred
             sampleSpecialCat.requiredHours = 2.5
-            sampleSpecialCat.measurementDefault = 1
             sampleCred.addToSpecialCats(sampleSpecialCat)
         }//: LOOP
         
@@ -335,5 +333,47 @@ final class ChartDataExtraction: BaseTestCase {
         
         
     }//: testCalculateSpecialCECAtHoursEarnedFor()
+    
+    func testCalculateMoneySpentByMonth() throws {
+        // Since this test only needs CeActivity and cost data, no sample credential or renewal period objects
+        // need to be created.
+        for month in 1...12 {
+            let calendar = Calendar.current
+            for day in 1...5 {
+                let sampleActivity = CeActivity(context: context)
+                sampleActivity.ceTitle = "CE # \(day)"
+                sampleActivity.activityCompleted = true
+                sampleActivity.ceAwarded = 1.0
+                sampleActivity.hoursOrUnits = 1
+                sampleActivity.cost = 50.00
+                
+                // Creating an assigned completion date for the current month
+                let randomizedDate = DateComponents(year: 2024, month: month, day: day + Int.random(in: 1...15))
+                if let date = calendar.date(from: randomizedDate) {
+                    sampleActivity.dateCompleted = date
+                } else  {
+                    let assignedPastDateAmount = Double(-(86400 * 500))
+                    sampleActivity.dateCompleted = Date.now.addingTimeInterval(assignedPastDateAmount)
+                }
+            }//: LOOP (activities per month)
+        }//: LOOP (calendar months)
+        
+        controller.save()
+        
+        
+        // Checking results
+        let allMoneySpent = controller.calculateMoneySpentByMonth()
+        guard allMoneySpent.isNotEmpty else {
+            XCTFail("Expected 12 months worth of payment data, but got none")
+            return
+        }
+        
+        XCTAssert(allMoneySpent.count == 12, "There should be 12 months of data, but got \(allMoneySpent.count) instead.")
+        
+        for key in allMoneySpent.keys {
+            XCTAssert(allMoneySpent[key] == 250, "Since each activity cost $50, the total cost for each month should come to $250. However, it was \(allMoneySpent[key] ?? 0) instead.")
+        }
+        
+    }//: testCalculateMoneySpentByMonth
     
 }//: ChartDataExtraction

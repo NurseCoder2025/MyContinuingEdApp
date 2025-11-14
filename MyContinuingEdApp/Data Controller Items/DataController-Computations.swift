@@ -56,7 +56,7 @@ extension DataController {
     }//: calculateRemainingTimeUntilExpiration(renewal)
     
     
-    // MARK: - CE HOUR COMPLETION
+    // MARK: - CE PROGRESS BAR METHODS
     func calculateRenewalPeriodCEsEarned(renewal: RenewalPeriod) -> Double {
         guard let renewalCred = renewal.credential else {return 0}
         
@@ -67,7 +67,6 @@ extension DataController {
         return earnedCEs
         
     }//: calculateRenewalPeriodCEsEarned
-    
     
     /// This method calculates the total number of CE hours (or units) that remain needed for a given renewal period.  Only CeActivities
     /// which meet the inclusion criteria of being marked as completed, fall under the same renwal period, and have a value > 0 for the cesAwarded
@@ -190,35 +189,19 @@ extension DataController {
                 guard requiredCatHours > 0.0 else { continue }
                 var catTotal: Double = 0.0
                 for activity in renewalActivities {
-                    // Need to make sure that the CE units entered in the SpecialCategory
-                    // requiredHours property is the same as what was entered for the CeActivity,
+                    // Need to make sure that the CE units entered in the Credential's
+                    // measurementDefault property is the same as what was entered for the CeActivity,
                     // and if not, convert accordingly.
                     if activity.specialCat == specialCat {
-                        if renewalCred.measurementDefault == specialCat.measurementDefault {
-                            if specialCat.measurementDefault == activity.hoursOrUnits {
-                                catTotal += activity.ceAwarded
-                            } else if specialCat.measurementDefault == 1 && activity.hoursOrUnits == 2 {
-                                let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
-                                catTotal += unitsToHours
-                            } else if specialCat.measurementDefault == 2 && activity.hoursOrUnits == 1 {
-                                let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
-                                catTotal += hoursToUnits
-                            }//: IF ELSE IF
-                        } else {
-                            // If, for some reason, the measurement default for the special category differs
-                            // from the renewal credential's, then go with the measurement unit for the
-                            // credential
-                            if renewalCred.measurementDefault == activity.hoursOrUnits {
-                                catTotal += activity.ceAwarded
-                            }else if renewalCred.measurementDefault == 1 && activity.hoursOrUnits == 2 {
-                                let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
-                                catTotal += unitsToHours
-                            } else if renewalCred.measurementDefault == 2 && activity.hoursOrUnits == 1 {
-                                let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
-                                catTotal += hoursToUnits
-                            }
-                        }//: IF ELSE
-                        
+                        if renewalCred.measurementDefault == activity.hoursOrUnits {
+                            catTotal += activity.ceAwarded
+                        } else if renewalCred.measurementDefault == 1 && activity.hoursOrUnits == 2 {
+                            let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
+                            catTotal += unitsToHours
+                        } else if renewalCred.measurementDefault == 2 && activity.hoursOrUnits == 1 {
+                            let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
+                            catTotal += hoursToUnits
+                        }
                     }//: IF
                 }//: LOOP (activity)
                 let remainingCEs: Double = requiredCatHours - catTotal
@@ -229,9 +212,15 @@ extension DataController {
         return remainingSpecialCatHours
     }//: calculateRemainingSpecialCECatHoursFor(renewal)
     
+    
+    // MARK: - CE CHART METHODS
     /// Method that retrieves all CeActivities meeting the four inclusion criteria, groups them by year and month, and then for each month
     /// calculates the total number of CE clock hours earned for that month.
     /// - Returns: Dictionary with the Year-Month Date key and a Double value representing the total # of CE clock hours awarded
+    ///
+    /// The primary reason for returning only clock hours as the value is for simplicity in showing the user how many CEs they have earned,
+    /// no matter how many credentials they have and are tracking CEs for.  If a user were to have a credential that measured CEs in hours but
+    /// had another that went by units, then converting the units to hours allows the chart to display all CEs earned for each credential as a total.
     func calculateCEsEarnedByMonth() -> [Date : Double] {
         // Fetch all CeActivities that meet the following criteria:
         // 1. Marked as completed
@@ -255,40 +244,7 @@ extension DataController {
         let completedActivities = (try? container.viewContext.fetch(activityFetch)) ?? []
         guard completedActivities.isNotEmpty else { return [:] }
         
-        let calendar = Calendar.current
-        let distantPastDate = Date.distantPast
-
-        // Group activities by year, then month
-        var yearMonthGroups: [Date] = []
-        var groupedByYearMonth: [Date : [CeActivity]] = [:]
-        // Purpose of this loop is to create a Month-Year date for each activity and then add all unique
-        // Month-Year dates to the yearMonthGroups array
-        for activity in completedActivities {
-            if let completionDate = activity.dateCompleted {
-                let normalizedDate = calendar.startOfDay(for: completionDate)
-                let yearMonthDate = calendar.date(from: calendar.dateComponents([.year, .month], from: normalizedDate)) ?? distantPastDate
-                
-                guard yearMonthDate != distantPastDate else { continue }
-                
-                if yearMonthGroups.doesNOTContain(yearMonthDate) {
-                    yearMonthGroups.append(yearMonthDate)
-                }
-            }//: IF LET
-        }//: LOOP
-        
-        // Purpose of this loop is to run through each Month-Year date in the groupedByYearMonth array and
-        // add any CeActvities to the corresponding date key's CeActivity array if the activity was
-        // completed in the matching month and year.
-        for date in yearMonthGroups {
-            for activity in completedActivities {
-                let normalizedDate = calendar.startOfDay(for: activity.dateCompleted ?? distantPastDate)
-                let yearMonthDate = calendar.date(from: calendar.dateComponents([.year, .month], from: normalizedDate)) ?? distantPastDate
-                
-                guard yearMonthDate != distantPastDate, yearMonthDate == date else { continue }
-                
-                groupedByYearMonth[date, default: []].append(activity)
-            }//: LOOP
-        }//: LOOP
+       let groupedByYearMonth = groupCeActivitiesByMonthYear(activities: completedActivities)
         
         // For adding up all ces awarded in each month
         var ceTotalResults: [Date : Double] = [:]
@@ -349,8 +305,85 @@ extension DataController {
         
     }//: convertCesAwardedFor(activity)
     
+    func calculateMoneySpentByMonth() -> [Date: Double] {
+        // Fetch all CeActivities that meet the following criteria:
+        // 1. Marked as completed
+        // 2. Has a cost > 0.00
+        // 3. Has a date entered in dateCompleted
+        // 4. dateCompleted is either before or on today's date
+        let activityFetch = CeActivity.fetchRequest()
+        activityFetch.sortDescriptors = [NSSortDescriptor(key: "dateCompleted", ascending: true)]
+        
+        var activityPredicates: [NSPredicate] = []
+        let completedPredicate = NSPredicate(format: "activityCompleted == true")
+        let paidPredicate = NSPredicate(format: "cost > %f", 0.0)
+        let validDatePredicate = NSPredicate(format: "dateCompleted != nil")
+        let completionPredateTodayPredicate = NSPredicate(format: "dateCompleted <= %@", Date.now as NSDate)
+            activityPredicates.append(completedPredicate)
+            activityPredicates.append(paidPredicate)
+            activityPredicates.append(validDatePredicate)
+            activityPredicates.append(completionPredateTodayPredicate)
+        activityFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: activityPredicates)
+        
+        let completedActivities = (try? container.viewContext.fetch(activityFetch)) ?? []
+        guard completedActivities.isNotEmpty else { return [:] }
+        
+        let groupedByYearMonth = groupCeActivitiesByMonthYear(activities: completedActivities)
+        
+        // Adding up the total amount of money spent per month on CEs
+        var moneySpent: [Date : Double] = [:]
+        for key in groupedByYearMonth.keys {
+            var total = 0.0
+            for activity in groupedByYearMonth[key] ?? [] {
+                total += activity.cost
+            }//: LOOP
+           moneySpent[key] = total
+        }//: LOOP (key in)
+        
+        return moneySpent
+    }//: calculateMoneySpentByMonth
     
-    
-    
+    /// Private method for taking an array of CeActivities (via the use of predicates and sorting or not) and then grouping them by month and
+    /// year, creating a standardized date (month-01-year) value that will be used as the key in the returned dictionary.
+    /// - Parameter activities: Array of CeActivity objects that are to be grouped by month and year
+    /// - Returns: Dictionary with a month-year date key and array of CeActivities as the value 
+    private func groupCeActivitiesByMonthYear(activities: [CeActivity]) -> [Date: [CeActivity]] {
+        let calendar = Calendar.current
+        let distantPastDate = Date.distantPast
+
+        // Group activities by year, then month
+        var yearMonthGroups: [Date] = []
+        var groupedByYearMonth: [Date : [CeActivity]] = [:]
+        // Purpose of this loop is to create a Month-Year date for each activity and then add all unique
+        // Month-Year dates to the yearMonthGroups array
+        for activity in activities {
+            if let completionDate = activity.dateCompleted {
+                let normalizedDate = calendar.startOfDay(for: completionDate)
+                let yearMonthDate = calendar.date(from: calendar.dateComponents([.year, .month], from: normalizedDate)) ?? distantPastDate
+                
+                guard yearMonthDate != distantPastDate else { continue }
+                
+                if yearMonthGroups.doesNOTContain(yearMonthDate) {
+                    yearMonthGroups.append(yearMonthDate)
+                }
+            }//: IF LET
+        }//: LOOP
+        
+        // Purpose of this loop is to run through each Month-Year date in the groupedByYearMonth array and
+        // add any CeActvities to the corresponding date key's CeActivity array if the activity was
+        // completed in the matching month and year.
+        for date in yearMonthGroups {
+            for activity in activities {
+                let normalizedDate = calendar.startOfDay(for: activity.dateCompleted ?? distantPastDate)
+                let yearMonthDate = calendar.date(from: calendar.dateComponents([.year, .month], from: normalizedDate)) ?? distantPastDate
+                
+                guard yearMonthDate != distantPastDate, yearMonthDate == date else { continue }
+                
+                groupedByYearMonth[date, default: []].append(activity)
+            }//: LOOP
+        }//: LOOP
+        
+        return groupedByYearMonth
+    }//: groupCeActivitiesByMonthYear(activities)
     
 }//: DATA CONTROLLER

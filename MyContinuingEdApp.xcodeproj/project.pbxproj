@@ -51,6 +51,9 @@
 		3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */; };
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
+		3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */; };
+		3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */; };
+		3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -221,6 +224,9 @@
 		3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Notifications.swift"; sourceTree = "<group>"; };
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
+		3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeEarnedByMonthChartView.swift; sourceTree = "<group>"; };
+		3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneySpentByMonthView.swift; sourceTree = "<group>"; };
+		3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterChartsSheet.swift; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -663,6 +669,9 @@
 			isa = PBXGroup;
 			children = (
 				3F817DD62EC679A600791223 /* ChartDataSources.swift */,
+				3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */,
+				3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */,
+				3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */,
 			);
 			path = Charts;
 			sourceTree = "<group>";
@@ -987,6 +996,7 @@
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
+				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
 				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
@@ -1046,6 +1056,7 @@
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
 				3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */,
 				F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */,
+				3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */,
 				3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */,
 				3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
@@ -1057,6 +1068,7 @@
 				F272591D2E78D0B800210F11 /* Extensions-Styles.swift in Sources */,
 				F28E6BB82E7A12A7003F4C95 /* NoDAIsView.swift in Sources */,
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
+				3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
 				F2B9379D2E836F5600AF9155 /* Enums-General.swift in Sources */,
 				3F2064542EB028AB0036C4B1 /* CredentialSubCatListSheetViewModel.swift in Sources */,

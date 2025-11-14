@@ -9,32 +9,37 @@
 import Foundation
 
 
-struct CeProgress: Identifiable {
+struct CeEarned: Identifiable {
     let id = UUID()
     
     var amount: Double
-    var requiredAmount: Double
-    var inHoursOrUnits: Int16
+    var earnedDate: Date
     
-    var earnedUnits: String {
-        switch inHoursOrUnits {
-        case 2:
-            return "units"
-        default:
-            return "hours"
-        }
-    }
-    
+    var dateLabel: String {
+        let formatter: DateFormatter = {
+            let df = DateFormatter()
+            df.dateFormat = "MMM yy"
+            return df
+        }()
+        return formatter.string(from: earnedDate)
+    }//: dateLabel
 }//: CEsEarned
 
 
-struct SpecialCatCEHours: Identifiable {
-    var id: String {specialCatName}
+
+struct CeCost: Identifiable {
+    let id = UUID()
     
-    var specialCatName: String
-    var amountEarned: Double
-    var requiredAmount: Double
+    var spentDate: Date
+    var cost: Double
     
-    var color: String
+    var dateLabel: String {
+        let formatter: DateFormatter = {
+            let df = DateFormatter()
+            df.dateFormat = "MM/yyyy"
+            return df
+        }()
+        return formatter.string(from: spentDate)
+    }//: dateLabel
     
 }

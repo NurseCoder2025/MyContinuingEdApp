@@ -11,7 +11,7 @@ struct NoItemView: View {
     // MARK: - PROPERTIES
     let noItemTitleText: String
     let noItemMessage: String
-    let noItemImage: String = "doc.circle"
+    var noItemImage: String = "doc.circle"
     
     // MARK: - BODY
     var body: some View {
