@@ -26,6 +26,11 @@ struct RenewalProgressView: View {
         }
     }
     
+    var percentageEarnedString: String {
+        let percentEarned = (totalCEsEarned / totalCEsRequired) * 100.0
+        return String(format: "%.0f", percentEarned)
+    }
+    
     var getCEMeasurement: String {
         if let renewalCred = renewal.credential {
             if renewalCred.measurementDefault == 1 {
@@ -45,10 +50,12 @@ struct RenewalProgressView: View {
             }
             .progressViewStyle(.linear)
             .foregroundStyle(Color(.green))
+            .accessibilityLabel(Text("Total CE \(getCEMeasurement) earned for the \(renewal.renewalPeriodName)"))
+            .accessibilityHint(
+                Text("So far in the \(renewal.renewalPeriodName), you've completed \(percentageEarnedString)% of the total CEs required. Keep up the good work!")
+            )
             
     }//: BODY
-    
-    // MARK: - INIT
     
 }//: STRUCT
 

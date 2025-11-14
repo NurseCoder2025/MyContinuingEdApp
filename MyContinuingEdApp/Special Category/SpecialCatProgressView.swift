@@ -15,7 +15,7 @@ struct SpecialCatProgressView: View {
     let specialCat: SpecialCategory
     
     // for customizing the color of the progress bar for multiple special categories
-    let color: String
+    let color: String?
     
     // MARK: - COMPUTED PROPERTIES
     var specialCatName: String {specialCat.specialName}
@@ -30,6 +30,11 @@ struct SpecialCatProgressView: View {
     }
     
     var totalSpecialCatHoursRequired: Double {specialCat.requiredHours}
+    
+    var percentageEarnedString: String {
+        let percentEarned = ((totalSpecialCatCEsEarned / totalSpecialCatHoursRequired) * 100)
+        return String(format: "%.0f", percentEarned)
+    }
     
     var getCEMeasurement: String {
         if let renewalCred = renewal.credential {
@@ -52,7 +57,11 @@ struct SpecialCatProgressView: View {
                      total: totalSpecialCatHoursRequired
         )
         .progressViewStyle(.linear)
-        .foregroundStyle(Color(color))
+        .foregroundStyle(Color(color ?? "blue"))
+        .accessibilityLabel(Text("CE \(getCEMeasurement) earned for \(specialCatName)"))
+        .accessibilityHint(
+            Text("So far in the \(renewal.renewalPeriodName), you have earned \(percentageEarnedString)% of the total required CEs for the \(specialCatName) requirement.")
+        )
         
     }//: BODY
 }//: STRUCt
