@@ -37,6 +37,9 @@
 		3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03342EB3F42600F5B1DC /* DataController-Tags.swift */; };
 		3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
+		3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD62EC679A600791223 /* ChartDataSources.swift */; };
+		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
+		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
@@ -204,6 +207,9 @@
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
+		3F817DD62EC679A600791223 /* ChartDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartDataSources.swift; sourceTree = "<group>"; };
+		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
+		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightCentral.swift; sourceTree = "<group>"; };
@@ -479,6 +485,7 @@
 		3F2A42CA2EA2C78C00B095CB /* Renewal Periods */ = {
 			isa = PBXGroup;
 			children = (
+				3F817DD82EC687A200791223 /* RenewalProgressView.swift */,
 				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
 				3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */,
 				F2BDFC102E83657A00A8CDAA /* RenewalPeriodDatesView.swift */,
@@ -548,6 +555,7 @@
 		3F2A42D02EA2E15000B095CB /* Special Category */ = {
 			isa = PBXGroup;
 			children = (
+				3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */,
 				F2B580152E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift */,
 				3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */,
 				3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */,
@@ -651,6 +659,14 @@
 			path = "Data Controller Items";
 			sourceTree = "<group>";
 		};
+		3F817DD52EC6755B00791223 /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				3F817DD62EC679A600791223 /* ChartDataSources.swift */,
+			);
+			path = Charts;
+			sourceTree = "<group>";
+		};
 		3F9520A32EB167AF00F1B498 /* Tags Section */ = {
 			isa = PBXGroup;
 			children = (
@@ -723,6 +739,7 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				3F817DD52EC6755B00791223 /* Charts */,
 				3F2A42D62EA2E62D00B095CB /* Removed Code */,
 				3F2A42C52EA2C73C00B095CB /* Configuration */,
 				3F2A42CD2EA2DF0E00B095CB /* Globals */,
@@ -944,6 +961,7 @@
 				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,
 				F2B389F32E4C538100518868 /* CertificateShareView.swift in Sources */,
 				F22940A52E76563100BFE78A /* SpecialCategories-CoreDataHelper.swift in Sources */,
+				3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */,
 				F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */,
 				3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */,
 				3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */,
@@ -954,6 +972,7 @@
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
+				3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */,
@@ -1007,6 +1026,7 @@
 				3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */,
 				F22940A32E764EE200BFE78A /* Enums-DisciplinaryActionItem.swift in Sources */,
 				3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */,
+				3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,

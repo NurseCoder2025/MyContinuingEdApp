@@ -257,4 +257,83 @@ final class ChartDataExtraction: BaseTestCase {
         
     }//: testCalculateCEsEarnedByMonthWithUnits()
     
+    func testCalculateSpecialCECatHoursEarnedFor() throws {
+        let sampleCred = Credential(context: context)
+        sampleCred.credentialID = UUID()
+        sampleCred.name = "Test Cred"
+        sampleCred.measurementDefault = 1
+        sampleCred.defaultCesPerUnit = 10
+        
+        let sampleRenewal = RenewalPeriod(context: context)
+        sampleRenewal.periodID = UUID()
+        sampleRenewal.periodStart = Date.renewalStartDate
+        sampleRenewal.periodEnd = Date.renewalEndDate
+        sampleRenewal.credential = sampleCred
+        
+        controller.save()
+        
+        // Creating two special categories for testing purposes
+        for specCat in 1...2 {
+            let sampleSpecialCat = SpecialCategory(context: context)
+            sampleSpecialCat.specialCatID = UUID()
+            sampleSpecialCat.name = "Category \(specCat)"
+            sampleSpecialCat.credential = sampleCred
+            sampleSpecialCat.requiredHours = 2.5
+            sampleSpecialCat.measurementDefault = 1
+            sampleCred.addToSpecialCats(sampleSpecialCat)
+        }//: LOOP
+        
+        controller.save()
+        
+        // Creating 10 sample activities that do NOT count towards a special category
+        for i in 0..<10 {
+            let sampleCE: CeActivity = CeActivity(context: context)
+            sampleCE.activityID = UUID()
+            sampleCE.ceTitle = "Sample Activity \(i)"
+            sampleCE.ceAwarded = 1.0
+            sampleCE.hoursOrUnits = 1
+            sampleCE.activityCompleted = true
+            sampleCE.dateCompleted = Date.now.addingTimeInterval((86400 * Double(i)) + 20)
+            sampleCE.renewal = sampleRenewal
+            controller.save()
+        }//: LOOP
+        
+        // Creating 2 sample activities that DO count towards a special category
+        let specialCatsFetch = SpecialCategory.fetchRequest()
+        specialCatsFetch.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        let specialCats = (try? context.fetch(specialCatsFetch)) ?? []
+        guard specialCats.count == 2 else {
+            XCTFail("There should have been 2 special category objects fetched, but only \(specialCats.count) were fetched.")
+            return
+        }
+        
+        for activity in 1...2 {
+            let sampleCE: CeActivity = CeActivity(context: context)
+            sampleCE.activityID = UUID()
+            sampleCE.ceTitle = "Sample Activity \(10 + activity)"
+            sampleCE.ceAwarded = 1.0
+            sampleCE.hoursOrUnits = 1
+            sampleCE.specialCat = (activity == 1 ? specialCats[0] : specialCats[1])
+            sampleCE.activityCompleted = true
+            sampleCE.dateCompleted = Date.now.addingTimeInterval(-(86400 * Double(10 + activity) + 20))
+            sampleCE.renewal = sampleRenewal
+        }//: LOOP
+        
+        controller.save()
+        
+        // Calculating hours earned
+        let specialCatHoursEarned = controller.calculateSpecialCECatHoursEarnedFor(renewal: sampleRenewal)
+        
+        // Checking results - given only 2 activities that were assigned to a special category and awarded
+        // 1.0 contact hour in value, the resulting dictionary should be:
+        // [Sample Activity 11: 1.0, Sample Activity 12: 1.0]
+        XCTAssert(specialCatHoursEarned.count == 2, "There should be just 2 entries in the dictionary as only 2 activities were assigned to a special category, but there were \(specialCatHoursEarned.count) instead.")
+        
+        for key in specialCatHoursEarned.keys {
+            XCTAssert(specialCatHoursEarned[key] == 1.0, "The object should have earned 1.0 contact hour, but the following value was obtained \(specialCatHoursEarned[key]!)")
+        }//: LOOP
+        
+        
+    }//: testCalculateSpecialCECAtHoursEarnedFor()
+    
 }//: ChartDataExtraction

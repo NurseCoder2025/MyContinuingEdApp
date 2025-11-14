@@ -57,6 +57,18 @@ extension DataController {
     
     
     // MARK: - CE HOUR COMPLETION
+    func calculateRenewalPeriodCEsEarned(renewal: RenewalPeriod) -> Double {
+        guard let renewalCred = renewal.credential else {return 0}
+        
+        let requiredCEs = renewalCred.renewalCEsRequired
+        let remainingCEs = calculateRemainingTotalCEsFor(renewal: renewal).ces
+        let earnedCEs = requiredCEs - remainingCEs
+        
+        return earnedCEs
+        
+    }//: calculateRenewalPeriodCEsEarned
+    
+    
     /// This method calculates the total number of CE hours (or units) that remain needed for a given renewal period.  Only CeActivities
     /// which meet the inclusion criteria of being marked as completed, fall under the same renwal period, and have a value > 0 for the cesAwarded
     /// property, will be included in the calculation.
@@ -116,6 +128,28 @@ extension DataController {
         
     }//: calculateRemainingCEHoursFor(renewal)
     
+    /// Method for retrieving the total number of CEs (whether in clock hours or units) earned for a given credential's renewal period. Method
+    /// calls the calculateRemainingSpecialCECatHoursFor method in helping to determine the total.
+    /// - Parameter renewal: RenewalPeriod objec for which the calculation is to be made.
+    /// - Returns: A dictionary consisting of each SpecialCategory object as a key with the total number of CEs earned as a value
+    func calculateSpecialCECatHoursEarnedFor(renewal: RenewalPeriod) -> [SpecialCategory: Double] {
+        guard let renewalCred = renewal.credential else { return [:]}
+        
+        if let assignedSpecialCats = renewalCred.specialCats as? Set<SpecialCategory> {
+            let allRemainingHours = calculateRemainingSpecialCECatHoursFor(renewal: renewal)
+            var allEarnedHours: [SpecialCategory: Double] = [:]
+            
+            for cat in assignedSpecialCats {
+                let earnedHours = cat.requiredHours - (allRemainingHours[cat.name ?? "none"] ?? 0)
+                allEarnedHours[cat] = earnedHours
+            }//: LOOP
+            
+            return allEarnedHours
+            
+        }//: IF LET
+        
+        return [:]
+    }//: calculateSpecialCECatHoursEarnedFor(renewal)
     
     /// This method evaluates all SpecialCategory objects for a given Credential, and for a given RenewalPeriod for that Credential, this
     /// method returns how many more hours or units the user needs to complete for each SpecialCategory object that is assigned
@@ -160,15 +194,31 @@ extension DataController {
                     // requiredHours property is the same as what was entered for the CeActivity,
                     // and if not, convert accordingly.
                     if activity.specialCat == specialCat {
-                        if specialCat.measurementDefault == activity.hoursOrUnits {
-                            catTotal += activity.ceAwarded
-                        } else if specialCat.measurementDefault == 1 && activity.hoursOrUnits == 2 {
-                            let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
-                            catTotal += unitsToHours
-                        } else if specialCat.measurementDefault == 2 && activity.hoursOrUnits == 1 {
-                            let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
-                            catTotal += hoursToUnits
-                        }//: IF ELSE IF
+                        if renewalCred.measurementDefault == specialCat.measurementDefault {
+                            if specialCat.measurementDefault == activity.hoursOrUnits {
+                                catTotal += activity.ceAwarded
+                            } else if specialCat.measurementDefault == 1 && activity.hoursOrUnits == 2 {
+                                let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
+                                catTotal += unitsToHours
+                            } else if specialCat.measurementDefault == 2 && activity.hoursOrUnits == 1 {
+                                let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
+                                catTotal += hoursToUnits
+                            }//: IF ELSE IF
+                        } else {
+                            // If, for some reason, the measurement default for the special category differs
+                            // from the renewal credential's, then go with the measurement unit for the
+                            // credential
+                            if renewalCred.measurementDefault == activity.hoursOrUnits {
+                                catTotal += activity.ceAwarded
+                            }else if renewalCred.measurementDefault == 1 && activity.hoursOrUnits == 2 {
+                                let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
+                                catTotal += unitsToHours
+                            } else if renewalCred.measurementDefault == 2 && activity.hoursOrUnits == 1 {
+                                let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
+                                catTotal += hoursToUnits
+                            }
+                        }//: IF ELSE
+                        
                     }//: IF
                 }//: LOOP (activity)
                 let remainingCEs: Double = requiredCatHours - catTotal
