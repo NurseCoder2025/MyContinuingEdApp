@@ -29,6 +29,9 @@ struct SidebarCredentialsSectionView: View {
     
     // Closure for creating a Credential object
     var addInitalCredential: () -> Void
+    
+    // Closure for showing the RenewalProgress sheet
+    var showRenewalProgress: (RenewalPeriod) -> Void
    
     // MARK: - BODY
     var body: some View {
@@ -46,8 +49,18 @@ struct SidebarCredentialsSectionView: View {
                     Section {
                         ForEach(viewModel.convertedRenewalFilters.filter{$0.credential == credential}) { filter in
                             NavigationLink(value: filter) {
-                                Label(filter.name, systemImage: "calendar.badge.clock")
+                                RenewalPeriodNavLabelView(renewalFilter: filter)
                                     .badge(filter.renewalActivitiesCount)
+                                    .swipeActions {
+                                        Button {
+                                            if let renewal = filter.renewalPeriod {
+                                                showRenewalProgress(renewal)
+                                            }
+                                        } label: {
+                                            Label("Check CE Progress", systemImage: "chart.pie.fill")
+                                                .labelStyle(.iconOnly)
+                                        }//: BUTTON
+                                    }//: SWIPE
                                     .contextMenu {
                                         // MARK: Edit Renewal Period Button
                                         Button {
@@ -102,7 +115,8 @@ struct SidebarCredentialsSectionView: View {
         onEditRenewal: @escaping (Credential, RenewalPeriod) -> Void,
         onAddRenewal: @escaping (Credential) -> Void,
         onRenewalDelete: @escaping (RenewalPeriod) -> Void,
-        addInitialCredential: @escaping () -> Void
+        addInitialCredential: @escaping () -> Void,
+        showRenewalProgress: @escaping (RenewalPeriod) -> Void
     ) {
         
         let viewModel = ViewModel(dataController: dataController)
@@ -112,6 +126,7 @@ struct SidebarCredentialsSectionView: View {
         self.onAddRenewal = onAddRenewal
         self.onRenewalDelete = onRenewalDelete
         self.addInitalCredential = addInitialCredential
+        self.showRenewalProgress = showRenewalProgress
         
     }//: INIT
 

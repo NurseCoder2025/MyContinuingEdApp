@@ -45,6 +45,7 @@ struct RenewalProgressView: View {
     
     // MARK: - BODY
     var body: some View {
+        HStack(spacing: 0) {
             ProgressView(value: totalCEsEarned, total: totalCEsRequired) {
                 Text("CEs Earned (in \(getCEMeasurement))")
             }
@@ -55,6 +56,10 @@ struct RenewalProgressView: View {
                 Text("So far in the \(renewal.renewalPeriodName), you've completed \(percentageEarnedString)% of the total CEs required. Keep up the good work!")
             )
             
+            Text(percentageEarnedString + "%")
+                .font(.title3)
+                .bold()
+        }//: HSTACK
     }//: BODY
     
 }//: STRUCT

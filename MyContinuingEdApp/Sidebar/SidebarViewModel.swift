@@ -27,6 +27,10 @@ extension SidebarView {
         // Properties for editing renewal periods
         @Published var renewalSheetData: RenewalSheetData?
         
+        // Property for holding a renewal period that the user wants to check progress on
+        @Published var selectedRenewalForProgressCheck: RenewalPeriod?
+        
+    
         // Properties for deleting renewal periods
         @Published var showDeleteRenewalWarning: Bool = false
         @Published var renewalToDelete: RenewalPeriod?

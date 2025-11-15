@@ -51,18 +51,23 @@ struct SpecialCatProgressView: View {
     
     // MARK: - BODY
     var body: some View {
-        ProgressView(
-                    "CE \(getCEMeasurement) earned for \(specialCatName)",
-                     value: totalSpecialCatCEsEarned,
-                     total: totalSpecialCatHoursRequired
-        )
-        .progressViewStyle(.linear)
-        .foregroundStyle(Color(color ?? "blue"))
-        .accessibilityLabel(Text("CE \(getCEMeasurement) earned for \(specialCatName)"))
-        .accessibilityHint(
-            Text("So far in the \(renewal.renewalPeriodName), you have earned \(percentageEarnedString)% of the total required CEs for the \(specialCatName) requirement.")
-        )
-        
+        HStack(spacing: 0) {
+            ProgressView(
+                "CE \(getCEMeasurement) earned for \(specialCatName)",
+                value: totalSpecialCatCEsEarned,
+                total: totalSpecialCatHoursRequired
+            )
+            .progressViewStyle(.linear)
+            .foregroundStyle(Color(color ?? "blue"))
+            .accessibilityLabel(Text("CE \(getCEMeasurement) earned for \(specialCatName)"))
+            .accessibilityHint(
+                Text("So far in the \(renewal.renewalPeriodName), you have earned \(percentageEarnedString)% of the total required CEs for the \(specialCatName) requirement.")
+            )
+            
+            Text(percentageEarnedString + "%")
+                .font(.title3)
+                .bold()
+        }//: HSTACK
     }//: BODY
 }//: STRUCt
 

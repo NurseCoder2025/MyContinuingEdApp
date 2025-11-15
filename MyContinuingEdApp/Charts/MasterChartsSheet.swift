@@ -13,7 +13,7 @@ struct MasterChartsSheet: View {
     
     // MARK: - BODY
     var body: some View {
-        Group {
+        NavigationStack {
             Text("Charts & Stats")
                 .font(.title)
                 .bold()
@@ -29,7 +29,7 @@ struct MasterChartsSheet: View {
                     
                 }//: LAZY V STACK
             }//: SCROLLVIEW
-        }//: GROUP
+        }//: NAV STACK
         // MARK: - TOOLBAR
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

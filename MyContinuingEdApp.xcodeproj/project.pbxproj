@@ -54,6 +54,9 @@
 		3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */; };
 		3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */; };
 		3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */; };
+		3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */; };
+		3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */; };
+		3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -227,6 +230,9 @@
 		3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeEarnedByMonthChartView.swift; sourceTree = "<group>"; };
 		3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneySpentByMonthView.swift; sourceTree = "<group>"; };
 		3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterChartsSheet.swift; sourceTree = "<group>"; };
+		3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalPeriodNavLabelView.swift; sourceTree = "<group>"; };
+		3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressSheet.swift; sourceTree = "<group>"; };
+		3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-ObjectRelationships.swift"; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -491,6 +497,8 @@
 		3F2A42CA2EA2C78C00B095CB /* Renewal Periods */ = {
 			isa = PBXGroup;
 			children = (
+				3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */,
+				3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */,
 				3F817DD82EC687A200791223 /* RenewalProgressView.swift */,
 				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
 				3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */,
@@ -648,6 +656,7 @@
 		3F5D03382EB3F55A00F5B1DC /* Data Controller Items */ = {
 			isa = PBXGroup;
 			children = (
+				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
 				3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */,
@@ -963,6 +972,7 @@
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
+				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
@@ -995,7 +1005,9 @@
 				3F5D03332EB3F3BC00F5B1DC /* DataController-Achievements.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
+				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
+				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,

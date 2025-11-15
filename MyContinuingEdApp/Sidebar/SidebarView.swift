@@ -8,6 +8,7 @@
 import SwiftUI
 import UIKit
 
+
 // The primary (initial) view when first launching the app. Provides different ways of filtering
 // CE activities that have been entered: via 2 "smart" filters, user-created tags, and by
 // credential-renewal cycle.
@@ -19,6 +20,7 @@ struct SidebarView: View {
     
     @StateObject private var viewModel: ViewModel
     @State private var showEnableRemindersAlert: Bool = false
+    @State private var showRenewalProgressSheet: Bool = false
     
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
@@ -60,6 +62,11 @@ struct SidebarView: View {
                     addInitialCredential: {
                        let newCred = viewModel.dataController.createNewCredential()
                         viewModel.newlyCreatedCredential = newCred
+                    },
+                    showRenewalProgress: { renewal in
+                        viewModel.selectedRenewalForProgressCheck = renewal
+                        showRenewalProgressSheet = true
+                        
                     }
                     
                 )//: SidebarCredentialsSectionView
@@ -114,6 +121,12 @@ struct SidebarView: View {
         .sheet(item: $viewModel.newlyCreatedCredential) { _ in
             if let addedCred = viewModel.newlyCreatedCredential {
                 CredentialSheet(credential: addedCred)
+            }
+        }//: SHEET
+        
+        .sheet(isPresented: $showRenewalProgressSheet) {
+            if let selectedRenewal = viewModel.selectedRenewalForProgressCheck {
+                RenewalProgressView(renewal: selectedRenewal)
             }
         }//: SHEET
         

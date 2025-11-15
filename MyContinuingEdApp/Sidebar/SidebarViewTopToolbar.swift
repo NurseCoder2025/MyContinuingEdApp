@@ -18,6 +18,7 @@ struct SidebarViewTopToolbar: View {
     
     @State private var showAwardsSheet: Bool = false
     @State private var showCredentialManagementSheet: Bool = false
+    @State private var showChartsAndStatsSheet: Bool = false
     
     // MARK: - BODY
     var body: some View {
@@ -30,7 +31,7 @@ struct SidebarViewTopToolbar: View {
         }//: BUTTON
         .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
         
-        // MARK: - Credential Management SHeet
+        // MARK: - Credential Management Sheet
         Button {
             // Action
             showCredentialManagementSheet = true
@@ -43,6 +44,16 @@ struct SidebarViewTopToolbar: View {
         .sheet(isPresented: $showCredentialManagementSheet) {
             CredentialManagementSheet(dataController: dataController)
         }//: SHEET
+        // MARK: - Charts Sheet
+        Button {
+            showChartsAndStatsSheet = true
+        } label: {
+            Label("Charts and Stats", image: "chart.bar.xaxis")
+        }//: BUTTON
+        .sheet(isPresented: $showChartsAndStatsSheet) {
+            MasterChartsSheet()
+        }
+        
         
     #if DEBUG
         Button {

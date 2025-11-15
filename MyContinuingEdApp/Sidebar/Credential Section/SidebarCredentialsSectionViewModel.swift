@@ -21,6 +21,7 @@ extension SidebarCredentialsSectionView {
         // Credential for adding a new renewal period
         @Published var credForRenewal: Credential?
         
+        
         // Converting all fetched renewal periods to Filter objects
         var convertedRenewalFilters: [Filter] {
             renewals.map { renewal in
