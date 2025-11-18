@@ -37,9 +37,9 @@ struct MoneySpentByMonthView: View {
                 Text("Money Spent on CEs by Month")
                 Chart {
                     ForEach(moneyData) { cost in
-                        LineMark(
-                            x: .value(cost.dateLabel, cost.spentDate),
-                            y: .value("Cost", cost.cost)
+                        BarMark (
+                            x: .value("Cost", cost.cost),
+                            y: .value(cost.dateLabel, cost.spentDate)
                         )
                         
                     }//: LOOP

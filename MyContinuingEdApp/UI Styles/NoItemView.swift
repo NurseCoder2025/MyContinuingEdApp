@@ -23,10 +23,12 @@ struct NoItemView: View {
             }
         } else {
             VStack {
-                Text(noItemTitleText)
-                    .font(.title3)
                 Image(systemName: noItemImage)
                     .font(.largeTitle)
+                    .padding(.bottom, 5)
+                Text(noItemTitleText)
+                    .font(.title2)
+                    .padding(.bottom, 2)
                 Text(noItemMessage)
                     .foregroundStyle(.secondary)
             } //: VSTACK

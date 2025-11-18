@@ -18,6 +18,9 @@ extension SidebarView {
         // Holder property for creating a new Credential
         @Published var newlyCreatedCredential: Credential?
         
+        // Properties for creating a new tag (with a custom name)
+        @Published var addedTagName: String = ""
+        
         // Properties for renaming tags
         @Published var showRenamingAlert: Bool = false
         @Published var newTagName: String = ""

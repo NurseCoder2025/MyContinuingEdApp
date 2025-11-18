@@ -21,6 +21,7 @@
 		3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */; };
 		3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
+		3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */; };
 		3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */; };
 		3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */; };
 		3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */; };
@@ -51,6 +52,7 @@
 		3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */; };
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
+		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
 		3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */; };
 		3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */; };
 		3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */; };
@@ -194,6 +196,7 @@
 		3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
+		3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalRenewalProgressBar.swift; sourceTree = "<group>"; };
 		3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewToolbarView.swift; sourceTree = "<group>"; };
 		3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalSheetData.swift; sourceTree = "<group>"; };
 		3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSmartFilterRow.swift; sourceTree = "<group>"; };
@@ -227,6 +230,7 @@
 		3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Notifications.swift"; sourceTree = "<group>"; };
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
+		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
 		3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeEarnedByMonthChartView.swift; sourceTree = "<group>"; };
 		3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneySpentByMonthView.swift; sourceTree = "<group>"; };
 		3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterChartsSheet.swift; sourceTree = "<group>"; };
@@ -499,6 +503,8 @@
 			children = (
 				3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */,
 				3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */,
+				3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */,
+				3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */,
 				3F817DD82EC687A200791223 /* RenewalProgressView.swift */,
 				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
 				3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */,
@@ -987,6 +993,7 @@
 				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
 				F2B937A52E8393B300AF9155 /* CredentialNextExpirationSectionView.swift in Sources */,
 				3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */,
+				3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */,
 				F2B580162E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift in Sources */,
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
@@ -1093,6 +1100,7 @@
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
+				3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */,
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,

@@ -15,12 +15,16 @@ struct RenewalProgressView: View {
     
     // MARK: - COMPUTED PROPERTIES
     var totalCEsEarned: Double {
-        dataController.calculateRenewalPeriodCEsEarned(renewal: renewal)
+        let earned = dataController.calculateRenewalPeriodCEsEarned(renewal: renewal)
+        let required = totalCEsRequired
+        // Clamp earned between 0 and required
+        return min(max(earned, 0), required)
     }
     
     var totalCEsRequired: Double {
         if let renewalCred = renewal.credential {
-           return renewalCred.renewalCEsRequired
+            // Ensure required is at least 1 to avoid division by zero and ProgressView errors
+            return max(renewalCred.renewalCEsRequired, 1)
         } else {
             return 25.0
         }
@@ -45,12 +49,11 @@ struct RenewalProgressView: View {
     
     // MARK: - BODY
     var body: some View {
-        HStack(spacing: 0) {
-            ProgressView(value: totalCEsEarned, total: totalCEsRequired) {
-                Text("CEs Earned (in \(getCEMeasurement))")
-            }
+        HStack(spacing: 5) {
+            ProgressView(value: totalCEsEarned, total: totalCEsRequired)
+            .frame(maxWidth: 150)
             .progressViewStyle(.linear)
-            .foregroundStyle(Color(.green))
+            .tint(Color(.systemGreen))
             .accessibilityLabel(Text("Total CE \(getCEMeasurement) earned for the \(renewal.renewalPeriodName)"))
             .accessibilityHint(
                 Text("So far in the \(renewal.renewalPeriodName), you've completed \(percentageEarnedString)% of the total CEs required. Keep up the good work!")

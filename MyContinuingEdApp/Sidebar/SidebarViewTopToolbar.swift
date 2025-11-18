@@ -22,48 +22,55 @@ struct SidebarViewTopToolbar: View {
     
     // MARK: - BODY
     var body: some View {
-        
-        // MARK: - Awards button
-        Button {
-            showAwardsSheet.toggle()
-        } label: {
-            Label("Show awards", systemImage: "rosette")
-        }//: BUTTON
-        .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
-        
-        // MARK: - Credential Management Sheet
-        Button {
-            // Action
-            showCredentialManagementSheet = true
-        } label: {
-            Label(
-                "Manage Credentials",
-                systemImage: "person.text.rectangle.fill"
-            )
-        }//: BUTTON
-        .sheet(isPresented: $showCredentialManagementSheet) {
-            CredentialManagementSheet(dataController: dataController)
-        }//: SHEET
-        // MARK: - Charts Sheet
-        Button {
-            showChartsAndStatsSheet = true
-        } label: {
-            Label("Charts and Stats", image: "chart.bar.xaxis")
-        }//: BUTTON
-        .sheet(isPresented: $showChartsAndStatsSheet) {
-            MasterChartsSheet()
-        }
-        
-        
-    #if DEBUG
-        Button {
-            dataController.deleteAll()
-            dataController.createSampleData()
-        } label: {
-            Label("Add Samples", systemImage: "flame")
-        }
-    #endif
-        
+            HStack {
+                // MARK: - Awards button
+                Button {
+                    showAwardsSheet.toggle()
+                } label: {
+                    Label("Show awards", systemImage: "rosette")
+                }//: BUTTON
+                
+                
+                // MARK: - Credential Management Sheet
+                Button {
+                    // Action
+                    showCredentialManagementSheet = true
+                } label: {
+                    Label(
+                        "Manage Credentials",
+                        systemImage: "person.text.rectangle.fill"
+                    )
+                }//: BUTTON
+                
+                 // MARK: - Charts Sheet
+                Button {
+                    showChartsAndStatsSheet = true
+                } label: {
+                    Label("Charts and Stats", systemImage: "chart.bar.xaxis")
+                }//: BUTTON
+               
+                
+#if DEBUG
+                Button {
+                    dataController.deleteAll()
+                    dataController.createSampleData()
+                } label: {
+                    Label("Add Samples", systemImage: "flame")
+                }
+#endif
+                
+            }//: HSTACK
+             // MARK: - SHEETS
+             .sheet(isPresented: $showChartsAndStatsSheet) {
+                 MasterChartsSheet()
+             }
+             
+             .sheet(isPresented: $showCredentialManagementSheet) {
+                 CredentialManagementSheet(dataController: dataController)
+             }//: SHEET
+             
+             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
+            
     }//: BODY
     
 }//: STRUCT

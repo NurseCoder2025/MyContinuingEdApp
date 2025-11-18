@@ -52,8 +52,6 @@ struct MyContinuingEdAppApp: App {
         } //: WINDOW GROUP
     } //: BODY
     
-    // MARK: - FUNCTIONS
-    
     
     // MARK: - INIT
     

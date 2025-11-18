@@ -14,8 +14,12 @@ struct SidebarTagsSectionView: View {
     // MARK: - PROPERTIES
     @StateObject private var viewModel: ViewModel
     
+    
     // Callback for renaming tag
     var onRenameTag: (Filter) -> Void
+    
+    // Closure for creating a new tag
+    var onCreateNewTag: () -> Void
     
     // MARK: - BODY
     var body: some View {
@@ -54,7 +58,7 @@ struct SidebarTagsSectionView: View {
                     
                     // New tag creation button
                     Button{
-                        viewModel.dataController.createNewTag()
+                        onCreateNewTag()
                     } label: {
                         Label("New tag", systemImage:"plus")
                             .labelStyle(.iconOnly)
@@ -64,18 +68,17 @@ struct SidebarTagsSectionView: View {
                 } //: HSTACK
             } //: SECTION (tags)
         }//: GROUP
-       
+        
         
     }//: BODY
     
-   
-    
     // MARK: - INIT
-    init(dataController: DataController, onRenameTag: @escaping (Filter) -> Void) {
+    init(dataController: DataController, onRenameTag: @escaping (Filter) -> Void, onCreateNewTag: @escaping () -> Void) {
         let viewModel = ViewModel(dataController: dataController)
         _viewModel = StateObject(wrappedValue: viewModel)
         
         self.onRenameTag = onRenameTag
+        self.onCreateNewTag = onCreateNewTag
     }//:INIT
     
 }//: STRUCT

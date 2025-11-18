@@ -13,6 +13,8 @@ import Combine
 
 // MARK: - APP SETTINGS STRUCT
 struct AppSettings: Codable {
+    var appPurchaseStatus: PurchaseStatus = .free
+    
     var daysUntilPrimaryNotification: Int = 30
     var daysUntilSecondaryNotification: Int = 7
     

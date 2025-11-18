@@ -21,13 +21,15 @@ struct SidebarView: View {
     @StateObject private var viewModel: ViewModel
     @State private var showEnableRemindersAlert: Bool = false
     @State private var showRenewalProgressSheet: Bool = false
+    @State private var showAddNewTagAlert: Bool = false
     
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
    
     // MARK: - BODY
     var body: some View {
-        List(selection: $viewModel.dataController.selectedFilter) {
+        NavigationStack {
+            List(selection: $viewModel.dataController.selectedFilter) {
                 // MARK: - SMART FILTERS SECTION
                 Section("Smart Filters") {
                     ForEach(smartFilters, content: SidebarSmartFilterRow.init)
@@ -41,6 +43,9 @@ struct SidebarView: View {
                         viewModel.tagToRename = filter.tag
                         viewModel.newTagName = filter.name
                         viewModel.showRenamingAlert = true
+                    },
+                    onCreateNewTag: {
+                        showAddNewTagAlert = true
                     }
                 )
                 // MARK: - CREDENTIALS SECTION
@@ -60,7 +65,7 @@ struct SidebarView: View {
                         }
                     },
                     addInitialCredential: {
-                       let newCred = viewModel.dataController.createNewCredential()
+                        let newCred = viewModel.dataController.createNewCredential()
                         viewModel.newlyCreatedCredential = newCred
                     },
                     showRenewalProgress: { renewal in
@@ -71,6 +76,7 @@ struct SidebarView: View {
                     
                 )//: SidebarCredentialsSectionView
             } //: LIST
+        }//: NAV STACK
             .navigationTitle("CE Filters")
             // MARK: - Toolbar
             .toolbar(content: SidebarViewTopToolbar.init)
@@ -89,6 +95,15 @@ struct SidebarView: View {
                 
             }//: ON APPEAR
         // MARK: - Alerts
+        .alert("Name New Tag", isPresented: $showAddNewTagAlert) {
+            TextField("Tag Name", text: $viewModel.addedTagName)
+            Button("OK", action: {
+                viewModel.dataController.createTagWithName(viewModel.addedTagName)
+                viewModel.addedTagName = ""
+            })
+            Button("Cancel", role: .cancel) {viewModel.addedTagName = ""}
+        }//: ALERT
+        
         // RENAMING TAG ALERT
             .alert("Rename Tag", isPresented: $viewModel.showRenamingAlert) {
                 Button("OK", action: { viewModel.confirmTagRename() })
@@ -106,8 +121,13 @@ struct SidebarView: View {
         
         // Notifications disabled alert
         .alert("Enable Notifications",isPresented: $showEnableRemindersAlert) {
+            if #available(iOS 26.0, *) {
+                Button("OK", role: .confirm) {}
+            } else {
+                // Fallback on earlier versions
+                Button("OK") {}
+            }
             Button("Settings", action: showAppSettings)
-            Button("Cancel", role: .cancel) {}
         } message: {
             Text("Hello there! To help you stay on top of renewal deadlines and CE expirations, please ensure that notifications are enabled for this app.")
         }
@@ -124,9 +144,9 @@ struct SidebarView: View {
             }
         }//: SHEET
         
-        .sheet(isPresented: $showRenewalProgressSheet) {
+        .sheet(item: $viewModel.selectedRenewalForProgressCheck) { _ in
             if let selectedRenewal = viewModel.selectedRenewalForProgressCheck {
-                RenewalProgressView(renewal: selectedRenewal)
+                RenewalProgressSheet(renewal: selectedRenewal)
             }
         }//: SHEET
         

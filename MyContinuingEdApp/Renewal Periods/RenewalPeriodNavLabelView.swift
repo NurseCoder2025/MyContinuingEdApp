@@ -13,11 +13,12 @@ struct RenewalPeriodNavLabelView: View {
     
     // MARK: - BODY
     var body: some View {
-        VStack {
+        VStack(spacing: 2) {
             Label(renewalFilter.name, systemImage: "calendar.badge.clock")
             
             if let renewal = renewalFilter.renewalPeriod {
                 RenewalProgressView(renewal: renewal)
+                    .padding(.leading, 23)
             }
         }//: VSTACK
     }//: BODY
