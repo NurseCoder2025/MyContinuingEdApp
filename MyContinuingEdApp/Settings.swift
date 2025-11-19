@@ -14,6 +14,10 @@ import Combine
 // MARK: - APP SETTINGS STRUCT
 struct AppSettings: Codable {
     var appPurchaseStatus: PurchaseStatus = .free
+    var proSubscriptionStatus: SubscriptionStatus = .freeTrial
+    var freeTrialEndDate: Date? = nil
+    var proSubscrptionEndDate: Date? = nil
+    var purchaseHistory: [Date: PurchaseStatus] = [:]
     
     var daysUntilPrimaryNotification: Int = 30
     var daysUntilSecondaryNotification: Int = 7
@@ -30,14 +34,14 @@ struct AppSettings: Codable {
 // MARK: - CE APP SETTINGS CLASS
 final class CeAppSettings: ObservableObject {
     // MARK: - PROPERTIES
-    @Published var settings: AppSettings
-    private let settingsFileURL: URL
-    private var cancellable: AnyCancellable?
+    @Published var settings: AppSettings = AppSettings()
+    private(set) var settingsFileURL: URL? = nil
+    private var cancellable: AnyCancellable? = nil
     
     // MARK: - FUNCTIONS
     func saveSettings() {
-        if let data = try? JSONEncoder().encode(settings) {
-            try? data.write(to: settingsFileURL)
+        if let data = try? JSONEncoder().encode(settings), let settingsLocation = settingsFileURL {
+            try? data.write(to: settingsLocation)
         }
     }//: saveSettings()
     
@@ -49,14 +53,27 @@ final class CeAppSettings: ObservableObject {
     
     // MARK: - INIT
     init() {
-        let settingsFile = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        settingsFileURL = settingsFile.appendingPathComponent("settings.json")
-        settings = Self.loadSettings(from: settingsFileURL) ?? AppSettings()
-        // Implementing the sink to call the saveSettings function automatically whenever the
-        // published property settings changes
-        cancellable = $settings.sink { [weak self] _ in
-            self?.saveSettings()
-        }
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            let localURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?
+                .appendingPathComponent("Documents")
+                .appendingPathComponent("CE Cache")
+            let fileURL = (iCloudURL ?? localURL).appendingPathComponent("settings.json")
+            if let icloudDir = iCloudURL {
+                try? FileManager.default.createDirectory(at: icloudDir, withIntermediateDirectories: true)
+            }//: IF LET
+           
+            let loadedSettings = Self.loadSettings(from: fileURL) ?? AppSettings()
+            DispatchQueue.main.async {
+                self?.settingsFileURL = fileURL
+                self?.settings = loadedSettings
+                // Implementing the sink to call the saveSettings function
+                // automatically whenever the published property settings changes
+                self?.cancellable = self?.$settings.sink { [weak self] _ in
+                    self?.saveSettings()
+                }
+            }//: DisptachQueue
+        }//: DispatchQueue (global)
     }//: INIT
     
 }//: CE APP SETTINGS

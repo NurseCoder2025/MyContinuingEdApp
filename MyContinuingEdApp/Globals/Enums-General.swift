@@ -147,3 +147,7 @@ enum PurchaseStatus: Codable {
     case free, basicUnlock, proSubscription
 }
 
+enum SubscriptionStatus: Codable {
+    case freeTrial, active, cancelled, expired
+}
+
