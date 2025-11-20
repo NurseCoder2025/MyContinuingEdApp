@@ -141,7 +141,7 @@ enum NotificationType: String, CaseIterable {
 }
 
 
-// MARK: - Purchase Level
+// MARK: - In App Purchases
 /// Enum for indicating whether the user has made an in-app purchase, and if so, which one, or is using the free version of the app.
 enum PurchaseStatus: Codable {
     case free, basicUnlock, proSubscription
@@ -151,3 +151,8 @@ enum SubscriptionStatus: Codable {
     case freeTrial, active, cancelled, expired
 }
 
+enum UpgradeNeeded: Error {
+    case maxTagsReached
+    case maxRenewalsReached
+    case maxCeActivitiesReached
+}

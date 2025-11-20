@@ -98,8 +98,15 @@ struct SidebarView: View {
         .alert("Name New Tag", isPresented: $showAddNewTagAlert) {
             TextField("Tag Name", text: $viewModel.addedTagName)
             Button("OK", action: {
-                viewModel.dataController.createTagWithName(viewModel.addedTagName)
-                viewModel.addedTagName = ""
+                do {
+                    try viewModel.dataController.createTagWithName(viewModel.addedTagName)
+                    viewModel.addedTagName = ""
+                    
+                } catch  {
+                    // TODO: Add upgrade sheet toggle
+                    print("Reached max tag limit for free app use.")
+                }
+                
             })
             Button("Cancel", role: .cancel) {viewModel.addedTagName = ""}
         }//: ALERT

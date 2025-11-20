@@ -164,11 +164,22 @@ struct ContentViewToolbarView: View {
                 if #available(iOS 17, *) {
                     // Use the dataController's createActivity method and item
                     // will be automatically added to Spotlight's index
-                    dataController.createActivity()
+                    do {
+                        // TODO: Add upgrade sheet toggle
+                        try dataController.createActivity()
+                    } catch  {
+                        print("Reached max CE activity limit")
+                    }
+                    
                 } else {
                     // Manually add CeActivity to Spotlight's index
-                    let newCe = dataController.createNewCeActivityIOs16()
-                    spotlightCentral?.addCeActivityToDefaultIndex(newCe)
+                    do {
+                        // TODO: Add upgrade sheet toggle
+                        let newCe = try dataController.createNewCeActivityIOs16()
+                        spotlightCentral?.addCeActivityToDefaultIndex(newCe)
+                    } catch  {
+                        print("Reached max CE activity limit.")
+                    }
                 }
             } label: {
                 Label("New Activity", systemImage: "square.and.pencil")

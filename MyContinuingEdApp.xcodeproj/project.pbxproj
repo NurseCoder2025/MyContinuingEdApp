@@ -44,6 +44,7 @@
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
+		3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
@@ -53,6 +54,17 @@
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
 		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
+		3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */; };
+		3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */; };
+		3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */; };
+		3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723F2ECE6D3200CCF0FC /* BasicFeaturesGridView.swift */; };
+		3FE372422ECE6D9F00CCF0FC /* UpgradeFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372412ECE6D9F00CCF0FC /* UpgradeFeature.swift */; };
+		3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372432ECE718B00CCF0FC /* ProFeaturesGridView.swift */; };
+		3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372452ECE779800CCF0FC /* BasicAndProFeatures.swift */; };
+		3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372472ECEA05B00CCF0FC /* UpgradeOptionsView.swift */; };
+		3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372492ECECD9000CCF0FC /* FeaturesDetailsSheet.swift */; };
+		3FE3724C2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3724B2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift */; };
+		3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3724D2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift */; };
 		3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */; };
 		3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */; };
 		3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */; };
@@ -222,6 +234,7 @@
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightCentral.swift; sourceTree = "<group>"; };
+		3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Settings.swift"; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoCredSubTypeView.swift; path = "MyContinuingEdApp/Credentials/Sub Category Cat Sheet/NoCredSubTypeView.swift"; sourceTree = SOURCE_ROOT; };
@@ -231,6 +244,17 @@
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
 		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
+		3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeToPaidSheet.swift; sourceTree = "<group>"; };
+		3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpgradeCardView.swift; sourceTree = "<group>"; };
+		3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseFeatureRowView.swift; sourceTree = "<group>"; };
+		3FE3723F2ECE6D3200CCF0FC /* BasicFeaturesGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicFeaturesGridView.swift; sourceTree = "<group>"; };
+		3FE372412ECE6D9F00CCF0FC /* UpgradeFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeFeature.swift; sourceTree = "<group>"; };
+		3FE372432ECE718B00CCF0FC /* ProFeaturesGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProFeaturesGridView.swift; sourceTree = "<group>"; };
+		3FE372452ECE779800CCF0FC /* BasicAndProFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAndProFeatures.swift; sourceTree = "<group>"; };
+		3FE372472ECEA05B00CCF0FC /* UpgradeOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeOptionsView.swift; sourceTree = "<group>"; };
+		3FE372492ECECD9000CCF0FC /* FeaturesDetailsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesDetailsSheet.swift; sourceTree = "<group>"; };
+		3FE3724B2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesDetailsRowView.swift; sourceTree = "<group>"; };
+		3FE3724D2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesDetailsHeaderView.swift; sourceTree = "<group>"; };
 		3FE90A1B2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeEarnedByMonthChartView.swift; sourceTree = "<group>"; };
 		3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneySpentByMonthView.swift; sourceTree = "<group>"; };
 		3FE90A1F2EC7D1DB0010FB12 /* MasterChartsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterChartsSheet.swift; sourceTree = "<group>"; };
@@ -674,6 +698,7 @@
 				3F5D032E2EB3F2E500F5B1DC /* DataController-Automation.swift */,
 				3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */,
 				3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */,
+				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
 				3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */,
 			);
@@ -739,6 +764,24 @@
 			path = "Issuer Sheet";
 			sourceTree = "<group>";
 		};
+		3FE3723A2ECE552400CCF0FC /* Upgrade */ = {
+			isa = PBXGroup;
+			children = (
+				3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */,
+				3FE372472ECEA05B00CCF0FC /* UpgradeOptionsView.swift */,
+				3FE372492ECECD9000CCF0FC /* FeaturesDetailsSheet.swift */,
+				3FE3724D2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift */,
+				3FE3724B2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift */,
+				3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */,
+				3FE3723F2ECE6D3200CCF0FC /* BasicFeaturesGridView.swift */,
+				3FE372432ECE718B00CCF0FC /* ProFeaturesGridView.swift */,
+				3FE372452ECE779800CCF0FC /* BasicAndProFeatures.swift */,
+				3FE372412ECE6D9F00CCF0FC /* UpgradeFeature.swift */,
+				3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */,
+			);
+			path = Upgrade;
+			sourceTree = "<group>";
+		};
 		F2772B862E1DDA9F006A94BD = {
 			isa = PBXGroup;
 			children = (
@@ -763,6 +806,7 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				3FE3723A2ECE552400CCF0FC /* Upgrade */,
 				3F817DD52EC6755B00791223 /* Charts */,
 				3F2A42D62EA2E62D00B095CB /* Removed Code */,
 				3F2A42C52EA2C73C00B095CB /* Configuration */,
@@ -975,6 +1019,8 @@
 				3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */,
 				3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */,
 				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
+				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
+				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
@@ -1012,6 +1058,7 @@
 				3F5D03332EB3F3BC00F5B1DC /* DataController-Achievements.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
+				3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
@@ -1021,9 +1068,11 @@
 				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
+				3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
+				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
@@ -1032,7 +1081,9 @@
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */,
 				3F2064562EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift in Sources */,
+				3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */,
 				3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */,
+				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
 				F2612A212E874D6500CC463D /* ActivityDescriptionSectionView.swift in Sources */,
 				F2BDFC112E83657A00A8CDAA /* RenewalPeriodDatesView.swift in Sources */,
@@ -1043,6 +1094,7 @@
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
+				3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */,
 				3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */,
 				3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */,
 				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
@@ -1058,6 +1110,7 @@
 				3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
+				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
 				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,
 				3F5D03312EB3F35E00F5B1DC /* DataController-Preloading.swift in Sources */,
@@ -1078,9 +1131,11 @@
 				3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */,
 				3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */,
 				3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */,
+				3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,
+				3FE3724C2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift in Sources */,
 				3FB486A92EB9A4D300C58ED5 /* DataController-Computations.swift in Sources */,
 				3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */,
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
@@ -1097,6 +1152,7 @@
 				F2B580142E7B39000073BCA7 /* Activity-CredentialSelectionSheet.swift in Sources */,
 				F2B580182E7B84510073BCA7 /* NoSpecialCatsView.swift in Sources */,
 				3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */,
+				3FE372422ECE6D9F00CCF0FC /* UpgradeFeature.swift in Sources */,
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
