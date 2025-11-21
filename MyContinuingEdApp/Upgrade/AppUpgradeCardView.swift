@@ -32,6 +32,12 @@ struct AppUpgradeCardView: View {
     
     let columns = Array(repeating: GridItem(.flexible()), count: 2)
     
+    // MARK: - CLOSURES
+    // Because this is a child view, passing up button functions to the parent view for
+    // improved UI stability
+    let onLearnMore: (PurchaseStatus) -> Void
+    let onPurchase: (PurchaseStatus) -> Void
+    
     // MARK: - COMPUTED PROPERTIES
     var priceDisplayString: String {
         String(format: "$%.2f", purchasePrice)
@@ -94,8 +100,9 @@ struct AppUpgradeCardView: View {
                             .foregroundStyle(.secondary)
                             .padding(.leading, 20)
                         Spacer()
+                        // MARK: ON LEARN MORE
                         Button {
-                            // TODO: Add action(s)
+                            onLearnMore(purchaseType)
                         } label: {
                             Text("Learn More")
                         }//: BUTTON
@@ -114,7 +121,7 @@ struct AppUpgradeCardView: View {
                         HStack {
                             Spacer()
                             Button {
-                                // TODO: Add action(s)
+                                onPurchase(purchaseType)
                             } label: {
                                 Text("\(purchaseType == .basicUnlock ? "Buy" : "Subscribe") for \(priceDisplayString)")
                                     .foregroundStyle(.white)
@@ -134,6 +141,17 @@ struct AppUpgradeCardView: View {
         .frame(maxWidth: 350)
         .padding()
     }//: BODY
+    // MARK: - CUSTOM INIT
+    init(purchaseType: PurchaseStatus, headerText: String, briefDescription: String?, purchasePrice: Double, purchaseDescription: String, cardHeight: CGFloat, onLearnMore: @escaping (PurchaseStatus) -> Void, onPurchase: @escaping (PurchaseStatus) -> Void) {
+        self.purchaseType = purchaseType
+        self.headerText = headerText
+        self.briefDescription = briefDescription
+        self.purchasePrice = purchasePrice
+        self.purchaseDescription = purchaseDescription
+        self.cardHeight = cardHeight
+        self.onLearnMore = onLearnMore
+        self.onPurchase = onPurchase
+    }
 }//: STRUCT
 
 
@@ -145,7 +163,9 @@ struct AppUpgradeCardView: View {
         briefDescription: "Essential features for tracking CEs for one credential",
         purchasePrice: 14.99,
         purchaseDescription: "One time purchase",
-        cardHeight: 2.5
+        cardHeight: 2.5,
+        onLearnMore: {_ in},
+        onPurchase: {_ in}
     )
     
 }
@@ -157,7 +177,9 @@ struct AppUpgradeCardView: View {
         briefDescription: "Everything in the basic feature unlock PLUS:",
         purchasePrice: 24.99,
         purchaseDescription: "Annual Subscription",
-        cardHeight: 2
+        cardHeight: 2,
+        onLearnMore: {_ in },
+        onPurchase: {_ in}
     )
     
 }

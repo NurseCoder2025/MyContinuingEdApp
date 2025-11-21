@@ -18,10 +18,14 @@ struct SidebarView: View {
     @AppStorage("firstRun") var firstRun: Bool = false
     @Environment(\.openURL) var openURL
     
+    @EnvironmentObject var settings: CeAppSettings
+    
     @StateObject private var viewModel: ViewModel
     @State private var showEnableRemindersAlert: Bool = false
     @State private var showRenewalProgressSheet: Bool = false
     @State private var showAddNewTagAlert: Bool = false
+    @State private var showUpgradeToPaidSheet: Bool = false
+    @State private var showFeaturesDetailsSheet: Bool = false
     
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
@@ -103,8 +107,8 @@ struct SidebarView: View {
                     viewModel.addedTagName = ""
                     
                 } catch  {
-                    // TODO: Add upgrade sheet toggle
-                    print("Reached max tag limit for free app use.")
+                    viewModel.itemMaxedOut =  "tags"
+                    showUpgradeToPaidSheet = true
                 }
                 
             })
@@ -142,7 +146,25 @@ struct SidebarView: View {
         
         // MARK: - SHEETS
         .sheet(item: $viewModel.renewalSheetData) { data in
-            RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+            let currentRenewalNum = viewModel.dataController.currentNumberOfRenewals
+            let currentPurchaseLevel = settings.settings.appPurchaseStatus
+            if currentPurchaseLevel != .free {
+                RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+            } else if currentPurchaseLevel == .free && currentRenewalNum < 1 {
+                RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+            } else {
+                UpgradeToPaidSheet(
+                    itemMaxReached: "renewals",
+                    learnMore: { type in
+                        viewModel.selectedUpgradeOptionForInfo = type
+                        showFeaturesDetailsSheet = true
+                    },
+                    purchaseItem: { type in
+                        // TODO: Add purchase logic
+                        viewModel.selectedUpgradeOptionForPurchase = type
+                    }
+                )//: UpgradeToPaidSheet
+            }//: IF - ELSE
         }//: SHEET
         
         .sheet(item: $viewModel.newlyCreatedCredential) { _ in
@@ -155,6 +177,26 @@ struct SidebarView: View {
             if let selectedRenewal = viewModel.selectedRenewalForProgressCheck {
                 RenewalProgressSheet(renewal: selectedRenewal)
             }
+        }//: SHEET
+        
+        .sheet(isPresented: $showUpgradeToPaidSheet) {
+            UpgradeToPaidSheet(
+                itemMaxReached: viewModel.itemMaxedOut,
+                learnMore: { type in
+                    viewModel.selectedUpgradeOptionForInfo = type
+                    showFeaturesDetailsSheet = true
+                },
+                purchaseItem: { type in
+                    // TODO: Add purchase logic
+                    viewModel.selectedUpgradeOptionForPurchase = type
+                }
+            )
+        }//: SHEET
+        
+        .sheet(isPresented: $showFeaturesDetailsSheet) {
+            if let optionForInfo = viewModel.selectedUpgradeOptionForInfo {
+                FeaturesDetailsSheet(upgradeType: optionForInfo)
+            }//: IF LET
         }//: SHEET
         
     } //: BODY

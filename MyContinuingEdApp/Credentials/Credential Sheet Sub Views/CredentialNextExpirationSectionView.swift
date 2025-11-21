@@ -20,12 +20,16 @@ import SwiftUI
 struct CredentialNextExpirationSectionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     
     @ObservedObject var credential: Credential
 
     // Property to display RenewalPeriod sheet
     @State private var showRenewalPeriodView: Bool = false
     
+    @State private var showUpgradeToPaidSheet: Bool = false
+    @State private var selectedUpgradeOption: PurchaseStatus? = nil
+    @State private var showFeaturesDetailsSheet: Bool = false
     
     // MARK: - COMPUTED PROPERTIES
     // This property will be used to determine the most recent (current) renewal
@@ -102,7 +106,30 @@ struct CredentialNextExpirationSectionView: View {
         // Renewal Period sheet
         // Calling this sheet is ONLY for adding new RenewalPeriod objects
         .sheet(isPresented: $showRenewalPeriodView) {
+            let renewalNumber = dataController.currentNumberOfRenewals
+            let currentPurchaseLevel = settings.settings.appPurchaseStatus
+            if currentPurchaseLevel != .free {
                 RenewalPeriodView(renewalCredential: credential, renewalPeriod: nil)
+            } else if currentPurchaseLevel == .free && renewalNumber < 1 {
+                RenewalPeriodView(renewalCredential: credential, renewalPeriod: nil)
+            } else {
+                UpgradeToPaidSheet(
+                    itemMaxReached: "renewals",
+                    learnMore: { type in
+                        selectedUpgradeOption = type
+                        showFeaturesDetailsSheet = true
+                    },
+                    purchaseItem: { type in
+                        selectedUpgradeOption = type
+                    }
+                )
+            }//: IF ELSE
+        }//: SHEET
+        
+        .sheet(isPresented: $showFeaturesDetailsSheet) {
+            if let selectedOption = selectedUpgradeOption {
+                FeaturesDetailsSheet(upgradeType: selectedOption)
+            }
         }//: SHEET
         
     }//: BODY

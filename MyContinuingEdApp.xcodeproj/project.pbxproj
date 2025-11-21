@@ -38,6 +38,9 @@
 		3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03342EB3F42600F5B1DC /* DataController-Tags.swift */; };
 		3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
+		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
+		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
+		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
 		3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD62EC679A600791223 /* ChartDataSources.swift */; };
 		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
 		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
@@ -228,6 +231,9 @@
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
+		3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-InAppPurchases.swift"; sourceTree = "<group>"; };
+		3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaidFeaturePromoView.swift; sourceTree = "<group>"; };
+		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
 		3F817DD62EC679A600791223 /* ChartDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartDataSources.swift; sourceTree = "<group>"; };
 		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
 		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
@@ -503,10 +509,10 @@
 				F2FBAAE02E5FABE900348AAA /* Activity Formats.json */,
 				F2FBAADE2E5FAB8A00348AAA /* ActivityFormats.swift */,
 				F2FBAAE62E5FDDC800348AAA /* ActivityTypeJSON.swift */,
+				F2F6D57B2E2B53E500E1FB5F /* ExpirationTypeEnum.swift */,
 				F2FBAAE22E5FD68C00348AAA /* Activity Types.json */,
 				F229518C2E3179BF002550EC /* ActivityRatingScale.swift */,
-				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
-				F2F6D57B2E2B53E500E1FB5F /* ExpirationTypeEnum.swift */,
+				3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */,
 				3F2A42D32EA2E3A400B095CB /* Activity Completion */,
 			);
 			path = Details;
@@ -525,15 +531,15 @@
 		3F2A42CA2EA2C78C00B095CB /* Renewal Periods */ = {
 			isa = PBXGroup;
 			children = (
+				F2BC94B02E38770000926B3D /* RenewalPeriodView.swift */,
+				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
 				3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */,
 				3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */,
 				3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */,
 				3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */,
 				3F817DD82EC687A200791223 /* RenewalProgressView.swift */,
-				F2BDFC0E2E833ACF00A8CDAA /* RenewalTopEditingView.swift */,
 				3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */,
 				F2BDFC102E83657A00A8CDAA /* RenewalPeriodDatesView.swift */,
-				F2BC94B02E38770000926B3D /* RenewalPeriodView.swift */,
 				3F39AFD22EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift */,
 			);
 			path = "Renewal Periods";
@@ -686,6 +692,7 @@
 		3F5D03382EB3F55A00F5B1DC /* Data Controller Items */ = {
 			isa = PBXGroup;
 			children = (
+				3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */,
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
@@ -703,6 +710,15 @@
 				3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */,
 			);
 			path = "Data Controller Items";
+			sourceTree = "<group>";
+		};
+		3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */ = {
+			isa = PBXGroup;
+			children = (
+				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
+				3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */,
+			);
+			path = "Activity Reflections";
 			sourceTree = "<group>";
 		};
 		3F817DD52EC6755B00791223 /* Charts */ = {
@@ -767,9 +783,10 @@
 		3FE3723A2ECE552400CCF0FC /* Upgrade */ = {
 			isa = PBXGroup;
 			children = (
+				3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */,
 				3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */,
-				3FE372472ECEA05B00CCF0FC /* UpgradeOptionsView.swift */,
 				3FE372492ECECD9000CCF0FC /* FeaturesDetailsSheet.swift */,
+				3FE372472ECEA05B00CCF0FC /* UpgradeOptionsView.swift */,
 				3FE3724D2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift */,
 				3FE3724B2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift */,
 				3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */,
@@ -1020,6 +1037,7 @@
 				3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */,
 				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
 				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
+				3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
@@ -1027,6 +1045,7 @@
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
+				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
 				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,
@@ -1074,6 +1093,7 @@
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
+				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,

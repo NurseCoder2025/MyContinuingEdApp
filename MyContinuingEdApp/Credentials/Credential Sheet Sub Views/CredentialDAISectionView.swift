@@ -11,6 +11,7 @@ import SwiftUI
 struct CredentialDAISectionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var credential: Credential
     
     // MARK: - COMPUTED PROPERTIES
@@ -27,27 +28,41 @@ struct CredentialDAISectionView: View {
         return actions
     }//: allDAIs
     
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
+    
     // MARK: - BODY
     var body: some View {
         Group {
             Section("Disciplinary Actions") {
-                List {
-                    NavigationLink {
-                        DisciplinaryActionListSheet(
-                            dataController: dataController,
-                            credential: credential
-                        )
-                    } label: {
-                        HStack {
-                            Text("Disciplinary Actions:")
-                        }//: HSTACK
-                        .badge(allDAIs.count)
-                        .accessibilityElement()
-                        .accessibilityLabel("Disciplinary actions taken against this credential")
-                        .accessibilityHint("^[\(allDAIs.count) action taken](inflect: true)")
-                    }//: NAV LINK
-                   
-                }//: LIST
+                if paidStatus != .proSubscription {
+                    PaidFeaturePromoView(
+                        featureIcon: "exclamationmark.triangle.fill",
+                        featureItem: "Board Actions",
+                        featureUpgradeLevel: .ProOnly
+                    )
+                } else {
+                    // Wrapped in a List view so the badge modifier could be used
+                    List {
+                        NavigationLink {
+                            DisciplinaryActionListSheet(
+                                dataController: dataController,
+                                credential: credential
+                            )
+                        } label: {
+                            HStack {
+                                Text("Disciplinary Actions:")
+                            }//: HSTACK
+                            .badge(allDAIs.count)
+                            .accessibilityElement()
+                            .accessibilityLabel("Disciplinary actions taken against this credential")
+                            .accessibilityHint("^[\(allDAIs.count) action taken](inflect: true)")
+                        }//: NAV LINK
+                        
+                    }//: LIST
+                }//: IF ELSE
+                
             }//: SECTION
         }//: GROUP
         

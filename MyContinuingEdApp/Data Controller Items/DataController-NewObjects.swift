@@ -71,7 +71,7 @@ extension DataController {
         if appSettings?.appPurchaseStatus == .free {
             let activityFetch = CeActivity.fetchRequest()
             let activityCount = (try? container.viewContext.count(for: activityFetch)) ?? 0
-            if activityCount == 5 {
+            if activityCount >= 3 {
                 throw UpgradeNeeded.maxCeActivitiesReached
             }
         }
@@ -94,6 +94,14 @@ extension DataController {
         // assign that tag to the new activity
         if let tag = selectedFilter?.tag {
             newActivity.addToTags(tag)
+        }
+        
+        // If only one Credential object exists, then automatically assign the
+        // activity to that credential
+        let credentialFetch = Credential.fetchRequest()
+        let credentials = (try? container.viewContext.fetch(credentialFetch)) ?? []
+        if credentials.count == 1 {
+            newActivity.addToCredentials(credentials.first!)
         }
         
         // if the user creates a new activity while a specific renewal period has been
@@ -119,7 +127,7 @@ extension DataController {
         if appSettings?.appPurchaseStatus == .free {
             let activityFetch = CeActivity.fetchRequest()
             let activityCount = (try? container.viewContext.count(for: activityFetch)) ?? 0
-            if activityCount == 5 {
+            if activityCount >= 3 {
                 throw UpgradeNeeded.maxCeActivitiesReached
             }
         }
@@ -139,6 +147,14 @@ extension DataController {
         // assign that tag to the new activity
         if let tag = selectedFilter?.tag {
             newActivity.addToTags(tag)
+        }
+        
+        // If only one Credential object exists, then automatically assign the
+        // activity to that credential
+        let credentialFetch = Credential.fetchRequest()
+        let credentials = (try? container.viewContext.fetch(credentialFetch)) ?? []
+        if credentials.count == 1 {
+            newActivity.addToCredentials(credentials.first!)
         }
         
         // if the user creates a new activity while a specific renewal period has been

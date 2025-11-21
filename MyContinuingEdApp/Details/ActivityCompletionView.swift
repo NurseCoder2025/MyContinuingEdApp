@@ -13,8 +13,13 @@ import SwiftUI
 struct ActivityCompletionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var activity: CeActivity
     
+    // MARK: - COMPUTED PROPERTIES
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
     
     // MARK: - BODY
     var body: some View {
@@ -28,27 +33,37 @@ struct ActivityCompletionView: View {
                         set: {activity.dateCompleted = $0}),
                     displayedComponents: [.date])
                     
-                    if !activity.isDeleted, let reflection = activity.reflection {
-                        NavigationLink {
-                            ActivityReflectionView(activity: activity, reflection: reflection)
-                        } label: {
-                            Text("Activity reflections...")
-                                .backgroundStyle(.yellow)
-                                .foregroundStyle(.blue)
-                                .fontWeight(.semibold)
-                        } //: NAV LINK
-                        
-                    }//: IF LET
+                    if paidStatus == .free {
+                        PaidFeaturePromoView(
+                            featureIcon: "pencil.and.scribble",
+                            featureItem: "Activity Reflection",
+                            featureUpgradeLevel: .basicAndPro
+                        )
+                    } else {
+                        if !activity.isDeleted, let reflection = activity.reflection {
+                            NavigationLink {
+                                ActivityReflectionView(activity: activity, reflection: reflection)
+                            } label: {
+                                Text("Activity reflections...")
+                                    .backgroundStyle(.yellow)
+                                    .foregroundStyle(.blue)
+                                    .fontWeight(.semibold)
+                            } //: NAV LINK
+                            
+                        }//: IF LET
+                    }//: IF ELSE
                     
                 } // IF activity completed...
             }//: SECTION (Activity Completion)
             // MARK: - ON CHANGE
             // MARK: Activity Completed? change
             .onChange(of: activity.activityCompleted) { _ in
-                if activity.reflection == nil {
-                    let newReflection = dataController.createNewActivityReflection()
-                    activity.reflection = newReflection
-                } //: IF
+                if paidStatus != .free {
+                    if activity.reflection == nil {
+                        let newReflection = dataController.createNewActivityReflection()
+                        activity.reflection = newReflection
+                    } //: IF
+                }//: IF
             } //: ON CHANGE
             
             // MARK: Date Completion change
@@ -65,4 +80,6 @@ struct ActivityCompletionView: View {
 // MARK: - PREVIEW
 #Preview {
     ActivityCompletionView(activity: .example)
+        .environmentObject(CeAppSettings())
+        .environmentObject(DataController(inMemory: true))
 }

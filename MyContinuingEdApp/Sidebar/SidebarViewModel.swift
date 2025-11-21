@@ -33,6 +33,15 @@ extension SidebarView {
         // Property for holding a renewal period that the user wants to check progress on
         @Published var selectedRenewalForProgressCheck: RenewalPeriod?
         
+        // Property to hold which upgrade option a user wants more info on
+        @Published var selectedUpgradeOptionForInfo: PurchaseStatus?
+        
+        // Property to hold which upgrade option a user wishes to purchase
+        @Published var selectedUpgradeOptionForPurchase: PurchaseStatus?
+        
+        // Property to hold which item was maxed out in free mode
+        @Published var itemMaxedOut: String = ""
+        
     
         // Properties for deleting renewal periods
         @Published var showDeleteRenewalWarning: Bool = false

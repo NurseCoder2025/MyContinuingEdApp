@@ -16,6 +16,7 @@ import SwiftUI
 struct ActivityCertificateImageView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var activity: CeActivity
     
     // Properties related to changes with the CE certificate
@@ -27,46 +28,58 @@ struct ActivityCertificateImageView: View {
     // Properties related to deleting the saved certificate
     @State private var showDeleteCertificateWarning: Bool = false
     
+    // MARK: - COMPUTED PROPERTIES
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
+    
     // MARK: - BODY
     var body: some View {
         Group {
             // MARK: - Certificate Image
             if activity.activityCompleted {
-                Section("Certificate Image") {
-                    CertificatePickerView(
-                        activity: activity,
-                        certificateData: $activity.completionCertificate
+                if paidStatus == .free {
+                    PaidFeaturePromoView(
+                        featureIcon: "doc.text.image.fill",
+                        featureItem: "Save CE Certificate",
+                        featureUpgradeLevel: .basicAndPro
                     )
-                                        
-                    if let data = activity.completionCertificate {
-                        if isPDF(data) {
-                            PDFKitView(data: data)
-                                .frame(height: 300)
-                                .accessibilityLabel("PDF view of your CE Certificate for this activity.")
-                        } else if let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 300)
-                                .accessibilityLabel("Picture of the CE certificate you received for this activity.")
-                        } else {
-                            Text("Unsupported file format - must be either an image (.png, .jpg) or PDF only.")
-                                .foregroundStyle(.secondary)
-                        }
-                    }//: IF LET (data)
-                    
-                    // MARK: - Certificate Sharing
-                    if let data = activity.completionCertificate {
-                        CertificateShareView(activity: activity, certificateData: data)
+                } else {
+                    Section("Certificate Image") {
+                        CertificatePickerView(
+                            activity: activity,
+                            certificateData: $activity.completionCertificate
+                        )
                         
-                        Button(role: .destructive) {
-                            showDeleteCertificateWarning = true
-                        } label: {
-                            Text("Delete Certificate")
-                        }
-                    }//: IF-LET (data)
-                }//: Certificate Section
-                
+                        if let data = activity.completionCertificate {
+                            if isPDF(data) {
+                                PDFKitView(data: data)
+                                    .frame(height: 300)
+                                    .accessibilityLabel("PDF view of your CE Certificate for this activity.")
+                            } else if let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 300)
+                                    .accessibilityLabel("Picture of the CE certificate you received for this activity.")
+                            } else {
+                                Text("Unsupported file format - must be either an image (.png, .jpg) or PDF only.")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }//: IF LET (data)
+                        
+                        // MARK: - Certificate Sharing
+                        if let data = activity.completionCertificate {
+                            CertificateShareView(activity: activity, certificateData: data)
+                            
+                            Button(role: .destructive) {
+                                showDeleteCertificateWarning = true
+                            } label: {
+                                Text("Delete Certificate")
+                            }
+                        }//: IF-LET (data)
+                    }//: Certificate Section
+                }//: IF ELSE
             } //: IF activity completed
         }//: GROUP
         // MARK: - ON APPEAR

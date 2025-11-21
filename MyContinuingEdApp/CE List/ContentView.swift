@@ -10,8 +10,15 @@ import SwiftUI
 
 struct ContentView: View {
     // MARK: - Properties
+    @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
+    
     @Environment(\.spotlightCentral) var spotlightCentral
     @StateObject private var viewModel: ViewModel
+    
+    @State private var showUpgradetoPaidSheet: Bool = false
+    @State private var showFeaturesDetailsSheet: Bool = false
+    @State private var selectedUpgradeOption: PurchaseStatus? = nil
     
     var deletionWarningMessage: String = ""
     
@@ -72,7 +79,48 @@ struct ContentView: View {
                 }
             }
             // MARK: - TOOLBAR
-            .toolbar {ContentViewToolbarView()} //: TOOLBAR
+            .toolbar {
+                ContentViewToolbarView() {
+                    if #available(iOS 17, *) {
+                        // Use the dataController's createActivity method and item
+                        // will be automatically added to Spotlight's index
+                        do {
+                            try dataController.createActivity()
+                        } catch  {
+                            showUpgradetoPaidSheet = true
+                        }
+                        
+                    } else {
+                        // Manually add CeActivity to Spotlight's index
+                        do {
+                            let newCe = try dataController.createNewCeActivityIOs16()
+                            spotlightCentral?.addCeActivityToDefaultIndex(newCe)
+                        } catch  {
+                            showUpgradetoPaidSheet = true
+                        }
+                    }
+                }//: CLOSURE
+            } //: TOOLBAR
+        // MARK: - SHEETS
+            .sheet(isPresented: $showUpgradetoPaidSheet) {
+                UpgradeToPaidSheet(
+                    itemMaxReached: "CE activities",
+                    learnMore: { type in
+                        selectedUpgradeOption = type
+                        showFeaturesDetailsSheet = true
+                    },
+                    purchaseItem: {type in
+                        selectedUpgradeOption = type
+                        // TODO: Add purchase logic
+                    }
+                )
+            }//: SHEET
+        
+            .sheet(isPresented: $showFeaturesDetailsSheet) {
+                if let selectedOption = selectedUpgradeOption {
+                    FeaturesDetailsSheet(upgradeType: selectedOption)
+                }
+            }//: SHEET
         
     } //: BODY
     

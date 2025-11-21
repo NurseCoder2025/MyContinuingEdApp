@@ -14,11 +14,17 @@ import SwiftUI
 struct ActivityCEDetailsView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var activity: CeActivity
     
     // Bindings to parent view (ActivityView)
     @State private var showCeDesignationSheet: Bool = false
     @State private var showSpecialCECatAssignmentSheet: Bool = false
+    
+    // MARK: - COMPUTED PROPERTIES
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
     
     
     // MARK: - BODY
@@ -40,30 +46,37 @@ struct ActivityCEDetailsView: View {
                     }//: HSTACK
                 } //: BUTTON
                 
-                // MARK: Special Category
-                VStack {
-                    Text("Special CE Category:")
-                        .bold()
-                    Text("NOTE: If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
-                        .font(.caption)
-                        .multilineTextAlignment(.leading)
-                    
-                    Button {
-                        showSpecialCECatAssignmentSheet = true
-                    } label: {
-                        HStack {
-                            Text("Category:")
-                            if let assignedCat = activity.specialCat {
-                                Text(assignedCat.specialName)
-                                    .lineLimit(1)
-                            } else {
-                                Text("Select Category (if applicable)")
-                            }
-                        }//: HSTACK
-                    }
-                    
-                } //: VSTACK
-                
+                if paidStatus != .proSubscription {
+                    PaidFeaturePromoView(
+                        featureIcon: "list.bullet.rectangle.fill",
+                        featureItem: "Credential-Specific CE Categories",
+                        featureUpgradeLevel: .ProOnly
+                    )
+                } else {
+                    // MARK: Special Category
+                    VStack {
+                        Text("Special CE Category:")
+                            .bold()
+                        Text("NOTE: If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
+                            .font(.caption)
+                            .multilineTextAlignment(.leading)
+                        
+                        Button {
+                            showSpecialCECatAssignmentSheet = true
+                        } label: {
+                            HStack {
+                                Text("Category:")
+                                if let assignedCat = activity.specialCat {
+                                    Text(assignedCat.specialName)
+                                        .lineLimit(1)
+                                } else {
+                                    Text("Select Category (if applicable)")
+                                }
+                            }//: HSTACK
+                        }
+                        
+                    } //: VSTACK
+                }//: IF ELSE
                 
             }//: SECTION
         }//: GROUP
