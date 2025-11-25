@@ -30,9 +30,14 @@ struct PaidFeaturePromoView: View {
                 Image(systemName: featureIcon)
                     .font(.largeTitle)
                     .foregroundStyle(Color(.gray))
+                    .padding(.trailing, 10)
                 
-                VStack {
-                    Text("\(featureUpgradeLevel == .basicAndPro ? "Paid" : "Pro") feature: \(featureItem)")
+                VStack(alignment: .leading) {
+                    Text("\(featureUpgradeLevel == .basicAndPro ? "Paid" : "Pro") Feature:")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                        .bold()
+                    Text(featureItem)
                         .foregroundStyle(.secondary)
                         .bold()
                     Text("Unlock by purchasing \(featureUpgradeLevel.rawValue)")
@@ -41,6 +46,7 @@ struct PaidFeaturePromoView: View {
                 }//: VSTACK
                 
             }//: HSTACK
+            .padding(.leading, 10)
             .accessibilityLabel(Text("Paid feature: \(featureItem)"))
             .accessibilityHint("Unlock by purchasing \(featureUpgradeLevel.rawValue)")
             

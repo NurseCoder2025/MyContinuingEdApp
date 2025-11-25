@@ -15,7 +15,13 @@ import SwiftUI
 
 struct SidebarCredentialsSectionView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var settings: CeAppSettings
     @StateObject private var viewModel: ViewModel
+    
+    // MARK: - COMPUTED PROPERTIES
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
     
     // MARK: - CLOSURES
    // Closure for editing a renewal period
@@ -52,14 +58,17 @@ struct SidebarCredentialsSectionView: View {
                                 RenewalPeriodNavLabelView(renewalFilter: filter)
                                     .badge(filter.renewalActivitiesCount)
                                     .swipeActions {
-                                        Button {
-                                            if let renewal = filter.renewalPeriod {
-                                                showRenewalProgress(renewal)
-                                            }
-                                        } label: {
-                                            Label("Check CE Progress", systemImage: "chart.pie.fill")
-                                                .labelStyle(.iconOnly)
-                                        }//: BUTTON
+                                        if paidStatus == .proSubscription {
+                                            Button {
+                                                if let renewal = filter.renewalPeriod {
+                                                    showRenewalProgress(renewal)
+                                                }
+                                            } label: {
+                                                Label("Check CE Progress", systemImage: "chart.pie.fill")
+                                                    .labelStyle(.iconOnly)
+                                            }//: BUTTON
+                                        }
+                                        
                                     }//: SWIPE
                                     .contextMenu {
                                         // MARK: Edit Renewal Period Button

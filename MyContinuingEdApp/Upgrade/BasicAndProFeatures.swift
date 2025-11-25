@@ -36,6 +36,7 @@ let basicFeatures = [
     ),
     UpgradeFeature(
         featureIcon: "pencil.and.scribble",
+        altIcon: "pencil.and.outline",
         featureText: "Journal on completed activities",
         sellingPoint: "Once you complete a CE activity, don't just go home and forget what you learned!  With this feature you can jot down a summary of what you learned using several prompts provided, including anything that you found surprising."
     )
@@ -64,7 +65,8 @@ let proFeatures: [UpgradeFeature] = [
         sellingPoint: "For many credentials, a certain number of CE hours/units on a particular subject such as ethics are required every renewal period as part of the overall total that must be earned. With a Pro subscription you can add and assign these categories to your credentials to make sure you meet any credential-specific CE requirements."
     ),
     UpgradeFeature(
-        featureIcon: "gauge.with.dots.needle.33percent",
+        featureIcon: "gauge.with.dots.needle.bottom.50percent",
+        altIcon: "gauge.medium",
         featureText: "CE progress meters",
         sellingPoint: "See at a glance how far along you are coming on meeting your CE requirements for any given renewal period that has been entered.  This is a quick and helpful way to size up your progress and make sure you're on track!"
     ),

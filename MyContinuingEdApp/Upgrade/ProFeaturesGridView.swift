@@ -19,7 +19,7 @@ struct ProFeaturesGridView: View {
             ForEach(proFeatures) { feature in
                 PurchaseFeatureRowView(
                     purchaseType: .proSubscription,
-                    featureIcon: feature.featureIcon,
+                    featureIcon: feature.altIcon ?? feature.featureIcon,
                     featureText: feature.featureText
                 )
             }//: LOOP

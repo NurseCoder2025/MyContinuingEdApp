@@ -17,7 +17,6 @@ struct ContentView: View {
     @StateObject private var viewModel: ViewModel
     
     @State private var showUpgradetoPaidSheet: Bool = false
-    @State private var showFeaturesDetailsSheet: Bool = false
     @State private var selectedUpgradeOption: PurchaseStatus? = nil
     
     var deletionWarningMessage: String = ""
@@ -105,10 +104,6 @@ struct ContentView: View {
             .sheet(isPresented: $showUpgradetoPaidSheet) {
                 UpgradeToPaidSheet(
                     itemMaxReached: "CE activities",
-                    learnMore: { type in
-                        selectedUpgradeOption = type
-                        showFeaturesDetailsSheet = true
-                    },
                     purchaseItem: {type in
                         selectedUpgradeOption = type
                         // TODO: Add purchase logic
@@ -116,11 +111,6 @@ struct ContentView: View {
                 )
             }//: SHEET
         
-            .sheet(isPresented: $showFeaturesDetailsSheet) {
-                if let selectedOption = selectedUpgradeOption {
-                    FeaturesDetailsSheet(upgradeType: selectedOption)
-                }
-            }//: SHEET
         
     } //: BODY
     

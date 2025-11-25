@@ -155,10 +155,6 @@ struct SidebarView: View {
             } else {
                 UpgradeToPaidSheet(
                     itemMaxReached: "renewals",
-                    learnMore: { type in
-                        viewModel.selectedUpgradeOptionForInfo = type
-                        showFeaturesDetailsSheet = true
-                    },
                     purchaseItem: { type in
                         // TODO: Add purchase logic
                         viewModel.selectedUpgradeOptionForPurchase = type
@@ -182,10 +178,6 @@ struct SidebarView: View {
         .sheet(isPresented: $showUpgradeToPaidSheet) {
             UpgradeToPaidSheet(
                 itemMaxReached: viewModel.itemMaxedOut,
-                learnMore: { type in
-                    viewModel.selectedUpgradeOptionForInfo = type
-                    showFeaturesDetailsSheet = true
-                },
                 purchaseItem: { type in
                     // TODO: Add purchase logic
                     viewModel.selectedUpgradeOptionForPurchase = type
@@ -193,11 +185,6 @@ struct SidebarView: View {
             )
         }//: SHEET
         
-        .sheet(isPresented: $showFeaturesDetailsSheet) {
-            if let optionForInfo = viewModel.selectedUpgradeOptionForInfo {
-                FeaturesDetailsSheet(upgradeType: optionForInfo)
-            }//: IF LET
-        }//: SHEET
         
     } //: BODY
     

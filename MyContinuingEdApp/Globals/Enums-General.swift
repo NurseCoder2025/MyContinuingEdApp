@@ -143,8 +143,19 @@ enum NotificationType: String, CaseIterable {
 
 // MARK: - In App Purchases
 /// Enum for indicating whether the user has made an in-app purchase, and if so, which one, or is using the free version of the app.
-enum PurchaseStatus: Codable {
+enum PurchaseStatus: Codable, Identifiable {
     case free, basicUnlock, proSubscription
+    
+    // Identifiable conformance
+    // Needed so that this enum can be used for presenting sheets
+    // as an item
+    var id: String {
+        switch self {
+        case .free: return "free"
+        case .basicUnlock: return "basicUnlock"
+        case .proSubscription: return "proSubscription"
+        }
+    }//: id
 }
 
 enum SubscriptionStatus: Codable {

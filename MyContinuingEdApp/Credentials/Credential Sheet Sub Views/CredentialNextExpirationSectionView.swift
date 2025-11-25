@@ -29,7 +29,6 @@ struct CredentialNextExpirationSectionView: View {
     
     @State private var showUpgradeToPaidSheet: Bool = false
     @State private var selectedUpgradeOption: PurchaseStatus? = nil
-    @State private var showFeaturesDetailsSheet: Bool = false
     
     // MARK: - COMPUTED PROPERTIES
     // This property will be used to determine the most recent (current) renewal
@@ -115,10 +114,6 @@ struct CredentialNextExpirationSectionView: View {
             } else {
                 UpgradeToPaidSheet(
                     itemMaxReached: "renewals",
-                    learnMore: { type in
-                        selectedUpgradeOption = type
-                        showFeaturesDetailsSheet = true
-                    },
                     purchaseItem: { type in
                         selectedUpgradeOption = type
                     }
@@ -126,11 +121,6 @@ struct CredentialNextExpirationSectionView: View {
             }//: IF ELSE
         }//: SHEET
         
-        .sheet(isPresented: $showFeaturesDetailsSheet) {
-            if let selectedOption = selectedUpgradeOption {
-                FeaturesDetailsSheet(upgradeType: selectedOption)
-            }
-        }//: SHEET
         
     }//: BODY
     

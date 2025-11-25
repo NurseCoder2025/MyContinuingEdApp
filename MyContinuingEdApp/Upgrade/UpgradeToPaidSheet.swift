@@ -17,8 +17,10 @@ struct UpgradeToPaidSheet: View {
     var headerText: String {
         if itemMaxReached == "" {
             return "Upgrade to Paid Option"
+        } else if itemMaxReached == "CE activities" {
+            return "Max CE Activities"
         } else {
-            return itemMaxReached
+            return "Max \(itemMaxReached.capitalized) Reached"
         }
     }//: headerText
     
@@ -31,20 +33,19 @@ struct UpgradeToPaidSheet: View {
     }
     
     // MARK: - CLOSURES
-    let learnMore: (PurchaseStatus) -> Void
     let purchaseItem: (PurchaseStatus) -> Void
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 0) {
                 // MARK: HEADER
                 VStack {
                     Image(systemName: "exclamationmark.octagon.fill")
                         .font(Font.largeTitle.bold())
                         .foregroundStyle(.red)
                     Text(headerText)
-                        .font(.largeTitle)
+                        .font(.title)
                 }//: VSTACK
                 .accessibilityElement()
                 .accessibilityLabel(Text("Attention: Paid Upgrade Needed"))
@@ -56,7 +57,6 @@ struct UpgradeToPaidSheet: View {
                 // Closure behaviors are handled in
                 // SidebarView (as parent view)
                 UpgradeOptionsView(
-                    learnMore: learnMore,
                     buyItem: purchaseItem
                 )
                 
@@ -75,9 +75,8 @@ struct UpgradeToPaidSheet: View {
         }//: NAV VIEW
     }//: BODY
     // MARK: - INIT
-    init(itemMaxReached: String, learnMore: @escaping (PurchaseStatus) -> Void, purchaseItem: @escaping (PurchaseStatus) -> Void) {
+    init(itemMaxReached: String, purchaseItem: @escaping (PurchaseStatus) -> Void) {
         self.itemMaxReached = itemMaxReached
-        self.learnMore = learnMore
         self.purchaseItem = purchaseItem
     }//: INIT
     
@@ -87,7 +86,6 @@ struct UpgradeToPaidSheet: View {
 #Preview {
     UpgradeToPaidSheet(
         itemMaxReached: "tags",
-        learnMore: {_ in },
         purchaseItem: {_ in}
     )
 }

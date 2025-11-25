@@ -18,7 +18,7 @@ struct BasicFeaturesGridView: View {
             ForEach(basicFeatures) {feature in
                 PurchaseFeatureRowView(
                     purchaseType: .basicUnlock,
-                    featureIcon: feature.featureIcon,
+                    featureIcon: feature.altIcon ?? feature.featureIcon,
                     featureText: feature.featureText
                 )
                 .accessibilityLabel(feature.featureText)

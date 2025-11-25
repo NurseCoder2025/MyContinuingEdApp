@@ -20,7 +20,7 @@ struct FeaturesDetailsRowView: View {
                 .frame(maxWidth: 330, maxHeight: 300)
                 .accessibilityHidden(true)
             HStack(alignment: .center) {
-                Image(systemName: feature.featureIcon)
+                Image(systemName: feature.altIcon ?? feature.featureIcon)
                     .font(.largeTitle)
                     .foregroundStyle(upgradeType == .basicUnlock ? .blue : .purple)
                     .padding([.leading, .trailing], 20)

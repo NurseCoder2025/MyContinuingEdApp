@@ -23,7 +23,7 @@ struct SidebarViewTopToolbar: View {
     
     @State private var showUpgradeToPaidSheet: Bool = false
     @State private var selectedUpgradeOption: PurchaseStatus?
-    @State private var showFeaturesDetailsSheet: Bool = false
+ 
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -94,10 +94,6 @@ struct SidebarViewTopToolbar: View {
              .sheet(isPresented: $showUpgradeToPaidSheet) {
                  UpgradeToPaidSheet(
                     itemMaxReached: "",
-                    learnMore: {type in
-                        selectedUpgradeOption = type
-                        showFeaturesDetailsSheet = true
-                    },
                     purchaseItem: {type in
                         selectedUpgradeOption = type
                         // TODO: Add purchase logic
@@ -105,11 +101,6 @@ struct SidebarViewTopToolbar: View {
                  )
              }//: SHEET
         
-             .sheet(isPresented: $showFeaturesDetailsSheet) {
-                 if let option = selectedUpgradeOption {
-                     FeaturesDetailsSheet(upgradeType: option)
-                 }
-             }//: SHEET
             
     }//: BODY
     

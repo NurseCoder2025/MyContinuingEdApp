@@ -16,6 +16,7 @@ import SwiftUI
 struct BasicCredentialInfoView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var credential: Credential
         
     // Property for bringing up the Issuer List sheet
@@ -24,6 +25,11 @@ struct BasicCredentialInfoView: View {
     @State private var showSpecialCECatsManagementSheet: Bool = false
     
     @State private var showCEMeasurementHelpAlert: Bool = false
+    
+    // MARK: - COMPUTED PROPERTIES
+    var paidStatus: PurchaseStatus {
+        settings.settings.appPurchaseStatus
+    }
     
     // MARK: - BODY
     var body: some View {
@@ -114,31 +120,39 @@ struct BasicCredentialInfoView: View {
                     }//: VSTACK
                 }//: GROUP
                 
-                Group {
-                    VStack(alignment: .leading) {
-                        Text("Special CE Category Assignments")
-                            .bold()
-                            .padding(.bottom, 5)
-                        Text("If your licensing/credentialing body requires a certain number of hours of a particular type of continuing education each renewal period, like ethics or law, use this section to create and assign those types so that the app can track your progress in meeting any requirements.")
-                            .font(.caption)
-                        
-                        Button {
-                            showSpecialCECatsManagementSheet = true
-                        } label: {
-                            if let anyAssignedSpecialCats = credential.specialCats as? Set<SpecialCategory> {
-                                if anyAssignedSpecialCats.isEmpty {
-                                    Text("Assign Special Category")
-                                } else {
-                                    let allAssignments = anyAssignedSpecialCats.map(\.specialName).joined(separator: ", ")
-                                    Text("Assigned: \(allAssignments)")
+                if paidStatus == .proSubscription {
+                    Group {
+                        VStack(alignment: .leading) {
+                            Text("Special CE Category Assignments")
+                                .bold()
+                                .padding(.bottom, 5)
+                            Text("If your licensing/credentialing body requires a certain number of hours of a particular type of continuing education each renewal period, like ethics or law, use this section to create and assign those types so that the app can track your progress in meeting any requirements.")
+                                .font(.caption)
+                            
+                            Button {
+                                showSpecialCECatsManagementSheet = true
+                            } label: {
+                                if let anyAssignedSpecialCats = credential.specialCats as? Set<SpecialCategory> {
+                                    if anyAssignedSpecialCats.isEmpty {
+                                        Text("Assign Special Category")
+                                    } else {
+                                        let allAssignments = anyAssignedSpecialCats.map(\.specialName).joined(separator: ", ")
+                                        Text("Assigned: \(allAssignments)")
+                                    }
                                 }
-                            }
-                        }//: BUTTON
-                        .padding(.top, 5)
-                        
-                    }//: VSTACK
-                    
-                }//: GROUP
+                            }//: BUTTON
+                            .padding(.top, 5)
+                            
+                        }//: VSTACK
+                    }//: GROUP (Special CE Categories)
+                } else {
+                    PaidFeaturePromoView(
+                        featureIcon: "list.bullet.clipboard.fill",
+                        featureItem: "Credential-Specific CEs",
+                        featureUpgradeLevel: .ProOnly
+                    )
+                }//: IF ELSE
+                
                 
             }//: SECTION
             
