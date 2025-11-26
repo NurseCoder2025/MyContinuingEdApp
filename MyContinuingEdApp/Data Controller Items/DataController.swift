@@ -53,6 +53,9 @@ class DataController: ObservableObject {
     // MARK: Spotlight
     var spotlightDelegate: NSCoreDataCoreSpotlightDelegate?
     
+    // MARK: In App Purchases
+    private var storeTask: Task<Void, Never>?
+    
    
     // MARK: - SAVING & DELETING METHODS
     
@@ -156,6 +159,9 @@ class DataController: ObservableObject {
         // DataController instances (due to testing, previewing, etc.)
         container = NSPersistentCloudKitContainer(name: "CEActivityModel", managedObjectModel: Self.model)
         
+        storeTask = Task {
+            await monitorTransactions()
+        }
         
         // identifying the name of the stored data to load and use
         if inMemory {

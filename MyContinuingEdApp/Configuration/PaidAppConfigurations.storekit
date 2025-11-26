@@ -1,0 +1,129 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "C2A7B983",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "14.99",
+      "familyShareable" : false,
+      "internalID" : "72BC1D70",
+      "localizations" : [
+        {
+          "description" : "Essential features for tracking CE activities for one credential",
+          "displayName" : "Basic Feature Unlock",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.TheEmpire.basicFeatureUnlock",
+      "referenceName" : "BasicUnlock",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : true,
+    "_billingGracePeriodEnabled" : true,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : true,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "561C17F8",
+      "localizations" : [
+
+      ],
+      "name" : "ProFeatures",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "24.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1D4EBBD3",
+          "introductoryOffer" : {
+            "displayPrice" : "9.99",
+            "internalID" : "FA58E4CA",
+            "paymentMode" : "payUpFront",
+            "subscriptionPeriod" : "P6M"
+          },
+          "localizations" : [
+            {
+              "description" : "Everything in the basic feature unlock plus additional enhancements and the ability to track CEs for multiple credentials",
+              "displayName" : "Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.TheEmpire.annualPro",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "AnnualProSubscription",
+          "subscriptionGroupID" : "561C17F8",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "24E2930D",
+          "introductoryOffer" : {
+            "displayPrice" : "0.99",
+            "internalID" : "C9550269",
+            "numberOfPeriods" : 3,
+            "paymentMode" : "payAsYouGo",
+            "subscriptionPeriod" : "P1M"
+          },
+          "localizations" : [
+            {
+              "description" : "Everything in the basic unlock plus enhanced features, graphs, and more to come",
+              "displayName" : "Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.TheEmpire.monthlyPro",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "MonthlyProSubscription",
+          "subscriptionGroupID" : "561C17F8",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

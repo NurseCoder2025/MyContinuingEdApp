@@ -13,11 +13,12 @@ import Combine
 
 // MARK: - APP SETTINGS STRUCT
 struct AppSettings: Codable {
+    var basicUnlockPurchased: Bool = false
+    var proSubscriptionPurchased: Bool = false
+    
     var appPurchaseStatus: PurchaseStatus = .free
-    var proSubscriptionStatus: SubscriptionStatus = .freeTrial
-    var freeTrialEndDate: Date? = nil
-    var proSubscrptionEndDate: Date? = nil
-    var purchaseHistory: [Date: PurchaseStatus] = [:]
+    var subscriptionStatus: SubscriptionStatus = .inactive
+    
     
     var daysUntilPrimaryNotification: Int = 30
     var daysUntilSecondaryNotification: Int = 7
@@ -39,6 +40,11 @@ final class CeAppSettings: ObservableObject {
     private var cancellable: AnyCancellable? = nil
     private var localSettingsURL: URL? = nil
     private var iCloudSettingsURL: URL? = nil
+    
+    // File Monitor properties for updating the settings property whenever
+    // settings.json is changed elsewhere in the app
+    private var fileMonitorSource: DispatchSourceFileSystemObject?
+    private var fileDescriptor: Int32 = -1
     
     // MARK: - FUNCTIONS
     func saveSettings() {
@@ -65,7 +71,52 @@ final class CeAppSettings: ObservableObject {
         return (try? FileManager.default.attributesOfItem(atPath: url.path)[.modificationDate]) as? Date
     }
     
-    // MARK: - INIT
+    // MARK: - FILE MONITORING
+    /// This method updates the settings property whenever the settings.json file is updated by another part of the app.
+    /// Called by the file monitor
+    private func reloadSettingsFromDisk() {
+        guard let url = settingsFileURL, let newSettings = CeAppSettings.loadSettings(from: url) else { return }
+        settings = newSettings
+    }
+    
+    private func startSettingsFileMonitoring() {
+        guard let url = settingsFileURL else { return }
+        stopMonitoringSettingsFile()
+        
+        fileDescriptor = open(url.path, O_EVTONLY)
+        guard fileDescriptor != -1 else { return }
+        
+        fileMonitorSource = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: .write, queue: DispatchQueue.global())
+        fileMonitorSource?.setEventHandler { [weak self] in
+            DispatchQueue.main.async {
+                self?.reloadSettingsFromDisk()
+            }
+        }
+        
+        fileMonitorSource?.setCancelHandler { [weak self] in
+            if let descriptor = self?.fileDescriptor, descriptor != -1 {
+                close(descriptor)
+            }
+            self?.fileDescriptor = -1
+            self?.fileMonitorSource = nil
+        }
+        
+        fileMonitorSource?.resume()
+        
+    }//: startFileMonitoringSettings()
+    
+    
+    private func stopMonitoringSettingsFile() {
+        fileMonitorSource?.cancel()
+        fileMonitorSource = nil
+        if fileDescriptor != -1 {
+            close(fileDescriptor)
+            fileDescriptor = -1
+        }
+    } //: stopMonitoringSettingsFile
+    
+    
+    // MARK: - INIT & DEINIT
     init() {
         // Initialize all properties synchronously
         let localURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -134,8 +185,15 @@ final class CeAppSettings: ObservableObject {
                 self?.cancellable = self?.$settings.sink { [weak self] _ in
                     self?.saveSettings()
                 }
+                self?.startSettingsFileMonitoring()
             }
         }
     }//: INIT
+    
+    deinit {
+        DispatchQueue.main.async { [weak self] in
+            self?.stopMonitoringSettingsFile()
+        }
+    }//: DEINIT
     
 }//: CE APP SETTINGS

@@ -82,6 +82,9 @@
             ReferencedContainer = "container:MyContinuingEdApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "../../MyContinuingEdApp/Configuration/PaidAppConfigurations.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

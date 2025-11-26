@@ -159,7 +159,7 @@ enum PurchaseStatus: Codable, Identifiable {
 }
 
 enum SubscriptionStatus: Codable {
-    case freeTrial, active, cancelled, expired
+    case inactive, freeTrial, introPromo, active, cancelled, expired
 }
 
 enum UpgradeNeeded: Error {
