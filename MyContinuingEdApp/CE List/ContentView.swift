@@ -102,13 +102,7 @@ struct ContentView: View {
             } //: TOOLBAR
         // MARK: - SHEETS
             .sheet(isPresented: $showUpgradetoPaidSheet) {
-                UpgradeToPaidSheet(
-                    itemMaxReached: "CE activities",
-                    purchaseItem: {type in
-                        selectedUpgradeOption = type
-                        // TODO: Add purchase logic
-                    }
-                )
+                UpgradeToPaidSheet(itemMaxReached: "CE activities")
             }//: SHEET
         
         

@@ -5,44 +5,43 @@
 //  Created by Ilum on 11/19/25.
 //
 
+import StoreKit
 import SwiftUI
 
-struct AppUpgradeCardView: View {
+struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
     // MARK: - PROPERTIES
-    let purchaseType: PurchaseStatus
-    
-    let headerText: String
-    let briefDescription: String?
-    let purchasePrice: Double
-    let purchaseDescription: String
-    
+    @EnvironmentObject var dataController: DataController
+    let product: T
+
     let cardHeight: CGFloat
-    
-    let proGradient = LinearGradient(
-        colors: [Color.purple, Color.red],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
-    let basicGradient = LinearGradient(
-        colors: [Color.blue],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
-    
     let columns = Array(repeating: GridItem(.flexible()), count: 2)
     
     // MARK: - CLOSURES
     // Because this is a child view, passing up button functions to the parent view for
     // improved UI stability
-    let onLearnMore: (PurchaseStatus) -> Void
-    let onPurchase: (PurchaseStatus) -> Void
+    let onLearnMore: (String) -> Void
+    let onPurchase: (Product) -> Void
+    let redeemCode: () -> Void
+    let restorePurchases: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
-    var priceDisplayString: String {
-        String(format: "$%.2f", purchasePrice)
-    }//: priceDisplayString
     
+    var purchaseDescription: String {
+        switch product.id {
+            case DataController.basicUnlocKID:
+            return "One-time Purchase"
+        case DataController.proMonthlyID:
+            return "Monthly Subscription"
+        case DataController.proAnnualID:
+            return "Annual Subscription"
+        default:
+            return "Unknown"
+        }
+    }//: purchaseDescription
+    
+    var asProduct: Product? {
+        return product as? Product
+    }
     
     // MARK: - BODY
     var body: some View {
@@ -54,40 +53,40 @@ struct AppUpgradeCardView: View {
             VStack(alignment: .leading, spacing: 0) {
                     // MARK: - HEADER
                     HStack {
-                        Text(headerText)
+                        Text(product.displayName)
                             .font(.title3)
                             .bold()
                             .overlay(
-                                purchaseType == .proSubscription ? proGradient : basicGradient
+                                product.id == DataController.basicUnlocKID ? basicGradient : proGradient
                             )
                             .fixedSize(horizontal: false, vertical: true)
                             .mask(
-                                Text(headerText)
+                                Text(product.displayName)
                                     .font(.title3)
                                     .bold()
                                     .fixedSize(horizontal: false, vertical: true)
                             )
                             .padding([.leading, .top], 10)
                         Spacer()
-                        Text(priceDisplayString)
+                        Text(product.displayPrice)
                             .foregroundStyle(.secondary)
                             .padding(.trailing, 20)
                     }//: HSTACK
-                    if let description = briefDescription {
-                        Text(description)
+                    
+                        Text(product.description)
                             .multilineTextAlignment(.leading)
                             .foregroundStyle(.secondary)
                             .padding(.leading, 10)
                             .padding(.bottom, 20)
                             .fixedSize(horizontal: false, vertical: true)
-                    }
                     
+                
                      // MARK: - Features (Grid)
-                    if purchaseType == .basicUnlock {
+                if product.id == DataController.basicUnlocKID {
                         BasicFeaturesGridView()
                             .padding(.leading, 10)
                             .padding(.trailing, 5)
-                    } else if purchaseType == .proSubscription {
+                    } else {
                         ProFeaturesGridView()
                             .padding(.leading, 10)
                             .padding(.trailing, 5)
@@ -102,7 +101,7 @@ struct AppUpgradeCardView: View {
                         Spacer()
                         // MARK: ON LEARN MORE
                         Button {
-                            onLearnMore(purchaseType)
+                            onLearnMore(product.id)
                         } label: {
                             Text("Learn More")
                         }//: BUTTON
@@ -114,72 +113,129 @@ struct AppUpgradeCardView: View {
                 Group {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(purchaseType == .basicUnlock ? basicGradient : proGradient)
+                            .foregroundStyle(product.id == DataController.basicUnlocKID ? basicGradient : proGradient)
                             .frame(height: 45)
                             .padding([.leading, .trailing], 20)
                             .accessibilityHidden(true)
                         HStack {
                             Spacer()
                             Button {
-                                onPurchase(purchaseType)
+                                if let appProd = asProduct {
+                                    onPurchase(appProd)
+                                }
                             } label: {
-                                Text("\(purchaseType == .basicUnlock ? "Buy" : "Subscribe") for \(priceDisplayString)")
-                                    .foregroundStyle(.white)
-                                    .bold()
-                            }//: BUTTON
+                                PurchaseButtonLabelView(product: product)
+                            }
                             Spacer()
                         }//: HSTACK
                     }//: ZSTACK
                     .padding(.top, 15)
                 }//: GROUP
-                
-                
+                // MARK: - Codes & Restore Purchase
+                HStack {
+                    Spacer()
+                    Button {
+                        redeemCode()
+                    } label: {
+                        Text("Redeem Code")
+                    }//: BUTTON
+                    
+                    Text("|")
+                        .accessibilityHidden(true)
+                    
+                    Button {
+                        restorePurchases()
+                    } label: {
+                        Text("Restore Purchases")
+                    }//: BUTTON
+                    Spacer()
+                }//: HStack
+                .padding(.top, 10)
                     Spacer()
                     
                 }//: VSTACK
         }//: ZSTACK
         .frame(maxWidth: 350)
         .padding()
+        
     }//: BODY
+    
     // MARK: - CUSTOM INIT
-    init(purchaseType: PurchaseStatus, headerText: String, briefDescription: String?, purchasePrice: Double, purchaseDescription: String, cardHeight: CGFloat, onLearnMore: @escaping (PurchaseStatus) -> Void, onPurchase: @escaping (PurchaseStatus) -> Void) {
-        self.purchaseType = purchaseType
-        self.headerText = headerText
-        self.briefDescription = briefDescription
-        self.purchasePrice = purchasePrice
-        self.purchaseDescription = purchaseDescription
+    init(
+        product: T,
+        cardHeight: CGFloat,
+        onLearnMore: @escaping (String) -> Void,
+        onPurchase: @escaping (Product) -> Void,
+        redeemCode: @escaping () -> Void,
+        restorePurchases: @escaping () -> Void
+    )
+    {
+        self.product = product
         self.cardHeight = cardHeight
         self.onLearnMore = onLearnMore
         self.onPurchase = onPurchase
+        self.redeemCode = redeemCode
+        self.restorePurchases = restorePurchases
     }
 }//: STRUCT
 
 
 // MARK: - PREVIEW
 #Preview {
+    let basicProduct = MockProduct(
+        id: "com.example.myapp.basic",
+        displayName: "Basic Feature Unlock",
+        description: "Essential features for tracking CEs for one credential.",
+        price: 14.99,
+        displayPrice: "$14.99"
+        
+    )
     AppUpgradeCardView(
-        purchaseType: .basicUnlock,
-        headerText: "Basic Feature Unlock",
-        briefDescription: "Essential features for tracking CEs for one credential",
-        purchasePrice: 14.99,
-        purchaseDescription: "One time purchase",
+        product: basicProduct,
         cardHeight: 2.5,
         onLearnMore: {_ in},
-        onPurchase: {_ in}
+        onPurchase: {_ in},
+        redeemCode: {},
+        restorePurchases: {}
     )
     
 }
 
 #Preview {
-    AppUpgradeCardView(
-        purchaseType: .proSubscription,
-        headerText: "CE Cache Pro Subscription",
-        briefDescription: "Everything in the basic feature unlock PLUS:",
-        purchasePrice: 24.99,
-        purchaseDescription: "Annual Subscription",
-        cardHeight: 2,
-        onLearnMore: {_ in },
-        onPurchase: {_ in}
+    let annualProduct = MockProduct(
+        id: "mock.annualProduct.id",
+        displayName: "Pro Annual",
+        description: "All the features in Basic Unlock PLUS",
+        price: 24.99,
+        displayPrice: "$24.99"
     )
     
+    AppUpgradeCardView(
+        product: annualProduct,
+        cardHeight: 2,
+        onLearnMore: {_ in },
+        onPurchase: {_ in},
+        redeemCode: {},
+        restorePurchases: {}
+    )
+    
+}
+
+#Preview {
+    let monthlyProduct = MockProduct(
+        id: "mock.monthlyProduct.id",
+        displayName: "Pro Monthly",
+        description: "All pro features on a monthly subscription basis",
+        price: 2.99,
+        displayPrice: "$2.99"
+    )
+    
+    AppUpgradeCardView(
+        product: monthlyProduct,
+        cardHeight: 2,
+        onLearnMore: {_ in},
+        onPurchase: {_ in},
+        redeemCode: {},
+        restorePurchases: {}
+    )
 }

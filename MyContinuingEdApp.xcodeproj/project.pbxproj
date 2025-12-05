@@ -50,6 +50,10 @@
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
 		3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */; };
+		3FA2961C2EE227FA000F5D12 /* StorePreviewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */; };
+		3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */; };
+		3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */; };
+		3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
@@ -245,6 +249,10 @@
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightCentral.swift; sourceTree = "<group>"; };
 		3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Settings.swift"; sourceTree = "<group>"; };
+		3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePreviewProtocol.swift; sourceTree = "<group>"; };
+		3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreExtensions.swift; path = MyContinuingEdApp/Extensions/StoreExtensions.swift; sourceTree = SOURCE_ROOT; };
+		3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProduct.swift; sourceTree = "<group>"; };
+		3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseButtonLabelView.swift; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoCredSubTypeView.swift; path = "MyContinuingEdApp/Credentials/Sub Category Cat Sheet/NoCredSubTypeView.swift"; sourceTree = SOURCE_ROOT; };
@@ -624,6 +632,8 @@
 		3F2A42D12EA2E22700B095CB /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */,
+				3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */,
 				3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */,
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
 				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
@@ -789,6 +799,7 @@
 		3FE3723A2ECE552400CCF0FC /* Store */ = {
 			isa = PBXGroup;
 			children = (
+				3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */,
 				3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */,
 				3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */,
 				3FE372492ECECD9000CCF0FC /* FeaturesDetailsSheet.swift */,
@@ -796,6 +807,7 @@
 				3FE3724D2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift */,
 				3FE3724B2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift */,
 				3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */,
+				3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */,
 				3FE3723F2ECE6D3200CCF0FC /* BasicFeaturesGridView.swift */,
 				3FE372432ECE718B00CCF0FC /* ProFeaturesGridView.swift */,
 				3FE372452ECE779800CCF0FC /* BasicAndProFeatures.swift */,
@@ -1037,6 +1049,8 @@
 				F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */,
 				F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */,
 				F2B937A72E83961E00AF9155 /* GlobalVariables.swift in Sources */,
+				3FA2961C2EE227FA000F5D12 /* StorePreviewProtocol.swift in Sources */,
+				3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */,
 				F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */,
 				3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */,
 				F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */,
@@ -1069,6 +1083,7 @@
 				F2B580162E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift in Sources */,
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
+				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
 				3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
@@ -1186,6 +1201,7 @@
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
 				3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */,
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,
+				3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,

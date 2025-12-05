@@ -92,13 +92,7 @@ struct SidebarViewTopToolbar: View {
              .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
         
              .sheet(isPresented: $showUpgradeToPaidSheet) {
-                 UpgradeToPaidSheet(
-                    itemMaxReached: "",
-                    purchaseItem: {type in
-                        selectedUpgradeOption = type
-                        // TODO: Add purchase logic
-                    }
-                 )
+                 UpgradeToPaidSheet(itemMaxReached: "")
              }//: SHEET
         
             

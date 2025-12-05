@@ -5,6 +5,7 @@
 //  Created by Kamino on 9/23/25.
 //
 
+import SwiftUI
 import Foundation
 
 // MARK: - FORMATTERS
@@ -68,3 +69,16 @@ var ceHourFormatter: NumberFormatter {
     
     return formatter
 }
+
+// MARK: - Gradient Styles
+let proGradient = LinearGradient(
+    colors: [Color.purple, Color.red],
+    startPoint: .leading,
+    endPoint: .trailing
+)
+
+let basicGradient = LinearGradient(
+    colors: [Color.blue],
+    startPoint: .leading,
+    endPoint: .trailing
+)

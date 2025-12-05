@@ -153,13 +153,7 @@ struct SidebarView: View {
             } else if currentPurchaseLevel == .free && currentRenewalNum < 1 {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
             } else {
-                UpgradeToPaidSheet(
-                    itemMaxReached: "renewals",
-                    purchaseItem: { type in
-                        // TODO: Add purchase logic
-                        viewModel.selectedUpgradeOptionForPurchase = type
-                    }
-                )//: UpgradeToPaidSheet
+                UpgradeToPaidSheet(itemMaxReached: "renewals")//: UpgradeToPaidSheet
             }//: IF - ELSE
         }//: SHEET
         
@@ -176,13 +170,7 @@ struct SidebarView: View {
         }//: SHEET
         
         .sheet(isPresented: $showUpgradeToPaidSheet) {
-            UpgradeToPaidSheet(
-                itemMaxReached: viewModel.itemMaxedOut,
-                purchaseItem: { type in
-                    // TODO: Add purchase logic
-                    viewModel.selectedUpgradeOptionForPurchase = type
-                }
-            )
+            UpgradeToPaidSheet(itemMaxReached: viewModel.itemMaxedOut)
         }//: SHEET
         
         

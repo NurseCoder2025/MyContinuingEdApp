@@ -55,6 +55,8 @@ class DataController: ObservableObject {
     
     // MARK: In App Purchases
     private var storeTask: Task<Void, Never>?
+    private var introEligibilityTask: Task<Void, Never>?
+    @Published var isEligibleForIntroOffer: Bool = true
     
    
     // MARK: - SAVING & DELETING METHODS
@@ -161,6 +163,10 @@ class DataController: ObservableObject {
         
         storeTask = Task {
             await monitorTransactions()
+        }
+        
+        introEligibilityTask = Task {
+           isEligibleForIntroOffer = await self.isUserEligibleForIntroOffer()
         }
         
         // identifying the name of the stored data to load and use

@@ -5,11 +5,13 @@
 //  Created by Ilum on 11/19/25.
 //
 
+import StoreKit
 import SwiftUI
 
 struct UpgradeToPaidSheet: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var dataController: DataController
     
     let itemMaxReached: String
     
@@ -32,8 +34,6 @@ struct UpgradeToPaidSheet: View {
         }
     }
     
-    // MARK: - CLOSURES
-    let purchaseItem: (PurchaseStatus) -> Void
     
     // MARK: - BODY
     var body: some View {
@@ -57,8 +57,10 @@ struct UpgradeToPaidSheet: View {
                 // Closure behaviors are handled in
                 // SidebarView (as parent view)
                 UpgradeOptionsView(
-                    buyItem: purchaseItem
-                )
+                    buyItem: { product in
+                        purchase(product)
+                    }
+                )//: UpgradeOptionsView
                 
             }//: VSTACK
              // MARK: - TOOlBAR
@@ -74,18 +76,22 @@ struct UpgradeToPaidSheet: View {
              }//: TOOlBAR
         }//: NAV VIEW
     }//: BODY
+    // MARK: - FUNCTIONS
+    func purchase(_ product: Product) {
+        Task { @MainActor in
+            try await dataController.purchase(product)
+        }
+    }//: purchase()
+    
+    
     // MARK: - INIT
-    init(itemMaxReached: String, purchaseItem: @escaping (PurchaseStatus) -> Void) {
+    init(itemMaxReached: String) {
         self.itemMaxReached = itemMaxReached
-        self.purchaseItem = purchaseItem
     }//: INIT
     
 }//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    UpgradeToPaidSheet(
-        itemMaxReached: "tags",
-        purchaseItem: {_ in}
-    )
+    UpgradeToPaidSheet(itemMaxReached: "tags")
 }

@@ -112,12 +112,7 @@ struct CredentialNextExpirationSectionView: View {
             } else if currentPurchaseLevel == .free && renewalNumber < 1 {
                 RenewalPeriodView(renewalCredential: credential, renewalPeriod: nil)
             } else {
-                UpgradeToPaidSheet(
-                    itemMaxReached: "renewals",
-                    purchaseItem: { type in
-                        selectedUpgradeOption = type
-                    }
-                )
+                UpgradeToPaidSheet(itemMaxReached: "renewals")
             }//: IF ELSE
         }//: SHEET
         
