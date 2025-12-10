@@ -167,3 +167,7 @@ enum UpgradeNeeded: Error {
     case maxRenewalsReached
     case maxCeActivitiesReached
 }
+
+enum LoadState {
+    case loading, loaded, error
+}

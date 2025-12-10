@@ -5,13 +5,9 @@
 //  Created by Manann on 7/8/25.
 //
 
+import StoreKit
 import Foundation
 import CoreData
-
-// MARK: - ENUMS
-
-
-
 
 /// A class that handles the creatiion, saving, and deletion of all major objects in this app, including sample data.  It also manages
 /// data syncing between iCloud and local storage. Additional functionality such as activity searching and filtering is also handled by
@@ -55,8 +51,7 @@ class DataController: ObservableObject {
     
     // MARK: In App Purchases
     private var storeTask: Task<Void, Never>?
-    private var introEligibilityTask: Task<Void, Never>?
-    @Published var isEligibleForIntroOffer: Bool = true
+    @Published var products: [Product] = []
     
    
     // MARK: - SAVING & DELETING METHODS
@@ -165,9 +160,6 @@ class DataController: ObservableObject {
             await monitorTransactions()
         }
         
-        introEligibilityTask = Task {
-           isEligibleForIntroOffer = await self.isUserEligibleForIntroOffer()
-        }
         
         // identifying the name of the stored data to load and use
         if inMemory {

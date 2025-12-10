@@ -57,16 +57,7 @@
 
           ],
           "codeOffers" : [
-            {
-              "eligibility" : [
-                "new"
-              ],
-              "internalID" : "DA788C63",
-              "isStackable" : true,
-              "paymentMode" : "free",
-              "referenceName" : "Friends & Family",
-              "subscriptionPeriod" : "P1Y"
-            }
+
           ],
           "displayPrice" : "24.99",
           "familyShareable" : false,
@@ -80,7 +71,7 @@
           },
           "localizations" : [
             {
-              "description" : "Everything in the basic feature unlock plus additional enhancements and the ability to track CEs for multiple credentials",
+              "description" : "Everything in the basic feature unlock plus additional enhancements",
               "displayName" : "Pro Annual",
               "locale" : "en_US"
             }
@@ -123,7 +114,7 @@
           },
           "localizations" : [
             {
-              "description" : "Everything in the basic unlock plus enhanced features, graphs, and more to come",
+              "description" : "Pro subscription features on a monthly basis",
               "displayName" : "Pro Monthly",
               "locale" : "en_US"
             }

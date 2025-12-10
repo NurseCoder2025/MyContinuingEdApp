@@ -10,13 +10,12 @@ import SwiftUI
 
 struct UpgradeOptionsView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
+    
     @State private var currentCardIndex: Int = 0
     @State private var selectedUpgradeOption: PurchaseStatus?
-    @State private var availableProducts: [Product] = []
+    @State private var loadingState: LoadState = .loading
     @State private var showCodeRedemptionSheet: Bool = false
-    
-    // MARK: - COMPUTED PROPERTIES
-    
     
     // MARK: - CLOSURES
     let buyItem: (Product) -> Void
@@ -24,71 +23,77 @@ struct UpgradeOptionsView: View {
     // MARK: - BODY
     var body: some View {
         VStack {
-            TabView(selection: $currentCardIndex) {
-                ForEach(availableProducts) { prod in
-                   AppUpgradeCardView(
-                    product: prod,
-                    cardHeight: 2,
-                    onLearnMore: { prodId in
-                        switch prodId {
-                        case DataController.basicUnlocKID:
-                            selectedUpgradeOption = .basicUnlock
-                        default:
-                            selectedUpgradeOption = .proSubscription
+            switch loadingState {
+            case .loading:
+                Text("Fetching offers...")
+                    .font(.title2.bold())
+                    .padding(.top, 20)
+                ProgressView()
+                    .controlSize(.large)
+            case .loaded:
+                TabView(selection: $currentCardIndex) {
+                    ForEach(Array(dataController.products.enumerated()), id: \.element.id) { index, prod in
+                       AppUpgradeCardView(
+                        product: prod,
+                        cardHeight: 2,
+                        onLearnMore: { prodId in
+                            switch prodId {
+                            case DataController.basicUnlocKID:
+                                selectedUpgradeOption = .basicUnlock
+                            default:
+                                selectedUpgradeOption = .proSubscription
+                            }
+                        },
+                        onPurchase: {product in
+                            buyItem(product)
+                        },
+                        redeemCode: {
+                            showCodeRedemptionSheet = true
+                        },
+                        restorePurchases: {
+                            restore()
                         }
-                    },
-                    onPurchase: {product in
-                        buyItem(product)
-                    },
-                    redeemCode: {
-                        showCodeRedemptionSheet = true
-                    },
-                    restorePurchases: {
-                        // TODO: Add logic here
-                    }
-                   )//: AppUpgradeCardView
-                   .offerCodeRedemption(isPresented: $showCodeRedemptionSheet)
-                }//: LOOP
-                
-            }//: TAB VIEW
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                       )//: AppUpgradeCardView
+                       .offerCodeRedemption(isPresented: $showCodeRedemptionSheet)
+                       .tag(index)
+                    }//: LOOP
+                    
+                }//: TAB VIEW
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             
-             // MARK: Page Indicator
-            HStack {
-                ForEach(0..<2, id: \.self) { count in
-                    Circle()
-                        .fill(count == currentCardIndex ? Color.yellow : Color.gray)
-                        .frame(width: 10, height: 10)
-                        .padding(5)
-                }//: LOOP
-            }//: HSTACK
+                
+                
+                
+                 // MARK: Page Indicator
+                HStack {
+                    ForEach(0..<dataController.products.count, id: \.self) { count in
+                        Circle()
+                            .fill(count == currentCardIndex ? Color.yellow : Color.gray)
+                            .frame(width: 10, height: 10)
+                            .padding(5)
+                    }//: LOOP
+                }//: HSTACK
+            case .error:
+                VStack {
+                    Text("Sorry, there was an error loading in-app purchase options from the App Store.")
+                    
+                    Button("Try Again") {
+                        Task {
+                            await load()
+                        }
+                    }//: Button
+                    .padding(.top, 5)
+                }//: VSTACK
+                .padding(.top, 15)
+                .padding([.leading, .trailing], 5)
+            }//: SWITCH
+            
         }//: VStack
         // MARK: - TASK
         .task {
-            do {
-                let prodIdentifiers = [DataController.basicUnlocKID, DataController.proAnnualID, DataController.proMonthlyID]
-                
-                let allProducts: Set<Product> = Set(try await Product.products(for: prodIdentifiers))
-                var userPurchasedProds: Set<Product> = []
-                for await result in Transaction.currentEntitlements {
-                    switch result {
-                    case .verified(let transaction):
-                        for prod in allProducts where prod.id == transaction.productID {
-                            userPurchasedProds.insert(prod)
-                        }
-                    case .unverified:
-                        continue
-                    }//: SWITCH
-                    
-                    availableProducts = Array(allProducts.subtracting(userPurchasedProds))
-                }//: FOR AWAIT
-                
-            } catch {
-                print("Unable to retrieve any products from the App Store.")
-            }
-            
-        }//: TASK
-        
+            await load()
+        }
+
         // MARK: - SHEETS
         .sheet(item: $selectedUpgradeOption) { option in
                 FeaturesDetailsSheet(upgradeType: option)
@@ -96,6 +101,35 @@ struct UpgradeOptionsView: View {
         
         
     }//: BODY
+    
+    // MARK: - FUNCTIONS
+    /// Function that sets the loadingState property for UpgradeOptionsView by calling the
+    /// DataController's loadProducts() method.  If the method throws an error or if the @Published
+    /// array of products in DataController is empty, then the loadingState is changed to .error.
+    func load() async {
+        loadingState = .loading
+        
+        do {
+            try await dataController.loadProducts()
+            
+            if dataController.products.isEmpty {
+                loadingState = .error
+            } else {
+                loadingState = .loaded
+            }
+        } catch {
+            loadingState = .error
+        }
+    }
+    
+    /// Function that forces a re-sync of app transaction information with the AppStore.  Only called
+    /// when the user taps the Restore Purchases button.
+    func restore() {
+        Task {
+            try await AppStore.sync()
+        }//: TASK
+    }//: RESTORE()
+    
     // MARK: - INIT
     init(buyItem: @escaping (Product) -> Void) {
         self.buyItem = buyItem

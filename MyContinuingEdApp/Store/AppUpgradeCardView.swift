@@ -82,7 +82,8 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
                     
                 
                      // MARK: - Features (Grid)
-                if product.id == DataController.basicUnlocKID {
+               
+                    if product.id == DataController.basicUnlocKID {
                         BasicFeaturesGridView()
                             .padding(.leading, 10)
                             .padding(.trailing, 5)
@@ -91,7 +92,7 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
                             .padding(.leading, 10)
                             .padding(.trailing, 5)
                     }
-                    
+                
                     // MARK: - Footer
                     Spacer()
                     HStack {
@@ -111,25 +112,13 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
                 
                 // MARK: - PURCHASE Button
                 Group {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(product.id == DataController.basicUnlocKID ? basicGradient : proGradient)
-                            .frame(height: 45)
-                            .padding([.leading, .trailing], 20)
-                            .accessibilityHidden(true)
-                        HStack {
-                            Spacer()
-                            Button {
-                                if let appProd = asProduct {
-                                    onPurchase(appProd)
-                                }
-                            } label: {
-                                PurchaseButtonLabelView(product: product)
-                            }
-                            Spacer()
-                        }//: HSTACK
-                    }//: ZSTACK
-                    .padding(.top, 15)
+                    Button {
+                        if let appProd = asProduct {
+                            onPurchase(appProd)
+                        }
+                    } label: {
+                        PurchaseButtonLabelView(product: product)
+                    }
                 }//: GROUP
                 // MARK: - Codes & Restore Purchase
                 HStack {
@@ -183,7 +172,7 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
 // MARK: - PREVIEW
 #Preview {
     let basicProduct = MockProduct(
-        id: "com.example.myapp.basic",
+        id: DataController.basicUnlocKID,
         displayName: "Basic Feature Unlock",
         description: "Essential features for tracking CEs for one credential.",
         price: 14.99,
@@ -203,7 +192,7 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
 
 #Preview {
     let annualProduct = MockProduct(
-        id: "mock.annualProduct.id",
+        id: DataController.proAnnualID,
         displayName: "Pro Annual",
         description: "All the features in Basic Unlock PLUS",
         price: 24.99,
@@ -223,7 +212,7 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
 
 #Preview {
     let monthlyProduct = MockProduct(
-        id: "mock.monthlyProduct.id",
+        id: DataController.proMonthlyID,
         displayName: "Pro Monthly",
         description: "All pro features on a monthly subscription basis",
         price: 2.99,

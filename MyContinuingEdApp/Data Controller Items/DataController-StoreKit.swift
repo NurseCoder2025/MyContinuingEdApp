@@ -16,6 +16,35 @@ extension DataController {
     static let proAnnualID = "com.TheEmpire.annualPro"
     static let proMonthlyID = "com.TheEmpire.monthlyPro"
     
+    // MARK: - Loading Products
+    @MainActor
+    func loadProducts() async throws {
+        guard products.isEmpty else { return }
+        
+        try await Task.sleep(for: .seconds(2))
+        
+        let prodIds = [Self.basicUnlocKID, Self.proAnnualID, Self.proMonthlyID]
+        let allProducts: Set<Product> = Set(try await Product.products(for: prodIds))
+        var userPurchasedProds: Set<Product> = []
+        for await result in Transaction.currentEntitlements {
+            switch result {
+            case .verified(let transaction):
+                for prod in allProducts where prod.id == transaction.productID {
+                    userPurchasedProds.insert(prod)
+                }
+            case .unverified:
+                continue
+            }//: SWITCH
+        }//: FOR AWAIT
+        
+        let availableProds = Array(allProducts.subtracting(userPurchasedProds))
+        let firstProd = availableProds.first(where: {$0.id == Self.proAnnualID})
+        let secondProd = availableProds.first(where: {$0.id == Self.proMonthlyID})
+        let thirdProd = availableProds.first(where: {$0.id == Self.basicUnlocKID})
+        
+        products = [firstProd, secondProd, thirdProd].compactMap(\.self)
+        
+    }//: loadProducts()
     
     // MARK: - Transaction Handling
     /// Function for finalizing in-app purchase transactions that are not refunds.  Updates the settings.json file to reflect

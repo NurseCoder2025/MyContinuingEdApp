@@ -13,12 +13,14 @@ struct UpgradeToPaidSheet: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var dataController: DataController
     
+    @State private var showingPurchaseError: Bool = false
+    
     let itemMaxReached: String
     
     // MARK: - COMPUTED PROPERTIES
     var headerText: String {
         if itemMaxReached == "" {
-            return "Upgrade to Paid Option"
+            return "Unlock More Potential!"
         } else if itemMaxReached == "CE activities" {
             return "Max CE Activities"
         } else {
@@ -46,12 +48,13 @@ struct UpgradeToPaidSheet: View {
                         .foregroundStyle(.red)
                     Text(headerText)
                         .font(.title)
+                        .padding([.leading, .trailing], 5)
                 }//: VSTACK
                 .accessibilityElement()
                 .accessibilityLabel(Text("Attention: Paid Upgrade Needed"))
                 
-                Text(subHeadText)
-                    .padding([.leading, .trailing, .top], 15)
+//                Text(subHeadText)
+//                    .padding([.leading, .trailing, .top], 15)
                         
             // MARK: In App Purchase Options
                 // Closure behaviors are handled in
@@ -74,10 +77,25 @@ struct UpgradeToPaidSheet: View {
                      }//: BUTTON
                  }//: TOOlBAR ITEM
              }//: TOOlBAR
+            // MARK: - ALERTS
+             .alert("In-app Purchases Disabled",isPresented: $showingPurchaseError) {
+             } message: {
+                 Text("""
+                     You can't purchase the selected product because  in-app purchases are currently disabled for this device.
+                     
+                     Please ask whomever manages your device for approval.
+                     """)
+             }//: ALERT
+            
         }//: NAV VIEW
     }//: BODY
     // MARK: - FUNCTIONS
     func purchase(_ product: Product) {
+        guard AppStore.canMakePayments else {
+            showingPurchaseError.toggle()
+            return
+        }
+        
         Task { @MainActor in
             try await dataController.purchase(product)
         }
