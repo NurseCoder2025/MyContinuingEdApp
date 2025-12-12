@@ -14,7 +14,6 @@ import SwiftUI
 struct ActivityCEDetailsView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var activity: CeActivity
     
     // Bindings to parent view (ActivityView)
@@ -23,8 +22,15 @@ struct ActivityCEDetailsView: View {
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     
     // MARK: - BODY

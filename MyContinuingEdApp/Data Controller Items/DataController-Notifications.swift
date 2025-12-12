@@ -267,10 +267,9 @@ extension DataController {
     /// expiring actiivty.  Each notification's trigger date is determined by what the user entered in settings for primary and
     /// secondary notification day intervals.
     func scheduleExpiringCEsNotifications() async {
-        // Accessing user settings
-        if let userSettings = accessUserSettings() {
-            let firstNotification = userSettings.daysUntilPrimaryNotification
-            let secondNotification = userSettings.daysUntilSecondaryNotification
+        guard showExpiringCesNotification == true else { return }
+            let firstNotification = primaryNotificationDays
+            let secondNotification = secondaryNotificationDays
             
             let expiringCes = fetchUpcomingExpiringCeActivities()
             
@@ -291,17 +290,15 @@ extension DataController {
                 }//: INNER LOOP
             }//: LOOP
             
-        }//: IF LET
     }//: scheduleExpiringCEsNotifications()
     
     /// This method creates notifications to alert the user when the end date for a credential's renewing period approaches and
     /// when the late renewal fee will be taking effect (if the user put that info in).  In both cases two notifications are created
     /// using the primary and secondary notifcation preferences set by the user as trigger dates.
     func scheduleRenewalsEndingNotifications() async {
-        // Accessing user settings
-        if let userSettings = accessUserSettings() {
-            let firstNotification = userSettings.daysUntilPrimaryNotification
-            let secondNotification = userSettings.daysUntilSecondaryNotification
+        guard showRenewalEndingNotification == true else {return}
+            let firstNotification = primaryNotificationDays
+            let secondNotification = secondaryNotificationDays
             
             let endingRenewalPeriods = getCurrentRenewalPeriods()
             
@@ -350,7 +347,7 @@ extension DataController {
             
             // Scheduling notifications related to each renewal's late fee start date
             for period in endingRenewalPeriods {
-                guard period.lateFeeAmount > 0, period.lateFeeStartDate != nil else { continue }
+                guard showRenewalLateFeeNotification, period.lateFeeAmount > 0, period.lateFeeStartDate != nil else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
                     let title = "The late fee for the \(period.renewalPeriodName) approaches!"
@@ -366,14 +363,14 @@ extension DataController {
                 }//: INNER LOOP
             }//: LOOP
             
-        }//: IF LET
+       
     } //: scheduleRenewalsEndingNotifications()
     
     
     func scheduleDisciplinaryActionNotifications() async {
-        if let userSettings = accessUserSettings() {
-            let firstNotice = userSettings.daysUntilPrimaryNotification
-            let secondNotice = userSettings.daysUntilSecondaryNotification
+        guard showDAINotifications == true else {return}
+            let firstNotice = primaryNotificationDays
+            let secondNotice = secondaryNotificationDays
             
             let calendar = Calendar.current
             let todaysDate = calendar.startOfDay(for: Date())
@@ -453,7 +450,6 @@ extension DataController {
                 }//: INNER LOOP
             }//: LOOP
             
-        }//: IF LET
         
     }//: scheduleDisciplinaryActionNotifications()
     

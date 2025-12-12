@@ -41,3 +41,36 @@ For reference use ONLY
         }
         
     }//: deleteAllPlaceholderCredentials
+
+
+## From DataController-StoreKit
+    func isUserEligibleForIntroOffer() async -> Bool {
+        for await entitlement in Transaction.currentEntitlements {
+            if case let .verified(transaction) = entitlement {
+                if transaction.productID == DataController.proAnnualID || transaction.productID == DataController.proMonthlyID {
+                    return false
+                }
+            }//: if case let
+        }//: for await
+        return true
+    }//: isUserEligibleForIntroOffer()
+    
+    func getSubscriptionIntroOfferText(for product: Product, isEligible: Bool) -> String {
+        guard let subscription = product.subscription else {
+            return "No subscription info available"
+        }
+        
+        if isEligible, let offer = subscription.introductoryOffer {
+            let price = offer.displayPrice
+            let period = offer.period.unit == .month ? "\(offer.period.value) month(s)" : "\(offer.period.value) year(s)"
+            
+            let standardPeriod = "\(subscription.subscriptionPeriod.value) \(subscription.subscriptionPeriod.unit)"
+            
+            return "\(price) for \(period), then \(product.displayPrice) for \(standardPeriod)"
+            
+        } else {
+            let standardPeriod = "\(subscription.subscriptionPeriod.value) \(subscription.subscriptionPeriod.unit)"
+            return "\(product.displayPrice) for \(standardPeriod)"
+        }
+            
+    }//: getSubscriptionIntroOfferText

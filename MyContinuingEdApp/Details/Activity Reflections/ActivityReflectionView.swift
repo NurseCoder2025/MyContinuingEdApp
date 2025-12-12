@@ -10,7 +10,6 @@ import SwiftUI
 struct ActivityReflectionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     
     var activity: CeActivity
     @ObservedObject var reflection: ActivityReflection

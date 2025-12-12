@@ -11,7 +11,6 @@ import SwiftUI
 struct CredentialDAISectionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     @ObservedObject var credential: Credential
     
     // MARK: - COMPUTED PROPERTIES
@@ -29,8 +28,15 @@ struct CredentialDAISectionView: View {
     }//: allDAIs
     
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - BODY
     var body: some View {

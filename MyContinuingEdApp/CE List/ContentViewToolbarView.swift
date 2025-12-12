@@ -15,7 +15,6 @@ struct ContentViewToolbarView: View {
     // MARK: - PROPERTIES
     @Environment(\.spotlightCentral) var spotlightCentral
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     
     let allDateSortTypes: [SortType] = [.dateCompleted, .dateCreated, .dateModified]
     let hoursCostsSortTypes: [SortType] = [.awardedCEAmount, .activityCost]
@@ -23,8 +22,15 @@ struct ContentViewToolbarView: View {
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - CLOSUREs
     // Adding this closure so that the parent view (ContentView) manages the sheets

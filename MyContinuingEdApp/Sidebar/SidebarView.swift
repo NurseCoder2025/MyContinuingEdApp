@@ -15,10 +15,9 @@ import UIKit
 
 struct SidebarView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @AppStorage("firstRun") var firstRun: Bool = false
     @Environment(\.openURL) var openURL
-    
-    @EnvironmentObject var settings: CeAppSettings
     
     @StateObject private var viewModel: ViewModel
     @State private var showEnableRemindersAlert: Bool = false
@@ -29,6 +28,18 @@ struct SidebarView: View {
     
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
+    
+    // MARK: - Computed Properties
+    var paidStatus: PurchaseStatus {
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
    
     // MARK: - BODY
     var body: some View {
@@ -147,10 +158,10 @@ struct SidebarView: View {
         // MARK: - SHEETS
         .sheet(item: $viewModel.renewalSheetData) { data in
             let currentRenewalNum = viewModel.dataController.currentNumberOfRenewals
-            let currentPurchaseLevel = settings.settings.appPurchaseStatus
-            if currentPurchaseLevel != .free {
+            
+            if paidStatus != .free {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
-            } else if currentPurchaseLevel == .free && currentRenewalNum < 1 {
+            } else if paidStatus == .free && currentRenewalNum < 1 {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
             } else {
                 UpgradeToPaidSheet(itemMaxReached: "renewals")//: UpgradeToPaidSheet

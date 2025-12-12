@@ -9,13 +9,21 @@ import SwiftUI
 
 struct RenewalPeriodNavLabelView: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var settings: CeAppSettings
+    @EnvironmentObject var dataController: DataController
+    
     let renewalFilter: Filter
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - BODY
     var body: some View {

@@ -158,10 +158,6 @@ enum PurchaseStatus: Codable, Identifiable {
     }//: id
 }
 
-enum SubscriptionStatus: Codable {
-    case inactive, freeTrial, introPromo, active, cancelled, expired
-}
-
 enum UpgradeNeeded: Error {
     case maxTagsReached
     case maxRenewalsReached

@@ -11,8 +11,7 @@ import SwiftUI
 struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
-    
+
     @Environment(\.spotlightCentral) var spotlightCentral
     @StateObject private var viewModel: ViewModel
     

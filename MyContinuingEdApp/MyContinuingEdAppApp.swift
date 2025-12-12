@@ -12,7 +12,6 @@ import CoreSpotlight
 @main
 struct MyContinuingEdAppApp: App {
     @StateObject var dataController: DataController = DataController()
-    @StateObject var appSettings: CeAppSettings = CeAppSettings()
     @State var spotlightCentral: SpotlightCentral?
     @Environment(\.scenePhase) var scenePhase
     
@@ -27,7 +26,6 @@ struct MyContinuingEdAppApp: App {
             }
             .environment(\.managedObjectContext, dataController.container.viewContext)
             .environmentObject(dataController)
-            .environmentObject(appSettings)
             .environment(\.spotlightCentral, spotlightCentral)
             // MARK: - ON CHANGE OF
             // Saves changes if the app is moved to the background by the user

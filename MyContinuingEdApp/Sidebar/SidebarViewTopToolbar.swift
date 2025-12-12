@@ -15,7 +15,6 @@ import SwiftUI
 struct SidebarViewTopToolbar: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     
     @State private var showAwardsSheet: Bool = false
     @State private var showCredentialManagementSheet: Bool = false
@@ -27,11 +26,35 @@ struct SidebarViewTopToolbar: View {
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
+    
+    var appStatusText: String {
+        switch paidStatus {
+        case .free:
+            return "Free"
+        case .basicUnlock:
+            return "Basic"
+        case .proSubscription:
+            return "Pro"
+        }
+    }//: appStatusText
     
     // MARK: - BODY
     var body: some View {
+        HStack {
+            Text("CE Cache")
+                .foregroundStyle(.secondary)
+            Text(appStatusText)
+                .foregroundStyle(.secondary)
+                .bold()
             Menu {
                 // MARK: - Awards button
                 Button {
@@ -63,10 +86,16 @@ struct SidebarViewTopToolbar: View {
                     Button {
                         showUpgradeToPaidSheet = true
                     } label: {
-                        Label("Paid Options", systemImage: "dollarsign")
+                        Label("Unlock App", systemImage: "dollarsign")
+                    }//: BUTTON
+                } else if paidStatus == .basicUnlock {
+                    Button {
+                        showUpgradeToPaidSheet = true
+                    } label: {
+                        Label("Upgrade to Pro!", systemImage: "plus.square.fill.on.square.fill")
                     }//: BUTTON
                 }
-                // TODO: Add option for folks who only have the basic feature unlock
+               
 #if DEBUG
                 Button {
                     dataController.deleteAll()
@@ -80,20 +109,21 @@ struct SidebarViewTopToolbar: View {
                 Label("App Features and Settings", systemImage: "ellipsis.circle")
                     .labelStyle(.iconOnly)
             }
-             // MARK: - SHEETS
-             .sheet(isPresented: $showChartsAndStatsSheet) {
-                 MasterChartsSheet()
-             }
-             
-             .sheet(isPresented: $showCredentialManagementSheet) {
-                 CredentialManagementSheet(dataController: dataController)
-             }//: SHEET
-             
-             .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
-        
-             .sheet(isPresented: $showUpgradeToPaidSheet) {
-                 UpgradeToPaidSheet(itemMaxReached: "")
-             }//: SHEET
+        }//: HSTACK
+         // MARK: - SHEETS
+         .sheet(isPresented: $showChartsAndStatsSheet) {
+             MasterChartsSheet()
+         }
+         
+         .sheet(isPresented: $showCredentialManagementSheet) {
+             CredentialManagementSheet(dataController: dataController)
+         }//: SHEET
+         
+         .sheet(isPresented: $showAwardsSheet, content: AwardsView.init)
+    
+         .sheet(isPresented: $showUpgradeToPaidSheet) {
+             UpgradeToPaidSheet(itemMaxReached: "")
+         }//: SHEET
         
             
     }//: BODY

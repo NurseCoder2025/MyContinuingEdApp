@@ -17,8 +17,7 @@ extension DataController {
     /// createActivity() makes a new instance of a CeActivity object with certain default values
     /// put into place for the activity title, description, expiration date, and such...
     func createTag() throws {
-        let appSettings = accessUserSettings()
-        if appSettings?.appPurchaseStatus == .free {
+        if purchaseStatus == PurchaseStatus.free.id {
             let tagFetch = Tag.fetchRequest()
             let tagCount = (try? container.viewContext.count(for: tagFetch)) ?? 0
             if tagCount < 3 {
@@ -41,8 +40,7 @@ extension DataController {
     
     // Alternative createTag function for specifying the name
     func createTagWithName(_ name: String) throws {
-        let appSettings = accessUserSettings()
-        if appSettings?.appPurchaseStatus == .free {
+        if purchaseStatus == PurchaseStatus.free.id {
             let tagFetch = Tag.fetchRequest()
             let tagCount = (try? container.viewContext.count(for: tagFetch)) ?? 0
             if tagCount < 3 {
@@ -67,8 +65,8 @@ extension DataController {
     /// Method for creating a new CeActivity object and saving it to the view context.  This particular method will
     /// be used when the user's device iOS is 17 or later due to Spotlight integration requirements.
     func createActivity() throws {
-        let appSettings = accessUserSettings()
-        if appSettings?.appPurchaseStatus == .free {
+        
+        if purchaseStatus == PurchaseStatus.free.id {
             let activityFetch = CeActivity.fetchRequest()
             let activityCount = (try? container.viewContext.count(for: activityFetch)) ?? 0
             if activityCount >= 3 {
@@ -123,8 +121,8 @@ extension DataController {
     /// be called on devices running iOS 16 or earlier.
     /// - Returns: new CeActivity object with default values entered for key properties
     func createNewCeActivityIOs16() throws -> CeActivity {
-        let appSettings = accessUserSettings()
-        if appSettings?.appPurchaseStatus == .free {
+        
+        if purchaseStatus == PurchaseStatus.free.id {
             let activityFetch = CeActivity.fetchRequest()
             let activityCount = (try? container.viewContext.count(for: activityFetch)) ?? 0
             if activityCount >= 3 {

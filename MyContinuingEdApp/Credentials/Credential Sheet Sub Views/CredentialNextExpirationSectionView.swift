@@ -20,7 +20,6 @@ import SwiftUI
 struct CredentialNextExpirationSectionView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @EnvironmentObject var settings: CeAppSettings
     
     @ObservedObject var credential: Credential
 
@@ -45,6 +44,17 @@ struct CredentialNextExpirationSectionView: View {
         return fetchedRenewals
             
     }//: renewalsSorted
+    
+    var paidStatus: PurchaseStatus {
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - BODY
     var body: some View {
@@ -106,10 +116,10 @@ struct CredentialNextExpirationSectionView: View {
         // Calling this sheet is ONLY for adding new RenewalPeriod objects
         .sheet(isPresented: $showRenewalPeriodView) {
             let renewalNumber = dataController.currentNumberOfRenewals
-            let currentPurchaseLevel = settings.settings.appPurchaseStatus
-            if currentPurchaseLevel != .free {
+            
+            if paidStatus != .free {
                 RenewalPeriodView(renewalCredential: credential, renewalPeriod: nil)
-            } else if currentPurchaseLevel == .free && renewalNumber < 1 {
+            } else if paidStatus == .free && renewalNumber < 1 {
                 RenewalPeriodView(renewalCredential: credential, renewalPeriod: nil)
             } else {
                 UpgradeToPaidSheet(itemMaxReached: "renewals")

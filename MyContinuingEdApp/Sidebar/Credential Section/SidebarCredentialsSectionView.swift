@@ -15,13 +15,20 @@ import SwiftUI
 
 struct SidebarCredentialsSectionView: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var settings: CeAppSettings
+    @EnvironmentObject var dataController: DataController
     @StateObject private var viewModel: ViewModel
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - CLOSURES
    // Closure for editing a renewal period

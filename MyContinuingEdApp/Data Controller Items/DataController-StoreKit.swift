@@ -16,6 +16,28 @@ extension DataController {
     static let proAnnualID = "com.TheEmpire.annualPro"
     static let proMonthlyID = "com.TheEmpire.monthlyPro"
     
+    // MARK: - Store related settings
+    /// Computed property which controls the current paid status for the app by accessing
+    /// the sharedSettings @Published property in DataController.
+    ///
+    /// This property is based on the NSUbiquitousKeyValueStore.default, which is assigned to the
+    /// sharedSettings property.  This allows for automatic syncing in iCloud between devices. In
+    /// order to keep things simple, the value for the key ("purchaseStatus") is a String value.
+    /// When using this property, be sure to use the id computed property for each case in the
+    /// PurchaseStatus enum as that returns a string value for each status.  The getter will return
+    /// the "free" string from the PurchaseStatus.free.id if the purchaseStatus key has not been
+    /// created yet.
+    var purchaseStatus: String {
+        get {
+            sharedSettings.string(forKey: "purchaseStatus") ?? PurchaseStatus.free.id
+        }
+        
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "purchaseStatus")
+        }
+    }//: purchaseStatus
+    
     // MARK: - Loading Products
     @MainActor
     func loadProducts() async throws {
@@ -44,61 +66,70 @@ extension DataController {
         
         products = [firstProd, secondProd, thirdProd].compactMap(\.self)
         
+        #if DEBUG
+        print("Loaded Products: \(products.count)")
+        #endif
+        
     }//: loadProducts()
     
     // MARK: - Transaction Handling
-    /// Function for finalizing in-app purchase transactions that are not refunds.  Updates the settings.json file to reflect
-    /// what was purchased (either basic feature unlock or the pro subscription).  For the subscription, sets status to
-    /// active.
+    /// Function for finalizing in-app purchase transactions, including refunds.
+    /// Updates the sharedSettings property in DataController with the key "purchaseStatus" with
+    /// a string representing the state of the app, whether in free mode, basic unlock, or in
+    /// subscription mode.  The string comes from the PurchaseStatus enum's id property.
     /// - Parameter transaction: In-app purchase transaction
     @MainActor
     func finalizeTransaction(_ transaction: Transaction) async {
-        var appSettings = accessUserSettings()
         if transaction.revocationDate == nil {
             if transaction.productID == Self.basicUnlocKID {
-                appSettings?.appPurchaseStatus = .basicUnlock
-                appSettings?.basicUnlockPurchased = true
-                
-                if let moddedSettings = appSettings {
-                    modifyUserSettings(moddedSettings)
-                }//: IF LET
+                // In the rare event that a user purchases a basic unlock
+                // while having an active subscription, keeping the
+                // purchaseStatus as the subscription
+                for await entitlement in Transaction.currentEntitlements {
+                    if case let .verified(transaction) = entitlement,
+                       (transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID)
+                    {
+                        purchaseStatus = PurchaseStatus.proSubscription.id
+                        return
+                    }
+                }//: LOOP (for await)
+                purchaseStatus = PurchaseStatus.basicUnlock.id
             } else if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
-               
-                appSettings?.appPurchaseStatus = .proSubscription
-                appSettings?.proSubscriptionPurchased = true
-                appSettings?.subscriptionStatus = .active
-                
-                if let moddedSettings = appSettings {
-                    modifyUserSettings(moddedSettings)
-                }
+               purchaseStatus = PurchaseStatus.proSubscription.id
             }//: ELSE IF
             await transaction.finish()
         } else {
-            // Handling refunds/cancellations
+            // Handling refunds/cancellations/subscription expiring
+            // Note: in the case of subscriptions, the grace period
+            // option will be used so an expired subscription won't be
+            // broadcasted until after that point in time
             if transaction.productID ==  Self.basicUnlocKID {
-                appSettings?.basicUnlockPurchased = false
-                if appSettings?.subscriptionStatus == .active {
-                    appSettings?.appPurchaseStatus = .proSubscription
-                } else {
-                    appSettings?.appPurchaseStatus = .free
-                }
-                
-                if let moddedSettings = appSettings {
-                    modifyUserSettings(moddedSettings)
-                }
+                // check current entitlements to see if the user has
+                // an active subscription (not likely), and if so,
+                // set the purchase status to that; otherwise set
+                // the purchaseStatus property to free
+                for await entitlement in Transaction.currentEntitlements {
+                    if case let .verified(transaction) = entitlement {
+                        if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
+                            purchaseStatus = PurchaseStatus.proSubscription.id
+                        } else {
+                            purchaseStatus = PurchaseStatus.free.id
+                        }
+                    }//: IF LET
+                }//: LOOP (for await)
             } else {
-                appSettings?.subscriptionStatus = .inactive
-                appSettings?.proSubscriptionPurchased = false
-                if appSettings?.basicUnlockPurchased == true {
-                    appSettings?.appPurchaseStatus = .basicUnlock
-                } else {
-                    appSettings?.appPurchaseStatus = .free
-                }
-                
-                if let moddedSettings = appSettings {
-                    modifyUserSettings(moddedSettings)
-                }
-            }
+                // Check current entitlements to see if the user ever
+                // purchased the basic lock in the past, and if so,
+                // enable basic unlock features; otherwise, set app to
+                // free mode
+                for await entitlement in Transaction.currentEntitlements {
+                    if case let .verified(transaction) = entitlement, transaction.productID == Self.basicUnlocKID {
+                        purchaseStatus = PurchaseStatus.basicUnlock.id
+                    } else {
+                        purchaseStatus = PurchaseStatus.free.id
+                    }
+                }//: LOOP (for await)
+            }//: IF ELSE
             await transaction.finish()
         }//: IF ELSE
     }//: finalizeTransaction
@@ -121,45 +152,19 @@ extension DataController {
     }//: monitorTransactions()
     
     
-    func purchase(_ product: Product) async throws {
+    func purchase(_ product: Product) async throws -> Bool {
         let result = try await product.purchase()
         
         if case let .success(validation) = result {
             try await finalizeTransaction(validation.payloadValue)
+            return true
+        } else {
+            return false
         }
     }//: purchase
     
-    // MARK: - Subscription OFFERS
-    func isUserEligibleForIntroOffer() async -> Bool {
-        for await entitlement in Transaction.currentEntitlements {
-            if case let .verified(transaction) = entitlement {
-                if transaction.productID == DataController.proAnnualID || transaction.productID == DataController.proMonthlyID {
-                    return false
-                }
-            }//: if case let
-        }//: for await
-        return true
-    }//: isUserEligibleForIntroOffer()
     
-    func getSubscriptionIntroOfferText(for product: Product, isEligible: Bool) -> String {
-        guard let subscription = product.subscription else {
-            return "No subscription info available"
-        }
-        
-        if isEligible, let offer = subscription.introductoryOffer {
-            let price = offer.displayPrice
-            let period = offer.period.unit == .month ? "\(offer.period.value) month(s)" : "\(offer.period.value) year(s)"
-            
-            let standardPeriod = "\(subscription.subscriptionPeriod.value) \(subscription.subscriptionPeriod.unit)"
-            
-            return "\(price) for \(period), then \(product.displayPrice) for \(standardPeriod)"
-            
-        } else {
-            let standardPeriod = "\(subscription.subscriptionPeriod.value) \(subscription.subscriptionPeriod.unit)"
-            return "\(product.displayPrice) for \(standardPeriod)"
-        }
-            
-    }//: getSubscriptionIntroOfferText
+    
     
     
 }//: DATA CONTROLLER

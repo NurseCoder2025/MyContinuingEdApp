@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ActivityAudioReflectionView: View {
     // MARK: - PROPERTIES
-    @EnvironmentObject var settings: CeAppSettings
+    @EnvironmentObject var dataController: DataController
     @ObservedObject var reflection: ActivityReflection
     
     @State private var isRecording = false
@@ -22,8 +22,15 @@ struct ActivityAudioReflectionView: View {
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
-        settings.settings.appPurchaseStatus
-    }
+        switch dataController.purchaseStatus {
+        case PurchaseStatus.proSubscription.id:
+            return .proSubscription
+        case PurchaseStatus.basicUnlock.id:
+            return .basicUnlock
+        default:
+            return .free
+        }
+    }//: paidStatus
     
     // MARK: - BODY
     var body: some View {

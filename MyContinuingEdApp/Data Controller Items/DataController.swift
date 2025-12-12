@@ -17,6 +17,8 @@ class DataController: ObservableObject {
     // container for holding the data in memory
     let container: NSPersistentCloudKitContainer
     
+    // shared settings for app with iCloud
+    @Published var sharedSettings = NSUbiquitousKeyValueStore.default
     
     // Properties for storing the current activity or filter/tag that the user has selected
     @Published var selectedFilter: Filter? = Filter.allActivities
@@ -156,10 +158,17 @@ class DataController: ObservableObject {
         // DataController instances (due to testing, previewing, etc.)
         container = NSPersistentCloudKitContainer(name: "CEActivityModel", managedObjectModel: Self.model)
         
+        #if DEBUG
+        // Adding this code in order to reset the purchaseStatus key
+        // upon deletion of the app and re-install for testing
+        // purposes.
+            self.sharedSettings.removeObject(forKey: "purchaseStatus")
+        #endif
+        
+        sharedSettings.synchronize()
         storeTask = Task {
             await monitorTransactions()
         }
-        
         
         // identifying the name of the stored data to load and use
         if inMemory {
@@ -176,7 +185,16 @@ class DataController: ObservableObject {
                 queue: .main,
                 using: remoteStorageChanged
             )
-        }
+            // Adding an observer for incoming changes to the sharedSettings
+            // property as it is an NSUbiquitousKeyValueStore and is synced
+            // over iCloud.
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleKeyValueStoreChanges(_:)),
+                name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+                object: sharedSettings
+                )
+        }//: IF inMemory
         
         // Spotlight configuration & setup
         // Configuring persistent history tracking

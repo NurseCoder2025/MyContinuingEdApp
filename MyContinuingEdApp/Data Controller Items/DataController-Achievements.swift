@@ -117,8 +117,7 @@ extension DataController {
             // TODO: Determine why the default case is executing each time the award screen
             // shows up. This also happens each time a button is pressed.
         case "unlock":
-            let appSettings = accessUserSettings()
-            if appSettings?.appPurchaseStatus != .free {
+            if purchaseStatus != PurchaseStatus.free.id {
                 return true
             } else {
                 return false
