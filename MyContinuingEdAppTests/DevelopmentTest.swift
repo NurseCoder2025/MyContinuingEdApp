@@ -103,7 +103,7 @@ final class DevelopmentTest: BaseTestCase {
     func testNewTagsHaveNoActivities() throws {
         // Creating sample tags
         for num in 0..<10 {
-            controller.createTagWithName("Test Tag #\(num)")
+            try controller.createTagWithName("Test Tag #\(num)")
         }//: LOOP
         
         let tagFetch = NSFetchRequest<Tag>(entityName: "Tag")

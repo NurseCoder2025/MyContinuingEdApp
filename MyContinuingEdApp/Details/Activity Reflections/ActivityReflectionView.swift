@@ -80,6 +80,7 @@ struct ActivityReflectionView: View {
         
         // MARK: - ON DISAPPEAR
         .onDisappear {
+            dataController.showActivityReflectionView = false
             dataController.save()
         }//: ON DISAPPEAR
         

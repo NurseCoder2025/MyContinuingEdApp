@@ -10,7 +10,7 @@ import UIKit
 
 struct CameraPickerView: UIViewControllerRepresentable {
     // MARK: - PROPERTIES
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
     var completion: (Data?) -> Void  // trailing closure when called by CertificatePickerView
     
     // MARK: - METHODS
@@ -45,13 +45,13 @@ class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerContro
             parent.completion(nil)
         }
         
-        parent.presentationMode.wrappedValue.dismiss()
+        parent.dismiss()
     } //: imagePickerController func
     
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         parent.completion(nil)
-        parent.presentationMode.wrappedValue.dismiss()
+        parent.dismiss()
     }
     
     // INIT

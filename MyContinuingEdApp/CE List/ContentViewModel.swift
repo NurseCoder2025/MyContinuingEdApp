@@ -35,6 +35,16 @@ extension ContentView {
             alphabeticalCEGroupings.keys.sorted()
         }
         
+        /// Computed property used to determine when to request iOS prompt the user to rate
+        /// the app on the AppStore.  Criteria are:  at least 5 tags and 5 CE activities have been
+        /// entered (meaning the user has made an in-app purchase and then continued to use the
+        /// app for a little bit after purchasing).
+        var shouldRequestReview: Bool {
+            let tagCount = dataController.count(for: Tag.fetchRequest())
+            let activityCount = dataController.count(for: CeActivity.fetchRequest())
+            return tagCount >= 5 && activityCount >= 5
+        }//: shouldRequestReview
+        
         // MARK: - FUNCTIONS
         func delete(activity: CeActivity) {
             activityToDelete = activity

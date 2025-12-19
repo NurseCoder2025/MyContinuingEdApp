@@ -28,7 +28,7 @@ extension DataController {
         
         set {
             objectWillChange.send()
-            sharedSettings.setValue(newValue, forKey: "primaryNotificationDays")
+            sharedSettings.set(newValue, forKey: "primaryNotificationDays")
         }
     } //: primaryNotificationDays
     
@@ -39,7 +39,7 @@ extension DataController {
         
         set {
             objectWillChange.send()
-            sharedSettings.setValue(newValue, forKey: "secondaryNotificationDays")
+            sharedSettings.set(newValue, forKey: "secondaryNotificationDays")
         }
     }//: secondaryNotificationDays
     

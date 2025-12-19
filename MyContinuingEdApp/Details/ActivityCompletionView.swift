@@ -50,7 +50,7 @@ struct ActivityCompletionView: View {
                             NavigationLink {
                                 ActivityReflectionView(activity: activity, reflection: reflection)
                             } label: {
-                                Text("Activity reflections...")
+                                Text("Reflect on the Activity")
                                     .backgroundStyle(.yellow)
                                     .foregroundStyle(.blue)
                                     .fontWeight(.semibold)

@@ -91,6 +91,8 @@ struct SidebarView: View {
                     
                 )//: SidebarCredentialsSectionView
             } //: LIST
+            
+           
         }//: NAV STACK
             .navigationTitle("CE Filters")
             // MARK: - Toolbar

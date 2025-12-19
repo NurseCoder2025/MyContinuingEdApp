@@ -13,6 +13,7 @@ struct ContentView: View {
     @EnvironmentObject var dataController: DataController
 
     @Environment(\.spotlightCentral) var spotlightCentral
+    @Environment(\.requestReview) var requestReview
     @StateObject private var viewModel: ViewModel
     
     @State private var showUpgradetoPaidSheet: Bool = false
@@ -104,8 +105,18 @@ struct ContentView: View {
                 UpgradeToPaidSheet(itemMaxReached: "CE activities")
             }//: SHEET
         
+        // MARK: - ON APPEAR
+            .onAppear {
+                askForReview()
+            }
         
     } //: BODY
+    // MARK: - METHODS
+    func askForReview() {
+        if viewModel.shouldRequestReview {
+            requestReview()
+        }
+    }//: askForReview
     
     // MARK: - INIT
     init(dataController: DataController) {

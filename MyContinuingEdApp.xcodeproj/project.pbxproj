@@ -10,6 +10,7 @@
 		3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DA2E944A5800101310 /* CredentialManagementSheet.swift */; };
 		3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */; };
 		3F0095DF2E9458B400101310 /* CredentialSubCatListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */; };
+		3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */; };
 		3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F75E2EAAA94400FE5277 /* SidebarViewModel.swift */; };
 		3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */; };
 		3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */; };
@@ -43,6 +44,11 @@
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
 		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
+		3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */; };
+		3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B67FC2EF0D0BE00069528 /* AppPurchaseLevelView.swift */; };
+		3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B67FF2EF0D18C00069528 /* SettingsHeaderView.swift */; };
+		3F7B68012EF0D18C00069528 /* SettingsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B67FF2EF0D18C00069528 /* SettingsHeaderView.swift */; };
+		3F7B68032EF0DBF100069528 /* PurchaseInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7B68022EF0DBF100069528 /* PurchaseInfoView.swift */; };
 		3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD62EC679A600791223 /* ChartDataSources.swift */; };
 		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
 		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
@@ -61,6 +67,11 @@
 		3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */; };
 		3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */; };
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
+		3FBD7FD62EF4E65C00A039C4 /* SettingsSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FD52EF4E65C00A039C4 /* SettingsSliderView.swift */; };
+		3FBD7FD82EF4F54500A039C4 /* ContactDeveloperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FD72EF4F54500A039C4 /* ContactDeveloperView.swift */; };
+		3FBD7FDA2EF4FA1C00A039C4 /* NoPurchasesYetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FD92EF4FA1C00A039C4 /* NoPurchasesYetView.swift */; };
+		3FBD7FDC2EF5077000A039C4 /* ComposeEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FDB2EF5077000A039C4 /* ComposeEmailView.swift */; };
+		3FBD7FDE2EF5419400A039C4 /* LeftAlignedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
 		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
 		3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */; };
@@ -206,6 +217,7 @@
 		3F0095DA2E944A5800101310 /* CredentialManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialManagementSheet.swift; sourceTree = "<group>"; };
 		3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialCatBoxView.swift; sourceTree = "<group>"; };
 		3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSubCatListSheet.swift; sourceTree = "<group>"; };
+		3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 		3F09F75E2EAAA94400FE5277 /* SidebarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewModel.swift; sourceTree = "<group>"; };
 		3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionViewModel.swift; sourceTree = "<group>"; };
 		3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialsSectionHeaderViewModel.swift; sourceTree = "<group>"; };
@@ -242,6 +254,10 @@
 		3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-InAppPurchases.swift"; sourceTree = "<group>"; };
 		3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaidFeaturePromoView.swift; sourceTree = "<group>"; };
 		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
+		3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		3F7B67FC2EF0D0BE00069528 /* AppPurchaseLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPurchaseLevelView.swift; sourceTree = "<group>"; };
+		3F7B67FF2EF0D18C00069528 /* SettingsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHeaderView.swift; sourceTree = "<group>"; };
+		3F7B68022EF0DBF100069528 /* PurchaseInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseInfoView.swift; sourceTree = "<group>"; };
 		3F817DD62EC679A600791223 /* ChartDataSources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartDataSources.swift; sourceTree = "<group>"; };
 		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
 		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
@@ -260,6 +276,11 @@
 		3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightHelpers.swift; sourceTree = "<group>"; };
 		3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Notifications.swift"; sourceTree = "<group>"; };
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		3FBD7FD52EF4E65C00A039C4 /* SettingsSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSliderView.swift; sourceTree = "<group>"; };
+		3FBD7FD72EF4F54500A039C4 /* ContactDeveloperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactDeveloperView.swift; sourceTree = "<group>"; };
+		3FBD7FD92EF4FA1C00A039C4 /* NoPurchasesYetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoPurchasesYetView.swift; sourceTree = "<group>"; };
+		3FBD7FDB2EF5077000A039C4 /* ComposeEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeEmailView.swift; sourceTree = "<group>"; };
+		3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedTextView.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
 		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
 		3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeToPaidSheet.swift; sourceTree = "<group>"; };
@@ -417,6 +438,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3F03BEA22EECE83A003B89E7 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */,
+				3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */,
+				3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */,
+				3FBD7FD72EF4F54500A039C4 /* ContactDeveloperView.swift */,
+				3FBD7FDB2EF5077000A039C4 /* ComposeEmailView.swift */,
+				3FBD7FD52EF4E65C00A039C4 /* SettingsSliderView.swift */,
+				3F7B67FC2EF0D0BE00069528 /* AppPurchaseLevelView.swift */,
+				3F7B68022EF0DBF100069528 /* PurchaseInfoView.swift */,
+				3FBD7FD92EF4FA1C00A039C4 /* NoPurchasesYetView.swift */,
+				3F7B67FF2EF0D18C00069528 /* SettingsHeaderView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		3F2064572EB035390036C4B1 /* Sub Category Cat Sheet */ = {
 			isa = PBXGroup;
 			children = (
@@ -599,6 +637,7 @@
 		3F2A42CE2EA2DFFB00B095CB /* UI Styles */ = {
 			isa = PBXGroup;
 			children = (
+				3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */,
 				F272591A2E78CBD500210F11 /* HeaderNoteView.swift */,
 				F254BB9C2E74EFFF0020DB28 /* DismissButtonCustomizations.swift */,
 				F273EC082E541A04003FCC43 /* NoItemView.swift */,
@@ -848,8 +887,8 @@
 				3F2A42CD2EA2DF0E00B095CB /* Globals */,
 				3F2A42C32EA2C72B00B095CB /* Extensions */,
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
-				3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */,
 				3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */,
+				3F03BEA22EECE83A003B89E7 /* Settings */,
 				3F5D03382EB3F55A00F5B1DC /* Data Controller Items */,
 				3F2A42C92EA2C77900B095CB /* Achievements */,
 				3F2A42CB2EA2C79900B095CB /* Credentials */,
@@ -1037,6 +1076,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F7B68012EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1078,8 +1118,11 @@
 				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
 				F2B937A52E8393B300AF9155 /* CredentialNextExpirationSectionView.swift in Sources */,
 				3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */,
+				3FBD7FDA2EF4FA1C00A039C4 /* NoPurchasesYetView.swift in Sources */,
+				3FBD7FD62EF4E65C00A039C4 /* SettingsSliderView.swift in Sources */,
 				3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */,
 				F2B580162E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift in Sources */,
+				3FBD7FDC2EF5077000A039C4 /* ComposeEmailView.swift in Sources */,
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
 				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
@@ -1102,7 +1145,9 @@
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
+				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
+				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
 				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
@@ -1115,10 +1160,12 @@
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
+				3F7B68032EF0DBF100069528 /* PurchaseInfoView.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
+				3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */,
 				3F2064562EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift in Sources */,
@@ -1132,6 +1179,7 @@
 				3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */,
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
 				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
+				3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
@@ -1176,6 +1224,7 @@
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,
+				3FBD7FD82EF4F54500A039C4 /* ContactDeveloperView.swift in Sources */,
 				3FE3724C2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift in Sources */,
 				3FB486A92EB9A4D300C58ED5 /* DataController-Computations.swift in Sources */,
 				3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */,
@@ -1194,6 +1243,7 @@
 				F2B580182E7B84510073BCA7 /* NoSpecialCatsView.swift in Sources */,
 				3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */,
 				3FE372422ECE6D9F00CCF0FC /* UpgradeFeature.swift in Sources */,
+				3FBD7FDE2EF5419400A039C4 /* LeftAlignedTextView.swift in Sources */,
 				3F1209F92ED67FBF00D8D93A /* DataController-StoreKit.swift in Sources */,
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,

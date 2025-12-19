@@ -19,6 +19,7 @@ struct SidebarViewTopToolbar: View {
     @State private var showAwardsSheet: Bool = false
     @State private var showCredentialManagementSheet: Bool = false
     @State private var showChartsAndStatsSheet: Bool = false
+    @State private var showSettingsSheet: Bool = false
     
     @State private var showUpgradeToPaidSheet: Bool = false
     @State private var selectedUpgradeOption: PurchaseStatus?
@@ -105,6 +106,12 @@ struct SidebarViewTopToolbar: View {
                 }
 #endif
                 
+                Button {
+                    showSettingsSheet = true
+                } label: {
+                    Label("Settings", systemImage: "gear")
+                }//: BUTTON
+                
             } label: {
                 Label("App Features and Settings", systemImage: "ellipsis.circle")
                     .labelStyle(.iconOnly)
@@ -125,6 +132,9 @@ struct SidebarViewTopToolbar: View {
              UpgradeToPaidSheet(itemMaxReached: "")
          }//: SHEET
         
+         .sheet(isPresented: $showSettingsSheet) {
+             SettingsSheet()
+         }
             
     }//: BODY
     

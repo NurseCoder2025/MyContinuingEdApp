@@ -43,7 +43,7 @@ extension DataController {
     func loadProducts() async throws {
         guard products.isEmpty else { return }
         
-        try await Task.sleep(for: .seconds(2))
+        try await Task.sleep(for: .seconds(0.2))
         
         let prodIds = [Self.basicUnlocKID, Self.proAnnualID, Self.proMonthlyID]
         let allProducts: Set<Product> = Set(try await Product.products(for: prodIds))
@@ -96,6 +96,11 @@ extension DataController {
                 purchaseStatus = PurchaseStatus.basicUnlock.id
             } else if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
                purchaseStatus = PurchaseStatus.proSubscription.id
+                if transaction.productID == Self.proAnnualID {
+                    currentSubscriptionType = "annual"
+                } else if transaction.productID == Self.proMonthlyID {
+                    currentSubscriptionType = "monthly"
+                }
             }//: ELSE IF
             await transaction.finish()
         } else {
@@ -112,8 +117,14 @@ extension DataController {
                     if case let .verified(transaction) = entitlement {
                         if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
                             purchaseStatus = PurchaseStatus.proSubscription.id
+                            if transaction.productID == Self.proAnnualID {
+                                currentSubscriptionType = "annual"
+                            } else if transaction.productID == Self.proMonthlyID {
+                                currentSubscriptionType = "monthly"
+                            }
                         } else {
                             purchaseStatus = PurchaseStatus.free.id
+                            currentSubscriptionType = ""
                         }
                     }//: IF LET
                 }//: LOOP (for await)
@@ -130,6 +141,7 @@ extension DataController {
                     }
                 }//: LOOP (for await)
             }//: IF ELSE
+            currentSubscriptionType = ""
             await transaction.finish()
         }//: IF ELSE
     }//: finalizeTransaction

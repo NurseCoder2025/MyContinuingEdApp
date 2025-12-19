@@ -20,6 +20,9 @@ class DataController: ObservableObject {
     // shared settings for app with iCloud
     @Published var sharedSettings = NSUbiquitousKeyValueStore.default
     
+    // Property for showing the activity reflection view
+    @Published var showActivityReflectionView: Bool = false
+    
     // Properties for storing the current activity or filter/tag that the user has selected
     @Published var selectedFilter: Filter? = Filter.allActivities
     @Published var selectedActivity: CeActivity?
@@ -54,7 +57,8 @@ class DataController: ObservableObject {
     // MARK: In App Purchases
     private var storeTask: Task<Void, Never>?
     @Published var products: [Product] = []
-    
+    /// String value for displaying to the user which subscription type that they currently have.
+    @Published var currentSubscriptionType: String = ""
    
     // MARK: - SAVING & DELETING METHODS
     

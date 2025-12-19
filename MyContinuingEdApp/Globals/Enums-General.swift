@@ -22,12 +22,10 @@ enum SortType: String {
     case format = "formatType"
 }
 
-
 // MARK: - Enum for sheet types
 enum SheetType {
     case renewal, issuer, specialCat
 }
-
 
 // MARK: - Enum for credential types
 /// Enum for handling the different types of credentials that can be added to the app.  Within this enum are several computed properties
@@ -158,12 +156,26 @@ enum PurchaseStatus: Codable, Identifiable {
     }//: id
 }
 
+/// Enum for indicating that the user has exceeded a pre-determined limit of objects while the
+/// app is in free mode. This is an error type that is thrown by the DataController's createNewTag,
+///  createNewRenewal, and createNewCeActivity methods.
 enum UpgradeNeeded: Error {
     case maxTagsReached
     case maxRenewalsReached
     case maxCeActivitiesReached
 }
 
+/// Enum for controlling what is shown to the user in the UpgradeToPaid sheet, depending on
+/// whether the products from that AppStore have been loaded or if an erro has been thrown.
 enum LoadState {
     case loading, loaded, error
+}
+
+// MARK: - SETTINGS
+/// Enum used in DetailView for determining which view to show the user, depending on whether
+/// they are editing a CeActivity and are navigating to the AcitivityReflectionView or if they are
+/// accessing the app's settings page.
+enum PageDestination: Hashable {
+    case settings
+    case reflection(ActivityReflection)
 }

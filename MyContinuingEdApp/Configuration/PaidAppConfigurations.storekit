@@ -48,7 +48,11 @@
     {
       "id" : "561C17F8",
       "localizations" : [
-
+        {
+          "description" : "All app features at either a monthly or annual rate",
+          "displayName" : "Ce Cache Pro",
+          "locale" : "en_US"
+        }
       ],
       "name" : "CeCachePro",
       "subscriptions" : [
