@@ -29,6 +29,14 @@
 		3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */; };
 		3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */; };
 		3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD22EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift */; };
+		3F3EAC3B2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */; };
+		3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */; };
+		3F3EAC3E2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */; };
+		3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */; };
+		3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC402EFA001300BBE427 /* TutorialStep.swift */; };
+		3F3EAC422EFA001300BBE427 /* TutorialStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC402EFA001300BBE427 /* TutorialStep.swift */; };
+		3F3EAC442EFA013700BBE427 /* TutorialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC432EFA013700BBE427 /* TutorialData.swift */; };
+		3F3EAC452EFA013700BBE427 /* TutorialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC432EFA013700BBE427 /* TutorialData.swift */; };
 		3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */; };
 		3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */; };
 		3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */; };
@@ -236,6 +244,10 @@
 		3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalSheetData.swift; sourceTree = "<group>"; };
 		3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSmartFilterRow.swift; sourceTree = "<group>"; };
 		3F39AFD22EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalPeriodSheetTitleView.swift; sourceTree = "<group>"; };
+		3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingView.swift; path = MyContinuingEdApp/OnboardingView.swift; sourceTree = "<group>"; };
+		3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingCardView.swift; path = MyContinuingEdApp/OnboardingCardView.swift; sourceTree = "<group>"; };
+		3F3EAC402EFA001300BBE427 /* TutorialStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TutorialStep.swift; path = MyContinuingEdApp/TutorialStep.swift; sourceTree = "<group>"; };
+		3F3EAC432EFA013700BBE427 /* TutorialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TutorialData.swift; path = MyContinuingEdApp/TutorialData.swift; sourceTree = "<group>"; };
 		3F44C83A2EA9BDD500645B13 /* PerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDAISectionView.swift; sourceTree = "<group>"; };
 		3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatViewModel.swift; sourceTree = "<group>"; };
@@ -859,6 +871,10 @@
 		F2772B862E1DDA9F006A94BD = {
 			isa = PBXGroup;
 			children = (
+				3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */,
+				3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */,
+				3F3EAC432EFA013700BBE427 /* TutorialData.swift */,
+				3F3EAC402EFA001300BBE427 /* TutorialStep.swift */,
 				3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
 				3F69189D2EA6C05C00435E02 /* MyContinuingEdAppTests */,
@@ -1077,6 +1093,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F7B68012EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
+				3F3EAC422EFA001300BBE427 /* TutorialStep.swift in Sources */,
+				3F3EAC442EFA013700BBE427 /* TutorialData.swift in Sources */,
+				3F3EAC3E2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */,
+				3F3EAC3B2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1161,6 +1181,7 @@
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
 				3F7B68032EF0DBF100069528 /* PurchaseInfoView.swift in Sources */,
+				3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
@@ -1169,8 +1190,10 @@
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */,
 				3F2064562EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift in Sources */,
+				3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */,
 				3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */,
 				3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */,
+				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
 				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
 				F2612A212E874D6500CC463D /* ActivityDescriptionSectionView.swift in Sources */,
@@ -1195,6 +1218,7 @@
 				F27259192E78C3B300210F11 /* DisciplinaryActionItemSheet.swift in Sources */,
 				3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */,
 				F22940A32E764EE200BFE78A /* Enums-DisciplinaryActionItem.swift in Sources */,
+				3F3EAC452EFA013700BBE427 /* TutorialData.swift in Sources */,
 				3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */,
 				3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,

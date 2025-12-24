@@ -53,7 +53,7 @@ struct NotificationSettingsView: View {
             } label: {
                 SettingsHeaderView(headerText: "Notification Intervals", headerImage: "calendar.badge.clock.rtl")
             }//: GROUPBOX
-            .padding(.bottom, 20)
+            .padding(.bottom, 15)
         
             // Notifications to show toggles
             GroupBox {

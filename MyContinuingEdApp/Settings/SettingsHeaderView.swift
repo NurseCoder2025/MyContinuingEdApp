@@ -14,14 +14,19 @@ struct SettingsHeaderView: View {
     
     // MARK: - BODY
     var body: some View {
-        HStack {
-            Text(headerText)
-                .font(.title3)
-            Spacer()
-            Image(systemName: headerImage)
-                .font(.title3)
+        VStack(spacing:0) {
+            HStack {
+                Text(headerText)
+                    .font(.title3)
+                Spacer()
+                Image(systemName: headerImage)
+                    .font(.title3)
+            }//: HSTACK
             
-        }//: HSTACK
+            Divider()
+                .padding(.bottom, 4)
+                .padding(.top, 2)
+        }//: VSTACK
         .accessibilityLabel(Text(headerText))
     }//: BODY
 }//: STRUCt

@@ -22,6 +22,7 @@ struct PurchaseInfoView: View {
     @State private var showManageSubscriptionSheet: Bool = false
     @State private var showRefundSheetForSubscription: Bool = false
     @State private var showRefundSheetForBasicUnlock: Bool = false
+    @State private var showUpgradeToProSheet: Bool = false
     
     @State private var showProductLoadingIssueAlert: Bool = false
     
@@ -127,16 +128,20 @@ struct PurchaseInfoView: View {
                                             Spacer()
                                         }//: HSTACK
                                         
-                                        Text("With the basic unlock, you can track as many CE activities and renewal periods as needed for a single credential, as well as saving CE certificates to your device.")
-                                            .multilineTextAlignment(.leading)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                            .padding(.top, 5)
                                     }//: VSTACK
                                 }//: HSTACK
                                 
-                                Divider()
+                                if subscribedProduct == nil {
+                                    Divider()
+                                    Button {
+                                        showUpgradeToProSheet = true
+                                    } label: {
+                                        Text("Subscribe to CE Cache Pro!")
+                                    }//: BUTTON
+                                    .buttonStyle(.borderedProminent)
+                                }//: IF
                                 
+                                Divider()
                                 Button {
                                     showRefundSheetForBasicUnlock = true
                                 } label: {
@@ -156,6 +161,10 @@ struct PurchaseInfoView: View {
                         for: basicUnlockTransactionID,
                         isPresented: $showRefundSheetForBasicUnlock
                     )
+                    .sheet(isPresented: $showUpgradeToProSheet) {
+                        UpgradeToPaidSheet(itemMaxReached: "")
+                    }//: SHEET
+                    
                     // MARK: - ALERTS
                     .alert("Problem Loading Purchases",isPresented: $showProductLoadingIssueAlert) {
                     } message: {

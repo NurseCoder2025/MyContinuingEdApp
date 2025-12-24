@@ -21,18 +21,22 @@ struct SettingsSheet: View {
                 .padding(.leading, 10)
                     
                 ScrollView(.vertical, showsIndicators: false) {
-                    VStack(spacing: 15) {
+                    VStack(spacing: 20) {
                         // App Purchase Level
                         AppPurchaseLevelView()
+                            .padding(.horizontal, 10)
                         
                         // Subscription/Purchase info
                         PurchaseInfoView()
+                            .padding(.horizontal, 10)
                         
                         // Notification Settings
                         NotificationSettingsView()
+                            .padding(.horizontal, 10)
                         
                         // Help - contact developer
                         ContactDeveloperView()
+                            .padding(.horizontal, 10)
                         
                     }//: VSTACK
                     

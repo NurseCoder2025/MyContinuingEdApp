@@ -38,8 +38,6 @@ struct AppPurchaseLevelView: View {
     var body: some View {
         GroupBox(label: SettingsHeaderView(headerText: "Purchase Level", headerImage: "info.circle")) {
             
-            Divider().padding(.vertical, 5)
-            
             Text(appPurchaseLevelText)
                 .font(.headline)
                 .bold()
