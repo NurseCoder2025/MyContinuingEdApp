@@ -50,7 +50,18 @@ struct SidebarViewTopToolbar: View {
     
     // MARK: - BODY
     var body: some View {
+        if #available(iOS 17.0, *) {
+            HStack {
+                Text("CE Cache")
+                    .foregroundStyle(.secondary)
+                Text(appStatusText)
+                    .foregroundStyle(.secondary)
+                    .bold()
+            }//: HSTACK
+            .padding(.leading, 5)
+        }//: IF Available
         HStack {
+            // The following text fields are only shown in iOS 16 and earlier
             Text("CE Cache")
                 .foregroundStyle(.secondary)
             Text(appStatusText)

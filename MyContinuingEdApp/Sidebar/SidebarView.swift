@@ -16,7 +16,7 @@ import UIKit
 struct SidebarView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    @AppStorage("firstRun") var firstRun: Bool = false
+    @AppStorage("firstRun") var firstRun: Bool = true
     @Environment(\.openURL) var openURL
     
     @StateObject private var viewModel: ViewModel
@@ -100,8 +100,9 @@ struct SidebarView: View {
         // MARK: - ON APPEAR
             .onAppear {
                 // First time running of app only
-                if firstRun == false {
-                    firstRun = true
+                if firstRun == true {
+                    dataController.showOnboardingScreen = true
+                    firstRun = false
                     showEnableRemindersAlert = true
                 }
                 

@@ -22,60 +22,74 @@ struct CredentialManagementSheet: View {
     // Computed property returning array of Grid items for the credential
     // category grid
     var columns: [GridItem] {
-        [GridItem(.fixed(150)),
-         GridItem(.fixed(150))
+        [GridItem(.flexible(minimum: 150, maximum: 300)),
+         GridItem(.flexible(minimum: 150, maximum: 300))
         ]
     }
         
     //: MARK: - BODY
     var body: some View {
         NavigationView {
-            VStack {
-                HStack {
-                    Spacer()
-                    // MARK: Credential Category Grid View
-                    LazyVGrid(columns: columns, alignment: .center, spacing: 10) {
-                        // See the Enums-General file for the enum definition (CredentialType)
-                        ForEach(CredentialType.addableTypes, id: \.self) { type in
-                            Button {
-                                viewModel.selectedCat = CredentialCatWrapper(
-                                    value: type.rawValue
+            ScrollView(.vertical) {
+                VStack(spacing: 20) {
+                    HStack {
+                        Spacer()
+                        // MARK: Credential Category Grid View
+                        LazyVGrid(columns: columns, alignment: .leading, spacing: 15) {
+                            // See the Enums-General file for the enum definition (CredentialType)
+                            ForEach(CredentialType.addableTypes, id: \.self) { type in
+                                Button {
+                                    viewModel.selectedCat = CredentialCatWrapper(
+                                        value: type.rawValue
+                                    )
+                                } label: {
+                                    CredentialCatBoxView(
+                                        icon: type.typeIcon,
+                                        text: type.displayPluralName,
+                                        badgeCount: viewModel.getCatBadgeCount(category: type.rawValue)
+                                    )
+                                    .accessibilityElement()
+                                    .accessibilityLabel("\(type.displayPluralName)")
+                                    .accessibilityHint("^[\(viewModel.getCatBadgeCount(category: type.rawValue)) \(type.rawValue)](inflect: true)")
+                                }//: BUTTON
+                            }//: LOOP
+                        }//: GRID
+                        Spacer()
+                    }//: HSTACK
+                    
+                    
+                    // MARK: Encumberance status view
+                        GroupBox {
+                            // Navigation link to EncumberedCredentialListSheet IF there are
+                            // encumbered credentials
+                            if viewModel.encumberedCreds.isNotEmpty {
+                                NavigationLink {
+                                    EncumberedCredentialListSheet()
+                                } label: {
+                                    Text("Encumbered Credentials (\(viewModel.encumberedCreds.count))")
+                                        .foregroundStyle(.red)
+                                }
+                            } else {
+                                NoItemView(
+                                    noItemTitleText: "Nothing Encumbered",
+                                    noItemMessage: """
+                                Great news! None of your credentials have any restrictions or other limitations placed on them by the issuer.
+                                
+                                If anything changes, be sure to add a disciplinary action item or restriction to the appropriate credential.
+                                """,
+                                    noItemImage: "smiley"
                                 )
-                            } label: {
-                                CredentialCatBoxView(
-                                    icon: type.typeIcon,
-                                    text: type.displayPluralName,
-                                    badgeCount: viewModel.getCatBadgeCount(category: type.rawValue)
-                                )
-                                .accessibilityElement()
-                                .accessibilityLabel("\(type.displayPluralName)")
-                                .accessibilityHint("^[\(viewModel.getCatBadgeCount(category: type.rawValue)) \(type.rawValue)](inflect: true)")
-                            }//: BUTTON
-                        }//: LOOP
-                    }//: GRID
+                            }
+                        } label: {
+                            GroupBoxLabelView(labelText: "Encumbered Credentials", labelImage: "exclamationmark.triangle.fill")
+                        }
+                        .frame(height: 400)
+                        .padding(.horizontal, 10)
+                    
                     Spacer()
-                }//: HSTACK
-                
-                
-                // MARK: Encumberance status view
-                // Navigation link to EncumberedCredentialListSheet IF there are
-                // encumbered credentials
-                if viewModel.encumberedCreds.isNotEmpty {
-                    NavigationLink {
-                        EncumberedCredentialListSheet()
-                    } label: {
-                        // TODO: Enhance this view to make it more prominent
-                        Text("Encumbered Credentials (\(viewModel.encumberedCreds.count))")
-                            .foregroundStyle(.red)
-                    }
-                }//: IF
-                
-                
-                // In-state/Out-of-state view
-                
-                Spacer()
-                
-            }//: VSTACK
+                    
+                }//: VSTACK
+            }//: SCROLL
             .navigationTitle("Credentials")
             //: MARK: - TOOLBAR
             .toolbar {

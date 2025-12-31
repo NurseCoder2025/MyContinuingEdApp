@@ -38,7 +38,10 @@ struct RenewalTopEditingView: View {
                 HStack {
                     Text("For Credential:")
                     Text(credential.credentialName)
+                        .bold()
+                        .foregroundStyle(.yellow)
                 }//: HSTACK
+                .font(.title2)
                 
                 
                 if paidStatus != .proSubscription {
@@ -77,4 +80,5 @@ struct RenewalTopEditingView: View {
 // MARK: - PREVIEW
 #Preview {
     RenewalTopEditingView(credential: .example, reinstatingYN: .constant(true), reinstateHours: .constant(1.0))
+        .environmentObject(DataController.preview)
 }

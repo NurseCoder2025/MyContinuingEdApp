@@ -16,15 +16,18 @@ struct RenewalPeriodView: View {
     // MARK: - PROPERTIES
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var dataController: DataController
+    
     // Credential property that the renewal is assigned to
     let renewalCredential: Credential
     // Optional property used for editing a selected RenewalPeriod by the user
     let renewalPeriod: RenewalPeriod?
+    
     // Renewal period properties
     @State private var periodStart: Date = Date.renewalStartDate
     @State private var periodEnd: Date = Date.renewalEndDate
     @State private var reinstatingYN: Bool = false
     @State private var reinstateHours: Double = 30.0
+    @State private var hasLateFee: Bool = false
     @State private var lateFeeDate: Date = Date.renewalLateFeeStartDate
     @State private var lateFeeAmount: Double = 50.0
     // MARK: - CORE DATA Fetches
@@ -37,7 +40,7 @@ struct RenewalPeriodView: View {
                 RenewalPeriodSheetTitleView(renewalPeriod: renewalPeriod)
                 
                 // MARK: - Credential Selection
-                VStack{
+                VStack(spacing: 20){
                         RenewalTopEditingView(
                             credential: renewalCredential,
                             reinstatingYN: $reinstatingYN,
@@ -45,11 +48,13 @@ struct RenewalPeriodView: View {
                         )
                         
                         RenewalPeriodDatesView(
+                            hasLateFee: $hasLateFee,
                             lateFeeDate: $lateFeeDate,
                             lateFeeAmount: $lateFeeAmount,
                             periodStart: $periodStart,
                             periodEnd: $periodEnd
                         )
+                        .padding(.horizontal, 15)
                         
                         // MARK: SAVE Button
                         Button {
@@ -87,6 +92,7 @@ struct RenewalPeriodView: View {
         renewal.credential = renewalCredential
         renewal.reinstateCredential = reinstatingYN
         renewal.reinstatementHours = reinstateHours
+        renewal.renewalHasLateFeeYN = hasLateFee
         renewal.lateFeeStartDate = lateFeeDate
         renewal.lateFeeAmount = lateFeeAmount
     }

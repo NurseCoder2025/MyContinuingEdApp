@@ -23,28 +23,56 @@ struct ContentView: View {
     
     // MARK: - BODY
     var body: some View {
+        if viewModel.allActivities.isEmpty && viewModel.allCredentials.isEmpty {
+            GeometryReader { geo in
+                VStack(spacing: 0) {
+                    Spacer()
+                    NoItemView(
+                        noItemTitleText: "First Things First",
+                        noItemMessage: "Before adding CE activities, go to the sidebar (CE Filters) and add a credential along with a renewal period to get started.",
+                        noItemImage: "1.circle.fill"
+                    )
+                    Spacer()
+                }//: VSTACK
+                .frame(width: geo.size.width, height: geo.size.height)
+                .ignoresSafeArea()
+                .navigationTitle("CE Activities")
+            }//: GEO READER
+        } else {
             /// The List section displays the ActivityROW and not the ActivityView. The
             /// ActivityView struct is for showing the details of each activity.
-        List(selection: $viewModel.dataController.selectedActivity) {
-            
-                // MARK: Header section
-            ForEach(viewModel.sortedKeys, id: \.self) { key in
-                    Section(header: Text(key)) {
-                        
-                        // MARK: Ce Activity row under the key header
-                        ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
-                            ActivityRow(activity: activity)
-                                .swipeActions {
-                                    Button(role: .destructive) {
-                                        viewModel.delete(activity: activity)
-                                    } label: {
-                                        Label("Delete", systemImage: "trash.fill")
-                                    }//: BUTTON
-                                }//: SWIPE
-                        } //: LOOP
-                        
-                    }//: SECTION
-                }//: LOOP
+            List(selection: $viewModel.dataController.selectedActivity) {
+                // MARK: Regular list with no header section
+                if dataController.sortType != .name {
+                    ForEach(viewModel.computedCEActivityList) { activity in
+                        ActivityRow(activity: activity)
+                            .swipeActions {
+                                Button(role: .destructive) {
+                                    viewModel.delete(activity: activity)
+                                } label: {
+                                    Label("Delete", systemImage: "trash.fill")
+                                }//: BUTTON
+                            }//: SWIPE
+                    }//: LOOP
+                } else {
+                    // MARK: List With Activity Name Alphabetical Sorting
+                    ForEach(viewModel.sortedKeys, id: \.self) { key in
+                        Section(header: Text(key)) {
+                            
+                            // Ce Activity row under the key header
+                            ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
+                                ActivityRow(activity: activity)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            viewModel.delete(activity: activity)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash.fill")
+                                        }//: BUTTON
+                                    }//: SWIPE
+                            } //: LOOP
+                        }//: SECTION
+                    }//: LOOP
+                }//: IF - ELSE
             } //: LIST
             .navigationTitle("CE Activities")
             .searchable(
@@ -52,63 +80,64 @@ struct ContentView: View {
                 tokens: $viewModel.dataController.filterTokens,
                 suggestedTokens: .constant(viewModel.dataController.suggestedFilterTokens),
                 prompt: "Filter CE activities, or type # to add tags") { tag in
-                Text(tag.tagTagName)
-            }
-        // MARK: - ALERTS
+                    Text(tag.tagTagName)
+                }
+            // MARK: - ALERTS
                 .alert("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
-                Button("Delete", role: .destructive) {
-                    if let activity = viewModel.activityToDelete {
-                        if #available(iOS 17, *) {
-                            viewModel.dataController.delete(activity)
-                        } else {
-                            spotlightCentral?.removeCeActivityFromDefaultIndex(activity)
-                            viewModel.dataController.delete(activity)
-                        }//: IF AVAILABLE
-                    }//: IF LET
-                    
-                    viewModel.activityToDelete = nil
-                } //: DELETE button
-                
-                Button("Cancel", role: .cancel) {
-                    viewModel.activityToDelete = nil
-                }
-            } message: {
-                if let activity = viewModel.activityToDelete {
-                    Text("Warning! You are about to delete the activity '\(activity.ceTitle)'.  This will delete its certificate along with any reflections.  This action cannot be undone.")
-                }
-            }
-            // MARK: - TOOLBAR
-            .toolbar {
-                ContentViewToolbarView() {
-                    if #available(iOS 17, *) {
-                        // Use the dataController's createActivity method and item
-                        // will be automatically added to Spotlight's index
-                        do {
-                            try dataController.createActivity()
-                        } catch  {
-                            showUpgradetoPaidSheet = true
-                        }
+                    Button("Delete", role: .destructive) {
+                        if let activity = viewModel.activityToDelete {
+                            if #available(iOS 17, *) {
+                                viewModel.dataController.delete(activity)
+                            } else {
+                                spotlightCentral?.removeCeActivityFromDefaultIndex(activity)
+                                viewModel.dataController.delete(activity)
+                            }//: IF AVAILABLE
+                        }//: IF LET
                         
-                    } else {
-                        // Manually add CeActivity to Spotlight's index
-                        do {
-                            let newCe = try dataController.createNewCeActivityIOs16()
-                            spotlightCentral?.addCeActivityToDefaultIndex(newCe)
-                        } catch  {
-                            showUpgradetoPaidSheet = true
-                        }
+                        viewModel.activityToDelete = nil
+                    } //: DELETE button
+                    
+                    Button("Cancel", role: .cancel) {
+                        viewModel.activityToDelete = nil
                     }
-                }//: CLOSURE
-            } //: TOOLBAR
-        // MARK: - SHEETS
-            .sheet(isPresented: $showUpgradetoPaidSheet) {
-                UpgradeToPaidSheet(itemMaxReached: "CE activities")
-            }//: SHEET
-        
-        // MARK: - ON APPEAR
-            .onAppear {
-                askForReview()
-            }
+                } message: {
+                    if let activity = viewModel.activityToDelete {
+                        Text("Warning! You are about to delete the activity '\(activity.ceTitle)'.  This will delete its certificate along with any reflections.  This action cannot be undone.")
+                    }
+                }
+            // MARK: - TOOLBAR
+                .toolbar {
+                    ContentViewToolbarView() {
+                        if #available(iOS 17, *) {
+                            // Use the dataController's createActivity method and item
+                            // will be automatically added to Spotlight's index
+                            do {
+                                try dataController.createActivity()
+                            } catch  {
+                                showUpgradetoPaidSheet = true
+                            }
+                            
+                        } else {
+                            // Manually add CeActivity to Spotlight's index
+                            do {
+                                let newCe = try dataController.createNewCeActivityIOs16()
+                                spotlightCentral?.addCeActivityToDefaultIndex(newCe)
+                            } catch  {
+                                showUpgradetoPaidSheet = true
+                            }
+                        }
+                    }//: CLOSURE
+                } //: TOOLBAR
+                  // MARK: - SHEETS
+                .sheet(isPresented: $showUpgradetoPaidSheet) {
+                    UpgradeToPaidSheet(itemMaxReached: "CE activities")
+                }//: SHEET
+            
+            // MARK: - ON APPEAR
+                .onAppear {
+                    askForReview()
+                }
+        }//: IF - ELSE
         
     } //: BODY
     // MARK: - METHODS

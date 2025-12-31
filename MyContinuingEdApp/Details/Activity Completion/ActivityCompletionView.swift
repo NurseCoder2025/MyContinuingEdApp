@@ -39,6 +39,16 @@ struct ActivityCompletionView: View {
                         set: {activity.dateCompleted = $0}),
                     displayedComponents: [.date])
                     
+                    // MARK: User's rating of the activity
+                    Picker("My Rating:", selection: $activity.evalRating) {
+                        Text(ActivityRating.terrible.rawValue).tag(Int16(0))
+                        Text(ActivityRating.poor.rawValue).tag(Int16(1))
+                        Text(ActivityRating.soSo.rawValue).tag(Int16(2))
+                        Text(ActivityRating.interesting.rawValue).tag(Int16(3))
+                        Text(ActivityRating.lovedIt.rawValue).tag(Int16(4))
+
+                    }//: PICKER
+                    
                     if paidStatus == .free {
                         PaidFeaturePromoView(
                             featureIcon: "pencil.and.scribble",

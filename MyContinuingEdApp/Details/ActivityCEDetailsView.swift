@@ -60,10 +60,10 @@ struct ActivityCEDetailsView: View {
                     )
                 } else {
                     // MARK: Special Category
-                    VStack {
-                        Text("Special CE Category:")
+                    VStack(spacing: 10) {
+                        Text("Special CE Category")
                             .bold()
-                        Text("NOTE: If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
+                        Text("If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
                             .font(.caption)
                             .multilineTextAlignment(.leading)
                         
@@ -76,11 +76,12 @@ struct ActivityCEDetailsView: View {
                                     Text(assignedCat.specialName)
                                         .lineLimit(1)
                                 } else {
-                                    Text("Select Category (if applicable)")
+                                    Text("Select")
                                 }
-                            }//: HSTACK
-                        }
-                        
+                                Spacer()
+                            }//: HStack
+                        }//: BUTTON
+                        .buttonStyle(.borderedProminent)
                     } //: VSTACK
                 }//: IF ELSE
                 

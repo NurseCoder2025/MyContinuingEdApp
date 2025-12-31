@@ -22,16 +22,19 @@ struct MasterChartsSheet: View {
                 Divider()
                 
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 20) {
                         
                         CeEarnedByMonthChartView()
-                            .padding([.leading, .trailing], 20)
-                            .padding([.top,.bottom], 20)
                         
                         MoneySpentByMonthView()
-                            .padding([.leading, .trailing], 20)
+                           
+                        Text("More enhancements and charts to come... 😀")
+                            .font(.title3)
+                            .padding(.horizontal, 20)
                         
                     }//: LAZY V STACK
+
+                    
                 }//: SCROLLVIEW
             }//: VSTACK
              // MARK: - TOOLBAR

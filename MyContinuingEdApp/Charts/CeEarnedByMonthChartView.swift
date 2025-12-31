@@ -55,4 +55,5 @@ struct CeEarnedByMonthChartView: View {
 // MARK: - PREVIEW
 #Preview {
     CeEarnedByMonthChartView()
+        .environmentObject(DataController.preview)
 }

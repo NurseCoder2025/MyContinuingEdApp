@@ -17,10 +17,17 @@ struct OnboardingCardView: View {
         ZStack {
             VStack(spacing: 20) {
                 // Card Title (heading)
+                if onBoardingStep.stepNumber > 1 && onBoardingStep.stepNumber < 5 {
+                    Text("Step \(onBoardingStep.stepNumber - 1): ")
+                        .font(.largeTitle)
+                        .foregroundStyle(.yellow)
+                        .padding(.horizontal, 10)
+                }
+                
                 Text(onBoardingStep.headline)
                     .font(.largeTitle)
                     .foregroundStyle(.yellow)
-                    
+                    .padding(.horizontal, 10)
                     
                 // Image (if available)
                 if let cardImage = onBoardingStep.imageName {
@@ -35,6 +42,11 @@ struct OnboardingCardView: View {
                     .foregroundStyle(.white)
                     .padding()
                     .multilineTextAlignment(.leading)
+                
+                // Button (last card only)
+                if onBoardingStep.stepNumber == 5 {
+                    StartButtonView()
+                }
                 
             }//: VSTACK
             

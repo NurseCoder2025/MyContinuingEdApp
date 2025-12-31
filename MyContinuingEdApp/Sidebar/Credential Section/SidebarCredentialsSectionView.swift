@@ -60,49 +60,60 @@ struct SidebarCredentialsSectionView: View {
                    ForEach(viewModel.allCredentials) { credential in
                     // Creating a section for each renewal period for the credential
                     Section {
-                        ForEach(viewModel.convertedRenewalFilters.filter{$0.credential == credential}) { filter in
-                            NavigationLink(value: filter) {
-                                RenewalPeriodNavLabelView(renewalFilter: filter)
-                                    .badge(filter.renewalActivitiesCount)
-                                    .swipeActions {
-                                        if paidStatus == .proSubscription {
+                        // MARK: Adding a renewal when there is none
+                        if credential.allRenewals.isEmpty {
+                            Button {
+                                onAddRenewal(credential)
+                            } label: {
+                                Label("Add Renewal Period", systemImage: "calendar.badge.plus")
+                                    .foregroundStyle(.white)
+                            }//: BUTTON
+                            .buttonStyle(.borderedProminent)
+                        } else {
+                            ForEach(viewModel.convertedRenewalFilters.filter{$0.credential == credential}) { filter in
+                                NavigationLink(value: filter) {
+                                    RenewalPeriodNavLabelView(renewalFilter: filter)
+                                        .badge(filter.renewalActivitiesCount)
+                                        .swipeActions {
+                                            if paidStatus == .proSubscription {
+                                                Button {
+                                                    if let renewal = filter.renewalPeriod {
+                                                        showRenewalProgress(renewal)
+                                                    }
+                                                } label: {
+                                                    Label("Check CE Progress", systemImage: "chart.pie.fill")
+                                                        .labelStyle(.iconOnly)
+                                                }//: BUTTON
+                                            }
+                                            
+                                        }//: SWIPE
+                                        .contextMenu {
+                                            // MARK: Edit Renewal Period Button
                                             Button {
-                                                if let renewal = filter.renewalPeriod {
-                                                    showRenewalProgress(renewal)
+                                                guard let renewal = filter.renewalPeriod, viewModel.renewals.contains(renewal) else { return }
+                                                guard let selectedCred = renewal.credential else {return}
+                                                onEditRenewal(selectedCred, renewal)
+                                            } label: {
+                                                Label("Edit Renewal Period", systemImage: "pencil")
+                                            }
+                                            
+                                            // MARK: Delete Renewal Period Button
+                                            Button(role: .destructive) {
+                                                viewModel.renewalToDelete = filter.renewalPeriod
+                                                if let deletingRenewal = viewModel.renewalToDelete {
+                                                    onRenewalDelete(deletingRenewal)
                                                 }
                                             } label: {
-                                                Label("Check CE Progress", systemImage: "chart.pie.fill")
-                                                    .labelStyle(.iconOnly)
-                                            }//: BUTTON
-                                        }
-                                        
-                                    }//: SWIPE
-                                    .contextMenu {
-                                        // MARK: Edit Renewal Period Button
-                                        Button {
-                                            guard let renewal = filter.renewalPeriod, viewModel.renewals.contains(renewal) else { return }
-                                            guard let selectedCred = renewal.credential else {return}
-                                            onEditRenewal(selectedCred, renewal)
-                                        } label: {
-                                            Label("Edit Renewal Period", systemImage: "pencil")
-                                        }
-                                        
-                                        // MARK: Delete Renewal Period Button
-                                        Button(role: .destructive) {
-                                            viewModel.renewalToDelete = filter.renewalPeriod
-                                            if let deletingRenewal = viewModel.renewalToDelete {
-                                                onRenewalDelete(deletingRenewal)
+                                                Label("Delete Renewal Period", systemImage: "trash.fill")
                                             }
-                                        } label: {
-                                            Label("Delete Renewal Period", systemImage: "trash.fill")
-                                        }
-                                    }//: CONTEXT MENU
-                                    .accessibilityElement()
-                                    .accessibilityLabel("Renewal period: \(filter.name)")
-                                    .accessibilityHint("^[\(filter.renewalActivitiesCount) CE activity](inflect: true)")
-                                
-                            }//: NAV LINK
-                        }//: LOOP
+                                        }//: CONTEXT MENU
+                                        .accessibilityElement()
+                                        .accessibilityLabel("Renewal period: \(filter.name)")
+                                        .accessibilityHint("^[\(filter.renewalActivitiesCount) CE activity](inflect: true)")
+                                    
+                                }//: NAV LINK
+                            }//: LOOP
+                        }//: IF
                     } header: {
                         SidebarCredentialSectionHeader(
                             dataController: viewModel.dataController,

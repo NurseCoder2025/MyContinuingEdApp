@@ -16,6 +16,7 @@ extension RenewalPeriod {
         return NSFetchRequest<RenewalPeriod>(entityName: "RenewalPeriod")
     }
 
+    @NSManaged public var renewalHasLateFeeYN: Bool
     @NSManaged public var lateFeeAmount: Double
     @NSManaged public var lateFeeStartDate: Date?
     @NSManaged public var periodEnd: Date?

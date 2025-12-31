@@ -26,6 +26,8 @@ struct CredentialSheet: View {
     // Show an alert if a credential type has not been selected by the user
     @State private var showNoCredTypeAlert: Bool = false
     
+    @State private var showDeleteCredAlert: Bool = false
+    
     // MARK: - BODY
     var body: some View {
     
@@ -54,6 +56,11 @@ struct CredentialSheet: View {
                 
                 // MARK: RESTRICTIONS
                 CredentialRestrictionsSectionView(credential: credential)
+                
+                // MARK: Delete Button
+                DeleteObjectButtonView(buttonText: "Delete Credential") {
+                    showDeleteCredAlert = true
+                }
                    
                 
             }//: FORM
@@ -84,6 +91,16 @@ struct CredentialSheet: View {
             } message: {
                 Text("Unable to save credential since no credential type has been selected.  Please select a credential type and try saving again.")
             }//: ALERT
+            
+            .alert("Delete Credential?", isPresented: $showDeleteCredAlert) {
+                Button("OK", role: .destructive) {
+                    dataController.delete(credential)
+                    dismiss()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Are you sure you want to delete the current credential? This will delete any associated disciplinary actions and renewal periods. However, activities associated with this credential will NOT be deleted.")
+            }//: ALERT
                 
             // MARK: - ON RECEIVE
             .onReceive(credential.objectWillChange) { _ in
@@ -91,6 +108,15 @@ struct CredentialSheet: View {
             }//: ON RECEIVE
             
             .onSubmit {dataController.save()}
+            // MARK: - ON DISAPPEAR
+            .onDisappear {
+                // If the user dismisses the sheet without updating the
+                // name of the credential, then it is assumed that
+                // they don't want to actually create a credential
+                if credential.credentialName == "New Credential" {
+                    dataController.delete(credential)
+                }
+            }// ON DISAPPEAR
         }//: NAV VIEW
     }//: BODY
     

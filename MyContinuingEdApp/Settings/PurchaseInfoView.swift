@@ -28,6 +28,10 @@ struct PurchaseInfoView: View {
     
     let currentDevice = ProcessInfo()
     
+    let basicUnlockMessageForProUsers: String = """
+        Since you are currently a Pro subscriber (thank you!), you have full app access as long as your subscription remains active.  Should it end then you will be downgraded to the basic unlock feature set. 
+        """
+    
     // MARK: - COMPUTED PROPERTIES
     /// Computed property returning true if the app is being run on a device which supports the
     /// manageSubscriptionsSheet(isPresented:) or not.  Depends on a local constant, currentDevice,
@@ -77,16 +81,29 @@ struct PurchaseInfoView: View {
                 if purchasedProds.isEmpty {
                     NoPurchasesYetView()
                 } else {
-                    VStack {
-                        // Group for Subscription (if applicable)
-                        if let subscription = subscribedProduct?.0, let purchaseDate = subscribedProduct?.1, let _ = subscription.subscription, let renewalDay = subRenewalDate {
+                    VStack(spacing: 20) {
+                        // MARK: - Subscription
+                        if let subscription = subscribedProduct?.0, let purchaseDate = subscribedProduct?.1, let renewalDay = subRenewalDate {
                             GroupBox {
                                 HStack{
                                     // TODO: Add image
                                     VStack {
-                                        Text(subscription.displayName.localizedCapitalized)
-                                        Text("Purchased on: \(purchaseDate.formatted(date: .numeric, time: .omitted))")
-                                        Text("Subscription ends: \(renewalDay.formatted(date: .numeric, time: .omitted))")
+                                        LeftAlignedTextView(text: subscription.displayName.localizedCapitalized)
+                                            .font(.title2).bold()
+                                            .foregroundStyle(Color.purple)
+                                        
+                                        HStack {
+                                            LeftAlignedTextView(text: "Purchased on: ")
+                                            Text("\(purchaseDate.formatted(date: .numeric, time: .omitted))")
+                                                .bold()
+                                        }//: HStack
+                                        
+                                        HStack {
+                                            LeftAlignedTextView(text: "Subscription renews: ")
+                                            Text("\(renewalDay.formatted(date: .numeric, time: .omitted))")
+                                                .bold()
+                                                .foregroundStyle(Color.orange)
+                                        }//: HSTACK
                                     }//: VSTACK
                                 }//: HSTACK
                                 
@@ -98,12 +115,14 @@ struct PurchaseInfoView: View {
                                     } label: {
                                         Text("Manage Subscription")
                                     }//: BUTTON
+                                    .buttonStyle(.borderedProminent)
                                 } else {
                                     Button {
                                         showRefundSheetForSubscription.toggle()
                                     } label: {
                                         Text("Cancel Subscription")
                                     }//: BUTTON
+                                    .buttonStyle(.bordered)
                                 }
                                 
                             } label: {
@@ -111,7 +130,7 @@ struct PurchaseInfoView: View {
                             }//: GROUP BOX
                         }
                         
-                        // Group for Basic Unlock purchase (if applicable)
+                        // MARK: - Basic Unlock
                         if let basicProduct = basicUnlockProduct {
                             GroupBox {
                                 HStack {
@@ -128,9 +147,19 @@ struct PurchaseInfoView: View {
                                             Spacer()
                                         }//: HSTACK
                                         
+                                        // MARK: Message for Pro + Basic Unlock Users
+                                        if subscribedProduct != nil {
+                                            LeftAlignedTextView(text: basicUnlockMessageForProUsers)
+                                                .font(.caption)
+                                                .italic()
+                                                .foregroundStyle(.secondary)
+                                                .padding(.top, 5)
+                                        }//: IF
+                                        
                                     }//: VSTACK
                                 }//: HSTACK
                                 
+                                // MARK: Upgrade to Pro
                                 if subscribedProduct == nil {
                                     Divider()
                                     Button {
@@ -142,6 +171,8 @@ struct PurchaseInfoView: View {
                                 }//: IF
                                 
                                 Divider()
+                                
+                                // MARK: REFUND
                                 Button {
                                     showRefundSheetForBasicUnlock = true
                                 } label: {
@@ -228,9 +259,8 @@ struct PurchaseInfoView: View {
                         let groupID = subscription.subscriptionGroupID
                         let statuses = try await Product.SubscriptionInfo.status(for: groupID)
                         if let status = statuses.first {
-                            let renewalVerification = status.renewalInfo
-                            if case let .verified(renewalInfo) = renewalVerification {
-                                subRenewalDate = renewalInfo.renewalDate
+                            if case let .verified(subTransAct) = status.transaction {
+                                subRenewalDate = subTransAct.expirationDate
                             }//: IF CASE LET
                             
                         }//: IF LET (status)

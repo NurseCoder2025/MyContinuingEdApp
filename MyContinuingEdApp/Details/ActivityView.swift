@@ -18,23 +18,21 @@ struct ActivityView: View {
     // MARK: - BODY
     var body: some View {
         Form {
-            // MARK: HEADER section
-            ActivityViewHeader(activity: activity)
+            // MARK: Basic info
+            // (name, credential assignment, description, tags)
+            ActivityBasicInfoView(activity: activity)
             
-            // MARK: Tag Menu
-            TagMenuView(activity: activity)
+            // MARK:  Activity Type & Format
+            ActivityTypeAndFormatView(activity: activity)
             
-            // MARK: Description & Expiration
-            ActivityDescriptionSectionView(activity: activity)
+            // MARK: Expiration Info
+            ActivityExpirationDetailsView(activity: activity)
             
             // MARK: Hours & Cost
             ActivityHoursAndCostView(activity: activity)
             
-            // MARK: CE DETAILS
+            // MARK: CE Hours & Designation Info
             ActivityCEDetailsView(activity: activity)
-            
-            // MARK:  Activity Type & Format
-            ActivityTypeAndFormatView(activity: activity)
             
             // MARK: Activity Completion
             ActivityCompletionView(activity: activity)

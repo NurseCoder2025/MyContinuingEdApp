@@ -20,6 +20,7 @@ struct NoItemView: View {
                 Label(noItemTitleText, systemImage: noItemImage)
             } description: {
                 Text(noItemMessage)
+                    .multilineTextAlignment(.leading)
             }
         } else {
             VStack {
@@ -31,6 +32,7 @@ struct NoItemView: View {
                     .padding(.bottom, 2)
                 Text(noItemMessage)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
             } //: VSTACK
             
         } //: IF AVAILABLE

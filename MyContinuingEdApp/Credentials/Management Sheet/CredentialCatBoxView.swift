@@ -20,24 +20,27 @@ struct CredentialCatBoxView: View {
     
     var badgeCount: Int = 0
     
-    
+    let sfWithExtraSpacing = [
+        "folder.fill",
+        "person.text.rectangle.fill",
+        "questionmark.circle.fill"
+    ]
     //: MARK: - BODY
     var body: some View {
             ZStack {
                 // Background Rounded Rectangle w/ overlay
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(Color.gray, lineWidth: 1)
-                    .frame(width: 150, height: 75)
                     .overlay(
                         Group {
                             if badgeCount > 0 {
                                 ZStack {
                                     Circle()
                                         .fill(Color.blue)
-                                        .frame(width: 24, height: 24)
+                                        .frame(width: 25, height: 25)
                                     Text("\(badgeCount)")
                                         .foregroundStyle(.white)
-                                        .font(.caption)
+                                        .font(.title3)
                                         .bold()
                                 }
                                 .padding([.top, .trailing], 8)
@@ -48,17 +51,22 @@ struct CredentialCatBoxView: View {
                 
                 VStack(alignment: .leading) {
                     Spacer()
-                    Image(systemName: icon)
-                        .foregroundStyle(iconColor)
-                        .font(.title)
-                    Text(text)
-                        .padding(.top, 5)
+                        Image(systemName: icon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                            .background(Color.clear)
+                            .foregroundStyle(iconColor)
+                            .padding(.leading, 10)
+                    LeftAlignedTextView(text: text)
+                        .font(.title3)
+                        .bold()
+                        .padding(.leading, 10)
                     Spacer()
                     
                 }//: VSTACK
-                .frame(width: 150, alignment: .leading)
-                .padding(.leading, 16)
             }//: ZSTACK
+            
     }//: BODY
 }//: STRUCT
 

@@ -69,7 +69,7 @@ struct CredentialIssueAndRenewalSectionView: View {
         } header: {
             Text("Issue & Renewal")
         } footer: {
-            Text("When was your credential originally issued?  How often does it need to be renewed?  How many CEs in total do you need to complete each renewal - enter the number in terms of your preferred unit (hours or units)?")
+            Text("Use this section to enter details about your credential such as when it was originally issued and how often it is renewed.")
                 
         }//: SECTION
     }

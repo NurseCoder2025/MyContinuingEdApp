@@ -10,7 +10,7 @@
 
 import SwiftUI
 
-struct ActivityViewHeader: View {
+struct ActivityBasicInfoView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
@@ -31,17 +31,26 @@ struct ActivityViewHeader: View {
     // MARK: - BODY
     var body: some View {
         Group {
-            Section {
-                VStack(alignment: .leading) {
-                    // MARK: Activity Title
-                    TextField(
-                        "Title:",
-                        text: $activity.ceTitle,
-                        prompt: Text("Enter the activity name here"),
-                        axis: .vertical
-                    )
-                        .font(.title)
-                    
+            // MARK: Activity Title
+            Section("Activity Status") {
+                TextField(
+                    "Title:",
+                    text: $activity.ceTitle,
+                    prompt: Text("Enter the activity name here"),
+                    axis: .vertical
+                )
+                .font(.title)
+                
+                // MARK: Modified Date
+                Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
+                    .foregroundStyle(.secondary)
+                
+                // MARK: Expiration status of activity
+                Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
+                    .foregroundStyle(.secondary)
+            }//: SECTION (title)
+            
+            Section("Activity For Credential(s)...") {
                     // Credential(s) to which activity is assigned to
                     if activity.activityCredentials.isNotEmpty {
                         Text("Assigned Credential(s): \(assignedCredentials)")
@@ -56,25 +65,25 @@ struct ActivityViewHeader: View {
                         } else {
                             Label("Manage Credential Assignments", systemImage: "list.bullet.clipboard.fill")
                         }
-                    }
-                    
-                    // MARK: Modified Date
-                    Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
-                        .foregroundStyle(.secondary)
-                    
-                    // MARK: Expiration status of activity
-                    Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
-                        .foregroundStyle(.secondary)
-                } //: VSTACK (title and modification date)
+                    }//: BUTTON
+                } //: SECTION (credential assignments)
+            
+                Section("Description & Assigned Tags") {
+                    VStack {
+                        LeftAlignedTextView(text: "Activity Description:")
+                            .font(.headline)
+                            .bold()
+                        TextField("Description:", text: $activity.ceDescription, prompt: Text("Enter a description of the activity"), axis: .vertical)
+                            .keyboardType(.default)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.2))
+                            )
+                    }//: VSTACK
                 
-                // MARK: User's rating of the activity
-                Picker("My Rating:", selection: $activity.evalRating) {
-                    Text(ActivityRating.terrible.rawValue).tag(Int16(0))
-                    Text(ActivityRating.poor.rawValue).tag(Int16(1))
-                    Text(ActivityRating.soSo.rawValue).tag(Int16(2))
-                    Text(ActivityRating.interesting.rawValue).tag(Int16(3))
-                    Text(ActivityRating.lovedIt.rawValue).tag(Int16(4))
-                }
+                VStack {
+                    Text("Assign custom tags to this activity:")
+                    TagMenuView(activity: activity)
+                }//: VSTACK
                 
             }//: SECTION
         }//: GROUP
@@ -89,5 +98,5 @@ struct ActivityViewHeader: View {
 
 // MARK: - PREVIEW
 #Preview {
-    ActivityViewHeader(activity: .example)
+    ActivityBasicInfoView(activity: .example)
 }

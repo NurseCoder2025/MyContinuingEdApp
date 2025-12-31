@@ -17,36 +17,40 @@ struct MyContinuingEdAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationSplitView {
-                SidebarView(dataController: dataController)
-            } content: {
-                ContentView(dataController: dataController)
-            } detail: {
-                DetailView()
-            }
-            .environment(\.managedObjectContext, dataController.container.viewContext)
-            .environmentObject(dataController)
-            .environment(\.spotlightCentral, spotlightCentral)
-            // MARK: - ON CHANGE OF
-            // Saves changes if the app is moved to the background by the user
-            .onChange(of: scenePhase) { phase in
-                if phase != .active {
-                    dataController.save()
-                }
-            } //: ONCHANGE
-            // MARK: - ON APPEAR
-            .onAppear {
-                if spotlightCentral == nil {
-                    spotlightCentral = SpotlightCentral(dataController: dataController)
-                }
-            }//: ON APPEAR
-            
-            // MARK: - SPOTLIGHT
-            .onContinueUserActivity(CSSearchableItemActionType, perform: { action in
+            if dataController.showOnboardingScreen {
+                OnboardingView()
+                    .environmentObject(dataController)
+            } else  {
+                NavigationSplitView {
+                    SidebarView(dataController: dataController)
+                } content: {
+                    ContentView(dataController: dataController)
+                } detail: {
+                    DetailView()
+                }//: NAV SPLIT VIEw
+                .environment(\.managedObjectContext, dataController.container.viewContext)
+                .environmentObject(dataController)
+                .environment(\.spotlightCentral, spotlightCentral)
+                // MARK: - ON CHANGE OF
+                // Saves changes if the app is moved to the background by the user
+                .onChange(of: scenePhase) { phase in
+                    if phase != .active {
+                        dataController.save()
+                    }
+                } //: ONCHANGE
+                  // MARK: - ON APPEAR
+                .onAppear {
+                    if spotlightCentral == nil {
+                        spotlightCentral = SpotlightCentral(dataController: dataController)
+                    }
+                }//: ON APPEAR
+                
+                // MARK: - SPOTLIGHT
+                .onContinueUserActivity(CSSearchableItemActionType, perform: { action in
                     spotlightCentral?.loadSpotlightItem(action)
                 }
-            )//: ON CONTINUE USER ACTIVITY
-            
+                )//: ON CONTINUE USER ACTIVITY
+            }//: IF ELSE
         } //: WINDOW GROUP
     } //: BODY
     

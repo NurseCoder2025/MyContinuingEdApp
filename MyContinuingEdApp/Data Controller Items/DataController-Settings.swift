@@ -21,6 +21,17 @@ import Foundation
 // keys.
 extension DataController {
     // MARK: - Setting Keys
+    var showOnboardingScreen: Bool {
+        get {
+            sharedSettings.bool(forKey: "showOnboardingScreen")
+        }
+        
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "showOnboardingScreen")
+        }
+    }//: showOnboardingScreen
+    
     var primaryNotificationDays: Double {
         get {
             sharedSettings.double(forKey: "primaryNotificationDays")
@@ -97,6 +108,7 @@ extension DataController {
     ///     NSUbiquitousKeyValueStore
     @objc func handleKeyValueStoreChanges(_ notification: Notification) {
         let settingsKeys: Set<String> = [
+            "showOnboardingScreen",
             "purchaseStatus",
             "primaryNotificationDays",
             "secondaryNotificationDays",

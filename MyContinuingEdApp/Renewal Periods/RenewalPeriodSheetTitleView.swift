@@ -26,7 +26,7 @@ struct RenewalPeriodSheetTitleView: View {
                     .padding()
             }
         }//: VSTACK
-        .padding(.bottom, 20)
+
     }//: BODY
 }//: STRUCt
 

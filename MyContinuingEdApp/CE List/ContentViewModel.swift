@@ -19,6 +19,17 @@ extension ContentView {
         @Published var activityToDelete: CeActivity?
         @Published var showDeleteWarning: Bool = false
         
+        // MARK: - CORE DATA
+        // These properties are needed in order to select the proper
+        // view to show in ContentView, depending on whether the
+        // user is brand new to the app or simply hasn't added
+        // any CE activities to it.
+        private let credsController: NSFetchedResultsController<Credential>
+        @Published var allCredentials: [Credential] = []
+        
+        private let activitiesController: NSFetchedResultsController<CeActivity>
+        @Published var allActivities: [CeActivity] = []
+        
         // MARK: - COMPUTED PROPERTIES
         var computedCEActivityList: [CeActivity] {dataController.activitiesForSelectedFilter()}
         
@@ -60,6 +71,41 @@ extension ContentView {
         // MARK: - INIT
         init(dataController: DataController) {
             self.dataController = dataController
+            
+            let credRequest = Credential.fetchRequest()
+            credRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Credential.name, ascending: true)]
+            
+            let activityRequest = CeActivity.fetchRequest()
+            activityRequest.sortDescriptors = [NSSortDescriptor(keyPath: \CeActivity.activityTitle, ascending: true)]
+            
+            credsController = NSFetchedResultsController(
+                fetchRequest: credRequest,
+                managedObjectContext: dataController.container.viewContext,
+                sectionNameKeyPath: nil,
+                cacheName: nil
+            )
+            
+            activitiesController = NSFetchedResultsController(
+                fetchRequest: activityRequest,
+                managedObjectContext: dataController.container.viewContext,
+                sectionNameKeyPath: nil,
+                cacheName: nil
+                )
+            
+            super.init()
+            credsController.delegate = self
+            activitiesController.delegate = self
+            
+            do {
+                try credsController.performFetch()
+                allCredentials = credsController.fetchedObjects ?? []
+                
+                try activitiesController.performFetch()
+                allActivities = activitiesController.fetchedObjects ?? []
+            } catch {
+                print("Failed to load any credentials or activities.")
+            }
+            
         }//: INIT
         
     }//: VIEW MODEL

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G231" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G325" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="ActivityReflection" representedClassName="ActivityReflection" syncable="YES" codeGenerationType="class">
         <attribute name="audioReflections" optional="YES" attributeType="Binary"/>
         <attribute name="completedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -128,6 +128,7 @@
         <attribute name="periodStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reinstateCredential" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="reinstatementHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="renewalHasLateFeeYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewal" inverseEntity="CeActivity"/>
         <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="renewals" inverseEntity="Credential"/>
     </entity>

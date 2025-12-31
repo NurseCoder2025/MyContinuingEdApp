@@ -10,17 +10,14 @@
 
 import SwiftUI
 
-struct ActivityDescriptionSectionView: View {
+struct ActivityExpirationDetailsView: View {
     // MARK: - PROPERTIES
     @ObservedObject var activity: CeActivity
     
     // MARK: - BODY
     var body: some View {
         Group {
-            Section("Description & Activity Expiration") {
-                TextField("Description:", text: $activity.ceDescription, prompt: Text("Enter a description of the activity"), axis: .vertical)
-                    .keyboardType(.default)
-                
+            Section("Activity Expiration") {
                 // MARK: Expiration Toggle
                 Toggle("Expires?", isOn: $activity.activityExpires)
                     
@@ -64,5 +61,5 @@ struct ActivityDescriptionSectionView: View {
 
 // MARK: - PREVIEW
 #Preview {
-    ActivityDescriptionSectionView(activity: .example)
+    ActivityExpirationDetailsView(activity: .example)
 }
