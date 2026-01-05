@@ -547,7 +547,7 @@
 			path = Sidebar;
 			sourceTree = "<group>";
 		};
-		3F2A42C72EA2C75400B095CB /* CE List */ = {
+		3F2A42C72EA2C75400B095CB /* ContentView */ = {
 			isa = PBXGroup;
 			children = (
 				F2F6D5792E2B4FEB00E1FB5F /* ActivityRow.swift */,
@@ -555,7 +555,7 @@
 				3F2064512EB01DCB0036C4B1 /* ContentViewModel.swift */,
 				3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */,
 			);
-			path = "CE List";
+			path = ContentView;
 			sourceTree = "<group>";
 		};
 		3F2A42C82EA2C76B00B095CB /* Details */ = {
@@ -925,7 +925,7 @@
 				3F2A42CC2EA2C7A000B095CB /* Disciplinary Actions */,
 				3F2A42CA2EA2C78C00B095CB /* Renewal Periods */,
 				3F2A42C62EA2C74400B095CB /* Sidebar */,
-				3F2A42C72EA2C75400B095CB /* CE List */,
+				3F2A42C72EA2C75400B095CB /* ContentView */,
 				3F2A42C82EA2C76B00B095CB /* Details */,
 				3F2A42D22EA2E2F800B095CB /* CE Designation */,
 				3F2A42D02EA2E15000B095CB /* Special Category */,
