@@ -34,7 +34,12 @@ struct OnboardingCardView: View {
                    Image(cardImage)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 250, height: 250)
+                        .frame(maxWidth: 600)
+                        .clipShape(
+                            RoundedRectangle(cornerRadius: 10)
+                        )
+                        .padding(.horizontal, 20)
+                       
                 }//: IF LET
                 
                 Text(onBoardingStep.description)

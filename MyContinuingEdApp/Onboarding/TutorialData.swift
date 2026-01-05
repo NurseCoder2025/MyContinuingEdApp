@@ -25,7 +25,7 @@ let newUserTutorial: [TutorialStep] = [
          •  Save activities for later completion
          •  And more!
          """,
-        imageName: nil,
+        imageName: "WelcomeImage_Firefly",
         gradientColors: [firstGradient, secondGradient]
     ),
     TutorialStep(
@@ -34,18 +34,18 @@ let newUserTutorial: [TutorialStep] = [
         description: """
             Begin by entering information for your credential such as license number, issue date, etc.
             """,
-        imageName: nil,
+        imageName: "Add_Credential_screenshot",
         gradientColors: [firstGradient, secondGradient]
     ),
     TutorialStep(
         stepNumber: 3,
         headline: "Add a Renewal Period",
         description: """
-            Tap on the plus "+" button to the right of the credential name to add a renewal period. 
+            Tap on the "Add Renewal Period" or plus "+" button to the right of the credential name to add a renewal period. 
             
             This will store all activities completed between the period's starting and ending dates for the given credential.
             """,
-        imageName: nil,
+        imageName: "Add_RenewalPeriod_screenshot",
         gradientColors: [firstGradient, secondGradient]
     ),
     TutorialStep(
@@ -60,7 +60,7 @@ let newUserTutorial: [TutorialStep] = [
             
             Note: Activities will automatically be assigned to the correct renewal period once they are marked as completed.
             """,
-        imageName: nil,
+        imageName: "Add_CeActivity_screenshot",
         gradientColors: [firstGradient, secondGradient]
     ),
     TutorialStep(

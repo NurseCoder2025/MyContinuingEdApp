@@ -67,6 +67,23 @@ extension ContentView {
             
         } //: DELETE Method
         
+        /// Method for updating the values of allCredentials and allActivities whenever a Credential or
+        /// CeActivity object is added/deleted.  This method will then update the view model properties
+        /// so that UI depending on those properties will be updated.
+        /// - Parameter controller: either the credsController or activitiesController as defined in
+        ///  the ContentView's view model properties list.
+        func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
+            if controller == credsController {
+                if let newCreds = controller.fetchedObjects as? [Credential] {
+                    allCredentials = newCreds
+                }
+            } else if controller == activitiesController {
+                if let newActivities = controller.fetchedObjects as? [CeActivity] {
+                    allActivities = newActivities
+                }
+            }//: IF ELSE
+        } //: controllerDidChangeContent()
+        
         
         // MARK: - INIT
         init(dataController: DataController) {

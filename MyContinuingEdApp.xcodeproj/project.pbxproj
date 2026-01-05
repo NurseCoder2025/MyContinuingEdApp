@@ -515,13 +515,6 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		3F2A42C42EA2C73400B095CB /* Localization */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Localization;
-			sourceTree = "<group>";
-		};
 		3F2A42C52EA2C73C00B095CB /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
@@ -929,7 +922,6 @@
 				3F2A42C82EA2C76B00B095CB /* Details */,
 				3F2A42D22EA2E2F800B095CB /* CE Designation */,
 				3F2A42D02EA2E15000B095CB /* Special Category */,
-				3F2A42C42EA2C73400B095CB /* Localization */,
 				3F2A42D12EA2E22700B095CB /* Utility */,
 				3F2A42CE2EA2DFFB00B095CB /* UI Styles */,
 				F2772B962E1DDAA2006A94BD /* Assets.xcassets */,
