@@ -44,13 +44,16 @@ extension SidebarCredentialsSectionView {
         // MARK: - FUNCTIONS
         
         func controllerDidChangeContent(_ controller: NSFetchedResultsController<any NSFetchRequestResult>) {
-            if let newCreds = controller.fetchedObjects as? [Credential] {
-                allCredentials = newCreds
-            }
             
-            if let newRenewals = controller.fetchedObjects as? [RenewalPeriod] {
-                renewals = newRenewals
-            }
+            if controller == credentialsController {
+                if let newCreds = controller.fetchedObjects as? [Credential] {
+                    allCredentials = newCreds
+                }
+            } else if controller == renewalsController {
+                if let newRenewals = controller.fetchedObjects as? [RenewalPeriod] {
+                    renewals = newRenewals
+                }
+            }//: IF ELSE
             
         }//: controllerDidChangeContent
         
