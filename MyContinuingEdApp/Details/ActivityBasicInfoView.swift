@@ -15,8 +15,10 @@ struct ActivityBasicInfoView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
-    // Bindings to parent view (ActivityView)
-    @State private var showACSelectionSheet: Bool = false
+    // MARK: - CLOSURES
+    // Adding this closure so as to pass up the sheet presentation
+    // to the parent view (ActivityView) for better coordination
+    var showACS: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
     // Property that returns a joined String of all Credential names
@@ -32,7 +34,7 @@ struct ActivityBasicInfoView: View {
     var body: some View {
         Group {
             // MARK: Activity Title
-            Section("Activity Status") {
+            Section("Activity Name & Status") {
                 TextField(
                     "Title:",
                     text: $activity.ceTitle,
@@ -41,13 +43,20 @@ struct ActivityBasicInfoView: View {
                 )
                 .font(.title)
                 
-                // MARK: Modified Date
-                Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
-                    .foregroundStyle(.secondary)
+                Group {
+                    VStack(alignment: .leading) {
+                        // MARK: Modified Date
+                        Text("**Modified:** \(activity.ceActivityModifiedDate.formatted(date: .long, time: .shortened))")
+                            .foregroundStyle(.secondary)
+                        
+                        // MARK: Expiration status of activity
+                        Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
+                            .foregroundStyle(.secondary)
+                    }//: VSTACK
+                }//: GROUP
+                .font(.caption)
+                .multilineTextAlignment(.leading)
                 
-                // MARK: Expiration status of activity
-                Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
-                    .foregroundStyle(.secondary)
             }//: SECTION (title)
             
             Section("Activity For Credential(s)...") {
@@ -58,7 +67,7 @@ struct ActivityBasicInfoView: View {
                     
                     // MARK: Show Credential Selection Sheet button
                     Button {
-                        showACSelectionSheet = true
+                        showACS()
                     } label: {
                         if activity.activityCredentials.isEmpty {
                             Label("Assign Credential", systemImage: "wallet.pass.fill")
@@ -87,16 +96,11 @@ struct ActivityBasicInfoView: View {
                 
             }//: SECTION
         }//: GROUP
-        // MARK: - SHEETS
-        // Credential(s) selection
-        .sheet(isPresented: $showACSelectionSheet) {
-            Activity_CredentialSelectionSheet(activity: activity)
-        }//: SHEET (activity-credential selection)
         
     }//: BODY
 }//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    ActivityBasicInfoView(activity: .example)
+    ActivityBasicInfoView(activity: .example, showACS: {})
 }

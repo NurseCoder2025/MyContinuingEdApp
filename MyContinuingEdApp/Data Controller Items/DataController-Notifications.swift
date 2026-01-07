@@ -206,8 +206,8 @@ extension DataController {
     }//: fetchUpcomingExpiringCeActivities()
     
     
-    /// This function pulls out only a single RenewalPeriod object, if any, that corresponds to what should be the current
-    /// renewal period for all saved credentials
+    /// Method for getting an array of all RenewalPeriod objects for which the current date happens to fall
+    /// between the starting and ending date (including either date as well).
     /// - Returns: array of renewal periods in which the current date falls between the period's start and end dates
     func getCurrentRenewalPeriods() -> [RenewalPeriod] {
         let renewalRequest = RenewalPeriod.fetchRequest()

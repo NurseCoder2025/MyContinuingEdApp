@@ -25,45 +25,54 @@ struct CredentialSheet: View {
     
     // Show an alert if a credential type has not been selected by the user
     @State private var showNoCredTypeAlert: Bool = false
-    
     @State private var showDeleteCredAlert: Bool = false
+    
+    // Properties for bringing up related sheet views
+    @State private var showIssuerListSheet: Bool = false
+    @State private var showSpecialCECatsManagementSheet: Bool = false
     
     // MARK: - BODY
     var body: some View {
     
-        // MARK: - Main Nav VIEW
-        NavigationView {
-            Form {
-                // MARK: BASIC INFO
-                BasicCredentialInfoView(credential: credential)
-                
-                
-                // MARK: ACTIVE Y or N?
-                ActiveCredentialSectionView(credential: credential)
-                
-                // MARK: Issue & Renewal Section
-                CredentialIssueAndRenewalSectionView(credential: credential)
-                   
-                
-                // MARK: Next Expiration
-                // Will be shown to the user ONLY if editing an existing credential
-                CredentialNextExpirationSectionView(credential: credential)
-                    
-                
-               // MARK: Disciplinary Actions
-               CredentialDAISectionView(credential: credential)
-                
-                
-                // MARK: RESTRICTIONS
-                CredentialRestrictionsSectionView(credential: credential)
-                
-                // MARK: Delete Button
-                DeleteObjectButtonView(buttonText: "Delete Credential") {
-                    showDeleteCredAlert = true
+    // MARK: - Main Nav VIEW
+    NavigationView {
+        Form {
+            // MARK: BASIC INFO
+            BasicCredentialInfoView(
+                credential: credential,
+                showIssuerSheet: {
+                    showIssuerListSheet = true
+                },
+                showSpecialCatsSheet: {
+                    showSpecialCECatsManagementSheet = true
                 }
-                   
-                
-            }//: FORM
+            )
+            
+            // MARK: ACTIVE Y or N?
+            ActiveCredentialSectionView(credential: credential)
+            
+            // MARK: Issue & Renewal Section
+            CredentialIssueAndRenewalSectionView(credential: credential)
+            
+            
+            // MARK: Next Expiration
+            // Will be shown to the user ONLY if editing an existing credential
+            CredentialNextExpirationSectionView(credential: credential)
+            
+            
+            // MARK: Disciplinary Actions
+            CredentialDAISectionView(credential: credential)
+            
+            
+            // MARK: RESTRICTIONS
+            CredentialRestrictionsSectionView(credential: credential)
+            
+            // MARK: Delete Button
+            DeleteObjectButtonView(buttonText: "Delete Credential") {
+                showDeleteCredAlert = true
+            }//: DELETE BUTTON
+            
+        }//: FORM
         // MARK: - NAV TITLE
             .navigationTitle(credential.credentialName == "New Credential" ? "Create Credential" : "Credential Info")
            
@@ -85,6 +94,16 @@ struct CredentialSheet: View {
                     
                 
             }//: TOOLBAR
+             // MARK: - SHEETS
+             // Issuer Sheet
+             .sheet(isPresented: $showIssuerListSheet) {
+                 IssuerListSheet(dataController: dataController, credential: credential)
+             }//: SHEET
+             
+             .sheet(isPresented: $showSpecialCECatsManagementSheet) {
+                 SpecialCECatsManagementSheet(dataController: dataController, credential: credential)
+             }//: SHEET
+            
             // MARK: - ALERTS
             .alert("Need Credential Type", isPresented: $showNoCredTypeAlert) {
                 Button("OK") {}

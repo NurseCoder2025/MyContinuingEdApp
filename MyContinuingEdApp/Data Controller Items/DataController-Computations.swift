@@ -11,6 +11,8 @@ import Foundation
 
 extension DataController {
     
+    // MARK: - Time Interval Calculations
+    
     /// Function for calculating the number of days between the current date and the end date for a given renewal period.  This funciton is
     /// intended to be used within the CredentialNextExpirationSectionView and only take the most recent renewal period object.
     /// - Parameter renewals: array of RenewalPeriod objects (should be the renewalsSorted computed property)
@@ -56,34 +58,103 @@ extension DataController {
     }//: calculateRemainingTimeUntilExpiration(renewal)
     
     
-    // MARK: - CE PROGRESS BAR METHODS
-    func calculateRenewalPeriodCEsEarned(renewal: RenewalPeriod) -> Double {
+    // MARK: - CE PROGRESS METHODS
+    // Since CEs can be measured in either clock hours or units, the approach being taken
+    // in this app is to first convert everything into clock hours (required and earned CEs).
+    // Then, after the percentage is calculated, convert the remaining amount of CE clock hours
+    // into units IF indicated by a Credential's measurementDefault (Int16) property of 1 for
+    // clock hours (default) or 2 (units).
+    
+    /// Method that calculates the total number of continuing education clock HOURS that are required for a given
+    /// RenewalPeriod object.  If the user has indicated that additional hours are required for reinstating a credential
+    /// for a given renewal, then those hours will be added to the normal amount (as specified in the Credential object's
+    /// renewalCEsRequired property. Otherwise, only that property value will be returned.
+    /// - Parameter renewal: RenewalPeriod object for which the total # of CE hours is being sought
+    /// - Returns: a Double representing the total number of clock HOURS required for a credential's renewal
+    ///
+    /// If the user has a Credential where continuing education contact hours are measured in units versus hours
+    /// (2 vs 1 property value for the Credential's measurementDefault property), then the conversion will need to be handled by
+    /// a separate method before returning the final result to the user.
+    func calculateTotalRequiredCEsFor(renewal: RenewalPeriod) -> Double {
         guard let renewalCred = renewal.credential else {return 0}
         
-        let requiredCEs = renewalCred.renewalCEsRequired
-        let remainingCEs = calculateRemainingTotalCEsFor(renewal: renewal).ces
-        let earnedCEs = requiredCEs - remainingCEs
+        let credDefault = renewalCred.measurementDefault
+        var requiredClockHours: Double = 0.0
+        var totalHours: Double = 0.0
+        var reinstatementClockHours: Double = 0.0
         
-        return earnedCEs
+        // If the Credential's default CE measurement is units, convert
+        // the required amount to clock hours; otherwise, just use whatever value is in
+        // the Credential's renewalCEsRequired property
+        if credDefault == 2 {
+            requiredClockHours = renewalCred.renewalCEsRequired * renewalCred.defaultCesPerUnit
+            
+        } else  {
+            requiredClockHours = renewalCred.renewalCEsRequired
+        }
+        
+        // Checking the RenewalPeriod's reinstatement related properties to determine
+        // whether or not to add the additional hours to the total or not
+        if renewal.reinstateCredential {
+            switch credDefault {
+            case 1:
+                reinstatementClockHours = renewal.reinstatementHours
+            default:
+                reinstatementClockHours = renewal.reinstatementHours * renewalCred.defaultCesPerUnit
+            }
+            totalHours = requiredClockHours + reinstatementClockHours
+        } else {
+           totalHours = requiredClockHours
+        }
+        
+        return totalHours
+    }//: calculateTotalRequiredCEsFor()
+    
+    /// Method that indicates whether any given RenewalPeriod object is current, meaning that the current date falls within
+    /// the renewal's starting and ending dates.
+    /// - Parameter renewal: RenewalPeriod object for determining whether it is current or not
+    /// - Returns: true if current date is within renewal's starting and ending dates; false if not
+    ///
+    /// This method calls the getCurrentRenewalPeriods() method from the DataController-Notifications file, which collects all
+    /// RenewalPeriod objects that meet the date inclusion criteria and returns them as an array.
+    /// If the RenewalPeriod passed in is found in that array, then this method will return true.
+    func renewalPeriodIsCurrentYN(_ renewal: RenewalPeriod) -> Bool {
+        let allCurrentRenewals = getCurrentRenewalPeriods()
+        let isCurrent: Bool = allCurrentRenewals.contains(where: { $0.periodID == renewal.periodID })
+        return isCurrent
+    }//: renewalPeriodIsCurrentYN()
+    
+    /// Method that computes how many CEs in terms of clock hours has been earned for a given renewal period.
+    /// - Parameter renewal: RenewalPeriod of interest
+    /// - Returns: CE clock hours as a Double
+    func calculateRenewalPeriodCEsEarned(renewal: RenewalPeriod) -> Double {
+        guard renewal.credential != nil else {return 0}
+        
+        return (calculateTotalRequiredCEsFor(renewal: renewal) - calculateRemainingTotalCEsFor(renewal: renewal))
         
     }//: calculateRenewalPeriodCEsEarned
     
-    /// This method calculates the total number of CE hours (or units) that remain needed for a given renewal period.  Only CeActivities
+    /// This method calculates the total number of CE clock hours that remain needed for a given renewal period.  Only CeActivities
     /// which meet the inclusion criteria of being marked as completed, fall under the same renwal period, and have a value > 0 for the cesAwarded
     /// property, will be included in the calculation.
     /// - Parameter renewal: RenewalPeriod object for which remaining CEs are due for (can be a previous or current period)
-    /// - Returns: Tuple with 3 elements: the number of CEs still needed (Double), if the renewal period is the current period (Bool), and
-    ///     whether the amount being returned is in hours or units.
-    func calculateRemainingTotalCEsFor(renewal: RenewalPeriod) -> (ces: Double, current: Bool, unit: Int16) {
-        guard let renewalCred = renewal.credential, renewalCred.renewalCEsRequired > 0 else { return (0.0, false, 1)}
+    /// - Returns: CE clock HOURS as a Double
+    ///
+    /// If the user's credential uses units as the CE measurement, then the returned value will need to be converted from clock hours to units separately.
+    func calculateRemainingTotalCEsFor(renewal: RenewalPeriod) -> Double {
+        guard let renewalCred = renewal.credential, renewalCred.renewalCEsRequired > 0 else { return 0.0 }
+        // shortcut variables
         var requiredCEs: Double = 0.0
-        var requirementUnit: Int16 = 1
         var unitsPerHour: Double = 10.0
        
-        requiredCEs = renewalCred.renewalCEsRequired
-        requirementUnit = renewalCred.measurementDefault
-        unitsPerHour = renewalCred.defaultCesPerUnit
-        // Fetch all relevant CeActivities for RenewalPeriod
+        requiredCEs = calculateTotalRequiredCEsFor(renewal: renewal)
+        if renewalCred.defaultCesPerUnit <= 0 {
+            unitsPerHour = 10.0
+        } else {
+            unitsPerHour = renewalCred.defaultCesPerUnit
+        }
+        
+        // MARK: Fetch all relevant CeActivities for RenewalPeriod
         var activityPredicates: [NSPredicate] = []
         let activityFetch = CeActivity.fetchRequest()
         activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
@@ -97,77 +168,67 @@ extension DataController {
         activityFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: activityPredicates)
         
         let renewalActivities = (try? container.viewContext.fetch(activityFetch)) ?? []
-        guard renewalActivities.isNotEmpty else { return (0.0, false, 1)}
+        guard renewalActivities.isNotEmpty else { return 0.0 }
         
-        // Calculating the number of hours earned
+        // MARK: Calculating the number of hours earned
         var totalCEAwarded: Double = 0.0
         for activity in renewalActivities {
-            // Need to make sure that the CE units entered in the Credential
-            // renewalCEsRequired property is the same as what was entered for the CeActivity,
-            // and if not, convert accordingly.
-            if activity.hoursOrUnits == requirementUnit {
+            // Since this method returns CE remaining in terms of clock hours, need to convert
+            // any activities where CE was awarded in units to clock hours
+            if activity.hoursOrUnits == 2 {
+                let convertedCE = activity.ceAwarded * unitsPerHour
+                totalCEAwarded += convertedCE
+            } else {
                 totalCEAwarded += activity.ceAwarded
-            } else if requirementUnit == 1 && activity.hoursOrUnits == 2 {
-                let cesInHours = activity.ceAwarded * unitsPerHour
-                totalCEAwarded += cesInHours
-            } else if requirementUnit == 2 && activity.hoursOrUnits == 1 {
-                let hoursInCES = activity.ceAwarded / unitsPerHour
-                totalCEAwarded += hoursInCES
             }
-            
-        }
+        }//: LOOP
         
         let remainingCEs: Double = requiredCEs - totalCEAwarded
         
-        // Determining if renewal period is current
-        let allCurrentRenewals = getCurrentRenewalPeriods()
-        let isCurrent: Bool = allCurrentRenewals.contains(where: { $0.periodID == renewal.periodID })
-        
-        return (remainingCEs, isCurrent, requirementUnit)
+        return remainingCEs
         
     }//: calculateRemainingCEHoursFor(renewal)
     
-    /// Method for retrieving the total number of CEs (whether in clock hours or units) earned for a given credential's renewal period. Method
-    /// calls the calculateRemainingSpecialCECatHoursFor method in helping to determine the total.
-    /// - Parameter renewal: RenewalPeriod objec for which the calculation is to be made.
-    /// - Returns: A dictionary consisting of each SpecialCategory object as a key with the total number of CEs earned as a value
-    func calculateSpecialCECatHoursEarnedFor(renewal: RenewalPeriod) -> [SpecialCategory: Double] {
-        guard let renewalCred = renewal.credential else { return [:]}
-        
-        if let assignedSpecialCats = renewalCred.specialCats as? Set<SpecialCategory> {
-            let allRemainingHours = calculateRemainingSpecialCECatHoursFor(renewal: renewal)
-            var allEarnedHours: [SpecialCategory: Double] = [:]
-            
-            for cat in assignedSpecialCats {
-                let earnedHours = cat.requiredHours - (allRemainingHours[cat.name ?? "none"] ?? 0)
-                allEarnedHours[cat] = earnedHours
-            }//: LOOP
-            
-            return allEarnedHours
-            
-        }//: IF LET
-        
-        return [:]
-    }//: calculateSpecialCECatHoursEarnedFor(renewal)
+    /// Method that converts CE clock hours into units for a given RenewalPeriod.
+    /// - Parameters:
+    ///   - hours: Number of clock hours to be converted (Double)
+    ///   - renewal: RenewalPeriod object for which the hours are being converted for
+    /// - Returns: Number of CE units as a Double, defined by the defaultCesPerUnit property for the Renewal's
+    /// Credential
+    ///
+    /// If the defaultCesPerUnit property happens to be 0 or anything less, then an assumed standard value of 10 is
+    /// used to convert the hours to units.
+    func convertHoursToUnits(_ hours: Double, for renewal: RenewalPeriod) -> Double {
+        guard let renewalCred = renewal.credential else { return 0.0 }
+        let conversionRate: Double = renewalCred.defaultCesPerUnit
+        if conversionRate <= 0 {
+            return hours / 10.0
+        } else {
+            return hours / conversionRate
+        }
+    }//: convertHoursToUnits()
     
+    // MARK: - Special CAT Hours
+
     /// This method evaluates all SpecialCategory objects for a given Credential, and for a given RenewalPeriod for that Credential, this
-    /// method returns how many more hours or units the user needs to complete for each SpecialCategory object that is assigned
+    /// method returns how many  clock hours were earned for each SpecialCategory object that is assigned
     /// to the Credential.
     ///
     /// - Parameter renewal: RenewalPeriod object representing the renewal period to be evaluated
-    /// - Returns: a dictionary composed of a String key and a Double value, representing each SpecialCategory for a given Credential,
-    ///     with the name of the SpecialCategory serving as the String key and the computed hours/units still needed as the Double value
-    func calculateRemainingSpecialCECatHoursFor(renewal: RenewalPeriod) -> [String : Double] {
-        guard let renewalCred = renewal.credential else { return [:]}
+    /// - Returns: a dictionary composed of a SpecialCat object key and a Double value
+    ///     as the computed clock hours earned for the given renewal period
+    func calculateCeEarnedForSpecialCatsIn(renewal: RenewalPeriod) -> [SpecialCategory : Double] {
+        guard let renewalCred = renewal.credential, renewalCred.allSpecialCats.count > 0 else { return [:]}
         
         // Defining the dictionary to hold values for each special category assigned
-        var remainingSpecialCatHours: [String: Double] = [:]
+        var earnedSpecialCatHours: [SpecialCategory: Double] = [:]
         
-        // Fetching activities to go through and add up hours/units
-        var activityPredicates: [NSPredicate] = []
+        // Fetching activities to go through and add up hours/units that have a special CE cat assigned
         let activityFetch = CeActivity.fetchRequest()
         activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
         
+        // ** Predicates **
+        var activityPredicates: [NSPredicate] = []
         let activityMatchRenewal = NSPredicate(format: "renewal == %@", renewal)
         let onlyCompletedActivity = NSPredicate(format: "activityCompleted == true")
         let hoursAwardedHasValue = NSPredicate(format: "ceAwarded > %f", 0.0)
@@ -178,42 +239,58 @@ extension DataController {
             activityPredicates.append(assignedSpecialCat)
         activityFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: activityPredicates)
         
+        // Running the fetch request ------------------------------------------------
         let renewalActivities = (try? container.viewContext.fetch(activityFetch)) ?? []
-        guard renewalActivities.isNotEmpty else { return remainingSpecialCatHours }
+        guard renewalActivities.isNotEmpty else { return earnedSpecialCatHours }
         
         // Iterating through all assigned Special Categories for the renewal period's Credential
-        if let assignedSpecialCats = renewalCred.specialCats as? Set<SpecialCategory> {
-            for specialCat in assignedSpecialCats {
-                let catKey: String = specialCat.specialName
+        for specialCat in renewalCred.allSpecialCats {
                 let requiredCatHours: Double = specialCat.requiredHours
+                // Skip the current specialCat if the # of required hours is 0.0 or less
                 guard requiredCatHours > 0.0 else { continue }
+            
                 var catTotal: Double = 0.0
                 for activity in renewalActivities {
-                    // Need to make sure that the CE units entered in the Credential's
-                    // measurementDefault property is the same as what was entered for the CeActivity,
-                    // and if not, convert accordingly.
+                    // Convert any CEs in units to hours for simplicity
+                    // Skip any activities that are not assigned to the current specialCat
                     if activity.specialCat == specialCat {
-                        if renewalCred.measurementDefault == activity.hoursOrUnits {
+                        if activity.hoursOrUnits == 2 {
+                            let convertedCE = activity.ceAwarded * renewalCred.defaultCesPerUnit
+                            catTotal += convertedCE
+                        } else {
                             catTotal += activity.ceAwarded
-                        } else if renewalCred.measurementDefault == 1 && activity.hoursOrUnits == 2 {
-                            let unitsToHours = activity.ceAwarded * renewalCred.defaultCesPerUnit
-                            catTotal += unitsToHours
-                        } else if renewalCred.measurementDefault == 2 && activity.hoursOrUnits == 1 {
-                            let hoursToUnits = activity.ceAwarded / renewalCred.defaultCesPerUnit
-                            catTotal += hoursToUnits
                         }
                     }//: IF
-                }//: LOOP (activity)
-                let remainingCEs: Double = requiredCatHours - catTotal
-                remainingSpecialCatHours[catKey] = remainingCEs
+                }//: LOOP (renewalActivities)
+                earnedSpecialCatHours[specialCat] = catTotal
             }//: LOOP (special cat)
-        }//: IF LET
+        return earnedSpecialCatHours
+    }//: calculateCeEarnedForSpecialCatsIn(renewal)
+    
+    /// Method that loops through all SpecialCategory objects assigned to a Credential for a specific RenewalPeriod and
+    /// calculates the total number of CE clock hours that still need to be earned for that renewal period.
+    /// - Parameter renewal: RenewalPeriod of interest
+    /// - Returns: Dictionary consisting of a SpecialCategory object as the key and the number of clock hours still needed as
+    /// a Double
+    ///
+    /// Like the other CE calculating methods, will need to convert the resulting numbers to units with the convertHoursToUnits
+    /// method if the Credential in question uses units instead of clock hours for measuring CE.
+    func calculateCeRemainingForSpecialCatsIn(renewal: RenewalPeriod) -> [SpecialCategory: Double] {
+        let specialCatsEarned = calculateCeEarnedForSpecialCatsIn(renewal: renewal)
+        guard specialCatsEarned.count > 0 else { return [:] }
         
-        return remainingSpecialCatHours
-    }//: calculateRemainingSpecialCECatHoursFor(renewal)
+        var specialCatsRemaining: [SpecialCategory: Double] = [:]
+        for (specialCat, ceEarned) in specialCatsEarned {
+            let remaining = specialCat.requiredHours - ceEarned
+            specialCatsRemaining[specialCat] = remaining
+        }//: LOOP
+        return specialCatsRemaining
+    }//: calculateCeRemainingForSpecialCatsIn(renewal)
+    
     
     
     // MARK: - CE CHART METHODS
+    
     /// Method that retrieves all CeActivities meeting the four inclusion criteria, groups them by year and month, and then for each month
     /// calculates the total number of CE clock hours earned for that month.
     /// - Returns: Dictionary with the Year-Month Date key and a Double value representing the total # of CE clock hours awarded

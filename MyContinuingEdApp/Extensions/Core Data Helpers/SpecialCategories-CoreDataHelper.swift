@@ -56,7 +56,7 @@ extension SpecialCategory {
         return returnedItems.sorted {
             ($0.ceActivityAddedDate) < ($1.ceActivityAddedDate)
         }
-    }
+    }//: designatedActivities
 }
 
 

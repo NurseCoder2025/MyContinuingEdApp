@@ -12,11 +12,16 @@ import SwiftUI
 struct RenewalTopEditingView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    // Using a LET constant instead of ObservableObject because
+    // this view only needs to read Credential object properties.
     let credential: Credential
     
     // Bindings to parent view (RenewalPeriodView)
     @Binding var reinstatingYN: Bool
     @Binding var reinstateHours: Double
+    
+    // MARK: - CLOSURES
+    var toggleHelp: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -29,6 +34,15 @@ struct RenewalTopEditingView: View {
             return .free
         }
     }//: paidStatus
+    
+    var credCEMeasurement: String {
+        switch credential.measurementDefault {
+        case 1:
+            return "hours"
+        default:
+            return "units"
+        }
+    }//: credCEMeasurement
     
     // MARK: - BODY
     var body: some View {
@@ -52,21 +66,36 @@ struct RenewalTopEditingView: View {
                     )
                 } else {
                     // Reinstatement info
-                    Toggle(isOn: $reinstatingYN) {
-                        Text("Reinstating Credential?")
-                    }
-                    .padding([.leading, .trailing], 30)
-                    
+                    HStack {
+                        Toggle(isOn: $reinstatingYN) {
+                            Text("Reinstating Credential?")
+                        }
+                        .padding([.leading, .trailing], 30)
+                        
+                        Button {
+                            toggleHelp()
+                        } label: {
+                            Label("More Info", systemImage: "questionmark.circle.fill")
+                        }//: BUTTON
+                    }//: HSTACK
                     if reinstatingYN {
-                        HStack {
-                            Text("CE Hours Required:")
-                                .bold()
-                            TextField("CE Hours Needed:",
-                                      value: $reinstateHours,
-                                      formatter: twoDigitDecimalFormatter
-                            )
-                        }//: HSTACK
-                        .padding(.leading, 30)
+                        VStack(spacing: 10) {
+                            HStack {
+                                Text("CE \(credCEMeasurement.uppercased()) Required:")
+                                    .bold()
+                                TextField("CE \(credCEMeasurement.uppercased()) Needed:",
+                                          value: $reinstateHours,
+                                          formatter: twoDigitDecimalFormatter
+                                )
+                            }//: HSTACK
+                            .padding(.leading, 30)
+                            
+                            Text("If your licensing board requires additional \(credCEMeasurement) to renew on top of the normal amount, please enter the extra number of \(credCEMeasurement) you need to complete for this renewal period.")
+                                .multilineTextAlignment(.leading)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            
+                        }//: VSTACK
                     }//: IF
                 }//: IF ELSE
                 
@@ -74,11 +103,18 @@ struct RenewalTopEditingView: View {
             .padding()
             
         }//: GROUP
-    }
-}
+        // MARK: - SHEETS
+        
+    }//: BODY
+}//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    RenewalTopEditingView(credential: .example, reinstatingYN: .constant(true), reinstateHours: .constant(1.0))
+    RenewalTopEditingView(
+        credential: .example,
+        reinstatingYN: .constant(true),
+        reinstateHours: .constant(1.0),
+        toggleHelp: {}
+    )
         .environmentObject(DataController.preview)
 }

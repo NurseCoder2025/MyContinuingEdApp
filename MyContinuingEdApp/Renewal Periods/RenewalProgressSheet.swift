@@ -31,17 +31,37 @@ struct RenewalProgressSheet: View {
         }
     }
     
+    /// Computed property that returns the number of CEs earned for a specific RenewalPeriod (whichever one
+    /// was passed in to the RenewalProgressSheet initializer) as a formatted string value. If the Credential for
+    /// the RenewalPeriod measures CEs in units vs clock hours, then the value will be converted into units.
     var totalCEsEarnedString: String {
         let earned = dataController.calculateRenewalPeriodCEsEarned(renewal: renewal)
-        let amountEarned = max(earned, 0)
+        let amountEarned: Double
+        let earnedString: String
         
-        let earnedString = String(format: "%.2f", amountEarned)
+        // Converting earned amount to units if the Credential measures CEs by units
+        if let renewalCred = renewal.credential, renewalCred.measurementDefault == 2 {
+            let earnedConverted = dataController.convertHoursToUnits(earned, for: renewal)
+            amountEarned = max(earnedConverted, 0)
+        } else {
+            amountEarned = max(earned, 0)
+        }
+        
+        earnedString = String(format: "%.2f", amountEarned)
         return earnedString
-    }
+    }//: totalCEsEarnedString
     
     var totalCEsRemaining: Double {
-       return dataController.calculateRemainingTotalCEsFor(renewal: renewal).ces
-    }
+       let clockHrsRemaining = dataController.calculateRemainingTotalCEsFor(renewal: renewal)
+        
+        // Converting hours to units IF Credential measures CEs in units vs hours
+        if let renewalCred = renewal.credential, renewalCred.measurementDefault == 2 {
+            let convertedHours = dataController.convertHoursToUnits(clockHrsRemaining, for: renewal)
+            return convertedHours
+        } else {
+            return clockHrsRemaining
+        }
+    }//: totalCEsRemaining
     
     var monthsRemaining: Int {
         let calendar = Calendar.current

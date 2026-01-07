@@ -18,8 +18,10 @@ struct NoIssuersView: View {
     let titleText: String = "Add Credential Issuer"
     let message: String = """
     You haven't added a credential issuer yet.
+    
     This is a governing body like a licensing board or similar entity 
     that has the authority to issue a credential. 
+    
     Add one by tapping on the button below.
     """
     let image: String = "questionmark.app.fill"
@@ -28,21 +30,18 @@ struct NoIssuersView: View {
     var addNewIssuer: () -> Void
     // MARK: - BODY
     var body: some View {
-        if #available(iOS 17, *) {
-            ContentUnavailableView {
-                Label(titleText, systemImage: image)
-            } description: {
-                Text(message)
-            }
-        } else {
-            VStack {
+        VStack(spacing: 10) {
+            Group {
+                Image(systemName: image)
+                    .imageScale(.large)
+                    .font(.largeTitle)
                 Text(titleText)
                     .font(.title3)
-                Image(systemName: image)
-                    .font(.largeTitle)
                 Text(message)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.gray.opacity(0.8))
+                    .multilineTextAlignment(.leading)
                     .padding()
+            }//: GROUP
                 
                 
                 // Add issuer button
@@ -55,19 +54,19 @@ struct NoIssuersView: View {
             } //: VSTACK
             // MARK: - TOOLBAR
             .toolbar{
-                Button {
-                    dismiss()
-                } label: {
-                    DismissButtonLabel()
-                }.applyDismissStyle()
-            }
-            // MARK: - SHEETS
+                ToolbarItem(placement: .cancellationAction){
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Dismiss")
+                    }
+                }//: TOOLBAR ITEM
+            }//: TOOLBAR
            
-        } //: IF AVAILABLE
-    }
-}
+    }//: BODY
+}//: STRUCT
 
-// MARK: - PREVIEw
+// MARK: - PREVIEW
 #Preview {
     NoIssuersView(addNewIssuer: {})
 }

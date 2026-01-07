@@ -25,21 +25,27 @@ extension Collection where Element: Equatable {
 extension Date {
      
     // Adding a property that will provide a reasonable future expiration date for new CE activities
+    /// Computed constant date that is set for two years from the current date and time
     static let futureExpiration: Date = Date.now.addingTimeInterval(86400 * 730)
     
     // Property for providing a more reasonable future completion date for new CE activities
+    /// Computed constant date that is set for 6 months from the current date and time
     static let futureCompletion: Date = Date.now.addingTimeInterval(86400 * 180)
     
     // Property for providing a reasonable renewal period start date
+    /// Computed constant date that is set for 6 months prior to the current date and time
     static let renewalStartDate: Date = Date.now.addingTimeInterval(86400 * -180)
     
     // Property for providing a reasonable renewal period end date
+    /// Computed constant date that is set for three years after the current date and time
     static let renewalEndDate: Date = Date.now.addingTimeInterval(86400 * 1095)
     
     // Property for providing a reasonable late fee start date for a given renewal period
+    /// Computed constant date that is set for a month (30 days) prior to the Date.renewalEndDate
     static let renewalLateFeeStartDate: Date = Date.now.addingTimeInterval((86400 * 1095) - (86400 * 30))
     
     // Property for providing a reasonable probationary end date for a given credential disciplinary action item
+    /// Computed constant date that is set for 90 days from the current date and time
     static let probationaryEndDate: Date = Date.now.addingTimeInterval(86400 * 90)
     
     // Getting a year string from a given date

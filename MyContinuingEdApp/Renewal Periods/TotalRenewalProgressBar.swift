@@ -17,18 +17,24 @@ struct TotalRenewalProgressBar: View {
     var totalCEsEarned: Double {
         let earned = dataController.calculateRenewalPeriodCEsEarned(renewal: renewal)
         let required = totalCEsRequired
+        
+        if let renewalCred = renewal.credential {
+            if renewalCred.measurementDefault == 2 {
+               let earnedConverted = dataController.convertHoursToUnits(earned, for: renewal)
+               return min(max(earnedConverted, 0), required)
+            }
+        }
         // Clamp earned between 0 and required
         return min(max(earned, 0), required)
-    }
+    }//: totalCEsEarned
     
     var totalCEsRequired: Double {
         if let renewalCred = renewal.credential {
-            // Ensure required is at least 1 to avoid division by zero and ProgressView errors
             return max(renewalCred.renewalCEsRequired, 1)
         } else {
             return 25.0
         }
-    }
+    }//: totalCEsRequired
     
     var totalProgress: CGFloat {
         CGFloat(totalCEsEarned / totalCEsRequired)

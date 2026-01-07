@@ -44,6 +44,8 @@
 		3F5D03332EB3F3BC00F5B1DC /* DataController-Achievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */; };
 		3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03342EB3F42600F5B1DC /* DataController-Tags.swift */; };
 		3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */; };
+		3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */; };
+		3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
@@ -259,6 +261,8 @@
 		3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Achievements.swift"; sourceTree = "<group>"; };
 		3F5D03342EB3F42600F5B1DC /* DataController-Tags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Tags.swift"; sourceTree = "<group>"; };
 		3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-ComputedProperties.swift"; sourceTree = "<group>"; };
+		3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpInfoSheetView.swift; sourceTree = "<group>"; };
+		3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-SpecialCats.swift"; sourceTree = "<group>"; };
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
@@ -643,6 +647,7 @@
 		3F2A42CE2EA2DFFB00B095CB /* UI Styles */ = {
 			isa = PBXGroup;
 			children = (
+				3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */,
 				3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */,
 				3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */,
 				3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */,
@@ -764,6 +769,7 @@
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
 				3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */,
+				3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */,
 				3F5D03302EB3F35E00F5B1DC /* DataController-Preloading.swift */,
 				3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */,
 				3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */,
@@ -1119,6 +1125,7 @@
 				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
 				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
 				3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */,
+				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
@@ -1127,6 +1134,7 @@
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
+				3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
 				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,

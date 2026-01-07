@@ -136,7 +136,10 @@ struct ContentView: View {
             // MARK: - ON APPEAR
                 .onAppear {
                     askForReview()
-                }
+                    #if DEBUG
+                    print("The # of credentials present: \(viewModel.allCredentials.count)")
+                    #endif
+                }//: ON APPEAR
         }//: IF - ELSE
         
     } //: BODY

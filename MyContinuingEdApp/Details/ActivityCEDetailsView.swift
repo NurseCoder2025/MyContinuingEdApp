@@ -16,9 +16,9 @@ struct ActivityCEDetailsView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
-    // Bindings to parent view (ActivityView)
-    @State private var showCeDesignationSheet: Bool = false
-    @State private var showSpecialCECatAssignmentSheet: Bool = false
+   // MARK: - CLOSURES
+    var showCEDesignationSheet: () -> Void
+    var showSpecialCatSheet: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -39,7 +39,7 @@ struct ActivityCEDetailsView: View {
             // MARK: Designation
             Section("CE Details") {
                 Button {
-                    showCeDesignationSheet = true
+                    showCEDesignationSheet()
                 } label: {
                     HStack {
                         Text("Designated as:")
@@ -68,7 +68,7 @@ struct ActivityCEDetailsView: View {
                             .multilineTextAlignment(.leading)
                         
                         Button {
-                            showSpecialCECatAssignmentSheet = true
+                            showSpecialCatSheet()
                         } label: {
                             HStack {
                                 Text("Category:")
@@ -87,21 +87,15 @@ struct ActivityCEDetailsView: View {
                 
             }//: SECTION
         }//: GROUP
-        // MARK: - SHEETS
-        // CeDesgination selection (i.e. CME, legal CE, etc.)
-        .sheet(isPresented: $showCeDesignationSheet) {
-                CeDesignationSelectionSheet(activity: activity)
-        }//: SHEET (CE Designation)
         
-        // CE Category selection
-        .sheet(isPresented: $showSpecialCECatAssignmentSheet) {
-            SpecialCECatsManagementSheet(dataController: dataController, activity: activity)
-        }//: SHEET (SpecialCECatASsignmentManagementSheet)
-                
     }//: BODY
 }//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    ActivityCEDetailsView(activity: .example)
+    ActivityCEDetailsView(
+        activity: .example,
+        showCEDesignationSheet: {},
+        showSpecialCatSheet: {}
+    )
 }

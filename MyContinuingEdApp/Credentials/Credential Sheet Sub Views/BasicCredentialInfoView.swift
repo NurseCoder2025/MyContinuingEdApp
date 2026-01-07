@@ -18,12 +18,11 @@ struct BasicCredentialInfoView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var credential: Credential
         
-    // Property for bringing up the Issuer List sheet
-    @State private var showIssuerListSheet: Bool = false
-    
-    @State private var showSpecialCECatsManagementSheet: Bool = false
-    
     @State private var showCEMeasurementHelpAlert: Bool = false
+    
+    // MARK: - CLOSURES
+    var showIssuerSheet: () -> Void
+    var showSpecialCatsSheet: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -65,7 +64,7 @@ struct BasicCredentialInfoView: View {
                 
                 // MARK: Credential issuer
                 Button {
-                    showIssuerListSheet = true
+                    showIssuerSheet()
                 } label: {
                     HStack {
                         Text("Issuer: ")
@@ -136,7 +135,7 @@ struct BasicCredentialInfoView: View {
                                 .font(.caption)
                             
                             Button {
-                                showSpecialCECatsManagementSheet = true
+                                showSpecialCatsSheet()
                             } label: {
                                 if let anyAssignedSpecialCats = credential.specialCats as? Set<SpecialCategory> {
                                     if anyAssignedSpecialCats.isEmpty {
@@ -163,15 +162,7 @@ struct BasicCredentialInfoView: View {
             }//: SECTION
             
         }//: GROUP
-        // MARK: - SHEETS
-        // Issuer Sheet
-        .sheet(isPresented: $showIssuerListSheet) {
-            IssuerListSheet(dataController: dataController, credential: credential)
-        }//: SHEET
         
-        .sheet(isPresented: $showSpecialCECatsManagementSheet) {
-            SpecialCECatsManagementSheet(dataController: dataController, credential: credential)
-        }//: SHEET
         
         // MARK: - ALERTS
         .alert("Choosing Default CE Units", isPresented: $showCEMeasurementHelpAlert) {
@@ -185,6 +176,10 @@ struct BasicCredentialInfoView: View {
 
 // MARK: - PREVIEW
 #Preview {
-    BasicCredentialInfoView(credential: .example)
+    BasicCredentialInfoView(
+        credential: .example,
+        showIssuerSheet: {},
+        showSpecialCatsSheet: {}
+    )
     
 }

@@ -111,5 +111,10 @@ extension Credential {
         return credRenewals.sorted {$0.renewalPeriodStart < $1.renewalPeriodStart}
     }
     
+    var allSpecialCats: [SpecialCategory] {
+        let specialCatsForCred = specialCats?.allObjects as? [SpecialCategory] ?? []
+        return specialCatsForCred.sorted { $0.specialName < $1.specialName }
+    }
+    
     
 }

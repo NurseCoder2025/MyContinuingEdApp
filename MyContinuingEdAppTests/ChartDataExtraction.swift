@@ -53,17 +53,16 @@ final class ChartDataExtraction: BaseTestCase {
             let testRenewal = renewals.first!
             
             let renewalRemainingCes = controller.calculateRemainingTotalCEsFor(renewal: testRenewal)
-            let cesToEarn = renewalRemainingCes.ces
-            let renewalIsCurrentYN = renewalRemainingCes.current
-            let ceUnits = renewalRemainingCes.unit
+            let renewalIsCurrentYN = controller.renewalPeriodIsCurrentYN(testRenewal)
+           
             
             // Check result
             XCTAssert(
-                cesToEarn == 30.0,
-                "A total of 10 contact hours was earned, so there should be 30 remaining. However, there are \(cesToEarn) hours remaining."
+                renewalRemainingCes == 30.0,
+                "A total of 10 contact hours was earned, so there should be 30 remaining. However, there are \(renewalRemainingCes) hours remaining."
             )
             XCTAssertTrue(renewalIsCurrentYN == true, "The sample renewal period should be identified as a current renewal period - double check renewal period dates.")
-            XCTAssert(ceUnits == 1, "The units for CEs earned were given as hours or 1.  That should be the unit portion of the returned tuple.")
+            
             
         }//: IF LET
         
@@ -71,7 +70,7 @@ final class ChartDataExtraction: BaseTestCase {
 
     
     /// This test is designed to ensure that the DataController's calculateRemainingSpecialCECatHoursFor() method properly computes the
-    /// total number of CE clock hours or units (depending on the Special Category setting) that still need to be completed for a given Renwal
+    /// total number of CE clock hours that still need to be completed for a given Renwal
     /// Period. Test also checks that the function skips over any CeActivities that are not designated for any special categories.
     func testCalculateRemainingSpecialCECatHoursFor() throws {
         // Create sample Credential
@@ -121,7 +120,7 @@ final class ChartDataExtraction: BaseTestCase {
                 return
             }
             let testRenewal = renewals.first!
-            let specialCatHoursRemaining = controller.calculateRemainingSpecialCECatHoursFor(renewal: testRenewal)
+            let specialCatHoursRemaining = controller.calculateCeRemainingForSpecialCatsIn(renewal: testRenewal)
             XCTAssert(specialCatHoursRemaining.isEmpty)
         }//: IF LET
         
@@ -145,11 +144,11 @@ final class ChartDataExtraction: BaseTestCase {
             }
             
             let testRenewal = renewals.first!
-            let specialCatHoursRemaining = controller.calculateRemainingSpecialCECatHoursFor(renewal: testRenewal)
-            let returnedHours = specialCatHoursRemaining["Test Special Cat"] ?? 0.0
+            let specialCatHoursRemaining = controller.calculateCeRemainingForSpecialCatsIn(renewal: testRenewal)
+            let returnedHours = specialCatHoursRemaining[sampleSpecialCat] ?? 0.0
             print(specialCatHoursRemaining)
             XCTAssertEqual(specialCatHoursRemaining.count, 1)
-            XCTAssert(specialCatHoursRemaining["Test Special Cat"] == 0.5, "The returned value of special CE cat hours remaining should be 0.5, but \(returnedHours) were returned instead.")
+            XCTAssert(specialCatHoursRemaining[sampleSpecialCat] == 0.5, "The returned value of special CE cat hours remaining should be 0.5, but \(returnedHours) were returned instead.")
                
         }//: IF LET
         
@@ -320,7 +319,7 @@ final class ChartDataExtraction: BaseTestCase {
         controller.save()
         
         // Calculating hours earned
-        let specialCatHoursEarned = controller.calculateSpecialCECatHoursEarnedFor(renewal: sampleRenewal)
+        let specialCatHoursEarned = controller.calculateCeEarnedForSpecialCatsIn(renewal: sampleRenewal)
         
         // Checking results - given only 2 activities that were assigned to a special category and awarded
         // 1.0 contact hour in value, the resulting dictionary should be:

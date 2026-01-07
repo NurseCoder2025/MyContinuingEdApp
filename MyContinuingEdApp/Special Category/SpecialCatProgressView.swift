@@ -20,14 +20,29 @@ struct SpecialCatProgressView: View {
     // MARK: - COMPUTED PROPERTIES
     var specialCatName: String {specialCat.specialName}
     
+    /// Computed property that returns a Double representing the number of CEs earned for a specific
+    /// SpecialCategory object (whichever one was passed into the SpecialCatProgressView struct). If the
+    /// Credential to which the SpecialCategory was assigned measures CEs in units vs hours, then the
+    /// CEs earned value is converted into units.
     var totalSpecialCatCEsEarned: Double {
         var earned: Double = 0.0
-        let results = dataController.calculateSpecialCECatHoursEarnedFor(renewal: renewal)
+        let results = dataController.calculateCeEarnedForSpecialCatsIn(renewal: renewal)
         if let value = results.first(where: {$0.key == specialCat})?.value {
             earned = value
         }
-        return earned
-    }
+        // Conveting results to units if the Credential measures CEs in units vs
+        // clock hours
+        if let renewalCred = renewal.credential {
+            if renewalCred.measurementDefault == 2 {
+                let convertedHours = dataController.convertHoursToUnits(earned, for: renewal)
+                return convertedHours
+            } else {
+                return earned
+            }
+        } else {
+            return earned
+        }//: IF LET
+    }//: totalSpecialCatCEsEarned
     
     var totalSpecialCatHoursRequired: Double {specialCat.requiredHours}
     

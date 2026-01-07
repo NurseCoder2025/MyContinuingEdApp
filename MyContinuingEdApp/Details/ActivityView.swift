@@ -15,12 +15,18 @@ struct ActivityView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
+    @State private var showACSelectionSheet: Bool = false
+    @State private var showCeDesignationSheet: Bool = false
+    @State private var showSpecialCECatAssignmentSheet: Bool = false
+    
     // MARK: - BODY
     var body: some View {
         Form {
             // MARK: Basic info
             // (name, credential assignment, description, tags)
-            ActivityBasicInfoView(activity: activity)
+            ActivityBasicInfoView(activity: activity) {
+                showACSelectionSheet = true
+            }
             
             // MARK:  Activity Type & Format
             ActivityTypeAndFormatView(activity: activity)
@@ -32,7 +38,15 @@ struct ActivityView: View {
             ActivityHoursAndCostView(activity: activity)
             
             // MARK: CE Hours & Designation Info
-            ActivityCEDetailsView(activity: activity)
+            ActivityCEDetailsView(
+                activity: activity,
+                showCEDesignationSheet: {
+                    showCeDesignationSheet = true
+                },
+                showSpecialCatSheet: {
+                    showSpecialCECatAssignmentSheet = true
+                }
+            )
             
             // MARK: Activity Completion
             ActivityCompletionView(activity: activity)
@@ -41,6 +55,21 @@ struct ActivityView: View {
             ActivityCertificateImageView(activity: activity)
             
         } //: FORM
+        // MARK: - SHEETS
+        // Credential(s) selection
+        .sheet(isPresented: $showACSelectionSheet) {
+            Activity_CredentialSelectionSheet(activity: activity)
+        }//: SHEET (activity-credential selection)
+        
+        // CeDesgination selection (i.e. CME, legal CE, etc.)
+        .sheet(isPresented: $showCeDesignationSheet) {
+                CeDesignationSelectionSheet(activity: activity)
+        }//: SHEET (CE Designation)
+        
+        // CE Category selection
+        .sheet(isPresented: $showSpecialCECatAssignmentSheet) {
+            SpecialCECatsManagementSheet(dataController: dataController, activity: activity)
+        }//: SHEET (SpecialCECatASsignmentManagementSheet)
         
         // MARK: - DISABLED
         // Stays with ActivityView
