@@ -119,6 +119,30 @@
         <relationship name="credential" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="issuer" inverseEntity="Credential"/>
         <relationship name="state" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="USState" inverseName="issuer" inverseEntity="USState"/>
     </entity>
+    <entity name="ReinstatementInfo" representedClassName="ReinstatementInfo" syncable="YES" codeGenerationType="class">
+        <attribute name="additionalTestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="additionalTestingYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="additionalTestNotes" optional="YES" attributeType="String"/>
+        <attribute name="additionalTestResults" optional="YES" attributeType="String"/>
+        <attribute name="backgroundCheckYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="bcCompletedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="cesCompletedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="documentationNeeded" optional="YES" attributeType="String"/>
+        <attribute name="interviewScheduled" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="interviewYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="reinstatementDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="reinstatementFee" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="reinstatementID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="totalExtraCEs" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="renewal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="reinstatement" inverseEntity="RenewalPeriod"/>
+        <relationship name="rscItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ReinstatementSpecialCat" inverseName="reinstatement" inverseEntity="ReinstatementSpecialCat"/>
+    </entity>
+    <entity name="ReinstatementSpecialCat" representedClassName="ReinstatementSpecialCat" syncable="YES" codeGenerationType="class">
+        <attribute name="cesRequired" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="rscID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="reinstatement" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReinstatementInfo" inverseName="rscItems" inverseEntity="ReinstatementInfo"/>
+        <relationship name="specialCat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="rscItems" inverseEntity="SpecialCategory"/>
+    </entity>
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
         <attribute name="lateFeeAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="lateFeeStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -131,6 +155,7 @@
         <attribute name="renewalHasLateFeeYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewal" inverseEntity="CeActivity"/>
         <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="renewals" inverseEntity="Credential"/>
+        <relationship name="reinstatement" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ReinstatementInfo" inverseName="renewal" inverseEntity="ReinstatementInfo"/>
     </entity>
     <entity name="SpecialCategory" representedClassName="SpecialCategory" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>
@@ -140,6 +165,7 @@
         <attribute name="specialCatID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="specialCat" inverseEntity="CeActivity"/>
         <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="specialCats" inverseEntity="Credential"/>
+        <relationship name="rscItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReinstatementSpecialCat" inverseName="specialCat" inverseEntity="ReinstatementSpecialCat"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

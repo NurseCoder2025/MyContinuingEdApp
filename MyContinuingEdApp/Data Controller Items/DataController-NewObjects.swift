@@ -169,7 +169,6 @@ extension DataController {
         return newActivity
     }
     
-    
     /// Method for creating, saving, and returning a new SpecialCategory object with general default properties
     /// - Returns: SpecialCategory object
     func createNewSpecialCategory() -> SpecialCategory {
@@ -184,7 +183,6 @@ extension DataController {
         return newSpecialCategory
         
     }//: SpecialCategory
-    
     
     /// Creating a new renewal period for which CEs need to be earned
     func createRenewalPeriod() -> RenewalPeriod {
@@ -211,7 +209,6 @@ extension DataController {
         save()
         return newReflection
     }
-    
     
     /// Function to create a new credential object with a default name value.
     /// - Returns: Credential object with default name value
@@ -249,7 +246,6 @@ extension DataController {
         return newIssuer
     }
     
-    
     /// Function to create a new DisciplinaryActionItem object to be associated with a given Credential. Object creation will take place
     ///  in the DisciplinaryActionListSheet or from the NoDAI view when the appropriate button is tapped.
     /// - Returns: DisciplinaryActionItem object with a default name of "New Action", auto-generated UUID, and default setting of
@@ -265,6 +261,49 @@ extension DataController {
         save()
         return newDAI
     }
+    
+    /// Method for creating a new ReinstatementInfo object with values assigned to two properties: reinstatementID and renewal (with the
+    /// renewal argument value).
+    /// - Parameter renewal: RenewalPeriod for which credential reinstatement is needed
+    /// - Returns: ReinstatementInfo object
+    func createNewReinstatementInfo(renewal: RenewalPeriod) -> ReinstatementInfo {
+        let context = container.viewContext
+        
+        let newRInfo = ReinstatementInfo(context: context)
+        newRInfo.reinstatementID = UUID()
+        newRInfo.renewal = renewal
+        
+        save()
+        return newRInfo
+    }//: createNewReinstatementInfo
+    
+    /// Method for creating a new ReinstatementSpecialCat object with values assigned to both relationship properties (reinstatement & specialCat)
+    /// as well as the id property (rscID).
+    /// - Parameters:
+    ///   - reinstatement: ReinstatementInfo object for which this object is to be assigned to
+    ///   - specialCat: SpecialCategory for which extra CEs must be earned for
+    /// - Returns: ReinstatementSpecialCat object
+    ///
+    /// The only property that needs to be modified after creating this object is the cesRequired one, which the user can input the exact number
+    /// of CEs that are required for this category in order to reinstate their credential.
+    ///
+    /// Whenever a credential lapses and must be renewed, part of the process may involve extra CE requirements set by the credential's
+    /// governing body.  In addition to requiring a certain number of CE hours overall (on any topic related to the credential), the governing body
+    /// may also specify that the credential holder get so many CEs in specific areas such as ethics, law, or other area applicable to the
+    /// credential.  Such requirements are likely already part of the regular renewal process, so if the user is a paid user of the app and added
+    /// SpecialCategory objects to a Credential, then they can be assigned to the ReinstatementSpecCat along with however many CEs the
+    /// licensing board requires.
+    func createNewReinstatementSpecCat(reinstatement: ReinstatementInfo, specialCat: SpecialCategory) -> ReinstatementSpecialCat {
+        let context = container.viewContext
+        
+        let newRSpecCat = ReinstatementSpecialCat(context: context)
+        newRSpecCat.rscID = UUID()
+        newRSpecCat.reinstatement = reinstatement
+        newRSpecCat.specialCat = specialCat
+        
+        save()
+        return newRSpecCat
+    }//: createNewReinstatementSpecCat()
     
     
 }//: DataController

@@ -59,6 +59,12 @@
 		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
 		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
 		3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */; };
+		3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */; };
+		3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */; };
+		3F83C7C32F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */; };
+		3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */; };
+		3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */; };
+		3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
@@ -277,6 +283,12 @@
 		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
 		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
 		3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxLabelView.swift; sourceTree = "<group>"; };
+		3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementSpecialCat-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementInfoSheet.swift; sourceTree = "<group>"; };
+		3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeAndDeadlineView.swift; sourceTree = "<group>"; };
+		3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeRequirementsView.swift; sourceTree = "<group>"; };
+		3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSCRowView.swift; sourceTree = "<group>"; };
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightCentral.swift; sourceTree = "<group>"; };
@@ -733,6 +745,8 @@
 		3F2A42D72EA2E67000B095CB /* Core Data Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */,
+				3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */,
 				F2BC94AA2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift */,
 				F2FBAAE42E5FDCDB00348AAA /* ActivityType-CoreDataHelper.swift */,
 				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
@@ -801,6 +815,17 @@
 				3FE90A1D2EC7CA570010FB12 /* MoneySpentByMonthView.swift */,
 			);
 			path = Charts;
+			sourceTree = "<group>";
+		};
+		3F83C7C12F0F3C1E00FB4CF2 /* Reinstatement */ = {
+			isa = PBXGroup;
+			children = (
+				3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */,
+				3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */,
+				3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */,
+				3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */,
+			);
+			path = Reinstatement;
 			sourceTree = "<group>";
 		};
 		3F9520A32EB167AF00F1B498 /* Tags Section */ = {
@@ -907,6 +932,7 @@
 		F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */ = {
 			isa = PBXGroup;
 			children = (
+				3F83C7C12F0F3C1E00FB4CF2 /* Reinstatement */,
 				3FD74F782F033771002360AB /* Onboarding */,
 				3FE3723A2ECE552400CCF0FC /* Store */,
 				3F817DD52EC6755B00791223 /* Charts */,
@@ -1111,6 +1137,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F83C7C32F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift in Sources */,
 				F2CFCE622E70D41D00443C5C /* NoCredentialsButtonView.swift in Sources */,
 				F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */,
 				F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */,
@@ -1160,6 +1187,7 @@
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */,
+				3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
 				3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */,
@@ -1196,6 +1224,7 @@
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
+				3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */,
 				3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */,
@@ -1204,6 +1233,7 @@
 				3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */,
 				3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */,
 				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
+				3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */,
 				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
 				F2612A212E874D6500CC463D /* ActivityExpirationDetailsView.swift in Sources */,
@@ -1232,7 +1262,9 @@
 				3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */,
 				3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
+				3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
+				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
 				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,

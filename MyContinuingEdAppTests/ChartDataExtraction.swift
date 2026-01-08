@@ -11,6 +11,13 @@ import XCTest
 
 final class ChartDataExtraction: BaseTestCase {
     
+    /// Test for determining whether the DataController's calculateRemainingTotalCEsFor method
+    /// properly returns the correct number of CEs that need to be earned for a given RenewalPeriod.
+    ///
+    /// Given: sample credential, sample renewal, and 10 sample CE Actvitiies
+    /// When: 40 CE clock hours are required for renewal and each of the 10 activities was
+    /// completed for 1.0 hour each (10.0 total)
+    /// Then: method should return a total of 30.0 hours remaining
     func testCesRemainingCalculation() throws {
         // Create sample Credential
         let sampleCred: Credential = Credential(context: context)
