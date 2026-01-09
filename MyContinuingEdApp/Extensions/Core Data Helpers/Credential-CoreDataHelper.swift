@@ -5,6 +5,7 @@
 //  Created by Kamino on 8/28/25.
 //
 
+import CoreData
 import Foundation
 
 extension Credential {
@@ -117,4 +118,29 @@ extension Credential {
     }
     
     
-}
+}//: EXTENSION
+
+// MARK: - OTHER
+extension Credential {
+    
+    /// Computed property designed to indicate whether a credential has potentially lapsed or not.
+    ///
+    /// ** Assumptions: **
+    /// This property assumes that if there are no RenewalPeriods currently assigned to the Credential then the
+    /// credential is active unless otherwise indicated by the user in the Credential settings.  If there are RenewalPeriods
+    /// assigned to the Credential and at least one of them is returned by the DataController's getCurrentRenewalPeriods()
+    /// method, then it is assumed that the credential is active and the user has time to work on getting CEs done.
+    var isLapsed: Bool {
+        guard self.allRenewals.isNotEmpty else { return false }
+        
+        let controller = DataController(inMemory: true)
+        let currentRenPeriods = controller.getCurrentRenewalPeriods()
+        for renewal in currentRenPeriods {
+            if self.allRenewals.contains(where: { $0.periodID == renewal.periodID }) {
+                return false
+            }//: IF
+        }//: LOOP
+        return true
+    }//: isLapsed
+    
+}//: EXTENSION

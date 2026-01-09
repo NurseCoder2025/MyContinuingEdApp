@@ -31,16 +31,20 @@ struct RenewalPeriodView: View {
     @State private var lateFeeDate: Date = Date.renewalLateFeeStartDate
     @State private var lateFeeAmount: Double = 50.0
     
+    // Reinstatement Properties
+    @State private var reinstatementForRenewal: ReinstatementInfo?
+    
     // Reinstatement Help Properties
     @State private var showReinstatementHelp: Bool = false
     let reinstatementHeader: String = "Reinstatement Help"
     let resinstatementBody: String = """
         You only need to toggle this switch if:
-        > Your credential lapsed due to one of the following reasons:
-            1.) Not renewed due to personal reasons
-            2.) You placed credential on inactive status
         
-        > You now wish to reinstate your crdential so you can begin using it again during the specified renewal period. In most instances licensing boards will require an additional amount of continuing education to be completed prior to reinstating the credential. 
+        1. Your credential lapsed due to one of the following reasons:
+            > Not renewed due to personal reasons
+            > You placed credential on inactive status
+        
+        2. You now wish to reinstate your crdential so you can begin using it again during the specified renewal period. In most instances licensing boards will require an additional amount of continuing education to be completed prior to reinstating the credential. 
         
         This amount is in addition to the normal hours/units required for the current renewal cycle.  Enter this extra amount and the app will allow you to track your progress in meeting this additional requirement. 
         
@@ -63,7 +67,12 @@ struct RenewalPeriodView: View {
                             reinstateHours: $reinstateHours,
                             toggleHelp: {
                                 showReinstatementHelp = true
-                            }
+                            }, showRIS: {
+                                if let existingRenewal = renewalPeriod {
+                                    reinstatementForRenewal = dataController.createNewReinstatementInfo(renewal: existingRenewal)
+                                    
+                                }//: IF LET
+                            }//: showRIS
                         )
                         
                         RenewalPeriodDatesView(
@@ -107,6 +116,12 @@ struct RenewalPeriodView: View {
             )
         }//: SHEET
         .presentationDetents([.medium, .large])
+        
+        .sheet(item: $reinstatementForRenewal) {_ in
+            if let reinstatement = reinstatementForRenewal {
+                ReinstatementInfoSheet(reinstatement: reinstatement)
+            }//: IF LET
+        }//: SHEET
             
     } //: BODY
     

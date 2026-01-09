@@ -14,19 +14,50 @@ struct ReinstatementInfoSheet: View {
     
     @ObservedObject var reinstatement: ReinstatementInfo
     
+    @State private var showSpecialCatManagementSheet: Bool = false
+    
     // MARK: - BODY
     var body: some View {
-        Form {
-            // Fees & Deadline Info
-            FeeAndDeadlineView(reinstatement: reinstatement)
-            
-            // CE Requirements
-            
-            // Documentation needed
-            
-            // Additional items (background check, interview, test)
-            
-        }//: FORM
+        NavigationView {
+            VStack {
+                HStack {
+                    Button {
+                        // TODO: Add action(s)
+                        dismiss()
+                    } label: {
+                        Text("Dismiss")
+                    }//: BUTTON
+                    Spacer()
+                }//: HSTACK
+                .padding(.leading, 20)
+                Form {
+                    // Fees & Deadline Info
+                    FeeAndDeadlineView(reinstatement: reinstatement)
+                    
+                    // CE Requirements
+                    CeRequirementsView(reinstatement: reinstatement) {
+                        showSpecialCatManagementSheet = true
+                    }
+                    
+                    // Documentation needed
+                    ReinstatementDocumentationView(reinstatement: reinstatement)
+                    
+                    // Additional items (background check, interview, test)
+                    ReinstatementAdditionalItemsView(reinstatement: reinstatement)
+                    
+                }//: FORM
+            }//: VSTACK
+            .navigationTitle("Reinstatement Information")
+            .navigationBarTitleDisplayMode( .inline)
+
+        }//: NAV VIEW
+        // MARK: - SHEETS
+        .sheet(isPresented: $showSpecialCatManagementSheet) {
+            if let cred = reinstatement.lapsedCredential {
+                SpecialCECatsManagementSheet(dataController: dataController, credential: cred)
+            }//: IF LET
+        }//: SHEET
+        
     }//: BODY
 }//: STRUCT
 

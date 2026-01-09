@@ -277,8 +277,10 @@ extension DataController {
         return newRInfo
     }//: createNewReinstatementInfo
     
-    /// Method for creating a new ReinstatementSpecialCat object with values assigned to both relationship properties (reinstatement & specialCat)
+    /// Method for creating a new ReinstatementSpecialCat object with values assigned to
+    /// both relationship properties (reinstatement & specialCat)
     /// as well as the id property (rscID).
+    /// **This method requires both a ReinstatementInfo object and a SpecialCategory object **
     /// - Parameters:
     ///   - reinstatement: ReinstatementInfo object for which this object is to be assigned to
     ///   - specialCat: SpecialCategory for which extra CEs must be earned for
@@ -304,6 +306,26 @@ extension DataController {
         save()
         return newRSpecCat
     }//: createNewReinstatementSpecCat()
+    
+    /// Method for creating a new ReinstatementSpecialCat object with a nul specialCat property
+    /// so that it can be assigned by the user later in the UI.
+    /// - Parameter reinstatement: ReinstatementInfo object that will be assigned to it
+    /// - Returns: ReinstatementSpecialCat object
+    ///
+    /// This method is nearly identical to the createNewReinstatementSpecCat method in
+    /// DataController, except for the fact that the specialCat property remains nul.  Use this
+    /// method for creating a ReinstatementSpecialCat object within the context of the UI where
+    /// the user needs to select a SpecialCategory object.
+    func createNewRSCItemFor(reinstatement: ReinstatementInfo) -> ReinstatementSpecialCat {
+        let context = container.viewContext
+        
+        let newRSCItem = ReinstatementSpecialCat(context: context)
+        newRSCItem.rscID = UUID()
+        newRSCItem.reinstatement = reinstatement
+        
+        save()
+        return newRSCItem
+    }//: createNewRSCItemFor(reinstatement)
     
     
 }//: DataController

@@ -18,14 +18,15 @@ struct HelpInfoSheetView: View {
     var body: some View {
         VStack(spacing: 10) {
             Text(headerText)
-                .font(.title3)
+                .font(.title).bold()
                 .padding(.horizontal, 10)
+                .padding(.top, 20)
             
             Divider()
             ScrollView(.vertical) {
                 Text(bodyText)
                     .multilineTextAlignment(.leading)
-                    .padding(.horizontal, 10)
+                    .padding(.horizontal, 20)
                 
                 // MARK: OK Button
                 Button {

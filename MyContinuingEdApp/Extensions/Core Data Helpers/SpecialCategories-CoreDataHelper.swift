@@ -12,6 +12,7 @@ import Foundation
 // Purpose: Creating computed properties to help with managing Core Data
 // optionals and Preview
 
+// MARK: - UI Helpers
 extension SpecialCategory {
     
     var specialName: String {
@@ -28,10 +29,10 @@ extension SpecialCategory {
         get {catDescription ?? ""}
         set {catDescription = newValue}
     }
-}
+}//: EXTENSION
 
 
-// MARK: - Creating example category
+// MARK: - EXAMPLES & PLACEHOLDERS
 extension SpecialCategory {
     
     static var example: SpecialCategory {
@@ -44,9 +45,27 @@ extension SpecialCategory {
         sampleCat.catDescription = "Ohio Nursing Laws & Rules"
         
         return sampleCat
-    }
-}
+    }//: example
+    
+    /// Computed property that creates a static SpecialCategory object for use in UI controls
+    /// such as Pickers as a placeholder value only.
+    static var placeholder: SpecialCategory {
+        let controller = DataController(inMemory: true)
+        let context = controller.container.viewContext
+        
+        let sampleCat = SpecialCategory(context: context)
+        sampleCat.specialCatID = UUID()
+        sampleCat.name = "Select category..."
+        sampleCat.abbreviation = ""
+        sampleCat.catDescription = "Placeholder item ONLY"
+        
+        controller.save()
+        return sampleCat
+    }//: placeholder
+    
+}//: EXTENSION
 
+// MARK: - Relationships
 // Adding a computed property that will create an array of
 // CeActivities for a given Special Category
 extension SpecialCategory {
@@ -57,7 +76,10 @@ extension SpecialCategory {
             ($0.ceActivityAddedDate) < ($1.ceActivityAddedDate)
         }
     }//: designatedActivities
-}
+    
+    
+    
+}//: EXTENSION
 
 
 // MARK: - Special Category Computed Label Name

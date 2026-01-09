@@ -106,6 +106,9 @@
 		3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */; };
 		3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */; };
 		3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */; };
+		3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */; };
+		3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */; };
+		3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -330,6 +333,9 @@
 		3FE90A212EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalPeriodNavLabelView.swift; sourceTree = "<group>"; };
 		3FE90A232EC7DCCB0010FB12 /* RenewalProgressSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressSheet.swift; sourceTree = "<group>"; };
 		3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-ObjectRelationships.swift"; sourceTree = "<group>"; };
+		3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementDocumentationView.swift; sourceTree = "<group>"; };
+		3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementAdditionalItemsView.swift; sourceTree = "<group>"; };
+		3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsToAddView.swift; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -682,6 +688,7 @@
 		3F2A42D02EA2E15000B095CB /* Special Category */ = {
 			isa = PBXGroup;
 			children = (
+				3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */,
 				3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */,
 				F2B580152E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift */,
 				3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */,
@@ -777,6 +784,7 @@
 			children = (
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
+				3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */,
 				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */,
 				3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */,
@@ -785,7 +793,6 @@
 				3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */,
 				3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */,
 				3F5D03302EB3F35E00F5B1DC /* DataController-Preloading.swift */,
-				3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */,
 				3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */,
 				3F5D03342EB3F42600F5B1DC /* DataController-Tags.swift */,
 				3F5D032C2EB3F27300F5B1DC /* DataController-SearchFilter.swift */,
@@ -820,6 +827,8 @@
 		3F83C7C12F0F3C1E00FB4CF2 /* Reinstatement */ = {
 			isa = PBXGroup;
 			children = (
+				3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */,
+				3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */,
 				3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */,
 				3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */,
 				3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */,
@@ -1244,6 +1253,7 @@
 				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
 				3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
+				3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
 				3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */,
@@ -1283,6 +1293,7 @@
 				F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */,
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
 				3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */,
+				3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */,
 				F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */,
 				3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */,
 				3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */,
@@ -1315,6 +1326,7 @@
 				3F1209F92ED67FBF00D8D93A /* DataController-StoreKit.swift in Sources */,
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
+				3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */,
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
 				3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */,
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,

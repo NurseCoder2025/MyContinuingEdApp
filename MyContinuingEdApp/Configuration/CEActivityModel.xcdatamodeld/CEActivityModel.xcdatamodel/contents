@@ -127,6 +127,7 @@
         <attribute name="backgroundCheckYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="bcCompletedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="cesCompletedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="cesCompletedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="documentationNeeded" optional="YES" attributeType="String"/>
         <attribute name="interviewScheduled" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="interviewYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>

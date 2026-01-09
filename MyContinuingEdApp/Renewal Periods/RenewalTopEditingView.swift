@@ -22,6 +22,7 @@ struct RenewalTopEditingView: View {
     
     // MARK: - CLOSURES
     var toggleHelp: () -> Void
+    var showRIS: () -> Void
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -79,23 +80,13 @@ struct RenewalTopEditingView: View {
                         }//: BUTTON
                     }//: HSTACK
                     if reinstatingYN {
-                        VStack(spacing: 10) {
-                            HStack {
-                                Text("CE \(credCEMeasurement.uppercased()) Required:")
-                                    .bold()
-                                TextField("CE \(credCEMeasurement.uppercased()) Needed:",
-                                          value: $reinstateHours,
-                                          formatter: twoDigitDecimalFormatter
-                                )
-                            }//: HSTACK
-                            .padding(.leading, 30)
-                            
-                            Text("If your licensing board requires additional \(credCEMeasurement) to renew on top of the normal amount, please enter the extra number of \(credCEMeasurement) you need to complete for this renewal period.")
-                                .multilineTextAlignment(.leading)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            
-                        }//: VSTACK
+                        Button {
+                            showRIS()
+                        } label: {
+                            Text("Edit Reinstatement Details")
+                        }//: BUTTON
+                        .buttonStyle(.bordered)
+                        
                     }//: IF
                 }//: IF ELSE
                 
@@ -103,7 +94,6 @@ struct RenewalTopEditingView: View {
             .padding()
             
         }//: GROUP
-        // MARK: - SHEETS
         
     }//: BODY
 }//: STRUCT
@@ -114,7 +104,8 @@ struct RenewalTopEditingView: View {
         credential: .example,
         reinstatingYN: .constant(true),
         reinstateHours: .constant(1.0),
-        toggleHelp: {}
+        toggleHelp: {},
+        showRIS: {}
     )
         .environmentObject(DataController.preview)
 }

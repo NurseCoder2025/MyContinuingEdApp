@@ -67,3 +67,25 @@ extension ReinstatementSpecialCat {
     }//: example
     
 }//: EXTENSION
+
+// MARK: - RELATIONSHIPS
+extension ReinstatementSpecialCat {
+    
+    /// Computed property which returns an array of all special categories which have been assigned
+    /// to the Credential that is being reinstated from within a given renewal period.
+    ///
+    /// This property is used primarily within the RSCRowView and works backward from the
+    /// ReinstatementSpecialCat object to its parent, ReinstatementInfo, and from there to another
+    /// parent object, RenewalPeriod, and lastly, from there to the final parent, Credential.  If a value
+    /// exists in all of those properties (relationships have been assigned), then the allSpecialCats
+    /// property in the Credential extension will be used to return an array of any SpeciallCategory
+    /// objects that are assigned to it.  Otherwise, an empty array will be returned.
+    var specialCatsToSelectFrom: [SpecialCategory] {
+        if let reItem = self.reinstatement, let reRenewal = reItem.renewal, let reCred = reRenewal.credential {
+            return reCred.allSpecialCats
+        } else {
+            return []
+        }
+    }//: specialCatsToSelectFrom
+    
+}//: EXTENSION

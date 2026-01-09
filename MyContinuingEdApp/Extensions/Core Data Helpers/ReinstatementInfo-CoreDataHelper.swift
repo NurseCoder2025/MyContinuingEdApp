@@ -63,6 +63,23 @@ extension ReinstatementInfo {
         return result.sorted()
     }//: requiredSpecialCatHours
     
+    /// Computed property for accessing the Credential that has lapsed and needs to be renewed by the user.
+    /// ** Optional Data Type **
+    ///
+    /// The app is structured so that reinstatement of a credential is handled within the context of a RenewalPeriod,
+    /// as that is how licensing boards typically handle credential reinstatements.  So, if a Credential expires and is
+    /// not renewed by the user, then later if they wish to reinstate it they must meet any preleminary requirements
+    /// for reinstatement by the issuing body in addition to current renewal requirements. Given that all RenewalPeriods
+    /// should have a Credential assigned to them, the result of this computed property should not be nil. However,
+    /// because these relationships are CoreData optionals, making the data type optional as well.
+    var lapsedCredential: Credential? {
+        if let probRenewal = self.renewal, let probCred = probRenewal.credential {
+            return probCred
+        } else {
+            return nil
+        }
+    }//: lapsedCredential
+    
     // MARK: - EXAMPLE
     static var example: ReinstatementInfo {
         let controller = DataController(inMemory: true)

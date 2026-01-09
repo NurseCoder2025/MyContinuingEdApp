@@ -13,20 +13,22 @@ struct FeeAndDeadlineView: View {
     // MARK: - BODY
     var body: some View {
         Section("Fee & Deadline Info") {
-            HStack {
+            HStack(spacing: 75) {
                 Text("Reinstatement Fee:")
                     .bold()
-                
+                    .multilineTextAlignment(.leading)
                 TextField(
                     "Reinstatement Fee",
                     value: $reinstatement.reinstatementFee,
                     formatter: currencyFormatter
                 )//: TEXTFIELD
+                .frame(maxWidth: 50)
                 .keyboardType(.decimalPad)
                 .onSubmit {
                     dismissKeyboard()
                 }//: ON SUBMIT
             }//: HSTACK
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             DatePicker(
                 "Reinstatement Deadline",

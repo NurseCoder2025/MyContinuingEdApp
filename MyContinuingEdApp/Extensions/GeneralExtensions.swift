@@ -16,10 +16,18 @@ extension Collection {
 }
 
 extension Collection where Element: Equatable {
+    
+    /// Method that performs the opposite of the .contains method. If the collection does NOT contain the given item,
+    /// true will be returned; otherwise, false.
+    /// - Parameter element: Any data type that conforms to Equatable
+    /// - Returns: True if the element is not present in the collection; otherwise false
+    ///
+    /// The purpose of this method is to enhance code readability by avoiding the use of  !item.contains syntax.  This method is part
+    /// of an extension on the Collection protocol, so any conforming member that has elements conforming to equatable can use it.
     func doesNOTContain(_ element: Element) -> Bool {
         return !self.contains(element)
     }
-}
+}//: EXTENSION (collection)
 
 
 extension Date {
