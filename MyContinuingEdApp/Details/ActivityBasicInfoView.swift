@@ -61,7 +61,6 @@ struct ActivityBasicInfoView: View {
             
             // MARK: Start & Ending Times
             DisclosureGroup("Starting & Ending Times") {
-                Section("Activity Date(s)") {
                     VStack(spacing: 10) {
                         DatePicker(
                             "Starts On",
@@ -77,8 +76,6 @@ struct ActivityBasicInfoView: View {
                         "Ends On",
                         selection: $activity.ceEndTime, displayedComponents: [.date, .hourAndMinute]
                     )//: DATE PICKER
-                    
-                }//: SECTION
             }//: DISCLOSURE GROUP
             
             // MARK: Credentials
