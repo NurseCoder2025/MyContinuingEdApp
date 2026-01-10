@@ -12,7 +12,7 @@ struct FeeAndDeadlineView: View {
     @ObservedObject var reinstatement: ReinstatementInfo
     // MARK: - BODY
     var body: some View {
-        Section("Fee & Deadline Info") {
+        Section {
             HStack(spacing: 75) {
                 Text("Reinstatement Fee:")
                     .bold()
@@ -36,7 +36,12 @@ struct FeeAndDeadlineView: View {
                 displayedComponents: .date
             )//: DATEPICKER
             
+        } header: {
+            Text("Fee & Deadline Info")
+        } footer: {
+            Text("If your credential's governing body doesn't set a reinstatement deadline for you, then you can enter a date when you want to complete the reinstatement process. Ce Cache will remind you of this date.")
         }//: SECTION
+        
     }//: BODY
 }//: STRUCT
 

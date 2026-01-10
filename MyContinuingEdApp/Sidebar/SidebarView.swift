@@ -164,8 +164,10 @@ struct SidebarView: View {
             
             if paidStatus != .free {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+                    .presentationDetents([.large])
             } else if paidStatus == .free && currentRenewalNum < 1 {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
+                    .presentationDetents([.large])
             } else {
                 UpgradeToPaidSheet(itemMaxReached: "renewals")//: UpgradeToPaidSheet
             }//: IF - ELSE

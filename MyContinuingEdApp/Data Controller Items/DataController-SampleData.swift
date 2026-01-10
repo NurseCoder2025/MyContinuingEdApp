@@ -169,7 +169,7 @@ extension DataController {
         try? viewContext.save()
         
         // assigning each activity to the sample renewal period
-        assignActivitiesToRenewalPeriod()
+        assignActivitiesToRenewalPeriods()
         
     } //: createSampelData()
     

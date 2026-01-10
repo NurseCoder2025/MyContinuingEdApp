@@ -16,17 +16,30 @@ struct CeRequirementsView: View {
     @State private var showAddRequiredCatsRows: Bool = false
     @State private var showNoCatsToAddView: Bool = false
     
+    // MARK: - COMPUTED PROPERTIES
+    var credCEMeasurement: String {
+        if let cred = reinstatement.lapsedCredential {
+            switch cred.measurementDefault {
+            case 1:
+                return "hours"
+            default:
+                return "units"
+            }//: SWITCH
+        } else {
+            return "hours"
+        }
+    }//: credCEMeasurement
+    
     // MARK: - CLOSURES
     /// Closure for passing up the closure in RSCRowView to ReinstatementInfoSheet where the SpecialCatManagementSheet will be presented.
     var addSpecialCategory: () -> Void
     
     // MARK: - BODY
     var body: some View {
-        
         // MARK: TOTAL HOURS
-        Section("Required Continuing Education") {
+        Section {
             HStack(spacing: 45) {
-                Text("Total Extra Hours Required:")
+                Text("Total Extra \(credCEMeasurement.uppercased()) Required:")
                     .bold()
                 
                 TextField(
@@ -41,6 +54,10 @@ struct CeRequirementsView: View {
                 }//: ON SUBMIT
             }//: HSTACK
             .frame(maxWidth: .infinity, alignment: .leading)
+        } header: {
+            Text("Required CEs")
+        } footer: {
+            Text("Whenever you complete a CE activity be sure to toggle the 'Reinstatement CE' switch on the activity page so that the app can keep track of your progress in meeting the reinstatement requirement.")
         }//: SECTION
         
         // MARK: Credential-Specific Requirements

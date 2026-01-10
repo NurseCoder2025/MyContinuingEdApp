@@ -46,7 +46,7 @@ extension DataController {
         
         // Adding any selected renewal period to the predicates
         if let renewalPeriod = filter.renewalPeriod {
-            let renewalPredicate = NSPredicate(format: "renewal == %@", renewalPeriod)
+            let renewalPredicate = NSPredicate(format: "renewals CONTAINS %@", renewalPeriod)
             predicates.append(renewalPredicate)
         }
         

@@ -24,6 +24,7 @@
 		3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */; };
 		3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
+		3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */; };
 		3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */; };
 		3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */; };
 		3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */; };
@@ -249,6 +250,7 @@
 		3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
+		3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Reinstatement.swift"; sourceTree = "<group>"; };
 		3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalRenewalProgressBar.swift; sourceTree = "<group>"; };
 		3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewToolbarView.swift; sourceTree = "<group>"; };
 		3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalSheetData.swift; sourceTree = "<group>"; };
@@ -791,6 +793,7 @@
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
 				3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */,
+				3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */,
 				3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */,
 				3F5D03302EB3F35E00F5B1DC /* DataController-Preloading.swift */,
 				3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */,
@@ -1297,6 +1300,7 @@
 				F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */,
 				3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */,
 				3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */,
+				3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */,
 				3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */,
 				3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */,
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,

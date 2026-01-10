@@ -31,6 +31,11 @@ struct RenewalPeriodView: View {
     @State private var lateFeeDate: Date = Date.renewalLateFeeStartDate
     @State private var lateFeeAmount: Double = 50.0
     
+    
+    @State private var periodBeginsOn: Date = Date.renewalStartDate
+    @State private var renewalCompletedOn: Date = Date.renewalEndDate
+    @State private var renewalCompleted: Bool = false
+    
     // Reinstatement Properties
     @State private var reinstatementForRenewal: ReinstatementInfo?
     
@@ -54,11 +59,11 @@ struct RenewalPeriodView: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     // MARK: - BODY
     var body: some View {
-        ScrollView {
             VStack {
                 // MARK: - Sheet Title
                 RenewalPeriodSheetTitleView(renewalPeriod: renewalPeriod)
                 
+                ScrollView {
                 // MARK: - Credential Selection
                 VStack(spacing: 20){
                         RenewalTopEditingView(
@@ -80,7 +85,10 @@ struct RenewalPeriodView: View {
                             lateFeeDate: $lateFeeDate,
                             lateFeeAmount: $lateFeeAmount,
                             periodStart: $periodStart,
-                            periodEnd: $periodEnd
+                            periodEnd: $periodEnd,
+                            periodBeginsOn: $periodBeginsOn,
+                            renewalCompletedOn: $renewalCompletedOn,
+                            renewalCompleted: $renewalCompleted
                         )
                         .padding(.horizontal, 15)
                         
@@ -133,11 +141,13 @@ struct RenewalPeriodView: View {
         renewal.periodEnd = periodEnd
         renewal.credential = renewalCredential
         renewal.reinstateCredential = reinstatingYN
-        renewal.reinstatementHours = reinstateHours
         renewal.renewalHasLateFeeYN = hasLateFee
         renewal.lateFeeStartDate = lateFeeDate
         renewal.lateFeeAmount = lateFeeAmount
-    }
+        renewal.periodBeginsOn = periodBeginsOn
+        renewal.renewalCompletedYN = renewalCompleted
+        renewal.renewalCompletedDate = renewalCompletedOn
+    }//: mapProperties
     
     
     /// Maps local properties to either the renewal period object that was passed in OR
@@ -157,7 +167,7 @@ struct RenewalPeriodView: View {
         }
         
         dataController.save()
-        dataController.assignActivitiesToRenewalPeriod()
+        dataController.assignActivitiesToRenewalPeriods()
     }
 }
 

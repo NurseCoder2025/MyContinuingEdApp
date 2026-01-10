@@ -66,22 +66,22 @@ extension DataController {
     // clock hours (default) or 2 (units).
     
     /// Method that calculates the total number of continuing education clock HOURS that are required for a given
-    /// RenewalPeriod object.  If the user has indicated that additional hours are required for reinstating a credential
-    /// for a given renewal, then those hours will be added to the normal amount (as specified in the Credential object's
-    /// renewalCEsRequired property. Otherwise, only that property value will be returned.
+    /// RenewalPeriod object.
     /// - Parameter renewal: RenewalPeriod object for which the total # of CE hours is being sought
     /// - Returns: a Double representing the total number of clock HOURS required for a credential's renewal
     ///
     /// If the user has a Credential where continuing education contact hours are measured in units versus hours
     /// (2 vs 1 property value for the Credential's measurementDefault property), then the conversion will need to be handled by
     /// a separate method before returning the final result to the user.
-    func calculateTotalRequiredCEsFor(renewal: RenewalPeriod) -> Double {
+    ///
+    /// Additionally, this method ignores any additional CEs that may be required due to a Credential being lapsed and needing
+    /// reinstated.  A separate method is available to handle this particular scenario as CEs earned for reinstating a credential
+    /// are NOT applied towards the regular renewal process.
+        func calculateTotalRequiredCEsFor(renewal: RenewalPeriod) -> Double {
         guard let renewalCred = renewal.credential else {return 0}
         
         let credDefault = renewalCred.measurementDefault
         var requiredClockHours: Double = 0.0
-        var totalHours: Double = 0.0
-        var reinstatementClockHours: Double = 0.0
         
         // If the Credential's default CE measurement is units, convert
         // the required amount to clock hours; otherwise, just use whatever value is in
@@ -93,21 +93,7 @@ extension DataController {
             requiredClockHours = renewalCred.renewalCEsRequired
         }
         
-        // Checking the RenewalPeriod's reinstatement related properties to determine
-        // whether or not to add the additional hours to the total or not
-        if renewal.reinstateCredential {
-            switch credDefault {
-            case 1:
-                reinstatementClockHours = renewal.reinstatementHours
-            default:
-                reinstatementClockHours = renewal.reinstatementHours * renewalCred.defaultCesPerUnit
-            }
-            totalHours = requiredClockHours + reinstatementClockHours
-        } else {
-           totalHours = requiredClockHours
-        }
-        
-        return totalHours
+        return requiredClockHours
     }//: calculateTotalRequiredCEsFor()
     
     /// Method that indicates whether any given RenewalPeriod object is current, meaning that the current date falls within
@@ -159,7 +145,7 @@ extension DataController {
         let activityFetch = CeActivity.fetchRequest()
         activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
         
-        let activityMatchRenewal = NSPredicate(format: "renewal == %@", renewal)
+        let activityMatchRenewal = NSPredicate(format: "renewals CONTAINS %@", renewal)
         let onlyCompletedActivity = NSPredicate(format: "activityCompleted == true")
         let hoursAwardedHasValue = NSPredicate(format: "ceAwarded > %f", 0.0)
             activityPredicates.append(activityMatchRenewal)
@@ -208,6 +194,7 @@ extension DataController {
         }
     }//: convertHoursToUnits()
     
+   
     // MARK: - Special CAT Hours
 
     /// This method evaluates all SpecialCategory objects for a given Credential, and for a given RenewalPeriod for that Credential, this
@@ -229,7 +216,7 @@ extension DataController {
         
         // ** Predicates **
         var activityPredicates: [NSPredicate] = []
-        let activityMatchRenewal = NSPredicate(format: "renewal == %@", renewal)
+        let activityMatchRenewal = NSPredicate(format: "renewals CONTAINS %@", renewal)
         let onlyCompletedActivity = NSPredicate(format: "activityCompleted == true")
         let hoursAwardedHasValue = NSPredicate(format: "ceAwarded > %f", 0.0)
         let assignedSpecialCat = NSPredicate(format: "specialCat != nil")
@@ -286,7 +273,6 @@ extension DataController {
         }//: LOOP
         return specialCatsRemaining
     }//: calculateCeRemainingForSpecialCatsIn(renewal)
-    
     
     
     // MARK: - CE CHART METHODS

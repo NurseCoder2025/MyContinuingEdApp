@@ -84,7 +84,7 @@ struct ActivityCompletionView: View {
             
             // MARK: Date Completion change
             .onChange(of: activity.dateCompleted) { _ in
-                dataController.assignActivitiesToRenewalPeriod()
+                dataController.assignActivitiesToRenewalPeriods()
             }
             
         }//: GROUP

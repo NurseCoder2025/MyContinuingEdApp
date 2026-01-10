@@ -59,6 +59,20 @@ extension CeActivity {
         dateCompleted ?? .futureCompletion
     }
     
+    /// Computed CoreData helper property for CeActivity's startTime property.  If the property happens to
+    /// be nil, then ceStartTime will return the futureCompletion static property for Date.
+    var ceStartTime: Date {
+        get {startTime ?? Date.futureCompletion}
+        set {startTime = newValue}
+    }//: ceStartTime
+    
+    /// Computed CoreData helper property for CeActivity's endTime property.  If the property happens to
+    /// be nil, then ceEndTime will return the futureCompletion static property for Date.
+    var ceEndTime: Date {
+        get {endTime ?? Date.futureCompletion}
+        set {endTime = newValue}
+    }//: ceEndTime
+    
     // MARK: - Tag-related properties
     var activityTags: [Tag] {
         let result = tags?.allObjects as? [Tag] ?? []
@@ -201,4 +215,44 @@ extension CeActivity {
         let result = credentials?.allObjects as? [Credential] ?? []
         return result.sorted()
     }
-}
+}//: EXTENSION
+
+
+// MARK: - METHODS
+extension CeActivity {
+    
+    /// Method for converting CE units earned for a given CeActivity object into clock hours for the purpose
+    /// of calculating total CEs earned, CEs remaining, and displaying progress bar indicators.
+    /// - Parameter credential: If needed, a Credential object can be passed in as an argument
+    /// - Returns: Amount of continuing education awarded for an activity converted into clock hours
+    ///
+    /// This method can be used without any arguments as the credential one is optional.  However, when
+    /// that argument is nil, then if an activity's ceAwarded property is in units versus hours (see hoursOrUnits
+    /// property) the method will return either the clockHoursAwarded value (if greater than 0) or a calculated
+    /// conversion based on the standard ratio of 10 hours per unit.  Otherwise, the conversion will be based
+    /// on the ratio value set for the passed in credential.
+    func getCeClockHoursEarned(for credential: Credential?) -> Double {
+        let activityUnits = self.hoursOrUnits
+        var clockHoursEarned: Double = 0.0
+        
+        switch activityUnits {
+        case 1:
+            return self.ceAwarded
+        default:
+            if self.clockHoursAwarded > 0 {
+                clockHoursEarned = self.clockHoursAwarded
+            } else if let cred = credential, cred.measurementDefault == 2, cred.defaultCesPerUnit > 0 {
+                // Use the Credential's CEU ratio if specified by the user
+                let credHrsToUnitRatio = cred.defaultCesPerUnit
+                clockHoursEarned = self.ceAwarded * credHrsToUnitRatio
+            } else if let cred = credential {
+                // Use the standard CEU ratio of 10 hours to 1 unit if
+                // otherwise not specified
+                let credHrsToUnitRatio: Double = 10.0
+                clockHoursEarned = self.ceAwarded * credHrsToUnitRatio
+            }
+        }//: SWITCH
+        return clockHoursEarned
+    }//: getCeClockHoursEarned(for)
+    
+}//: EXTENSION

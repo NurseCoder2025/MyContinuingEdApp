@@ -52,6 +52,8 @@ struct ActivityCEDetailsView: View {
                     }//: HSTACK
                 } //: BUTTON
                 
+                // MARK: Special Category
+                DisclosureGroup("Credential-Specific CEs") {
                 if paidStatus != .proSubscription {
                     PaidFeaturePromoView(
                         featureIcon: "list.bullet.rectangle.fill",
@@ -59,31 +61,50 @@ struct ActivityCEDetailsView: View {
                         featureUpgradeLevel: .ProOnly
                     )
                 } else {
-                    // MARK: Special Category
-                    VStack(spacing: 10) {
-                        Text("Special CE Category")
-                            .bold()
-                        Text("If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
-                            .font(.caption)
-                            .multilineTextAlignment(.leading)
-                        
-                        Button {
-                            showSpecialCatSheet()
-                        } label: {
-                            HStack {
-                                Text("Category:")
-                                if let assignedCat = activity.specialCat {
-                                    Text(assignedCat.specialName)
-                                        .lineLimit(1)
-                                } else {
-                                    Text("Select")
-                                }
-                                Spacer()
-                            }//: HStack
-                        }//: BUTTON
-                        .buttonStyle(.borderedProminent)
-                    } //: VSTACK
-                }//: IF ELSE
+                        VStack(spacing: 10) {
+                            Text("Required CE Category")
+                                .bold()
+                            Text("If the activity certificate indicates that the hours/units are for a specific kind of continuing education requirement by the governing body, such as law or ethics, indicate that here.")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                            
+                            Button {
+                                showSpecialCatSheet()
+                            } label: {
+                                HStack {
+                                    Text("Category:")
+                                    if let assignedCat = activity.specialCat {
+                                        Text(assignedCat.specialName)
+                                            .lineLimit(1)
+                                    } else {
+                                        Text("Select")
+                                    }
+                                    Spacer()
+                                }//: HStack
+                            }//: BUTTON
+                            .buttonStyle(.borderedProminent)
+                        } //: VSTACK
+                    
+                    }//: IF ELSE
+                }//: DISCLOSURE GROUP
+                
+                // MARK: Apply CEs towards Credential Reinstatement
+                DisclosureGroup("Credential Reinstatement") {
+                if paidStatus != .proSubscription {
+                    PaidFeaturePromoView(
+                        featureIcon: "graduationcap.fill",
+                        featureItem: "Remedial CE",
+                        featureUpgradeLevel: .ProOnly
+                    )
+                } else {
+                        VStack {
+                            Text("Apply the CEs from this activity towards the reinstatement of a credential?")
+                                .font(.caption)
+                                .multilineTextAlignment(.leading)
+                            Toggle("Reinstatement CE?", isOn: $activity.forReinstatementYN)
+                        }//: VSTACK
+                    }//: IF ELSE
+                }//: DISCLOSURE GROUP
                 
             }//: SECTION
         }//: GROUP

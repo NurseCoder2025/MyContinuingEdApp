@@ -7,14 +7,24 @@
 
 import Foundation
 
-// MARK: CoreData Helpers
+
 extension RenewalPeriod {
+    // MARK: - CoreData Helpers
     // For each of the dates connected with each RenewalPeriod object, a custom getter was needed in
     // order to more easily compare just the date components (MM/DD/YYYY) with another date in
     // various functions throughout the app, especially the notification ones.  All date values
     // returned will have standardized time components (12:00:00) which will allow for the comparing
     // of dates.
     
+    /// Computed CoreData property helper for RenewalPeriod that returns & sets a date for the periodStart property.
+    ///
+    /// This property represents the first day of a complete renewal cycle and not the date when credential holders
+    /// can begin applying to renew their credential with the governing body.
+    ///
+    /// For example, if a renewal cycle is 2 years long, and begins on June 1st of the year, then the periodStart is
+    /// June 1st.  However, credential holders usually have to apply to renew their credential before that date, like
+    /// April 1st, with May 31st as the deadline to renew.  The application window dates are represented by the
+    /// other RenewalPeriod properties of renewalBeginsOn and renewalDeadline.
     var renewalPeriodStart: Date {
         get {
             let calendar = Calendar.current
@@ -25,6 +35,11 @@ extension RenewalPeriod {
         set { periodStart = newValue }
     }
     
+    /// Computed CoreData property helper for RenewalPeriod that returns & sets a date for the periodEnd property.
+    ///
+    /// This property represents the final day of a complete renewal cycle when the credential is considered to be
+    /// active and in effect.  If a credential holder fails to renew before this day, then the credential is considered to
+    /// be lapsed and requires reinstatement with the credential's governing body.
     var renewalPeriodEnd: Date {
         get {
             let calendar = Calendar.current
@@ -55,11 +70,42 @@ extension RenewalPeriod {
         get { periodName ?? ""}
     }
     
+    /// CoreData property helper for the RenewalPeriod's renewalBeginsOn property to make UI integration easier.
+    ///
+    /// The renewalBeginsOn property represents the first day on which credential holders are allowed by the
+    /// governing body to start renewing their credential ahead of the renewal period's end.  If, for example, a credential
+    /// is valid from June 1st of one year to May 31st of the following year, then usually the governing body will
+    /// allow credential holders to begin renewing around April 1st so they have time to submit the required
+    /// renewal application and fees.
+    var renewalBeginsOn: Date {
+        get {
+            let calendar = Calendar.current
+            let renewalBeginsOn = calendar.startOfDay(for: periodBeginsOn ?? Date.renewalStartDate)
+            return renewalBeginsOn
+        }
+        set {periodBeginsOn = newValue}
+    }//: renewRenealBeginsOn
+    
+    /// CoreData property helper for the RenewalPeriod's renewalCompletedDate property.  This represents the day
+    /// on which the user actually submitted the renewal application and fees for their credential.  Both gets and
+    /// sets the value for the renewalCompletedDate property.
+    ///
+    /// This date is not to be confused with the periodEnd date property as that is the day on which the credential
+    /// expires if not renewed before midnight on that day.
+    var renewRenewalCompletedDate: Date {
+        get {
+            let calendar = Calendar.current
+            let existingDate = calendar.startOfDay(for: renewalCompletedDate ?? Date.futureCompletion)
+            return existingDate
+        }
+        set {renewalCompletedDate = newValue}
+    }//: renewRenewalCompletedDate
     
     
-    // Computed property that returns all activities that fall within the
-    // current (selected) renewal period
-    var renewalCurrentActivities: [CeActivity] {
+    // MARK: - RELATIONSHIPS
+    /// Computed property that returns all completed activities that fall within the
+    /// current (selected) renewal period
+    var completedRenewalActivities: [CeActivity] {
         let renewalStart = self.renewalPeriodStart
         let renewalEnd = self.renewalPeriodEnd
         
@@ -71,8 +117,18 @@ extension RenewalPeriod {
             } //: IF LET
             return filterResult
         } //: FILTER
-    }
-}
+    }//: renewalCurrentActivities
+    
+    /// RenewalPeriod computed  property that returns an array of CeActivities
+    /// that are completed within the RenewalPeriod timeframe, and have
+    /// an assigned SpecialCategory object to them.
+    var completedActivitiesWithSpecialCats: [CeActivity] {
+        completedRenewalActivities.filter {
+            $0.specialCat != nil
+        }
+    }//: completedActivitiesWithSpecialCats
+    
+}//: EXTENSION
 
 
 // MARK: - Renewal Period EXAMPLE

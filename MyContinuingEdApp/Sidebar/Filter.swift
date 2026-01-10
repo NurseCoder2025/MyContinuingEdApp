@@ -18,7 +18,7 @@ struct Filter: Identifiable, Hashable {
     
     // MARK: - OTHER COMPUTED PROPERTIES
     var tagActivitiesCount: Int {tag?.tagActiveActivities.count ?? 0}
-    var renewalActivitiesCount: Int {renewalPeriod?.renewalCurrentActivities.count ?? 0}
+    var renewalActivitiesCount: Int {renewalPeriod?.completedRenewalActivities.count ?? 0}
     
     // MARK: - "Smart Filter" properties
     static var recentActivities = Filter(

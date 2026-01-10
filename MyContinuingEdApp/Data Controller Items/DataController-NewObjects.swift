@@ -107,7 +107,7 @@ extension DataController {
         // be assigned to the new activity as well as the Renewal Period
         if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
             newActivity.addToCredentials(credential)
-            newActivity.renewal = renewal
+            newActivity.addToRenewals(renewal)
             newActivity.hoursOrUnits = credential.measurementDefault
         }
         
@@ -160,7 +160,7 @@ extension DataController {
         // be assigned to the new activity as well as the Renewal Period
         if let renewal = selectedFilter?.renewalPeriod, let credential = renewal.credential {
             newActivity.addToCredentials(credential)
-            newActivity.renewal = renewal
+            newActivity.addToRenewals(renewal)
             newActivity.hoursOrUnits = credential.measurementDefault
         }
         

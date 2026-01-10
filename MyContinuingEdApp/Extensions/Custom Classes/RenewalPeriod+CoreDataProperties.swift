@@ -23,12 +23,18 @@ extension RenewalPeriod {
     @NSManaged public var periodID: UUID?
     @NSManaged public var periodName: String?
     @NSManaged public var periodStart: Date?
-    @NSManaged public var reinstatementHours: Double
     @NSManaged public var reinstateCredential: Bool
+    @NSManaged public var periodBeginsOn: Date?
+    @NSManaged public var renewalCompletedYN: Bool
+    @NSManaged public var renewalCompletedDate: Date?
+    
+    
+    // MARK: Relationship properties
     @NSManaged public var cesCompleted: NSSet?
     @NSManaged public var credential: Credential?
+    @NSManaged public var reinstatement: ReinstatementInfo?
 
-}
+}//: EXTENSION
 
 // MARK: Generated accessors for cesCompleted
 extension RenewalPeriod {

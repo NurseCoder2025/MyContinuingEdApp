@@ -98,6 +98,25 @@ extension DataController {
         }
     }//: showDAINotifications
     
+    var showActivityStartNotifications: Bool {
+        get {
+            sharedSettings.bool(forKey: "showCeActivityStartNotifications")
+        }
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "showCeActivityStartNotifications")
+        }
+    }//: showActivityStartNotifications
+    
+    var showReinstatementAlerts: Bool {
+        get {
+            sharedSettings.bool(forKey: "showCredentialReinstatementAlerts")
+        }
+        set {
+            objectWillChange.send( )
+            sharedSettings.set(newValue, forKey: "showCredentialReinstatementAlerts")
+        }
+    }//: showReinstatementAlerts
     
     // MARK: - Methods
     /// This method is used to trigger the objectWillChange.send() method whenever iCloud pushes
@@ -115,7 +134,9 @@ extension DataController {
             "showExpiringCesNotification",
             "showRenewalEndingNotification",
             "showRenewalLateFeeNotification",
-            "showDAINotifications"
+            "showDAINotifications",
+            "showCeActivityStartNotifications",
+            "showCredentialReinstatementAlerts"
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

@@ -28,21 +28,26 @@
         <attribute name="activityID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="activityTitle" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="ceAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="clockHoursAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="completionCertificate" optional="YES" attributeType="Binary"/>
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="currentStatus" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="expirationReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="forReinstatementYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
+        <attribute name="startReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="whatILearned" optional="YES" attributeType="String"/>
         <relationship name="credentials" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="activities" inverseEntity="Credential"/>
         <relationship name="designation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeDesignation" inverseName="activities" inverseEntity="CeDesignation"/>
         <relationship name="disciplinaryAction" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DisciplinaryActionItem" inverseName="ces" inverseEntity="DisciplinaryActionItem"/>
         <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
-        <relationship name="renewal" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
+        <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
         <relationship name="specialCat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="activities" inverseEntity="SpecialCategory"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="activity" inverseEntity="Tag"/>
         <relationship name="type" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityType" inverseName="activity" inverseEntity="ActivityType"/>
@@ -147,14 +152,16 @@
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
         <attribute name="lateFeeAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="lateFeeStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="periodBeginsOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="periodEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="periodID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="periodName" optional="YES" attributeType="String"/>
         <attribute name="periodStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="reinstateCredential" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="reinstatementHours" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="renewalCompletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="renewalCompletedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="renewalHasLateFeeYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewal" inverseEntity="CeActivity"/>
+        <relationship name="cesCompleted" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="renewals" inverseEntity="CeActivity"/>
         <relationship name="credential" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Credential" inverseName="renewals" inverseEntity="Credential"/>
         <relationship name="reinstatement" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ReinstatementInfo" inverseName="renewal" inverseEntity="ReinstatementInfo"/>
     </entity>

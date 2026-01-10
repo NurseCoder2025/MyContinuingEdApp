@@ -59,13 +59,36 @@ struct ActivityBasicInfoView: View {
                 
             }//: SECTION (title)
             
+            // MARK: Start & Ending Times
+            DisclosureGroup("Starting & Ending Times") {
+                Section("Activity Date(s)") {
+                    VStack(spacing: 10) {
+                        DatePicker(
+                            "Starts On",
+                            selection: $activity.ceStartTime, displayedComponents: [.date, .hourAndMinute]
+                        )//: DATE PICKER
+                        
+                        Toggle(isOn: $activity.startReminderYN) {
+                            Text("Remind Me?")
+                        }//: TOGGLE
+                    }//: VSTACK
+                    
+                    DatePicker(
+                        "Ends On",
+                        selection: $activity.ceEndTime, displayedComponents: [.date, .hourAndMinute]
+                    )//: DATE PICKER
+                    
+                }//: SECTION
+            }//: DISCLOSURE GROUP
+            
+            // MARK: Credentials
             Section("Activity For Credential(s)...") {
                     // Credential(s) to which activity is assigned to
                     if activity.activityCredentials.isNotEmpty {
                         Text("Assigned Credential(s): \(assignedCredentials)")
                     }
                     
-                    // MARK: Show Credential Selection Sheet button
+                    // Show Credential Selection Sheet button
                     Button {
                         showACS()
                     } label: {
@@ -77,6 +100,7 @@ struct ActivityBasicInfoView: View {
                     }//: BUTTON
                 } //: SECTION (credential assignments)
             
+                // MARK: Description & Tags
                 Section("Description & Assigned Tags") {
                     VStack {
                         LeftAlignedTextView(text: "Activity Description:")

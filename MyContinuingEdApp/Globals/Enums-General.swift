@@ -125,6 +125,7 @@ enum CredentialType: String, CaseIterable {
     
 
 // MARK: - Notification Type ENUM
+
 /// Enum used primarily for creating suffix values that will be appended to the string UUID values of Core Data
 /// entities as part of their unique NotificationCenter identifier value. This will allow for multiple notifications for the same
 /// object to be created.
@@ -136,7 +137,10 @@ enum NotificationType: String, CaseIterable {
     case serviceDeadlineApproaching
     case fineDeadlineApproaching
     case ceHoursDeadlineApproaching
-}
+    case reinstatementDeadline
+    case interview
+    case additionalTestDate
+}//: NotificationType
 
 
 // MARK: - In App Purchases

@@ -114,7 +114,7 @@ final class RenewalPeriodsTest: BaseTestCase {
         newRenewal.credential = sampleCredential
         
         // Assigning all completed CE activities to the new renewal period
-        controller.assignActivitiesToRenewalPeriod()
+        controller.assignActivitiesToRenewalPeriods()
         
         // Retrieving the number of completed activities assigned to newRenewal
         let newRenewalCompletedActivities = newRenewal.cesCompleted as? Set<CeActivity> ?? []
