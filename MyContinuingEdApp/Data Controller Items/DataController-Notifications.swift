@@ -171,6 +171,7 @@ extension DataController {
         await scheduleExpiringCEsNotifications()
         await scheduleRenewalsEndingNotifications()
         await scheduleDisciplinaryActionNotifications()
+        await scheduleRelevantReinstatementInfoNotifications()
         
     }//: updateAllReminders
     
@@ -296,6 +297,41 @@ extension DataController {
     }//: fetchUpcomingCeActivities()
     
     
+    /// Method for fetching all ReinstatementInfo objects for the purpose of creating and
+    /// scheduling notifications to the user.
+    /// - Returns: Array containing any ReinstatementInfo objects that meet the criteria
+    ///
+    /// Predicate criteria include:
+    ///     - Reinstatement deadline must still be future AND any of the following:
+    ///         - Background check is required
+    ///         - Interview is required
+    ///         - Additional knowledge testing is required
+    ///         - The required CEs for reinstatement are not completed yet
+    func fetchCurrentReinstatmentItems() -> [ReinstatementInfo] {
+        let reinInfoFetch = ReinstatementInfo.fetchRequest()
+        reinInfoFetch.sortDescriptors = [NSSortDescriptor(key: "reinstatementDeadline", ascending: true)]
+        
+        let reinInfoANDPredicates: [NSPredicate] = [
+            NSPredicate(format: "reinstatementDeadline > %@", Date.now as NSDate),
+        ]
+        
+        let reinInfoORPredicates: [NSPredicate] = [
+            NSPredicate(format: "backgroundCheckYN == true"),
+            NSPredicate(format: "interviewYN == true"),
+            NSPredicate(format: "additionalTestingYN == true"),
+            NSPredicate(format: "cesCompletedYN == false")
+        ]
+        
+        let reinInfoPredicateCompound: NSCompoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: reinInfoORPredicates)
+        
+        let reinInfoFinalPredicate: NSCompoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: reinInfoANDPredicates + [reinInfoPredicateCompound])
+        
+        reinInfoFetch.predicate = reinInfoFinalPredicate
+        
+        let fetchedReinstatementInfo: [ReinstatementInfo] = (try? container.viewContext.fetch(reinInfoFetch)) ?? []
+        
+        return fetchedReinstatementInfo
+    }//: fetchCurrentReinstatementItems
     
     
     // MARK: - Object Specific Notifications
@@ -581,7 +617,7 @@ extension DataController {
     /// will be scheduled for however many minutes ahead the user sets the preferences for.  If set to 0 minutes, no notification
     /// will be made.
     func scheduleUpcomingCeActivityNotifications() async {
-        guard showActivityStartNotifications else { return }
+        guard showAllLiveEventAlerts else { return }
         
         let firstNotification = primaryNotificationDays
         let secondNotification = secondaryNotificationDays
@@ -651,6 +687,142 @@ extension DataController {
             }//: LOOP
         }//: LOOP (activity in eligibleActivities)
     }//: scheduleUpcomingCeActivityNotifications()
+    
+    
+    /// Method for scheduling notifications related to ReinstatementInfo objects.  If the showReinstatementAlerts
+    /// settings is set to true, then notifications will be generated for ReinstatementInfo objects when other criteria
+    /// is met.
+    ///
+    /// The specific types of notifications scheduled by this method include: deadline notifications, interview date
+    /// notifications, and exam notifications. All notifications that are date based will be scheduled for 10am on the
+    /// day that they are to appear.
+    func scheduleRelevantReinstatementInfoNotifications() async {
+        guard showReinstatementAlerts else { return }
+        
+        let relevantRIs = fetchCurrentReinstatmentItems()
+        guard relevantRIs.isNotEmpty else { return }
+        
+        let firstNotification = primaryNotificationDays
+        let secondNotification = secondaryNotificationDays
+        let calendar = Calendar.current
+        let morningNotificationInterval: Double = (60 * 60 * 10)
+        
+        for relevantRI in relevantRIs {
+            // deadline approaching notifications
+            for a in 1...2 {
+                guard let riDeadline = relevantRI.reinstatementDeadline else { continue }
+                let pureDeadline = calendar.startOfDay(for: riDeadline)
+                let daysToDeadline = Int(pureDeadline.timeIntervalSinceNow / 86400)
+                let targetDaysAhead: Double = (a == 1 ? Double(firstNotification) : Double(secondNotification) * 86400)
+                
+                let title: String = "Reinstatement Deadline/Goal Approaching"
+                let body: String = "This is a friendly reminder that there are only \(daysToDeadline) days left to reinstate your credential (if this date is a goal you set versus a hard deadline set by the licensing board or governing body, then try to get everything done by then). Please ensure that you are on track towards getting everything done that is needed for reinstatement by \(pureDeadline.formatted(date: .abbreviated, time: .omitted))."
+                
+                let triggerDate = pureDeadline.addingTimeInterval(-targetDaysAhead)
+                let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationInterval)
+                let noticeType: NotificationType = .reinstatementDeadline
+                let noticeNumber: Int = a
+                
+                await addReminder(
+                    for: relevantRI,
+                    title: title,
+                    body: body,
+                    onDate: amNoticeTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP (a)
+            
+            // interview notifications
+            // Interview DATE reminders
+            for b in 1...2 {
+                guard let interviewDate = relevantRI.interviewScheduled, interviewDate > Date.now else { continue }
+                let pureInterviewDate = calendar.startOfDay(for: interviewDate)
+                let dateString = pureInterviewDate.formatted(date: .numeric, time: .omitted)
+                let timeString = interviewDate.formatted(date: .omitted, time: .shortened)
+                
+                let daysToInterview = Int(pureInterviewDate.timeIntervalSinceNow / 86400)
+                let targetDaysAhead: Double = (b == 1 ? Double(firstNotification) : Double(secondaryNotificationDays) * 86400)
+                
+                let title: String = "Reinstatement Interview Approaching"
+                let body: String = "Don't forget that you have an important interview coming up with your credential issuer to help get it reinstated. It is only \(daysToInterview) days away from now, on \(dateString) at \(timeString). Please make sure you have everything ready and on track for this important meeting."
+                
+                let triggerDate = pureInterviewDate.addingTimeInterval(-targetDaysAhead)
+                let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationInterval)
+                let noticeType: NotificationType = .interview
+                let noticeNumber: Int = b
+                
+                await addReminder(
+                    for: relevantRI,
+                    title: title,
+                    body: body,
+                    onDate: amNoticeTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP (b)
+            
+            // Interview TIME reminders
+            for c in 1...2 {
+                guard let interviewDate = relevantRI.interviewScheduled, interviewDate > Date.now else { continue }
+                let timeString = interviewDate.formatted(date: .omitted, time: .shortened)
+                let firstAlert = (firstLiveEventAlert * 60)
+                let secondAlert = (secondLiveEventAlert * 60)
+                let targetTimeAhead = (c == 1 ? Double(firstAlert) : Double(secondAlert))
+                
+                let minutesToEvent = Int(interviewDate.timeIntervalSinceNow / 60)
+                guard minutesToEvent > 0 else { continue }
+                
+                let title: String = "Reinstatement Interview Reminder"
+                let body: String = "You have an important interview coming up with your credential issuer to help get it reinstated. It will start in \(minutesToEvent) minutes at \(timeString). Please make sure you have everything ready and on track for this important meeting."
+                
+                let triggerTime = interviewDate.addingTimeInterval(-targetTimeAhead)
+                let noticeType: NotificationType = .interview
+                let noticeNumber: Int = c
+                
+                await addReminder(
+                    for: relevantRI,
+                    title: title,
+                    body: body,
+                    onDate: triggerTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP (c)
+            
+            // testing date notifications
+            for d in 1...2 {
+                guard let testDate = relevantRI.additionalTestDate, testDate > Date.now else { continue }
+                
+                let firstNotification = primaryNotificationDays
+                let secondNotification = secondaryNotificationDays
+                let targetDaysAhead = (d == 1 ? Double(firstNotification) : Double(secondNotification)) * 86400
+                
+                let dateString = testDate.formatted(date: .numeric, time: .omitted)
+                let timeString = testDate.formatted(date: .omitted, time: .shortened)
+                
+                let daysToTest = Int(testDate.timeIntervalSinceNow / 86400)
+               
+                let title: String = "Credential Re-Test Date Approaching"
+                let body: String = "As part of your credential reinstatement, the governing body requires you to take an exam, which is now only \(daysToTest) days away on \(dateString) at \(timeString). Study hard!"
+                
+                let triggerDate = calendar.startOfDay(for: testDate).addingTimeInterval(-targetDaysAhead)
+                let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationInterval)
+                let noticeType: NotificationType = .additionalTestDate
+                let noticeNumber: Int = d
+                
+                await addReminder(
+                    for: relevantRI,
+                    title: title,
+                    body: body,
+                    onDate: amNoticeTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP (d)
+
+        }//: LOOP
+    }//: scheduleRelevantReinstatementInfoNotifications()
     
 }//: DATA CONTROLLER
 

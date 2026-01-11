@@ -86,18 +86,21 @@ extension DataController {
     
     // MARK: Notification ON/OFF Settings
     /// Computed Settings property that gets and sets the value (Bool) for whether the user wishes to recieve any
-    /// notifications regarding live CE activities that have a specified starting time.
+    /// notifications regarding live events, including CE activities, that have a specified starting time.
     ///
     /// Each individual CeActivity object has its own reminder property that allows the user to customize which activiies
     /// (with start times) they wish to be reminded about.  If, however, this property is set to false then no notifications
     /// will be scheduled for CeActivities with starting times.
-    var showActivityStartNotifications: Bool {
+    ///
+    /// This setting can also be used to set reminders for other live events, such as interviews and tests that are part of the
+    /// credential reinstatement process (see ReinstatementInfo object for relevant properties).
+    var showAllLiveEventAlerts: Bool {
         get {
-            sharedSettings.bool(forKey: "showCeActivityStartNotifications")
+            sharedSettings.bool(forKey: "showAllLiveEventAlerts")
         }
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showCeActivityStartNotifications")
+            sharedSettings.set(newValue, forKey: "showAllLiveEventAlerts")
         }
     }//: showActivityStartNotifications
     
@@ -173,7 +176,7 @@ extension DataController {
             "showRenewalEndingNotification",
             "showRenewalLateFeeNotification",
             "showDAINotifications",
-            "showCeActivityStartNotifications",
+            "showAllLiveEventAlerts",
             "showCredentialReinstatementAlerts",
             "firstLiveEventAlert",
             "secondLiveEventAlert",

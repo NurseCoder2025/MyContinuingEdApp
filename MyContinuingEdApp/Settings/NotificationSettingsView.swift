@@ -57,10 +57,14 @@ struct NotificationSettingsView: View {
             }//: GROUPBOX
             .padding(.bottom, 15)
             
-            // Live CE Activity Alert Sliders
+            // Live Event Alert Sliders
             GroupBox {
                 VStack {
-                    Text("For CE activities that have a definitive start time, Ce Cache will generate up to two reminders for you on the day they take place. If you only want one reminder, then set the corresponding slider to 0.")
+                    Text("""
+                         For any live events that have a definitive start time, Ce Cache will generate up to two reminders for you on the day they take place. If you only want one reminder, then set the corresponding slider to 0.
+                         
+                         For the purposes of these settings, live events include CE activities and conferences, as well as events tied to credential reinstatement (Pro subscribers only).
+                         """)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 10)
@@ -109,7 +113,7 @@ struct NotificationSettingsView: View {
                         .padding(.top, 10)
                     
                     VStack {
-                        Toggle("Upcoming Live CE Activity Alerts", isOn: $dataController.showActivityStartNotifications)
+                        Toggle("Upcoming Live Event Alerts", isOn: $dataController.showAllLiveEventAlerts)
                         
                         Toggle("Expiring CE Activity Alerts", isOn: $dataController.showExpiringCesNotification)
                         
