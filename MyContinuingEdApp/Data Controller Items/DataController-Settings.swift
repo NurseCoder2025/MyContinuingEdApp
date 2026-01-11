@@ -21,6 +21,7 @@ import Foundation
 // keys.
 extension DataController {
     // MARK: - Setting Keys
+    // MARK: FIRST RUN
     var showOnboardingScreen: Bool {
         get {
             sharedSettings.bool(forKey: "showOnboardingScreen")
@@ -32,6 +33,7 @@ extension DataController {
         }
     }//: showOnboardingScreen
     
+    // MARK: Notification Timing
     var primaryNotificationDays: Double {
         get {
             sharedSettings.double(forKey: "primaryNotificationDays")
@@ -53,6 +55,51 @@ extension DataController {
             sharedSettings.set(newValue, forKey: "secondaryNotificationDays")
         }
     }//: secondaryNotificationDays
+    
+    /// Computed Settings property that gets and sets the value (Double) for how many minutes the user wishes
+    /// to be notified about an upcoming live CE activity that they are interested in attending.  This is the first of two
+    /// notifications that will be sent if the user permits it.
+    var firstLiveEventAlert: Double {
+        get {
+            sharedSettings.double(forKey: "firstLiveEventAlert")
+        }
+        
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "firstLiveEventAlert")
+        }
+        
+    }//: firstLiveEventAlert
+    
+    /// Computed Settings property that gets and sets the value (Double) for how many minutes the user wishes
+    /// to be notified about an upcoming live CE activity that they are interested in attending.  This is the second of two
+    /// notifications that will be sent if the user permits it.
+    var secondLiveEventAlert: Double {
+        get {
+            sharedSettings.double(forKey: "secondLiveEventAlert")
+        }
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "secondLiveEventAlert")
+        }
+    }//: secondLiveEventAlert
+    
+    // MARK: Notification ON/OFF Settings
+    /// Computed Settings property that gets and sets the value (Bool) for whether the user wishes to recieve any
+    /// notifications regarding live CE activities that have a specified starting time.
+    ///
+    /// Each individual CeActivity object has its own reminder property that allows the user to customize which activiies
+    /// (with start times) they wish to be reminded about.  If, however, this property is set to false then no notifications
+    /// will be scheduled for CeActivities with starting times.
+    var showActivityStartNotifications: Bool {
+        get {
+            sharedSettings.bool(forKey: "showCeActivityStartNotifications")
+        }
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "showCeActivityStartNotifications")
+        }
+    }//: showActivityStartNotifications
     
     var showExpiringCesNotification: Bool {
         get {
@@ -98,16 +145,7 @@ extension DataController {
         }
     }//: showDAINotifications
     
-    var showActivityStartNotifications: Bool {
-        get {
-            sharedSettings.bool(forKey: "showCeActivityStartNotifications")
-        }
-        set {
-            objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showCeActivityStartNotifications")
-        }
-    }//: showActivityStartNotifications
-    
+
     var showReinstatementAlerts: Bool {
         get {
             sharedSettings.bool(forKey: "showCredentialReinstatementAlerts")
@@ -136,7 +174,9 @@ extension DataController {
             "showRenewalLateFeeNotification",
             "showDAINotifications",
             "showCeActivityStartNotifications",
-            "showCredentialReinstatementAlerts"
+            "showCredentialReinstatementAlerts",
+            "firstLiveEventAlert",
+            "secondLiveEventAlert",
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

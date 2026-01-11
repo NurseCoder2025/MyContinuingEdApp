@@ -131,12 +131,14 @@ enum CredentialType: String, CaseIterable {
 /// object to be created.
 enum NotificationType: String, CaseIterable {
     case upcomingExpiration
+    case renewalProcessStarting
     case renewalEnding
     case lateFeeStarting
     case disciplineEnding
     case serviceDeadlineApproaching
     case fineDeadlineApproaching
     case ceHoursDeadlineApproaching
+    case liveActivityStarting
     case reinstatementDeadline
     case interview
     case additionalTestDate

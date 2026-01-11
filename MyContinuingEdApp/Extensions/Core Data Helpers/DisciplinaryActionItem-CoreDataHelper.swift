@@ -80,6 +80,15 @@ extension DisciplinaryActionItem {
 // Setting the actionsTaken and actionsTakenRaw property so I can save an array of
 // DisciplineAction enum values as a single Data? property in Core Data.
 extension DisciplinaryActionItem {
+    
+    /// Computed CoreData property helper for DisciplinaryActionItem object that returns an array of
+    /// DisciplineAction (enum) objects. Use this property to both get and set values for the
+    /// actionsTakenRaw property as it makes doing so a lot easier.
+    ///
+    /// This computed property both gets and sets the DisciplinaryActionItem's actionsTAkenRaw
+    /// Transformable property.  It uses the JSON encoder and decoder to encode and decode
+    /// any enum values to and from this property as a NSObject since that is how enum values
+    /// must be stored as in CoreData.
     var actionsTaken: [DisciplineAction] {
         get {
             guard let data = actionsTakenRaw as? Data else { return [] }
@@ -90,8 +99,9 @@ extension DisciplinaryActionItem {
         set {
             actionsTakenRaw = try? JSONEncoder().encode(newValue) as NSObject
         }
-    }
-}
+    }//: actionsTaken
+    
+}//: EXTENSION
 
 
 // Creating an example item for development purposes

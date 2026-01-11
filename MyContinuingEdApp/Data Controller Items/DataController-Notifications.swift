@@ -167,6 +167,7 @@ extension DataController {
     func updateAllReminders() async {
         await removeAllReminders()
         
+        await scheduleUpcomingCeActivityNotifications()
         await scheduleExpiringCEsNotifications()
         await scheduleRenewalsEndingNotifications()
         await scheduleDisciplinaryActionNotifications()
@@ -180,6 +181,11 @@ extension DataController {
     /// This method searches all CeActivity objects and returns only those that match four criteria for inclusion with
     /// activities that are due to expire in the future and the user specifically wants to be reminded of that ahead of time.
     /// - Returns: array of CeActivity objects meeting the inclusion criteria set within the function
+    /// - Criteria:
+    ///     - CeActivity must be set to expire (activityExpires = true)
+    ///     - The activity's expiration date must be after the current date
+    ///     - The activity must not be marked as completed
+    ///     - The activity's expirationReminderYN property must be set to true
     func fetchUpcomingExpiringCeActivities() -> [CeActivity] {
         let request: NSFetchRequest<CeActivity> = CeActivity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(keyPath: \CeActivity.expirationDate, ascending: true)]
@@ -262,8 +268,39 @@ extension DataController {
     }
     
     
+    /// Method that returns an array of all CeActivities that meet the criteria for being "upcoming" and can be
+    /// included for the scheduling of notifications to the user.
+    /// - Returns: Array of CeActivities meeting all fetch predicates
+    /// - Criteria:
+    ///     - CeActivity must have a startTime value greater than that of the current Date value
+    ///     - CeActivity must have the startReminderYN set to true (user wants to be reminded)
+    ///     - CeActivity must not have been marked as completed
+    ///
+    ///  There is a global settings value that also controls whether any CeActivity start reminders are shown,
+    ///  showActivityStartNotifications, that value will be used in the notification scheduling function to
+    ///  determine whether to schedule any notifications.
+    func fetchUpcomingCeActivities() -> [CeActivity] {
+        let activityFetch = CeActivity.fetchRequest()
+        activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
+        
+        let activityPredicates: [NSPredicate] = [
+            NSPredicate(format: "startTime > %@", Date.now as NSDate),
+            NSPredicate(format: "startReminderYN == true"),
+            NSPredicate(format: "activityCompleted == false")
+        ]
+        
+        activityFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: activityPredicates)
+        
+        let fetchedActivities = (try? container.viewContext.fetch(activityFetch)) ?? []
+        return fetchedActivities
+    }//: fetchUpcomingCeActivities()
+    
+    
+    
     
     // MARK: - Object Specific Notifications
+    // ** It is important that all of the methods in this section are included
+    // in the updateAllReminders() method **
     
     /// This method creates two notifications for each CeActivity which meets the inclusion criteria for being an upcoming,
     /// expiring actiivty.  Each notification's trigger date is determined by what the user entered in settings for primary and
@@ -272,48 +309,67 @@ extension DataController {
         guard showExpiringCesNotification == true else { return }
             let firstNotification = primaryNotificationDays
             let secondNotification = secondaryNotificationDays
+        
+            let calendar = Calendar.current
+            let amNotificationTime = Double (60 * 60 * 10)
             
             let expiringCes = fetchUpcomingExpiringCeActivities()
             
             // Creating notifications
             for ce in expiringCes {
+                guard let expiresOn = ce.expirationDate, ce.expirationReminderYN == true else { continue }
                 for i in 1...2 {
                     let title = ce.ceTitle
-                    let daysToExpiration = (ce.ceActivityExpirationDate.timeIntervalSinceNow) / 86400
+                    let daysToExpiration = (expiresOn.timeIntervalSinceNow) / 86400
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
                     let body = "This CE activity ^[is scheduled to expire \(Int(daysToExpiration)) day](inflect:true) from now! Make sure you complete it before then if you wish to count it for the current renewal period."
-                    let triggerDate = (
-                        ce.ceActivityExpirationDate).addingTimeInterval(-targetDaysAhead)
+                    let triggerDate = calendar.startOfDay(for: expiresOn).addingTimeInterval(-targetDaysAhead)
+                    let morningNoticeTime = triggerDate.addingTimeInterval(amNotificationTime)
                     let noticeType: NotificationType = .upcomingExpiration
                     let noticeNumber: Int = i
                     
-                    await addReminder(for: ce, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
+                    await addReminder(
+                        for: ce,
+                        title: title,
+                        body: body,
+                        onDate: morningNoticeTime,
+                        notificationType: noticeType,
+                        noticeNum: noticeNumber
+                    )
                 }//: INNER LOOP
             }//: LOOP
             
     }//: scheduleExpiringCEsNotifications()
     
-    /// This method creates notifications to alert the user when the end date for a credential's renewing period approaches and
-    /// when the late renewal fee will be taking effect (if the user put that info in).  In both cases two notifications are created
-    /// using the primary and secondary notifcation preferences set by the user as trigger dates.
+    /// This method creates multiple notifications related to the end of a renewal period and the need for them to complete all required CEs and renew
+    /// their credential before it ends to prevent the credential from lapsing.
+    ///
+    /// A total of five different notification types are created and scheduled by this method, if the notification criteria for each are met.  For three of the
+    /// types (6 month renewal notice, renewal application window starting, and late fee starting), only one notification is scheduled and is for a specific
+    /// date.  For the remaining two types (general renewal reminder & late fee approaching), two notifications are generated based on the user's
+    /// notification preferences as set in Settings. All notifications created by this method are scheduled to be triggered at 10am on the day they are to
+    /// be shown to the user.
     func scheduleRenewalsEndingNotifications() async {
         guard showRenewalEndingNotification == true else {return}
             let firstNotification = primaryNotificationDays
             let secondNotification = secondaryNotificationDays
+        
+            let calendar = Calendar.current
+            let morningNotificationTimeFactor: Double = (60 * 60 * 10)
             
             let endingRenewalPeriods = getCurrentRenewalPeriods()
             
             // Scheduling a 6 month renewal notification
+            // Note: first & second notifications do NOT apply to this particular notification
             for period in endingRenewalPeriods {
-                guard period.periodEnd != nil else { continue }
-                let credName = period.credential?.credentialName ?? "your credential"
-                let timeRemaining = calculateRemainingTimeUntilExpiration(renewal: period).days
-                if timeRemaining == 180 {
-                    let title = "6 months remaining until renewal!"
-                    let body = "^[You have \(timeRemaining) day](inflect:true) left before your \(credName) expires. Now is the time to start working on getting all your required CEs if you haven't done so yet."
-                    let targetDaysAhead: Double = Double(timeRemaining) * 86400
-                    let triggerDate = period.renewalPeriodEnd.addingTimeInterval(-targetDaysAhead)
+                guard period.periodEnd != nil, period.renewalCompletedYN == false else { continue }
+                let credName = period.credential?.credentialName ?? "credential"
+                let title = "6 months remaining until renewal!"
+                let body = "Time flies! You only have six months left before your \(credName) expires. Now is the time to start working on getting all your required CEs if you haven't done so yet."
+                
+                if let triggerDate = getCustomMonthsLeftInRenewalDate(months: -6, renewal: period) {
+                    let noticeTime = triggerDate.addingTimeInterval(morningNotificationTimeFactor)
                     let noticeType: NotificationType = .renewalEnding
                     let noticeNumber: Int = 666
                     
@@ -321,48 +377,108 @@ extension DataController {
                         for: period,
                         title: title,
                         body: body,
-                        onDate: triggerDate,
+                        onDate: noticeTime,
                         notificationType: noticeType,
                         noticeNum: noticeNumber)
-                }//: IF
+                }//: IF LET
+            }//: LOOP
+        
+            // Renewal application window now open notification
+            for period in endingRenewalPeriods {
+                guard let endDate = period.periodEnd, let windowOpens = period.periodBeginsOn else { continue }
+                
+                let credName = period.credential?.credentialName ?? "credential"
+                let title = "Application window for the next renewal cycle now open!"
+                let lateFeeString = (
+                    period.renewalHasLateFeeYN ? "Your credential issuer will charge a late fee of $\(period.lateFeeAmount) if you don't renew before \(period.renewalLateFeeStartDate), so be sure to renew before then."
+                    : "Don't wait until the last minute to renew!"
+                    )
+                let body = "You can now renew your \(credName) anytime between now and \(endDate). \(lateFeeString)"
+                let triggerDate = calendar.startOfDay(for: windowOpens).addingTimeInterval(morningNotificationTimeFactor)
+                let noticeType: NotificationType = .renewalProcessStarting
+                let noticeNumber: Int = 777
+                
+                await addReminder(
+                    for: period,
+                    title: title,
+                    body: body,
+                    onDate: triggerDate,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
             }//: LOOP
             
             
             // Scheduling notifications related to the renewal period end date
             for period in endingRenewalPeriods {
-                guard period.periodEnd != nil else { continue }
+                guard let endDate = period.periodEnd, period.renewalCompletedYN == false else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
                     let title = "The \(period.renewalPeriodName) for \(credName) ends soon!"
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
-                    let daysRemaining = Int((period.renewalPeriodEnd).timeIntervalSinceNow / 86400)
+                    let daysRemaining = Int((endDate).timeIntervalSinceNow / 86400)
                     let body = "^[You have \(daysRemaining) day](inflect:true) left before your credential expires if you haven't renewed yet!"
-                    let triggerDate = (period.renewalPeriodEnd).addingTimeInterval(-targetDaysAhead)
+                    let triggerDate = calendar.startOfDay(for: endDate).addingTimeInterval(-targetDaysAhead)
+                    let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationTimeFactor)
                     let noticeType: NotificationType = .renewalEnding
                     let noticeNumber: Int = i
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
+                    await addReminder(
+                        for: period,
+                        title: title,
+                        body: body,
+                        onDate: amNoticeTime,
+                        notificationType: noticeType,
+                        noticeNum: noticeNumber
+                    )
                 }//: INNER LOOP
             }//: LOOP
             
             
             // Scheduling notifications related to each renewal's late fee start date
             for period in endingRenewalPeriods {
-                guard showRenewalLateFeeNotification, period.lateFeeAmount > 0, period.lateFeeStartDate != nil else { continue }
+                guard showRenewalLateFeeNotification, period.lateFeeAmount > 0, let lateFeeDate = period.lateFeeStartDate, period.renewalCompletedYN == false, let endDate = period.periodEnd else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 for i in 1...2 {
                     let title = "The late fee for the \(period.renewalPeriodName) approaches!"
                     let targetDaysAhead: Double = (
                         Double(i == 1 ? firstNotification : secondNotification)) * 86400
-                    let daysRemaining = Int((period.renewalLateFeeStartDate).timeIntervalSinceNow / 86400)
+                    let daysRemaining = Int((lateFeeDate).timeIntervalSinceNow / 86400)
                     let body = "^[You have \(daysRemaining) day](inflect:true) left before renewing your \(credName) will cost you $\(period.lateFeeAmount) extra - renew soon!"
-                    let triggerDate = (period.renewalLateFeeStartDate).addingTimeInterval(-targetDaysAhead)
+                    let triggerDate = calendar.startOfDay(for: lateFeeDate).addingTimeInterval(-targetDaysAhead)
+                    let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationTimeFactor)
                     let noticeType: NotificationType = .lateFeeStarting
                     let noticeNumber: Int = i
                     
-                    await addReminder(for: period, title: title, body: body, onDate: triggerDate, notificationType: noticeType, noticeNum: noticeNumber)
+                    await addReminder(
+                        for: period,
+                        title: title,
+                        body: body,
+                        onDate: amNoticeTime,
+                        notificationType: noticeType,
+                        noticeNum: noticeNumber
+                    )
                 }//: INNER LOOP
+                
+                // Adding same day late fee starting notification if user still has not renewed
+                let title = "The late fee for the \(period.renewalPeriodName) starts TODAY!"
+                let daysLeftToRenew = Int((endDate).timeIntervalSinceNow / 86400)
+                let body = "Unfortunately,renewing your \(credName) will now cost you $\(period.lateFeeAmount) extra. You only have \(daysLeftToRenew) days left to renew, so make sure you do so before \(endDate). Otherwise, your credential will lapse and you will need to reinstate it."
+                let triggerDate = calendar.startOfDay(for: lateFeeDate)
+                let amNoticeTime = triggerDate.addingTimeInterval(morningNotificationTimeFactor)
+                let noticeType: NotificationType = .lateFeeStarting
+                let noticeNumber: Int = 3
+                
+                await addReminder(
+                    for: period,
+                    title: title,
+                    body: body,
+                    onDate: amNoticeTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+                
             }//: LOOP
             
        
@@ -455,6 +571,86 @@ extension DataController {
         
     }//: scheduleDisciplinaryActionNotifications()
     
+    
+    /// Method that creates multiple notifications for CeActivities that have a specified starting time.
+    ///
+    /// The notifications are created both in terms of days ahead as well as minutes ahead, based on the values
+    /// entered by the user in Settings for primary and secondary notifications as well as live alerts.  If an activity has
+    /// a starting time, hasn't been completed, and has been marked for notifications, then the method will create 2 alerts
+    /// in the days leading up to the event, based on user preference.  Then, on the day of the live even two notifications
+    /// will be scheduled for however many minutes ahead the user sets the preferences for.  If set to 0 minutes, no notification
+    /// will be made.
+    func scheduleUpcomingCeActivityNotifications() async {
+        guard showActivityStartNotifications else { return }
+        
+        let firstNotification = primaryNotificationDays
+        let secondNotification = secondaryNotificationDays
+        let calendar = Calendar.current
+        let morningNoticeTime = Double(60 * 60 * 10)
+        
+        let eligibleActivities = fetchUpcomingCeActivities()
+        guard eligibleActivities.isNotEmpty else {return}
+        
+        // Creating and scheduling the two notifications for each activity
+        for activity in eligibleActivities {
+            guard let startTime = activity.startTime else { continue }
+            let startDate = startTime.formatted(date: .numeric, time: .omitted)
+            let time = startTime.formatted(date: .omitted, time: .shortened)
+            
+            // Notifications scheduled days ahead
+            for i in 1...2 {
+                let targetDaysAhead: Double = Double((i == 1 ? firstNotification : secondNotification) * 86400)
+                let daysUntilEvent: Int = Int((startTime.timeIntervalSinceNow) / 86400)
+                
+                let title: String = "Live CE activity coming up!"
+                let body: String = "Don't miss the live CE activity, \(activity.ceTitle), on \(startDate) at \(time)! It's only \(daysUntilEvent) away from now!"
+                
+                let triggerDate = calendar.startOfDay(for: startTime).addingTimeInterval(-targetDaysAhead)
+                let amNoticeTime = triggerDate.addingTimeInterval(morningNoticeTime)
+                let noticeType: NotificationType = .liveActivityStarting
+                let noticeNumber: Int = i
+                
+                await addReminder(
+                    for: activity,
+                    title: title,
+                    body: body,
+                    onDate: amNoticeTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP (inner)
+            
+            
+            // Notifications scheduled for hours / minutes ahead
+            // Multiplying by 60 because the Settings keys that these variables point to
+            // return a Double value that represents the number of minutes ahead that the
+            // user wishes to receive a notification for
+            let firstAlert = (firstLiveEventAlert * 60)
+            let secondAlert = (secondLiveEventAlert * 60)
+            
+            for j in 1...2 {
+                let targetTimeAhead: Double = Double((j == 1 ? firstAlert : secondAlert))
+                guard targetTimeAhead > 0 else {continue}
+                let timeUntilEvent: Int = Int(startTime.timeIntervalSinceNow / 60)
+                
+                let title: String = "Live CE activity coming up!"
+                let body: String = "Don't miss the live CE activity, \(activity.ceTitle), starting in \(timeUntilEvent) minutes at \(time)!"
+                
+                let triggerTime = startTime.addingTimeInterval(-targetTimeAhead)
+                let noticeType: NotificationType = .liveActivityStarting
+                let noticeNumber: Int = j
+                
+                await addReminder(
+                    for: activity,
+                    title: title,
+                    body: body,
+                    onDate: triggerTime,
+                    notificationType: noticeType,
+                    noticeNum: noticeNumber
+                )
+            }//: LOOP
+        }//: LOOP (activity in eligibleActivities)
+    }//: scheduleUpcomingCeActivityNotifications()
     
 }//: DATA CONTROLLER
 

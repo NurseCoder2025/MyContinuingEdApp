@@ -57,6 +57,36 @@ extension DataController {
         
     }//: calculateRemainingTimeUntilExpiration(renewal)
     
+    /// Method that computes a date that is so many months ahead of the passed-in renewal period's end date. Mainly intended for use in scheduling
+    /// notifications, but can be used elsewhere.
+    /// - Parameters:
+    ///   - months: Int value which should be a negative value, representing how many months ahead the returned date should be
+    ///   - renewal: RenewalPeriod object for which a notification date needs to be calculated
+    /// - Returns: Optional Date value representing the date that is however many months ahead of the renewal end date
+    ///
+    /// This function returns an OPTIONAL Date value becuase either the passed-in renewal period object does not have a value for periodEnd or
+    /// the specified date calculation could not be determined by the .date(byAdding) method.  In the event a positive Int is used as the argument
+    /// for months, the method will automatically convert it to a negative value so that the right date can be returned.
+    func getCustomMonthsLeftInRenewalDate(months: Int, renewal: RenewalPeriod) -> Date? {
+        guard renewal.periodEnd != nil else {return nil}
+        var monthsPrior: Int = 0
+        
+        // Ensuring that if the months argument is positive, it is turned to a negative in order to correctly
+        // return the date that is that many months AHEAD of the renewal end date.
+        if months > 0 {
+            monthsPrior = (0 - months)
+        } else {
+            monthsPrior = months
+        }
+        
+        let calendar = Calendar.current
+        let pureEndDate = calendar.startOfDay(for: renewal.renewalPeriodEnd)
+        
+        let earlyNotificationDate = calendar.date(byAdding: .month, value: monthsPrior, to: pureEndDate)
+        
+        return earlyNotificationDate
+    }//: getCustomMonthsLeftInRenewalDate()
+    
     
     // MARK: - CE PROGRESS METHODS
     // Since CEs can be measured in either clock hours or units, the approach being taken

@@ -70,7 +70,7 @@ class DataController: ObservableObject {
         if container.viewContext.hasChanges {
             try? container.viewContext.save()
         }
-    }
+    }//: save()
     
     /// The queueSave function calls the save() function in the DataController but assigns it to a task variable
     /// which will delay saving for 5 seconds unless the action gets cancelled by user behavior.

@@ -8,12 +8,16 @@
 import Foundation
 import SwiftUI
 
+// MARK: - COLLECTION Extensions
 extension Collection {
+    /// Computed property within the Collection extension that returns the opposite value of .isEmpty
+    ///
+    /// Can be used on any data type that conforms to the Collection protocol
     var isNotEmpty: Bool {
         return !self.isEmpty
-    }
+    }//: isNotEmpty
     
-}
+}//: EXTENSION (Collection)
 
 extension Collection where Element: Equatable {
     
@@ -26,10 +30,11 @@ extension Collection where Element: Equatable {
     /// of an extension on the Collection protocol, so any conforming member that has elements conforming to equatable can use it.
     func doesNOTContain(_ element: Element) -> Bool {
         return !self.contains(element)
-    }
+    }//: doesNOTContain
+    
 }//: EXTENSION (collection)
 
-
+// MARK: - DATE Extensions
 extension Date {
      
     // Adding a property that will provide a reasonable future expiration date for new CE activities
@@ -56,6 +61,14 @@ extension Date {
     /// Computed constant date that is set for 90 days from the current date and time
     static let probationaryEndDate: Date = Date.now.addingTimeInterval(86400 * 90)
     
+    /// Computed static property for providing a reasonable renewal period application start date.  Value
+    /// is based on the renewalStartDate property and adds 2.5 years to that date (913 days).
+    static let renewalBeginsOnDate: Date = Date.renewalStartDate.addingTimeInterval(86400 * 913)
+    
+    /// Computed static property for providing a reasonable date for when a credential holder completes
+    /// the renewal process, which in this case is 20 days after the renewalBeginsOnDate.
+    static let renewalCompletedOnDate: Date = Date.renewalBeginsOnDate.addingTimeInterval(86400 * 20)
+    
     // Getting a year string from a given date
     var yearString: String {
         let calendar = Calendar.current
@@ -64,8 +77,10 @@ extension Date {
     }
 }
 
-
+// MARK: - VIEW Extensions
 extension View {
+    
+    /// Method that dismisses the on-screen keyboard using the UIApplication shared singleton
     func dismissKeyboard() {
         UIApplication.shared.sendAction(
             #selector(UIResponder.resignFirstResponder),
@@ -74,4 +89,4 @@ extension View {
             for: nil
         )
     }//: dismissKeyboard
-}
+}//: EXTENSION (View)

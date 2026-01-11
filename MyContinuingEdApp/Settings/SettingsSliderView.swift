@@ -15,6 +15,7 @@ struct SettingsSliderView: View {
     let minValue: Double
     let maxValue: Double
     let stepValue: Int
+    let valueLabel: String
     let headerText: String
     let minImageLabel: String
     let maxImageLabel: String
@@ -23,7 +24,7 @@ struct SettingsSliderView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("\(headerText): \(sliderValue, specifier: "%.0f") days")
+                Text("\(headerText): \(sliderValue, specifier: "%.0f") \(valueLabel)")
                     .font(.headline)
                 Spacer()
             }//: HSTACK
@@ -41,12 +42,12 @@ struct SettingsSliderView: View {
             
             
             HStack {
-                Text("\(minValue, specifier: "%.0f") days")
+                Text("\(minValue, specifier: "%.0f") \(valueLabel)")
                     .padding(.leading, 8)
                     .foregroundStyle(.secondary)
                     .accessibilityHint(Text("This is the earliest you can set this alert to be set for."))
                 Spacer()
-                Text("\(maxValue, specifier: "%.0f") days")
+                Text("\(maxValue, specifier: "%.0f") \(valueLabel)")
                     .padding(.trailing, 8)
                     .foregroundStyle(.secondary)
                     .accessibilityHint(Text("This is the latest you can set this alert to be set for."))
@@ -64,8 +65,9 @@ struct SettingsSliderView: View {
         minValue: 30.0,
         maxValue: 180.0,
         stepValue: 1,
+        valueLabel: "days",
         headerText: "Primary Alert",
         minImageLabel: "hourglass.bottomhalf.fill",
         maxImageLabel: "hourglass.tophalf.fill"
     )
-}
+}//: PREVIEW
