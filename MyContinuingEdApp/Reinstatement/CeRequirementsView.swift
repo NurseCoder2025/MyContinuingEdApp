@@ -12,6 +12,9 @@ struct CeRequirementsView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var reinstatement: ReinstatementInfo
     
+    @State private var reinstateCEHrRequired: Double = 1.0
+    @State private var reinstateCEHrEarned: Double = 0.0
+    
     @State private var requiredCECats: [ReinstatementSpecialCat] = []
     @State private var showAddRequiredCatsRows: Bool = false
     @State private var showNoCatsToAddView: Bool = false
@@ -96,12 +99,25 @@ struct CeRequirementsView: View {
         
         // MARK: CE COMPLETION
         Section("CE Completion") {
-            Toggle("All Required CEs Completed?", isOn: $reinstatement.cesCompletedYN)
+            ReinstatementCEProgressView(
+                reinstatement: reinstatement,
+                requiredHours: reinstateCEHrRequired,
+                earnedHours: reinstateCEHrEarned
+            )
             
             if reinstatement.cesCompletedYN {
                 DatePicker("Date Completed", selection: $reinstatement.riCEsCompletedDate, displayedComponents: .date)
             }//: IF
+               
         }//: SECTION
+         // MARK: - ON APPEAR
+         .onAppear {
+             if let renewal = reinstatement.renewal {
+                 let reinstateHours = dataController.calculateCEsForReinstatement(renewal: renewal)
+                 reinstateCEHrRequired = reinstateHours.required
+                 reinstateCEHrEarned = reinstateHours.earned
+             }//: IF LET
+         }//: ON APPEAR
         
     }//: BODY
      // MARK: - METHODS

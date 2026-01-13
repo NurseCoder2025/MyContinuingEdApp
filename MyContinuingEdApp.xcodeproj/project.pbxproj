@@ -47,6 +47,10 @@
 		3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */; };
 		3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */; };
 		3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */; };
+		3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB6F2F159EDD00489758 /* ReinstatementCEProgressView.swift */; };
+		3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB712F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift */; };
+		3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */; };
+		3F67DB762F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
@@ -274,6 +278,10 @@
 		3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-ComputedProperties.swift"; sourceTree = "<group>"; };
 		3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpInfoSheetView.swift; sourceTree = "<group>"; };
 		3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-SpecialCats.swift"; sourceTree = "<group>"; };
+		3F67DB6F2F159EDD00489758 /* ReinstatementCEProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementCEProgressView.swift; sourceTree = "<group>"; };
+		3F67DB712F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatHrsNeededCardView.swift; sourceTree = "<group>"; };
+		3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementProgressCheckSheet.swift; sourceTree = "<group>"; };
+		3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementStandAloneProgressView.swift; sourceTree = "<group>"; };
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
@@ -786,12 +794,11 @@
 			children = (
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
+				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
 				3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */,
 				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */,
 				3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */,
-				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
-				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
 				3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */,
 				3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */,
 				3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */,
@@ -803,6 +810,7 @@
 				3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */,
 				3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */,
 				3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */,
+				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 			);
 			path = "Data Controller Items";
 			sourceTree = "<group>";
@@ -833,8 +841,12 @@
 				3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */,
 				3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */,
 				3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */,
+				3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */,
 				3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */,
 				3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */,
+				3F67DB6F2F159EDD00489758 /* ReinstatementCEProgressView.swift */,
+				3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */,
+				3F67DB712F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift */,
 				3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */,
 			);
 			path = Reinstatement;
@@ -1153,6 +1165,7 @@
 				F2CFCE622E70D41D00443C5C /* NoCredentialsButtonView.swift in Sources */,
 				F2011DBF2E62417200D5DF92 /* InactiveReasons-Defaults.swift in Sources */,
 				F2011DC52E62529100D5DF92 /* US-StatesList.swift in Sources */,
+				3F67DB762F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift in Sources */,
 				F2B937A72E83961E00AF9155 /* GlobalVariables.swift in Sources */,
 				3FA2961C2EE227FA000F5D12 /* StorePreviewProtocol.swift in Sources */,
 				3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */,
@@ -1222,10 +1235,12 @@
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
 				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
+				3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
 				3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
+				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
@@ -1293,6 +1308,7 @@
 				3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */,
 				F2BC94A92E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift in Sources */,
 				3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */,
+				3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */,
 				F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */,
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
 				3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */,

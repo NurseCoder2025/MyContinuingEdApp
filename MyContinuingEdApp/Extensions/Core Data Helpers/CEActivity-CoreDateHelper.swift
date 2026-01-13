@@ -10,7 +10,7 @@ import Foundation
 
 extension CeActivity {
     // Extending CEActivity to handle Core Data optionals easier
-    
+    // MARK: - UI HELPERS
     var ceTitle: String {
         get { activityTitle ?? "" }
         set { activityTitle = newValue}
@@ -27,10 +27,6 @@ extension CeActivity {
         set { activityFormat = newValue }
     }
     
-    var ceActivityWhatILearned: String {
-        get { whatILearned ?? "" }
-        set { whatILearned = newValue }
-    }
     
     // Removing this part of the helper as activities that aren't completed
     // shouldn't have a date value at all (should be nil)
@@ -73,6 +69,41 @@ extension CeActivity {
         set {endTime = newValue}
     }//: ceEndTime
     
+    /// Computed CoreData helper property for CeActivity's infoWebsiteURL property, returning an
+    /// empty string if the field is nil.
+    var ceInfoWebsiteURL: String {
+        get {
+            infoWebsiteURL ?? ""
+        }
+        set {
+            infoWebsiteURL = newValue
+        }
+    }//: ceInfoWebsiteURL
+    
+    /// Computed CoreData helper property for CeActivity's registrationURL property, returning an empty
+    /// string value if field is nil.
+    var ceRegistrationURL: String {
+        get {
+            registrationURL ?? ""
+        }
+        set {
+            registrationURL = newValue
+        }
+    }//: ceRegistrationURL
+    
+    /// Computed CoreData helper property for CeActivity's registeredOn Date property, returning the current
+    /// Date if field is nil.
+    var ceRegisteredOn: Date {
+        get {
+            registeredOn ?? Date.now
+        }
+        
+        set {
+            registeredOn = newValue
+        }
+        
+    }//: ceRegisteredOn
+    
     // MARK: - Tag-related properties
     var activityTags: [Tag] {
         let result = tags?.allObjects as? [Tag] ?? []
@@ -113,7 +144,6 @@ extension CeActivity {
         activity.activityCompleted = true
         activity.expirationDate = Date.now.addingTimeInterval(86400 * 30)
         activity.evalRating = 3
-        activity.whatILearned = "How to create new CE activities in the tracker"
         
         return activity
     }
@@ -235,6 +265,7 @@ extension CeActivity {
         let activityUnits = self.hoursOrUnits
         var clockHoursEarned: Double = 0.0
         
+        // TODO: Re-evaluate logic and test this method!
         switch activityUnits {
         case 1:
             return self.ceAwarded
@@ -245,7 +276,7 @@ extension CeActivity {
                 // Use the Credential's CEU ratio if specified by the user
                 let credHrsToUnitRatio = cred.defaultCesPerUnit
                 clockHoursEarned = self.ceAwarded * credHrsToUnitRatio
-            } else if let cred = credential {
+            } else if let _ = credential {
                 // Use the standard CEU ratio of 10 hours to 1 unit if
                 // otherwise not specified
                 let credHrsToUnitRatio: Double = 10.0

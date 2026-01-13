@@ -33,6 +33,9 @@ extension SidebarView {
         // Property for holding a renewal period that the user wants to check progress on
         @Published var selectedRenewalForProgressCheck: RenewalPeriod?
         
+        // Property for holding a reinstatement info object for checking progress
+        @Published var selectedReinstatementForProgressCheck: ReinstatementInfo?
+        @Published var showReinstatmentProgressSheet: Bool = false
         
         // Property to hold which item was maxed out in free mode
         @Published var itemMaxedOut: String = ""

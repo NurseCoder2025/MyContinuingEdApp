@@ -22,6 +22,15 @@ extension DataController {
     /// CEs in terms of units vs hours, this method will convert the number of required reinstatement CEs to clock
     /// hours.  For the calculation of earned CEs from completed activities, the getCeClockHoursEarned(for) method
     /// is called within the method.
+    ///
+    /// The calculation of hours is made upon function call, and it basically iterates through all CeActivities assigned to the
+    /// RenewalPeriod arugment, adding the value of the cesAwarded property (in clock hours via the getCeClockHoursEarned
+    /// method) to an internal earnedTotal variable which is returned as the second item in the tuple upon function completion.
+    ///
+    /// ** Important**
+    /// This method also updates the ReinstatementInfo object's cesCompletedYN property to true IF the total number
+    /// of CEs were earned by the credential holder (user) and that total includes all of the required hours for each
+    /// credential-specific category that the governing body required.
     func calculateCEsForReinstatement(renewal: RenewalPeriod) -> (required:Double, earned:Double) {
         guard let reinstatementObj = renewal.reinstatement, let renewalCred = renewal.credential else { return (0.0, 0.0) }
         let ceType = renewalCred.measurementDefault
@@ -43,6 +52,18 @@ extension DataController {
                 earnedTotal += activity.getCeClockHoursEarned(for: renewalCred)
             }
         }//: LOOP
+        
+        // IF the number of CEs earned >= what was required & all special category CEs earned, set the
+        // cesCompletedYN property to true; otherwise ensure it is set to false.
+        // This is important because the value of this property
+        // determines which progress bar indicator is shown in
+        // RenewalPeriodNavLabelView AND whether ReinstatementCEProgressView
+        // is shown in ReinstatementInfoSheet
+        if earnedTotal >= requiredCEs, checkIfSpecialCatHoursMetForReinstatement(renewal: renewal) {
+            reinstatementObj.cesCompletedYN = true
+        } else {
+            reinstatementObj.cesCompletedYN = false
+        }
         
         return (requiredCEs, earnedTotal)
     }//: calculateCEsForReinstatement()

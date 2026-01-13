@@ -74,8 +74,13 @@ struct RenewalPeriodView: View {
                                 showReinstatementHelp = true
                             }, showRIS: {
                                 if let existingRenewal = renewalPeriod {
-                                    reinstatementForRenewal = dataController.createNewReinstatementInfo(renewal: existingRenewal)
-                                    
+                                    // The following code was written to help ensure that duplicate
+                                    // objects won't be created, thus overriding previous ones...
+                                    if let existingReInfo = existingRenewal.reinstatement {
+                                        reinstatementForRenewal = existingReInfo
+                                    } else {
+                                        reinstatementForRenewal = dataController.createNewReinstatementInfo(renewal: existingRenewal)
+                                    }
                                 }//: IF LET
                             }//: showRIS
                         )
@@ -113,7 +118,11 @@ struct RenewalPeriodView: View {
             .onAppear {
                 periodStart = renewalPeriod?.periodStart ?? Date.renewalStartDate
                 periodEnd = renewalPeriod?.periodEnd ?? Date.renewalEndDate
-            }
+                
+                // To ensure that the ReinstatementInfoSheet appears, setting the @State property to
+                // nil upon the sheet appearing so that its value will always change
+                reinstatementForRenewal = nil
+            }//: ON APPEAR
             
         }//: VSTACK
         // MARK: - SHEETS

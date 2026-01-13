@@ -59,20 +59,6 @@ final class ExtensionsTest: BaseTestCase {
     }//: testActivityFormatWrapping()
     
     
-    /// Test to determine whether the computed ceActivityWhatILearned property in the CeActivity extension (CEActivity-CoreDataHelper file) reads and writes
-    /// changes to the CeActivity's whatILearned String properly.
-    func testActivityLearnedWrapping() {
-        let someActivity = CeActivity(context: context)
-        someActivity.whatILearned = "Nothing much"
-        
-        // Does the ceActivityWhatILearned computed property unwrap the entity's whatILearned property?
-        XCTAssertEqual(someActivity.ceActivityWhatILearned, "Nothing much")
-        
-        // Changing the activity's whatILearned property via the computed wrapper
-        someActivity.ceActivityWhatILearned = "A lot of amazing things!"
-        XCTAssertEqual(someActivity.whatILearned, "A lot of amazing things!")
-        
-    }//: testActivityLearnedWrapping()
     
     
     /// Test to determine whether the computed ceActivityAddedDate property in the CeActivity extension (CEActivity-CoreDataHelper file) reads

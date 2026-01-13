@@ -87,6 +87,10 @@ struct SidebarView: View {
                         viewModel.selectedRenewalForProgressCheck = renewal
                         showRenewalProgressSheet = true
                         
+                    },
+                    showReinstatementProgress: { reinstatement in
+                        viewModel.selectedReinstatementForProgressCheck = reinstatement
+                        viewModel.showReinstatmentProgressSheet = true
                     }
                     
                 )//: SidebarCredentialsSectionView
@@ -187,6 +191,10 @@ struct SidebarView: View {
         
         .sheet(isPresented: $showUpgradeToPaidSheet) {
             UpgradeToPaidSheet(itemMaxReached: viewModel.itemMaxedOut)
+        }//: SHEET
+        
+        .sheet(item: $viewModel.selectedReinstatementForProgressCheck) {reInfo in
+            ReinstatementInfoSheet(reinstatement: reInfo)
         }//: SHEET
         
         

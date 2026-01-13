@@ -45,6 +45,9 @@ struct SidebarCredentialsSectionView: View {
     
     // Closure for showing the RenewalProgress sheet
     var showRenewalProgress: (RenewalPeriod) -> Void
+    
+    // Closure for showing any applicable Reinstatment progress
+    var showReinstatmentProgress: (ReinstatementInfo) -> Void
    
     // MARK: - BODY
     var body: some View {
@@ -84,7 +87,17 @@ struct SidebarCredentialsSectionView: View {
                                                     Label("Check CE Progress", systemImage: "chart.pie.fill")
                                                         .labelStyle(.iconOnly)
                                                 }//: BUTTON
-                                            }
+                                                
+                                                if let renewal = filter.renewalPeriod, let renewReinstatement = renewal.reinstatement {
+                                                    Button {
+                                                        // TODO: Add action(s)
+                                                        showReinstatmentProgress(renewReinstatement)
+                                                    } label: {
+                                                        Label("Check Reinstatement Progress", systemImage: "arrow.3.trianglepath")
+                                                            .labelStyle(.iconOnly)
+                                                    }//: BUTTON
+                                                }//: IF
+                                            }//: IF (paidStatus == .proSubscription)
                                             
                                         }//: SWIPE
                                         .contextMenu {
@@ -143,7 +156,8 @@ struct SidebarCredentialsSectionView: View {
         onAddRenewal: @escaping (Credential) -> Void,
         onRenewalDelete: @escaping (RenewalPeriod) -> Void,
         addInitialCredential: @escaping () -> Void,
-        showRenewalProgress: @escaping (RenewalPeriod) -> Void
+        showRenewalProgress: @escaping (RenewalPeriod) -> Void,
+        showReinstatementProgress: @escaping (ReinstatementInfo) -> Void
     ) {
         
         let viewModel = ViewModel(dataController: dataController)
@@ -154,6 +168,7 @@ struct SidebarCredentialsSectionView: View {
         self.onRenewalDelete = onRenewalDelete
         self.addInitalCredential = addInitialCredential
         self.showRenewalProgress = showRenewalProgress
+        self.showReinstatmentProgress = showReinstatementProgress
         
     }//: INIT
 

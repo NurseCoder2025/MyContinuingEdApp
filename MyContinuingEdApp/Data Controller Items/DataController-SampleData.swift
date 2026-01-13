@@ -152,7 +152,6 @@ extension DataController {
                 activity.currentStatus = activity.expirationStatusString
                 activity.cost = Double.random(in: 0...450)
                 activity.activityFormat = "Virtual"
-                activity.whatILearned = "A lot!"
                 tag.addToActivity(activity)
                 
                 // Adding sample activity reflections IF activity has been
