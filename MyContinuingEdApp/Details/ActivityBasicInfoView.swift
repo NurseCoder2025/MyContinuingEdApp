@@ -8,12 +8,18 @@
 // Purpose: Refactor ActivityView code so as to make it more maintanable and easier
 // to read
 
+import CoreData
 import SwiftUI
 
 struct ActivityBasicInfoView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
+    
+    @State var newWebURL: String = ""
+    
+    // Properties for storing values for various activity fields
+    @State private var selectedActivityType: ActivityType?
     
     // MARK: - CLOSURES
     // Adding this closure so as to pass up the sheet presentation
@@ -30,10 +36,13 @@ struct ActivityBasicInfoView: View {
         return credString
     }
     
+    // MARK: - CORE DATA FETCHES
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.typeName)]) var allActivityTypes: FetchedResults<ActivityType>
+    
     // MARK: - BODY
     var body: some View {
         Group {
-            // MARK: Activity Title
+            // MARK: Activity Title + Status
             Section("Activity Name & Status") {
                 TextField(
                     "Title:",
@@ -50,33 +59,51 @@ struct ActivityBasicInfoView: View {
                             .foregroundStyle(.secondary)
                         
                         // MARK: Expiration status of activity
-                        Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
-                            .foregroundStyle(.secondary)
+                        if activity.expirationStatus != .liveActivity {
+                            Text("**Expiration Status:** \(activity.expirationStatus.rawValue)")
+                                .foregroundStyle(.secondary)
+                        }//: IF
+                        
                     }//: VSTACK
                 }//: GROUP
                 .font(.caption)
                 .multilineTextAlignment(.leading)
                 
+                // MARK: TAGS
+                VStack {
+                    Text("Assign custom tags to this activity:")
+                    TagMenuView(activity: activity)
+                }//: VSTACK
+                
             }//: SECTION (title)
             
-            // MARK: Start & Ending Times
-            DisclosureGroup("Starting & Ending Times") {
-                    VStack(spacing: 10) {
-                        DatePicker(
-                            "Starts On",
-                            selection: $activity.ceStartTime, displayedComponents: [.date, .hourAndMinute]
-                        )//: DATE PICKER
-                        
-                        Toggle(isOn: $activity.startReminderYN) {
-                            Text("Remind Me?")
-                        }//: TOGGLE
-                    }//: VSTACK
+            // MARK: Activity Website
+            Section("Activity Website"){
+                WebSiteEntryView(
+                    propertyURLString: $newWebURL,
+                    textEntryLabel: "Website Address",
+                    textEntryPrompt: "If the activity has a website, enter it here",
+                    linkLabel: "Activity's Website"
+                )
+            }//: SECTION
+            
+            // MARK: Activity Type
+            Section("Activity Type") {
+                Picker("Type:", selection: $selectedActivityType) {
+                    ForEach(allActivityTypes) { type in
+                        Text(type.activityTypeName)
+                            .tag(type as ActivityType?)
+                    }//: LOOP
                     
-                    DatePicker(
-                        "Ends On",
-                        selection: $activity.ceEndTime, displayedComponents: [.date, .hourAndMinute]
-                    )//: DATE PICKER
-            }//: DISCLOSURE GROUP
+                }//: PICKER
+                .onChange(of: selectedActivityType) { newType in
+                    activity.type = newType
+                }//: ON CHANGE
+            }//: SECTION
+            
+            if activity.isLiveActivity {
+                LiveActivitySettings(activity: activity)
+            }//: IF
             
             // MARK: Credentials
             Section("Activity For Credential(s)...") {
@@ -97,26 +124,31 @@ struct ActivityBasicInfoView: View {
                     }//: BUTTON
                 } //: SECTION (credential assignments)
             
-                // MARK: Description & Tags
-                Section("Description & Assigned Tags") {
-                    VStack {
-                        LeftAlignedTextView(text: "Activity Description:")
-                            .font(.headline)
-                            .bold()
-                        TextField("Description:", text: $activity.ceDescription, prompt: Text("Enter a description of the activity"), axis: .vertical)
-                            .keyboardType(.default)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.2))
-                            )
-                    }//: VSTACK
-                
+            // MARK: Description
+            Section("Description") {
                 VStack {
-                    Text("Assign custom tags to this activity:")
-                    TagMenuView(activity: activity)
+                    LeftAlignedTextView(text: "Activity Description:")
+                        .font(.headline)
+                        .bold()
+                    TextField("Description:", text: $activity.ceDescription, prompt: Text("Enter a description of the activity"), axis: .vertical)
+                        .keyboardType(.default)
+                        .frame(minHeight: 150, alignment: .topLeading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.2))
+                        )
                 }//: VSTACK
-                
-            }//: SECTION
+            
+        }//: SECTION
         }//: GROUP
+        // MARK: - ON CHANGE
+        .onChange(of: newWebURL) { urlAddress in
+            activity.ceInfoWebsiteURL = urlAddress
+        }//: ONCHANGE
+         // MARK: - ON APPEAR
+         .onAppear {
+             selectedActivityType = activity.type
+         }//: ON APPEAR
+        
         
     }//: BODY
 }//: STRUCT

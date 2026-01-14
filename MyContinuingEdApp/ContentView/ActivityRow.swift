@@ -26,6 +26,7 @@ struct ActivityRow: View {
                 // This block shows a different icon depending on whether the activity
                 // has been completed by the user, and if not, whether the activity
                 // has expired or will be expiring soon
+                // MARK: - STATUS ICON
                 VStack(alignment: .leading) {
                     if activity.activityCompleted == true {
                         Image(systemName: "checkmark.seal.fill")
@@ -50,7 +51,9 @@ struct ActivityRow: View {
                         Image(systemName: "clock.badge.exclamation")
                             .imageScale(.large)
                             .accessibilityLabel("Activity expires after today")
-                    } else if expiration == .stillValid {
+                    } else if expiration == .stillValid  || expiration == .liveActivity {
+                        // This image is just used as a blank filler to keep things aligned
+                        // if the activity does not meet any of the above criteria.
                         Image(systemName: "book.fill")
                             .imageScale(.large)
                             .opacity(0)
@@ -61,6 +64,7 @@ struct ActivityRow: View {
                
                 
                 // VSTACK for name and tags
+                // MARK: - NAME & Tags
                 VStack(alignment: .leading) {
                     // Activity Name
                     Text(activity.ceTitle)
@@ -75,6 +79,7 @@ struct ActivityRow: View {
                
             Spacer()
             
+                // MARK: - Completion & Expiration Status
             VStack(alignment: .trailing) {
                 // 8-12-25 Improvement: Placed "Completed" and "exp" date in
                 // an if-else statement so that the expiration date is hidden
@@ -103,14 +108,27 @@ struct ActivityRow: View {
                             .foregroundStyle(.red)
                             .font(.subheadline)
                             .bold()
+                    } else if activity.isLiveActivity, let setTime = activity.startTime {
+                        VStack(spacing: 2) {
+                            Text(setTime.formatted(date: .omitted, time: .shortened))
+                                .bold()
+                        
+                                Text(setTime.formatted(date: .numeric, time: .omitted))
+                          
+                        }//: VSTACK
+                        .font(.subheadline)
+                    } else if activity.isLiveActivity {
+                        Text("Live Activity")
+                            .font(.caption).bold()
+                        Text("Need date & time!")
+                            .font(.caption)
+                            .italic()
                     } else {
-                        Text("No expiration")
+                        Text("Expires, no date")
                             .foregroundStyle(.gray)
-                            .font(.subheadline)
+                            .font(.caption)
                             .italic()
                     }
-                   
-                       
                 } //: IF - ELSE
                 
             } //: VSTACK - Expiration date
@@ -119,8 +137,8 @@ struct ActivityRow: View {
             
         } //: NAV LINK
         
-    }
-}
+    }//: BODY
+}//: STRUCT
 
 
 // MARK: - PREVIEW

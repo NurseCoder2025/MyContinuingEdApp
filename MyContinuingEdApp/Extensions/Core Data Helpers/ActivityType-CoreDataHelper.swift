@@ -6,9 +6,11 @@
 //
 
 extension ActivityType {
-    
+    // MARK: - UI HELPERS
     var activityTypeName: String {
         get { typeName ?? "" }
         set { typeName = newValue }
-    }
-}
+    }//: activityTypeName
+    
+    
+}//: EXTENSION

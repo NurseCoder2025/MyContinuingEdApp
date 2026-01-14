@@ -9,16 +9,19 @@
         "typeName": "Course"
     },
     {
-        "typeName": "Journal club"
+        "typeName": "Journal Club"
     },
     {
-        "typeName": "Podcast"
+        "typeName": "Podcast (live)"
+    },
+    {
+        "typeName": "Recording"
     },
     {
         "typeName": "Simulation"
     },
     {
-        "typeName": "Webinar"
+        "typeName": "Webinar (live)"
     },
     {
         "typeName": "Workshop"

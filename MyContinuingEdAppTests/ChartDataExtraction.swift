@@ -43,7 +43,7 @@ final class ChartDataExtraction: BaseTestCase {
             sampleCE.hoursOrUnits = 1
             sampleCE.activityCompleted = true
             sampleCE.dateCompleted = Date.now.addingTimeInterval((86400 * Double(i)) + 20)
-            sampleCE.renewal = sampleRenewal
+            sampleCE.addToRenewals(sampleRenewal)
             controller.save()
         }//: LOOP
         
@@ -112,7 +112,7 @@ final class ChartDataExtraction: BaseTestCase {
             sampleCE.hoursOrUnits = 1
             sampleCE.activityCompleted = true
             sampleCE.dateCompleted = Date.now.addingTimeInterval((86400 * Double(i)) + 20)
-            sampleCE.renewal = sampleRenewal
+            sampleCE.addToRenewals(sampleRenewal)
             controller.save()
         }//: LOOP
         
@@ -138,7 +138,7 @@ final class ChartDataExtraction: BaseTestCase {
         specialCatCe.hoursOrUnits = 1
         specialCatCe.activityCompleted = true
         specialCatCe.dateCompleted = Date.now.addingTimeInterval(86400 * 45)
-        specialCatCe.renewal = sampleRenewal
+        specialCatCe.addToRenewals(sampleRenewal)
         specialCatCe.specialCat = sampleSpecialCat
         controller.save()
         
@@ -298,7 +298,7 @@ final class ChartDataExtraction: BaseTestCase {
             sampleCE.hoursOrUnits = 1
             sampleCE.activityCompleted = true
             sampleCE.dateCompleted = Date.now.addingTimeInterval((86400 * Double(i)) + 20)
-            sampleCE.renewal = sampleRenewal
+            sampleCE.addToRenewals(sampleRenewal)
             controller.save()
         }//: LOOP
         
@@ -320,7 +320,7 @@ final class ChartDataExtraction: BaseTestCase {
             sampleCE.specialCat = (activity == 1 ? specialCats[0] : specialCats[1])
             sampleCE.activityCompleted = true
             sampleCE.dateCompleted = Date.now.addingTimeInterval(-(86400 * Double(10 + activity) + 20))
-            sampleCE.renewal = sampleRenewal
+            sampleCE.addToRenewals(sampleRenewal)
         }//: LOOP
         
         controller.save()

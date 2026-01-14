@@ -27,6 +27,14 @@ extension CeActivity {
         set { activityFormat = newValue }
     }
     
+    /// Computed CoreData helper for CeActivity's itemsToBring string property. If the property is nil,
+    /// will return an empty string value. Will set the property value to whatever new String value the
+    /// user assigns to it in the UI.
+    var ceItemsToBring: String {
+        get {itemsToBring ?? ""}
+        set {itemsToBring = newValue}
+    }// ceItemsToBring
+    
     
     // Removing this part of the helper as activities that aren't completed
     // shouldn't have a date value at all (should be nil)
@@ -165,7 +173,7 @@ extension CeActivity: Comparable {
 }
 
 
-// MARK: - Adding computed expiration status property
+// MARK: - OTHER COMPUTED PROPERTIES
 extension CeActivity {
     
     // computed property to determine if the given activity will be
@@ -174,6 +182,12 @@ extension CeActivity {
     // Updated 8/12/25 to reflect the fact I removed the expirationDate
     // getter and setter from the helper file in order to keep nil values
     // nil (and not replaced with an arbitrary fill-in value).
+    
+    /// Computed property that returns an ExpirationType enum value that reflects whether the CeActivity it is being
+    /// called upon has expired, will be expiring soon, or is still valid.  If the user has marked the activity as being
+    /// completed then that enum value will be returned.
+    ///
+    /// The expiring soon status is based on the expiration date 30 days or less away from the current date.
     var expirationStatus: ExpirationType {
         if let expiration = expirationDate {
             let monthOut: Double = 86400 * 30
@@ -206,12 +220,13 @@ extension CeActivity {
         // that it has been completed or it is still valid
         if activityCompleted {
             return .finishedActivity
+        } else if self.isLiveActivity {
+            return .liveActivity
         } else {
             return .stillValid
         }
 
     }//: expirationStatus
-    
     
     /// Computed property that returns the result of the expirationStatus computed property back
     /// as a String, using the enum's raw value.
@@ -219,7 +234,36 @@ extension CeActivity {
         return expirationStatus.rawValue
     }//: expirationStatusString
     
-}
+    
+    /// Computed property that returns True if the CeActivity that this property is called upon
+    /// has a type property whose value is an ActivityType that is considered to be a "live activity".
+    ///
+    /// Live activities include the majority of the pre-created ActivityTypes (from the
+    /// Activity Type.json file), and include: conference, course, journal club, podcast (live),
+    /// simulation, webinar (live), and workshop.  Non-live activities are the article and
+    /// recording types. If the type property has NOT been set by the user then this value will
+    /// come back as false.
+    ///
+    /// In order to prevent a false return of false, this method creates a set of String values consisting
+    /// of each ActivityType's name property if it meets the criteria for being a live activity and then
+    /// compares the typeName of the assigned ActivityType for the current activity to those in the
+    /// list, and returns true if it is found in there.
+    var isLiveActivity: Bool {
+        guard let selectedType = self.type else {return false}
+        let controller = DataController(inMemory: true)
+        let allActivityTypes = controller.allActivityTypes
+        let liveActivities = allActivityTypes.filter{
+            $0.typeName != "Article" && $0.typeName != "Recording"
+        }
+        
+        var liveActivityNames: Set<String> = []
+        liveActivities.forEach { liveActivityNames.insert($0.activityTypeName) }
+        
+        return liveActivityNames.contains(selectedType.activityTypeName)
+        
+    }//: isLiveActivity
+    
+}//: EXTENSION
 
 // MARK: - Designation ID Computed Property
 // Adding another extension to allow for CeDesignation objects to be identified by

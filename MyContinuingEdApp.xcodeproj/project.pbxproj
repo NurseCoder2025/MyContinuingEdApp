@@ -92,6 +92,9 @@
 		3FBD7FDE2EF5419400A039C4 /* LeftAlignedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
 		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
+		3FD56A372F17101200D74515 /* ActivityRegistrationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */; };
+		3FD56A602F1713CC00D74515 /* DataController-HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */; };
+		3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */; };
 		3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F792F0349A6002360AB /* StartButtonView.swift */; };
 		3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */; };
 		3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */; };
@@ -169,7 +172,7 @@
 		F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */; };
 		F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */; };
 		F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */; };
-		F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */; };
+		F2AA2AAE2E8AFDFD00321667 /* LiveActivitySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AAD2E8AFDFD00321667 /* LiveActivitySettings.swift */; };
 		F2AA2AB02E8AFFC300321667 /* ActivityCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */; };
 		F2AA2AB22E8B03D200321667 /* ActivityCertificateImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */; };
 		F2B389EF2E4C37C200518868 /* CertificatePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */; };
@@ -324,6 +327,9 @@
 		3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedTextView.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
 		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
+		3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRegistrationSectionView.swift; sourceTree = "<group>"; };
+		3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-HelperFunctions.swift"; sourceTree = "<group>"; };
+		3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSiteEntryView.swift; sourceTree = "<group>"; };
 		3FD74F792F0349A6002360AB /* StartButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonView.swift; sourceTree = "<group>"; };
 		3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteObjectButtonView.swift; sourceTree = "<group>"; };
 		3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeToPaidSheet.swift; sourceTree = "<group>"; };
@@ -404,7 +410,7 @@
 		F291AE872E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeDesignationSelectionSheet.swift; sourceTree = "<group>"; };
 		F291AE892E5E55D900ECA8CD /* DesignationBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignationBoxView.swift; sourceTree = "<group>"; };
 		F291AE8B2E5E823D00ECA8CD /* DesignationEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignationEditView.swift; sourceTree = "<group>"; };
-		F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityTypeAndFormatView.swift; sourceTree = "<group>"; };
+		F2AA2AAD2E8AFDFD00321667 /* LiveActivitySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivitySettings.swift; sourceTree = "<group>"; };
 		F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCompletionView.swift; sourceTree = "<group>"; };
 		F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityCertificateImageView.swift; sourceTree = "<group>"; };
 		F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePickerView.swift; sourceTree = "<group>"; };
@@ -589,10 +595,11 @@
 				F2F6D5752E2B45AE00E1FB5F /* NoActivityView.swift */,
 				F2B521C32E1F5E7A000AB6E6 /* DetailView.swift */,
 				F2F6D5772E2B460D00E1FB5F /* ActivityView.swift */,
+				3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */,
 				F2612A1C2E87275000CC463D /* ActivityBasicInfoView.swift */,
 				F2612A1E2E872AC100CC463D /* TagMenuView.swift */,
 				F2612A202E874D6500CC463D /* ActivityExpirationDetailsView.swift */,
-				F2AA2AAD2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift */,
+				F2AA2AAD2E8AFDFD00321667 /* LiveActivitySettings.swift */,
 				F2612A242E87512D00CC463D /* ActivityCEDetailsView.swift */,
 				F2612A222E874FB900CC463D /* ActivityHoursAndCostView.swift */,
 				F2FBAAE02E5FABE900348AAA /* Activity Formats.json */,
@@ -675,6 +682,7 @@
 		3F2A42CE2EA2DFFB00B095CB /* UI Styles */ = {
 			isa = PBXGroup;
 			children = (
+				3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */,
 				3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */,
 				3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */,
 				3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */,
@@ -810,6 +818,7 @@
 				3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */,
 				3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */,
 				3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */,
+				3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */,
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 			);
 			path = "Data Controller Items";
@@ -1169,10 +1178,12 @@
 				F2B937A72E83961E00AF9155 /* GlobalVariables.swift in Sources */,
 				3FA2961C2EE227FA000F5D12 /* StorePreviewProtocol.swift in Sources */,
 				3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */,
+				3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */,
 				F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */,
 				3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */,
 				F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */,
 				3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */,
+				3FD56A372F17101200D74515 /* ActivityRegistrationSectionView.swift in Sources */,
 				3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */,
 				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
 				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
@@ -1233,7 +1244,7 @@
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
-				F2AA2AAE2E8AFDFD00321667 /* ActivityTypeAndFormatView.swift in Sources */,
+				F2AA2AAE2E8AFDFD00321667 /* LiveActivitySettings.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
 				3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
@@ -1331,6 +1342,7 @@
 				F272591D2E78D0B800210F11 /* Extensions-Styles.swift in Sources */,
 				F28E6BB82E7A12A7003F4C95 /* NoDAIsView.swift in Sources */,
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
+				3FD56A602F1713CC00D74515 /* DataController-HelperFunctions.swift in Sources */,
 				3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
 				F2B9379D2E836F5600AF9155 /* Enums-General.swift in Sources */,

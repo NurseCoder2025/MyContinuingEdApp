@@ -31,6 +31,7 @@ struct ActivityHoursAndCostView: View {
                             Text("hours").tag(Int16(1))
                             Text("units").tag(Int16(2))
                         }//: PICKER
+                        .pickerStyle(.segmented)
                         .labelsHidden()
                     } //: HSTACK
             

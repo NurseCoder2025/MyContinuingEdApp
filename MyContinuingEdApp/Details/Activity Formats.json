@@ -6,9 +6,5 @@
     {
         "formatName": "Virtual",
         "image": "video.fill"
-    },
-    {
-        "formatName": "N/A",
-        "image": "circle.slash"
     }
 ]

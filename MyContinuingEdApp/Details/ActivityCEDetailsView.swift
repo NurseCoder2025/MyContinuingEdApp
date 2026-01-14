@@ -53,7 +53,7 @@ struct ActivityCEDetailsView: View {
                 } //: BUTTON
                 
                 // MARK: Special Category
-                DisclosureGroup("Credential-Specific CEs") {
+                DisclosureGroup("Credential-Specific CE Categories") {
                 if paidStatus != .proSubscription {
                     PaidFeaturePromoView(
                         featureIcon: "list.bullet.rectangle.fill",

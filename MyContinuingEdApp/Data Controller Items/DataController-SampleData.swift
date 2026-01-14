@@ -117,10 +117,6 @@ extension DataController {
                     activity.designation = allDesignations[randomIndex]
                 }
                 
-                // MARK: Sample Activity Format
-                let allFormats: [ActivityFormat] = ActivityFormat.allFormats
-                let randomFormat = allFormats.randomElement()
-                activity.activityFormat = randomFormat?.formatName
                 
                 // MARK: Sample Activity Type
                 let typeRequest = ActivityType.fetchRequest()
@@ -133,13 +129,22 @@ extension DataController {
                     activity.type = allTypes[randomIndex]
                 }
                               
+                // MARK: Sample Activity Format
+                if activity.isLiveActivity {
+                    let allFormats: [ActivityFormat] = ActivityFormat.allFormats
+                    let randomFormat = allFormats.randomElement()
+                    activity.activityFormat = randomFormat?.formatName
+                }//: IF (isLiveActivity)
+                
                 // MARK: Sample Activity Expiration
-                activity.activityExpires = Bool.random()
-                if activity.activityExpires {
-                    activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
-                } else {
-                    activity.expirationDate = nil
-                }
+                if !activity.isLiveActivity {
+                    activity.activityExpires = Bool.random()
+                    if activity.activityExpires {
+                        activity.expirationDate = Date.now.addingTimeInterval(randomFutureExpirationDate)
+                    } else {
+                        activity.expirationDate = nil
+                    }
+                }//: IF NOT
                 
                 // MARK: sample activity completion
                 activity.activityCompleted = Bool.random()
@@ -151,7 +156,6 @@ extension DataController {
                 
                 activity.currentStatus = activity.expirationStatusString
                 activity.cost = Double.random(in: 0...450)
-                activity.activityFormat = "Virtual"
                 tag.addToActivity(activity)
                 
                 // Adding sample activity reflections IF activity has been
@@ -185,6 +189,101 @@ extension DataController {
     } //: createSampelData()
     
     // MARK: - TESTING SAMPLE DATA
+    
+    /// Method for creating a sample CeActivity object for testing purposes.  Most properties are
+    /// assigned a reasonable default value, except for the name property.
+    /// - Parameters:
+    ///   - name: String representing the name of the activity - must pass in
+    ///   - onDate: Date when activity starts (default: Date.futureCompletion)
+    ///   - format: String value representing whether activity was done in-person or virtually (
+    ///   default: "In Person")
+    ///   - type: OPTIONAL ActivityType object assigned, indicating the type of activity (default: nil)
+    ///   - price: Double representing the cost of the activity (default: 25.00)
+    ///   - cesEarned: Double representing the amount of CEs awarded upon completion (default:
+    ///   1.0)
+    ///   - cesUnit: Int16 representing whether the CEs were awarded in hours (1) or units (2) (
+    ///   default: 1)
+    ///   - ceDesignation: OPTIONAL CeDesignation object representing the field the CEs are
+    ///   designated for, such as CME or CLE (default: nil)
+    ///   - specialCat: OPTIONAL SpecialCat object representing a credential-specific CE
+    ///   category that the activity counts towards (default: nil)
+    ///   - forCred: OPTIONAL Credential object representing a credential that the activity was
+    ///   completed for (default: nil)
+    ///   - registrationYN: Bool for whether registration is required for the activity or not (default:
+    ///   false)
+    ///   - startReminderYN: Bool for whether the user wishes to be reminded of the activity's
+    ///   start time via notifications (default: false)
+    ///   - endTime: Date indicating when the activity ends (default: 1 hour after the onDate default)
+    ///   - expiresYN: Bool indicating whether the activity expires or not (default: false)
+    ///   - expiresOn: OPTIONAL Date indicating on what day the activity expires (default: nil)
+    ///   - expirationReminder: Bool indicating if the user is to be notified of the activity
+    ///   expiring or not (default: false)
+    ///   - completedYN: Bool indicating if the activity has been completed by the user (default:
+    ///   false)
+    ///   - completedOnDate: OPTIONAL Date for when the activity was completed by the
+    ///   user (default: nil)
+    /// - Returns: CeActivity object with properties corresponding to all argument values
+    func createSampleCeActivity(
+        name: String,
+        onDate: Date? = Date.futureCompletion,
+        format: String = "In Person",
+        type: ActivityType? = nil,
+        price: Double = 25.00,
+        cesEarned: Double = 1.0,
+        cesUnit: Int16 = 1,
+        ceDesignation: CeDesignation? = nil,
+        specialCat: SpecialCategory? = nil,
+        forCred: Credential? = nil,
+        registrationYN: Bool = false,
+        startReminderYN: Bool = true,
+        endTime: Date? = Date.futureCompletion.addingTimeInterval(3600),
+        expiresYN: Bool = false,
+        expiresOn: Date? = nil,
+        expirationReminder: Bool = false,
+        completedYN: Bool = false,
+        completedOnDate: Date? = nil
+    ) -> CeActivity {
+        let context = container.viewContext
+        let newActivity = CeActivity(context: context)
+        newActivity.activityTitle = name
+        if let startingDate = onDate {
+            newActivity.startTime = startingDate
+        }
+        newActivity.activityFormat = format
+        if let assignedType = type {
+            newActivity.type = assignedType
+        }
+        newActivity.cost = price
+        newActivity.ceAwarded = cesEarned
+        newActivity.hoursOrUnits = cesUnit
+        if let assignedDesignation = ceDesignation {
+            newActivity.designation = assignedDesignation
+        }
+        if let assignedSpecialCat = specialCat {
+            newActivity.specialCat = assignedSpecialCat
+        }
+        if let assignedCred = forCred {
+            newActivity.addToCredentials(assignedCred)
+        }
+        newActivity.registrationRequiredYN = registrationYN
+        newActivity.startReminderYN = startReminderYN
+        if let activityEndsOn = endTime {
+            newActivity.endTime = activityEndsOn
+        }
+        newActivity.activityExpires = expiresYN
+        if let activityExpirationDate = expiresOn {
+            newActivity.expirationDate = activityExpirationDate
+        }
+        newActivity.expirationReminderYN = expirationReminder
+        newActivity.activityCompleted = completedYN
+        if let completedActivityDate = completedOnDate {
+            newActivity.dateCompleted = completedActivityDate
+        }
+        
+        save()
+        return newActivity
+        
+    }//: createSampleCeActivity()
     
     /// Method that creates a sample Credential object for use within testing contexts as the object is saved
     /// to the view context.

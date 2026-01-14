@@ -28,11 +28,10 @@ struct ActivityView: View {
                 showACSelectionSheet = true
             }
             
-            // MARK:  Activity Type & Format
-            ActivityTypeAndFormatView(activity: activity)
-            
             // MARK: Expiration Info
-            ActivityExpirationDetailsView(activity: activity)
+            if !activity.isLiveActivity {
+                ActivityExpirationDetailsView(activity: activity)
+            }//: IF
             
             // MARK: Hours & Cost
             ActivityHoursAndCostView(activity: activity)

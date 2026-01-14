@@ -38,7 +38,6 @@ final class ComputationsTest: BaseTestCase {
         let firstRenewal = RenewalPeriod(context: context)
         firstRenewal.reinstateCredential = false
         // Adding this value to check that the reinstateCredential is checked properly
-        firstRenewal.reinstatementHours = 50.0
         firstRenewal.periodStart = Date.renewalStartDate
         firstRenewal.periodEnd = Date.renewalEndDate
         firstRenewal.credential = firstSampleCred
@@ -58,7 +57,6 @@ final class ComputationsTest: BaseTestCase {
         
         let secondRenewal = RenewalPeriod(context: context)
         secondRenewal.reinstateCredential = false
-        secondRenewal.reinstatementHours = 50.0
         secondRenewal.periodStart = Date.renewalStartDate
         secondRenewal.periodEnd = Date.renewalEndDate
         secondRenewal.credential = secondSampleCred
@@ -75,18 +73,25 @@ final class ComputationsTest: BaseTestCase {
         thirdSampleCred.measurementDefault = Int16(1)
         thirdSampleCred.renewalCEsRequired = 20.0
         
-        let thirdRenewal = RenewalPeriod(context: context)
-        thirdRenewal.reinstateCredential = true
-        thirdRenewal.reinstatementHours = 20.0
-        thirdRenewal.periodStart = Date.renewalStartDate
-        thirdRenewal.periodEnd = Date.renewalStartDate
-        thirdRenewal.credential = thirdSampleCred
+        
+        let thirdRenewal = controller.createSampleRenewalPeriod(
+            reinstateYN: true,
+            credential: thirdSampleCred
+        )
+        
+        // Assigning 20 clock hours to the reinstatement total
+        if let thirdReinstatement = thirdRenewal.reinstatement {
+            thirdReinstatement.totalExtraCEs = 20
+        }
         
         controller.save()
         
         XCTAssertTrue(thirdRenewal.reinstateCredential)
         let scenarioThreeHours = controller.calculateTotalRequiredCEsFor(renewal: thirdRenewal)
-        XCTAssertEqual(scenarioThreeHours, 40.0)
+        XCTAssertEqual(scenarioThreeHours, 20.0)
+        
+        let totalScenarioThreeHours = scenarioThreeHours + (thirdRenewal.reinstatement?.totalExtraCEs ?? Double(0.0))
+        XCTAssertEqual(totalScenarioThreeHours, 40.0)
         
     }//: testTotalRequiredCEsFor()
     
@@ -155,7 +160,7 @@ final class ComputationsTest: BaseTestCase {
             sampleCe.activityCompleted = true
             sampleCe.ceAwarded = (i < 3 ? 5.0 : 0.75)
             sampleCe.hoursOrUnits = (i < 3 ? 1 : 2)
-            sampleCe.renewal = samplePeriod
+            sampleCe.addToRenewals(samplePeriod)
             controller.save()
         }//: LOOP
         
@@ -166,7 +171,7 @@ final class ComputationsTest: BaseTestCase {
             testCe.activityCompleted = false
             testCe.ceAwarded = 35.0
             testCe.hoursOrUnits = 1
-            testCe.renewal = samplePeriod
+            testCe.addToRenewals(samplePeriod)
             controller.save()
         }//: LOOP
         

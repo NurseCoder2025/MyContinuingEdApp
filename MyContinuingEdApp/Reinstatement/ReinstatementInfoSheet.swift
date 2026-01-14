@@ -15,14 +15,15 @@ struct ReinstatementInfoSheet: View {
     @ObservedObject var reinstatement: ReinstatementInfo
     
     @State private var showSpecialCatManagementSheet: Bool = false
+    @State private var showDeleteRIAlert: Bool = false
     
     // MARK: - BODY
     var body: some View {
         NavigationView {
             VStack {
+                // MARK: DISMISS
                 HStack {
                     Button {
-                        // TODO: Add action(s)
                         dismiss()
                     } label: {
                         Text("Dismiss")
@@ -30,6 +31,7 @@ struct ReinstatementInfoSheet: View {
                     Spacer()
                 }//: HSTACK
                 .padding(.leading, 20)
+                // MARK: - FORM
                 Form {
                     // Fees & Deadline Info
                     FeeAndDeadlineView(reinstatement: reinstatement)
@@ -45,10 +47,20 @@ struct ReinstatementInfoSheet: View {
                     // Additional items (background check, interview, test)
                     ReinstatementAdditionalItemsView(reinstatement: reinstatement)
                     
+                    // MARK: - DELETE
+                    Section("Delete") {
+                        DeleteObjectButtonView(
+                            buttonText: "Delete Reinstatement",
+                            onDelete: {showDeleteRIAlert = true}
+                        )
+                    }//: SECTION
+                    
                 }//: FORM
+                .disabled(reinstatement.isDeleted)
             }//: VSTACK
             .navigationTitle("Reinstatement Information")
             .navigationBarTitleDisplayMode( .inline)
+            
 
         }//: NAV VIEW
         // MARK: - SHEETS
@@ -57,8 +69,37 @@ struct ReinstatementInfoSheet: View {
                 SpecialCECatsManagementSheet(dataController: dataController, credential: cred)
             }//: IF LET
         }//: SHEET
+        // MARK: - ALERTS
+        .alert("Delete Reinstatement?", isPresented: $showDeleteRIAlert) {
+            Button("Cancel", role: .cancel){}
+            Button("Delete", role: .destructive) {
+                deleteReinstatement()
+            }
+        } message: {
+            Text("Are you sure you wish to remove reinstatement information for this renewal period?")
+        }
+        // MARK: - AUTO SAVE
+        // This allows for the auto-saving of changes to any
+        // reinstatementInfo properties that are changed by the user
+        .onReceive(reinstatement.objectWillChange) { _ in
+            dataController.queueSave()
+        }//: ON RECIEVE
+        
+        .onSubmit {
+            dataController.save()
+        }//: ON SUBMiT
         
     }//: BODY
+     // MARK: - METHODS
+    
+    /// View method that deletes the ReinstatementInfo object that is being shown to
+    /// the user after they confirm deletion with the pop-up alert message. Sheet is then
+    /// dismissed.
+    func deleteReinstatement() {
+        dataController.delete(reinstatement)
+        dismiss()
+    }//: deleteReinstatement()
+    
 }//: STRUCT
 
 // MARK: - PREVIEW
