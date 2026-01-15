@@ -97,6 +97,7 @@
 		3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */; };
 		3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F792F0349A6002360AB /* StartButtonView.swift */; };
 		3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */; };
+		3FDF714C2F1850380036D490 /* DataController-Templates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FDF714B2F1850380036D490 /* DataController-Templates.swift */; };
 		3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */; };
 		3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */; };
 		3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */; };
@@ -332,6 +333,7 @@
 		3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSiteEntryView.swift; sourceTree = "<group>"; };
 		3FD74F792F0349A6002360AB /* StartButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonView.swift; sourceTree = "<group>"; };
 		3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteObjectButtonView.swift; sourceTree = "<group>"; };
+		3FDF714B2F1850380036D490 /* DataController-Templates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Templates.swift"; sourceTree = "<group>"; };
 		3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeToPaidSheet.swift; sourceTree = "<group>"; };
 		3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpgradeCardView.swift; sourceTree = "<group>"; };
 		3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseFeatureRowView.swift; sourceTree = "<group>"; };
@@ -800,6 +802,7 @@
 		3F5D03382EB3F55A00F5B1DC /* Data Controller Items */ = {
 			isa = PBXGroup;
 			children = (
+				3FDF714B2F1850380036D490 /* DataController-Templates.swift */,
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
 				3F5D03362EB3F48A00F5B1DC /* DataController-ComputedProperties.swift */,
@@ -1293,6 +1296,7 @@
 				F2B937AB2E83A92300AF9155 /* DebuggingFunctions.swift in Sources */,
 				F2AA2AB22E8B03D200321667 /* ActivityCertificateImageView.swift in Sources */,
 				F2772BA42E1DE3A2006A94BD /* DataController.swift in Sources */,
+				3FDF714C2F1850380036D490 /* DataController-Templates.swift in Sources */,
 				F2612A1F2E872AC100CC463D /* TagMenuView.swift in Sources */,
 				F27259192E78C3B300210F11 /* DisciplinaryActionItemSheet.swift in Sources */,
 				3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */,

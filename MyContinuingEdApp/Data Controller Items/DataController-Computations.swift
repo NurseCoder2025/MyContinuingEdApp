@@ -224,7 +224,7 @@ extension DataController {
         }
     }//: convertHoursToUnits()
     
-   
+    
     // MARK: - Special CAT Hours
 
     /// This method evaluates all SpecialCategory objects for a given Credential, and for a given RenewalPeriod for that Credential, this

@@ -39,14 +39,17 @@ extension DisciplinaryActionItem {
         return actionStartDate ?? Date.now
     }
     
+    /// Computed CoreData helper property for DisciplinaryActionItem's actionEndDate property that is a getter ONLY.  Will
+    /// return a standardized end date where the time value is midnight for either the actual actionEndDate value (if not nil)
+    /// or the current date.
     var daiActionEndDate: Date {
         // Because the actionEndDate as well as other deadline dates will be used for comparison
         // purposes within various functions in the app (specifically, the notification-related ones)
         // it is important to set the nil collasced value to be a standard value (date with 12:00:00
         // components) so that two dates can be evenly compared by the date value alone.
         let calendar = Calendar.current
-        let now = calendar.startOfDay(for: Date())
-        return actionEndDate ?? now
+        let pureEndDate = calendar.startOfDay(for: actionEndDate ?? Date())
+        return pureEndDate
     }
     
     var daiAppealedActionDate: Date {

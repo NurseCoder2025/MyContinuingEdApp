@@ -18,7 +18,7 @@ struct NotificationSettingsView: View {
             GroupBox {
                 VStack {
                     // Description for user
-                    Text("CE Cache will notify you twice about upcoming dates pertaining to CE activities, credential renewal, and, if a subscriber, any disciplinary action deadlines. Use this section to designate how far in advance you want to be notified.")
+                    Text("CE Cache will notify you twice about upcoming dates pertaining to CE activities, credential renewal, and, if a subscriber, any disciplinary action and reinstatement related deadlines. Use this section to designate how far in advance you want to be notified.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .padding(.top, 10)

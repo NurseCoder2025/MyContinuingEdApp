@@ -69,6 +69,11 @@ extension Date {
     /// the renewal process, which in this case is 20 days after the renewalBeginsOnDate.
     static let renewalCompletedOnDate: Date = Date.renewalBeginsOnDate.addingTimeInterval(86400 * 20)
     
+    /// Computed static property for providing a reasonable date with the CeActivity's registrationDeadline property,
+    /// when used with the ceRegistrationDeadline helper property.  Constant value that is 30 days ahead of the current
+    /// date and time.
+    static let registrationDeadlineDate: Date = Date.now.addingTimeInterval(86400 * 30)
+    
     // Getting a year string from a given date
     var yearString: String {
         let calendar = Calendar.current
@@ -90,3 +95,43 @@ extension View {
         )
     }//: dismissKeyboard
 }//: EXTENSION (View)
+
+
+// MARK: - DOUBLE & INT Extensions
+
+extension Double {
+    
+    /// Constant property for the Double data type whose value is 36,000 (60 x 60 x 10), representing
+    /// the number of seconds to be added to a notification trigger date value.  This value is intended
+    /// to standardize the timing of notifications when they appear.
+    ///
+    /// If using, then it is important that the trigger date for the notification be set using the Calendar's
+    /// startOfDay(for:) method so that the seconds represented by this constant set the notification time to
+    /// whichever hour of the day (final number in multiplication sequence) is desired.  Currently, the value of
+    /// 10 should cause the trigger time to be 10am on the day the notification is presented so long as the
+    /// startOfDay(for) method was used.
+    static let morningNotificationTimeAdjustment: Double = Double (60 * 60 * 10)
+    
+    /// /// Constant property for the Double data type whose value is 54,000 (60 x 60 x 15), representing
+    /// the number of seconds to be added to a notification trigger date value.  This value is intended
+    /// to standardize the timing of notifications when they appear.
+    ///
+    /// If using, then it is important that the trigger date for the notification be set using the Calendar's
+    /// startOfDay(for:) method so that the seconds represented by this constant set the notification time to
+    /// whichever hour of the day (final number in multiplication sequence) is desired.  Currently, the value of
+    /// 15 should cause the trigger time to be 3pm on the day the notification is presented so long as the
+    /// startOfDay(for) method was used.
+    static let afternoonNotificationTimeAdjustment: Double = Double(60 * 60 * 15)
+    
+    /// /// Constant property for the Double data type whose value is 68,400 (60 x 60 x 19), representing
+    /// the number of seconds to be added to a notification trigger date value.  This value is intended
+    /// to standardize the timing of notifications when they appear.
+    ///
+    /// If using, then it is important that the trigger date for the notification be set using the Calendar's
+    /// startOfDay(for:) method so that the seconds represented by this constant set the notification time to
+    /// whichever hour of the day (final number in multiplication sequence) is desired.  Currently, the value of
+    /// 19 should cause the trigger time to be 7pm on the day the notification is presented so long as the
+    /// startOfDay(for) method was used.
+    static let eveningNotificationTimeAdjustment: Double = Double(60 * 60 * 19)
+    
+}//: DOUBLE

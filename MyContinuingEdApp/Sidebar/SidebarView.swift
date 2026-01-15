@@ -113,6 +113,7 @@ struct SidebarView: View {
                 // Updating notifications
                 Task { @MainActor in
                     await viewModel.dataController.updateAllReminders()
+                    await viewModel.dataController.scheduleEarnedAwardNotifications()
                 }//: TASK
                 
             }//: ON APPEAR

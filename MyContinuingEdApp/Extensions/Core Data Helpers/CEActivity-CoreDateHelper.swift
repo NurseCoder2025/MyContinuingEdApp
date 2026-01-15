@@ -112,6 +112,14 @@ extension CeActivity {
         
     }//: ceRegisteredOn
     
+    /// Computed CoreData helper property for CeActivity's registrationDeadline property which both gets and
+    /// sets the value.  With the getter, if the actual property value is nil then the Date static constant
+    /// registrationDeadlineDate is returned, which is 30 days from the current date and time.
+    var ceRegistrationDeadline: Date {
+        get { registrationDeadline ?? Date.registrationDeadlineDate }
+        set { registrationDeadline = newValue }
+    }//: ceRegistrationDeadline
+    
     // MARK: - Tag-related properties
     var activityTags: [Tag] {
         let result = tags?.allObjects as? [Tag] ?? []

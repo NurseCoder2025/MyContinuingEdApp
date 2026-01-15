@@ -2,6 +2,7 @@
     {
         "name": "First Steps",
         "description": "Earn your first CE contact hour.",
+        "notificationText": "completing your first clock hour's worth of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 1,
@@ -10,6 +11,7 @@
     {
         "name": "A Great Start",
         "description": "Earn 15 CE contact hours.",
+        "notificationText": "completing 15 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 15,
@@ -18,6 +20,7 @@
     {
         "name": "Moving On Up",
         "description": "Earn 25 CE contact hours.",
+        "notificationText": "completing 25 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 25,
@@ -26,6 +29,7 @@
     {
         "name": "Gathering Speed",
         "description": "Earn 45 CE contact hours.",
+        "notificationText": "completing 45 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 45,
@@ -34,6 +38,7 @@
     {
         "name": "Making Waves",
         "description": "Earn 65 CE contact hours.",
+        "notificationText": "completing 65 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 65,
@@ -42,6 +47,7 @@
     {
         "name": "High Performer",
         "description": "Earn 85 CE contact hours.",
+        "notificationText": "completing 85 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 85,
@@ -50,6 +56,7 @@
     {
         "name": "Star Performer",
         "description": "Earn 100 CE contact hours.",
+        "notificationText": "completing 100 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 100,
@@ -58,6 +65,7 @@
     {
         "name": "Champion Performer",
         "description": "Earn 150 contact hours.",
+        "notificationText": "completing 150 clock hours of CE learning!",
         "color": "Light Blue",
         "criterion": "CEs",
         "value": 150,
@@ -66,6 +74,7 @@
     {
         "name": "Checking Boxes",
         "description": "Complete your first CE.",
+        "notificationText": "completing your first CE activity!",
         "color": "Green",
         "criterion": "completed",
         "value": 1,
@@ -74,6 +83,7 @@
     {
         "name": "Rocking it",
         "description": "Complete 10 CE activities.",
+        "notificationText": "completing 10 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 10,
@@ -82,6 +92,7 @@
     {
         "name": "20 is Plenty",
         "description": "Complete 20 CE activities.",
+        "notificationText": "completing 20 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 20,
@@ -90,6 +101,7 @@
     {
         "name": "Bullseye!",
         "description": "Complete 30 CE activities.",
+        "notificationText": "completing 30 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 30,
@@ -98,6 +110,7 @@
     {
         "name": "Flying High",
         "description": "Complete 50 CE activities.",
+        "notificationText": "completing 50 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 50,
@@ -106,6 +119,7 @@
     {
         "name": "You're On Fire!",
         "description": "Complete 75 CE activities.",
+        "notificationText": "completing 75 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 75,
@@ -114,6 +128,7 @@
     {
         "name": "Box Ticker in Chief",
         "description": "Complete 100 CE activities.",
+        "notificationText": "completing 100 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 100,
@@ -122,6 +137,7 @@
     {
         "name": "Boom!",
         "description": "Complete 150 CE activities.",
+        "notificationText": "completing 150 CE activities!",
         "color": "Green",
         "criterion": "completed",
         "value": 150,
@@ -130,6 +146,7 @@
     {
         "name": "Playing tag",
         "description": "You created your first tag.",
+        "notificationText": "creating your first custom tag!",
         "color": "Gold",
         "criterion": "tags",
         "value": 1,
@@ -138,6 +155,7 @@
     {
         "name": "Tag wrestling",
         "description": "You've created 10 tags.",
+        "notificationText": "creating 10 custom tags!",
         "color": "Gold",
         "criterion": "tags",
         "value": 10,
@@ -146,6 +164,7 @@
     {
         "name": "Supreme tagger",
         "description": "You've created 50 tags.",
+        "notificationText": "creating 50 custom tags!",
         "color": "Gold",
         "criterion": "tags",
         "value": 50,
@@ -154,6 +173,7 @@
     {
         "name": "Supporter",
         "description": "You subscribed or bought the basic feature unlock.",
+        "notificationText": "completing an in-app purchase! Thank you!",
         "color": "Purple",
         "criterion": "unlock",
         "value": 0,
@@ -162,6 +182,7 @@
     {
         "name": "Loving Every Minute!",
         "description": "Rate 20 activities as 'Loved It'",
+        "notificationText": "rating 20 activities as 'Loved It'!",
         "color": "Red",
         "criterion": "loved",
         "value": 20,
@@ -170,6 +191,7 @@
     {
         "name": "Breaking Boring",
         "description": "Rate 10 activities as 'Interesting'",
+        "notificationText": "rating 10 activities as 'Interesting'!",
         "color": "Teal",
         "criterion": "howInteresting",
         "value": 10,
@@ -178,6 +200,7 @@
     {
         "name": "Entered the Meditation Chamber",
         "description": "Complete a relection on 20 activities",
+        "notificationText": "reflecting on 20 completed activities!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 20,
@@ -186,6 +209,7 @@
     {
         "name": "On a Learning Curve",
         "description": "Complete a relection on 45 activities",
+        "notificationText": "reflecting on 45 completed activities!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 45,
@@ -194,6 +218,7 @@
     {
         "name": "Filled Up on Knowledge",
         "description": "Complete a relection on 75 activities",
+        "notificationText": "reflecting on 75 completed activities!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 75,
@@ -202,6 +227,7 @@
     {
         "name": "Encyclopedic!",
         "description": "Complete a relection on 100 activities",
+        "notificationText": "reflecting on 100 completed activities!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 100,
@@ -210,6 +236,7 @@
     {
         "name": "Surprise Me Once",
         "description": "Write about one activity where you learned something surprising",
+        "notificationText": "writing about something surprising that you learned in a CE activity.",
         "color": "Orange",
         "criterion": "surprises",
         "value": 1,
@@ -218,6 +245,7 @@
     {
         "name": "Hidden Gems",
         "description": "Write about 10 activities where you learned something surprising",
+        "notificationText": "writing about something surprising that you learned in 10 CE activities!",
         "color": "Orange",
         "criterion": "surprises",
         "value": 10,
@@ -226,6 +254,7 @@
     {
         "name": "Raiders of Limitless Learning",
         "description": "Write about 25 activities where you learned something surprising",
+        "notificationText": "writing about something surprising that you learned in 25 CE activities!",
         "color": "Orange",
         "criterion": "surprises",
         "value": 25,

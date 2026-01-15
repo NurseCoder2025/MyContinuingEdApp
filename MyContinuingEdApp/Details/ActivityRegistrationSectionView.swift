@@ -35,6 +35,15 @@ struct ActivityRegistrationSectionView: View {
                         
                         Divider()
                         
+                        // MARK: Registration Deadline
+                        Toggle("Registration Deadline?", isOn: $activity.registrationDeadlineYN)
+                        
+                        if activity.registrationDeadlineYN {
+                            DatePicker("Registration Deadline:", selection: $activity.ceRegistrationDeadline, displayedComponents: .date)
+                        }//: IF
+                        
+                        Divider()
+                        
                         // MARK: Registered Date
                         DatePicker(selection: $activity.ceRegisteredOn, displayedComponents: .date) {
                             Text("Registered On:")

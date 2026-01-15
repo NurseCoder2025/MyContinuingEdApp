@@ -43,6 +43,8 @@
         <attribute name="itemsToBring" optional="YES" attributeType="String"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="registeredOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="registrationDeadline" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="registrationDeadlineYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="registrationRequiredYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="registrationURL" optional="YES" attributeType="String"/>
         <attribute name="startReminderYN" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>

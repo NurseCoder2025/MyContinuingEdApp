@@ -23,6 +23,12 @@ extension DataController {
     /// The addContactHours function is designed to add up all of the contact
     /// hours returned from a CeActivity fetch request and return that value
     /// as a double which can then be used.
+    ///
+    /// - Important: Updated this method to handle situations where the CEs awarded property
+    /// acutally represents units instead of clock hours.  Since clock hours are needed, this method
+    /// will either return the value of clockHoursAwarded (if > 0) or do a "guesstimate" conversion using
+    /// the standard hours to units ratio of 10:1, which should approximate how many clock hours a user
+    /// has spent in a CE activity where units were awarded.
     func addAwardedCE(for fetchRequest: NSFetchRequest<CeActivity>) -> Double {
         do {
             let fetchResult = try container.viewContext.fetch(fetchRequest)
@@ -31,7 +37,18 @@ extension DataController {
             let allCE: [Double] = {
                 var hours: [Double] = []
                 for activity in fetchResult {
-                    hours.append(activity.ceAwarded)
+                    switch activity.hoursOrUnits {
+                    case 2:
+                        if activity.clockHoursAwarded > 0 {
+                            hours.append(activity.clockHoursAwarded)
+                        } else {
+                            let convertedHrs = Double(activity.ceAwarded * 10)
+                            hours.append(convertedHrs)
+                        }
+                    default:
+                        hours.append(activity.ceAwarded)
+                    }//: SWITCH
+                    
                 } //: LOOP
                 
                 return hours
@@ -49,7 +66,7 @@ extension DataController {
         }
         
         
-    }
+    }//: addAwardedCE()
     
         
     // Function to determine whether an award has been earned

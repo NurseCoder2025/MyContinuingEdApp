@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct Award: Decodable, Identifiable {
+struct Award: Decodable, Identifiable, Hashable {
     var id: String { name }
     var name: String
     var description: String
+    var notificationText: String
     var color: String
     var criterion: String
     var value: Int
