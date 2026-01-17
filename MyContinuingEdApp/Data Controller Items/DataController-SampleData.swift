@@ -156,7 +156,7 @@ extension DataController {
                 
                 activity.currentStatus = activity.expirationStatusString
                 activity.cost = Double.random(in: 0...450)
-                tag.addToActivity(activity)
+                tag.addToActivities(activity)
                 
                 // Adding sample activity reflections IF activity has been
                 // completed

@@ -9,8 +9,27 @@ import Foundation
 
 
 // MARK: - Sort TYPE
-/// This enum is used in ContentView for the Sorting menu as a way to easily tag sort values.  Each enum type has a raw String
+
+/// This enum is used in ContentView for the Sorting menu as a way to easily tag sort values.
+/// Each enum type has a raw String
 /// value that corresponds to a CeActivity property that the user can sort on.
+///
+/// - Important: The string value associated with each case MUST exactly match the
+/// CoreData entity property to be sorted. Otherwise, a fatalError will occur.  Also, whenever
+/// adding a new type or removing one, be sure to update the corresponding arrays in
+/// ContentViewToolbarView as they organize all sort enum types into categories, and those are
+/// used for controlling whether a picker control is enabled or not.
+///
+/// Case values include:
+///     - name: activityTitle
+///     - dateCreated: activityAddedDate
+///     - dateModified: modifiedDate
+///     - dateCompleted: dateCompleted
+///     - activityCost: cost
+///     - awardedCEAmount: ceAwarded
+///     - typeOfCE: ceType
+///     - format: formatType
+///     - startTime: startTime
 enum SortType: String {
     case name = "activityTitle"
     case dateCreated = "activityAddedDate"
@@ -20,7 +39,9 @@ enum SortType: String {
     case awardedCEAmount = "ceAwarded"
     case typeOfCE = "ceType"
     case format = "formatType"
-}
+    case startTime = "startTime"
+    case endTime = "endTime"
+}//: SORT TYPE
 
 // MARK: - Enum for sheet types
 enum SheetType {
@@ -173,7 +194,17 @@ enum TimePreference {
 
 
 // MARK: - In App Purchases
-/// Enum for indicating whether the user has made an in-app purchase, and if so, which one, or is using the free version of the app.
+
+/// Enum for indicating whether the user has made an in-app purchase, and if so, which one, or
+/// is using the free version of the app.
+///
+/// This enum has a computed id property that returns a String value for use as a value in the
+/// sharedSettings key "purchaseStatus".  Those values are as follows:
+///  - .free: "free"
+///  - .basicUnlock: "basicUnlock"
+///  - .proSubscription: "proSubscription"
+///
+///  - Note: Protocol conformance for this enum includes Codable & Identifiable.
 enum PurchaseStatus: Codable, Identifiable {
     case free, basicUnlock, proSubscription
     
@@ -187,7 +218,7 @@ enum PurchaseStatus: Codable, Identifiable {
         case .proSubscription: return "proSubscription"
         }
     }//: id
-}
+}//: PURHCASE STATUS
 
 /// Enum for indicating that the user has exceeded a pre-determined limit of objects while the
 /// app is in free mode. This is an error type that is thrown by the DataController's createNewTag,
@@ -212,3 +243,14 @@ enum PageDestination: Hashable {
     case settings
     case reflection(ActivityReflection)
 }
+
+/// Enum used for setting the value of Setting keys pertaining to the numerical value shown
+/// in badges, such as the one for each Tag and RenewalPeriod in SidebarView.
+///
+/// - Important: Be sure to use the raw value when setting the value for each setting key, but
+/// can use the regular enum in pickers or other UI controls.
+enum BadgeCountOption: String, CaseIterable {
+    case allItems = "allItems"
+    case activeItems = "activeItems"
+    case completedItems = "completedItems"
+}//: BadgeCountOption

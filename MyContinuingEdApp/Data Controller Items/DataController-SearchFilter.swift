@@ -24,6 +24,7 @@ extension DataController {
         let filter = selectedFilter ?? .allActivities
         var predicates: [NSPredicate] = [NSPredicate]()
         
+        // MARK: - PREDICATES
         if let tag = filter.tag {
             let tagPredicate = NSPredicate(format: "tags CONTAINS %@", tag)
             predicates.append(tagPredicate)
@@ -52,18 +53,18 @@ extension DataController {
         
         // if the user activates the filter feature, add the selected filters to the compound NSPredicate
         if filterEnabled {
-            // Credential filter
+            // MARK: Credential filter
             if filterCredential != "" {
                 let credPredicate = NSPredicate(format: "ANY credentials IN %@", filterCredential)
                 predicates.append(credPredicate)
             }
             
-            // Rating filter
+            // MARK: Rating filter
             if filterRating >= 0 {
                 let ratingPredicate = NSPredicate(format: "evalRating = %d", filterRating)
                 predicates.append(ratingPredicate)
             }
-            // Expiration status filter
+            // MARK: Expiration status filter
             if filterExpirationStatus != .all {
                 // All completed activities filter
                 let lookForCompleted = filterExpirationStatus == .finishedActivity
@@ -74,18 +75,26 @@ extension DataController {
                 let otherStatusPredicate = NSPredicate(format: "currentStatus = %@", filterExpirationStatus.rawValue)
                 predicates.append(otherStatusPredicate)
                 
-            }
+            }//: IF (filterExpiration)
+            
+            // MARK: Live Activity Start Times
+            if filterLiveActivitiesOnly {
+                let liveActivityPredicate = NSPredicate(format: "startTime != nil")
+                predicates.append(liveActivityPredicate)
+            }//: IF (live activity)
+            
         } //: IF Filter Enabled
         
         let request = CeActivity.fetchRequest()
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
+        // MARK: - SORTING
         // For sorting the selected filter/sort items:
         request.sortDescriptors = [NSSortDescriptor(key: sortType.rawValue, ascending: sortNewestFirst)]
         
         let allActivities = (try? container.viewContext.fetch(request)) ?? []
         return allActivities
-    }
+    }//: activitiesForSelectedFilter()
     
     
     /// Function that filters all activities from the activitiesForSelectedFilter method by a specified letter so they can

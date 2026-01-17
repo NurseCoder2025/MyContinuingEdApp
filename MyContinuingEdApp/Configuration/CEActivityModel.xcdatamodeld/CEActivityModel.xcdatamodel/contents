@@ -34,7 +34,7 @@
         <attribute name="currentStatus" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="3" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="expirationReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="forReinstatementYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -55,7 +55,7 @@
         <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
         <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
         <relationship name="specialCat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="activities" inverseEntity="SpecialCategory"/>
-        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="activity" inverseEntity="Tag"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="activities" inverseEntity="Tag"/>
         <relationship name="type" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityType" inverseName="activity" inverseEntity="ActivityType"/>
     </entity>
     <entity name="CeDesignation" representedClassName="CeDesignation" syncable="YES" codeGenerationType="class">
@@ -185,7 +185,7 @@
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="tagID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="tagName" optional="YES" attributeType="String"/>
-        <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="tags" inverseEntity="CeActivity"/>
+        <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="tags" inverseEntity="CeActivity"/>
     </entity>
     <entity name="USState" representedClassName="USState" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>

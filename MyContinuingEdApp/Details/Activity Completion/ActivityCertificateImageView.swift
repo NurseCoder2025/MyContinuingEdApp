@@ -12,6 +12,7 @@
 import PDFKit
 import PhotosUI
 import SwiftUI
+import UIKit
 
 struct ActivityCertificateImageView: View {
     // MARK: - PROPERTIES
@@ -57,20 +58,20 @@ struct ActivityCertificateImageView: View {
                             certificateData: $activity.completionCertificate
                         )
                         
-                        if let data = activity.completionCertificate {
+                        if let data = activity.completionCertificate, data.count > 0 {
                             if isPDF(data) {
                                 PDFKitView(data: data)
                                     .frame(height: 300)
                                     .accessibilityLabel("PDF view of your CE Certificate for this activity.")
-                            } else if let uiImage = UIImage(data: data) {
-                                Image(uiImage: uiImage)
+                            } else if let certImage = decodeCertImage(from: data) {
+                                Image(uiImage: certImage)
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(height: 300)
-                                    .accessibilityLabel("Picture of the CE certificate you received for this activity.")
+                                    .frame(maxHeight: 300)
+                                    .accessibilityLabel(Text("Image of your CE Certificate for this activity."))
                             } else {
-                                Text("Unsupported file format - must be either an image (.png, .jpg) or PDF only.")
-                                    .foregroundStyle(.secondary)
+                                Text("Unfortunately, the certificate you saved is not in a PDF or recognizable image format (jpg, png, tiff, gif, heiff). Try re-saving the image, take a picture of it with the camera, or convert the certificate file to a PDF or supported image.")
+                                    
                             }
                         }//: IF LET (data)
                         

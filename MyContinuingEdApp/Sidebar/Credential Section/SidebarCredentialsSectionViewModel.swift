@@ -23,6 +23,18 @@ extension SidebarCredentialsSectionView {
         
         
         // Converting all fetched renewal periods to Filter objects
+        
+        /// Computed property that returns an array of Filter objects based on the view model's
+        /// @Published renewals array.
+        ///
+        /// This array  contains all RenewalPeriods fetched by the init and
+        /// controllerDidChangeContent methods.  Currently, it is set to fetch all RenewalPeriod
+        /// objects stored.
+        ///
+        /// For each Renewal "filter" object, it assigns the renewal period name as the filter's name,
+        /// the "timer.square" SF symbol name for icon String property, the renewal object for the filter's
+        /// renewalPeriod property, and the Credential associated with the renewal in the filter's
+        /// credential property.
         var convertedRenewalFilters: [Filter] {
             renewals.map { renewal in
                 Filter(

@@ -135,3 +135,6 @@ extension Double {
     static let eveningNotificationTimeAdjustment: Double = Double(60 * 60 * 19)
     
 }//: DOUBLE
+
+// MARK: - IMAGE RELATED
+

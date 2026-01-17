@@ -57,12 +57,14 @@ struct ActivityHoursAndCostView: View {
                                     dismissKeyboard()
                                 }//: ON SUBMIT
                         }//: HSTACK
+                        .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.3))
+                        )//: Background
                         
                     }//: VSTACK
-                    .background(
-                        RoundedRectangle(cornerRadius: 8).fill(Color.gray.opacity(0.3))
-                    )//: Background
+                    
                 }//: IF
                     
                     HStack {

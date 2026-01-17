@@ -105,18 +105,13 @@ extension RenewalPeriod {
     // MARK: - RELATIONSHIPS
     /// Computed property that returns all completed activities that fall within the
     /// current (selected) renewal period
+    ///
+    /// Due to the fact that CeActivity objects are ONLY assigned to a RenewalPeriod by the
+    /// assignActivitiesToRenewalPeriods method (DataController-Automation) when activities are marked as
+    /// completed by the user and have a completion date value that falls within the renewal period's starting and
+    /// ending dates, it is safe to simply return all objects in the cesCompleted Set.
     var completedRenewalActivities: [CeActivity] {
-        let renewalStart = self.renewalPeriodStart
-        let renewalEnd = self.renewalPeriodEnd
-        
-        let result = cesCompleted?.allObjects as? [CeActivity] ?? []
-        return result.filter {
-            var filterResult: Bool = false
-            if let completionDate = $0.dateCompleted {
-                filterResult = completionDate >= renewalStart && completionDate <= renewalEnd
-            } //: IF LET
-            return filterResult
-        } //: FILTER
+        return cesCompleted?.allObjects as? [CeActivity] ?? []
     }//: renewalCurrentActivities
     
     /// RenewalPeriod computed  property that returns an array of CeActivities

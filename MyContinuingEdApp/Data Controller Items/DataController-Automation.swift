@@ -21,6 +21,9 @@ extension DataController {
     /// This method will assign all completed CeActivity objects to all RenewalPeriods where the completion date falls between
     /// the starting and ending dates (inclusive of those as well) for each Credential that the CeActivity object was assigned to in
     /// ActivityView.  Note that there should only be one RenewalPeriod assignment per Credential object.
+    ///
+    /// - Note: This method is called whenever a RenewalPeriod object is saved (via RenewalPeriodView),
+    /// and whenever  the CeActivity "dateCompleted" property is changed in ActivityCompletionView.
     func assignActivitiesToRenewalPeriods() {
         let viewContext = container.viewContext
         

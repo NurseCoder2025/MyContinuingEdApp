@@ -14,6 +14,11 @@
 import CoreData
 import SwiftUI
 
+/// Subview of ActivityBasicInfoView that contains UI controls for properties that pertain only
+/// to CE activities considered to be "live activities".
+///
+/// Control of this view is determined by the CeActivity's isLiveActivity computed property value.
+/// When true, this view will be shown in ActivityBasicInfoView.
 struct LiveActivitySettings: View {
     // MARK: - PROPERTIES
     @ObservedObject var activity: CeActivity
@@ -39,7 +44,7 @@ struct LiveActivitySettings: View {
             DisclosureGroup("Starting & Ending Times") {
                     VStack(spacing: 10) {
                         DatePicker(
-                            "Starts On",
+                            "Starts",
                             selection: $activity.ceStartTime, displayedComponents: [.date, .hourAndMinute]
                         )//: DATE PICKER
                         
@@ -49,7 +54,7 @@ struct LiveActivitySettings: View {
                     }//: VSTACK
                     
                     DatePicker(
-                        "Ends On",
+                        "Ends",
                         selection: $activity.ceEndTime, displayedComponents: [.date, .hourAndMinute]
                     )//: DATE PICKER
             }//: DISCLOSURE GROUP

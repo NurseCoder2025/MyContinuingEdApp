@@ -32,6 +32,7 @@ struct ContentView: View {
                         noItemMessage: "Before adding CE activities, go to the sidebar (CE Filters) and add a credential along with a renewal period to get started.",
                         noItemImage: "1.circle.fill"
                     )
+                    .padding(.horizontal, 20)
                     Spacer()
                 }//: VSTACK
                 .frame(width: geo.size.width, height: geo.size.height)

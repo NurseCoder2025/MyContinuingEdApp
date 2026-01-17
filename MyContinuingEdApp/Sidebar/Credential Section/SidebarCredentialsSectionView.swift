@@ -76,6 +76,7 @@ struct SidebarCredentialsSectionView: View {
                             ForEach(viewModel.convertedRenewalFilters.filter{$0.credential == credential}) { filter in
                                 NavigationLink(value: filter) {
                                     RenewalPeriodNavLabelView(renewalFilter: filter)
+                                    // TODO: Make sure the badge count is correct!
                                         .badge(filter.renewalActivitiesCount)
                                         .swipeActions {
                                             if paidStatus == .proSubscription {

@@ -61,20 +61,39 @@ struct CertificatePickerView: View {
                 }
             }
         } //: FILE IMPORTER
+        // MARK: - ON CHANGE (pics from Photo Library)
         .onChange(of: selectedCertificatePhoto) { newPic in
             guard let item = newPic else {return}
             Task {
-                if let data = try? await item.loadTransferable(type: Data.self) {
-                    certificateData = data
-                }
-            }
+                if let data = try? await item.loadTransferable(type: Data.self){
+                    // Try to get a UI image first
+                    if let selectedUiImage = UIImage(data: data) {
+                        // If certificate image is a JPEG or PNG, save it in that format to disk
+                        if let jpgImage = selectedUiImage.jpegData(compressionQuality: 0.8) {
+                            certificateData = jpgImage
+                        } else if let pngImage = selectedUiImage.pngData() {
+                            certificateData = pngImage
+                        } else {
+                            certificateData = data
+                        }
+                        // Returning raw data if a UI Image cannot be directly created
+                        // In this instance, in ActivityCertificateImageView the data
+                        // will be run through the decodeCertImage function which will
+                        // attempt to create a CGImage from the data and then back into
+                        // a UIImage, but if that fails then likey there is an issue like
+                        // data corruption or a file format that isn't supported by Apple
+                    } else {
+                        certificateData = data
+                    }
+                }//: IF LET (data)
+            }//: TASK
         } //: ON CHANGE
         
     }//: BODY
-}
+}//: STRUCT
 
 
-// MARK: PREVIEW
+// MARK: - PREVIEW
 struct CertificatePickerViewPreview: PreviewProvider {
     static var previews: some View {
         CertificatePickerView(activity: .example, certificateData: .constant(nil))

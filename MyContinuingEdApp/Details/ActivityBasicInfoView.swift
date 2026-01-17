@@ -11,6 +11,21 @@
 import CoreData
 import SwiftUI
 
+/// Subview of ActivityView that displays UI controls for a variety of properties that store essential information
+/// about a CE activity (though all are optional).
+/// - Parameters:
+///     - activity: CeActivity object that is to be viewed/edited
+///
+/// - Closures: showACS() - assigned to the "Manage Credential Assingments" button for passing up
+/// functionality to the parent view for displaying the CredentialManagementSheet.
+/// - Computed Properities:
+///     - assignedCredentials: returns a String of all Credential objects assigned to this activity (name value
+///     only).
+///
+/// - CoreData Fetches:  allActivityTypes & allCredentials
+/// - SubViews Called:
+///     - WebsiteEntryView
+///     - LiveActivitySettings (display is controlled by the activity's isLiveActivity computed property)
 struct ActivityBasicInfoView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
@@ -38,6 +53,8 @@ struct ActivityBasicInfoView: View {
     
     // MARK: - CORE DATA FETCHES
     @FetchRequest(sortDescriptors: [SortDescriptor(\.typeName)]) var allActivityTypes: FetchedResults<ActivityType>
+    
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     
     // MARK: - BODY
     var body: some View {
@@ -113,6 +130,7 @@ struct ActivityBasicInfoView: View {
                     }
                     
                     // Show Credential Selection Sheet button
+                if allCredentials.count > 1 {
                     Button {
                         showACS()
                     } label: {
@@ -122,7 +140,9 @@ struct ActivityBasicInfoView: View {
                             Label("Manage Credential Assignments", systemImage: "list.bullet.clipboard.fill")
                         }
                     }//: BUTTON
-                } //: SECTION (credential assignments)
+                }//: IF
+                
+            } //: SECTION (credential assignments)
             
             // MARK: Description
             Section("Description") {

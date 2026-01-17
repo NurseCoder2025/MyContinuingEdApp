@@ -55,6 +55,7 @@ class DataController: ObservableObject {
         @Published var filterRating: Int = -1
         @Published var filterExpirationStatus: ExpirationType = .all
         @Published var filterCredential: String = ""
+        @Published var filterLiveActivitiesOnly: Bool = false
    
     
     // Task property for controlling how often the app saves changes to disk
@@ -178,7 +179,7 @@ class DataController: ObservableObject {
             self.sharedSettings.removeObject(forKey: "purchaseStatus")
         #endif
         
-        sharedSettings.synchronize()
+        // MARK: MONITOR TRANSACTIONS
         storeTask = Task {
             await monitorTransactions()
         }
@@ -192,6 +193,7 @@ class DataController: ObservableObject {
                 true as NSNumber,
                 forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
             )
+            // MARK: OBSERVERS
             NotificationCenter.default.addObserver(
                 forName: .NSPersistentStoreRemoteChange,
                 object: container.persistentStoreCoordinator,
@@ -229,6 +231,7 @@ class DataController: ObservableObject {
                 print("Core Data store failed to load: \(error.localizedDescription)")
                 fatalError("Failed to load data from local storage: \(error)")
             }
+            // MARK: Preloading JSON Objects
             // for first time app use load "Default CE Designations"
             let request = CeDesignation.fetchRequest()
             let count = (try? self?.container.viewContext.count(for: request))
@@ -254,8 +257,17 @@ class DataController: ObservableObject {
                 self?.preloadStatesList()
             }
             
+            // Setting default values for all Settings keys (initial
+            // app launch ONLY
+            // MARK: Default Settings
+            self?.setDefaultSettingsKeys()
+            
+            // MARK: Spotlight Indexing
             self?.spotlightDelegate?.startSpotlightIndexing()
         }//: loadPersistentStores
+        
+        // MARK: Sync Settings
+        sharedSettings.synchronize()
     } //: INIT
     
    

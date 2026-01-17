@@ -16,7 +16,9 @@ struct ContentViewToolbarView: View {
     @Environment(\.spotlightCentral) var spotlightCentral
     @EnvironmentObject var dataController: DataController
     
-    let allDateSortTypes: [SortType] = [.dateCompleted, .dateCreated, .dateModified]
+    let allDateSortTypes: [SortType] = [
+        .dateCompleted, .dateCreated, .dateModified, .startTime, .endTime
+    ]
     let hoursCostsSortTypes: [SortType] = [.awardedCEAmount, .activityCost]
     let allAlphabeticalSortTypes: [SortType] = [.format, .typeOfCE]
     
@@ -53,7 +55,7 @@ struct ContentViewToolbarView: View {
             
                 Menu("Filter by") {
                     if paidStatus == .proSubscription {
-                        // Credential
+                        // MARK: Credential FILTER
                         // ONLY show the credential picker filter if there is more than 1 credential
                         if allCredentials.count > 1 {
                             Picker("Credential", selection: $dataController.filterCredential) {
@@ -65,7 +67,7 @@ struct ContentViewToolbarView: View {
                             Divider()
                         }//: IF
                         
-                        // Activity Status
+                        // MARK: Activity Status Filter
                         Picker("Activity Status", selection: $dataController.filterExpirationStatus) {
                             Text("All Activities").tag(ExpirationType.all)
                             Text("Currently Valid").tag(ExpirationType.stillValid)
@@ -77,6 +79,15 @@ struct ContentViewToolbarView: View {
                         .disabled(dataController.filterEnabled == false)
                         
                         Divider()
+                        
+                        // MARK: LIVE ACTIVITY Filter
+                        Picker("Live Activities", selection: $dataController.filterLiveActivitiesOnly) {
+                            Text("All Activities").tag(false)
+                            Text("Live Activities Only").tag(true)
+                        }//: PICKER
+                        
+                        Divider()
+                        
                     }//: IF
                     
                     // Activity Rating
@@ -136,6 +147,24 @@ struct ContentViewToolbarView: View {
                         }//: Date Sub-Menu
                     }//: GROUP
                     
+                    // MARK: Start Times
+                    Group {
+                        Menu("Activity Times") {
+                            Picker("Sort By", selection: $dataController.sortType) {
+                                Text("Start Time").tag(SortType.startTime)
+                                Text("End Time").tag(SortType.endTime)
+                            }//: PICKER
+                            
+                            Divider()
+                            
+                            Picker("Order by", selection: $dataController.sortNewestFirst) {
+                                Text("Earliest to Latest").tag(true)
+                                Text("Latest to Earliest").tag(false)
+                            }//: PICKER
+                            .disabled(!allDateSortTypes.contains(dataController.sortType))
+                        }//: MENU
+                    }//: GROUP
+                    
                     // MARK: CE Hours/Cost Submenu
                     Group {
                         Menu("CE Amount & Cost") {
@@ -171,7 +200,7 @@ struct ContentViewToolbarView: View {
                             .disabled(!allAlphabeticalSortTypes.contains(dataController.sortType))
                         }//: MENU (CE Type/Format)
                     }//: GROUP
-                }//: IF
+                }//: IF (PRO Subscription)
                 
             } label: {
                 Label("Sort", systemImage: "arrow.up.arrow.down.circle")

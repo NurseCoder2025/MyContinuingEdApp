@@ -695,7 +695,7 @@ extension DataController {
     /// expiring actiivty.  Each notification's trigger date is determined by what the user entered in settings for primary and
     /// secondary notification day intervals.
     func scheduleExpiringCEsNotifications() async {
-        guard showExpiringCesNotification == true else { return }
+        guard showExpiringCesNotifications == true else { return }
         let expiringCes = fetchUpcomingExpiringCeActivities()
         guard expiringCes.isNotEmpty else { return }
         
@@ -726,7 +726,7 @@ extension DataController {
     /// notification preferences as set in Settings. All notifications created by this method are scheduled to be triggered at 10am on the day they are to
     /// be shown to the user.
     func scheduleRenewalsEndingNotifications() async {
-        guard showRenewalEndingNotification == true else {return}
+        guard showRenewalEndingNotifications == true else {return}
             let endingRenewalPeriods = getCurrentRenewalPeriods()
             guard endingRenewalPeriods.isNotEmpty else { return }
             
@@ -795,7 +795,7 @@ extension DataController {
             
             // Scheduling notifications related to each renewal's late fee start date
             for period in endingRenewalPeriods {
-                guard showRenewalLateFeeNotification, period.lateFeeAmount > 0, let lateFeeDate = period.lateFeeStartDate, period.renewalCompletedYN == false, let endDate = period.periodEnd else { continue }
+                guard showRenewalLateFeeNotifications, period.lateFeeAmount > 0, let lateFeeDate = period.lateFeeStartDate, period.renewalCompletedYN == false, let endDate = period.periodEnd else { continue }
                 let credName = period.credential?.credentialName ?? "your credential"
                 let title = "The late fee for the \(period.renewalPeriodName) approaches!"
                 let daysRemaining = Int((lateFeeDate).timeIntervalSinceNow / 86400)
@@ -826,7 +826,9 @@ extension DataController {
             }//: LOOP
     } //: scheduleRenewalsEndingNotifications()
     
-    /// Method for scheduling notifications related to DisciplinaryActionItem objects that meet specific criteria.
+    /// Method for scheduling notifications related to DisciplinaryActionItem objects
+    /// that meet specific criteria.  Only creates notifications if user is current a Pro subscriber as
+    /// DisciplinaryActionItems are only available at that purchase level.
     ///
     /// Four different notifications are created by this method, and they are for:
     /// - Reminding users of when any temporary disciplinary action is coming to an end
@@ -838,7 +840,8 @@ extension DataController {
     /// which meet the criteria will have two notifications scheduled based on the primary and secondary notification days
     /// settings.
     func scheduleDisciplinaryActionNotifications() async {
-        guard showDAINotifications == true else {return}
+        guard showDAINotifications == true, purchaseStatus == PurchaseStatus.proSubscription.id else {return}
+        
             let allDAIS = fetchActiveDisciplinaryActions()
             guard allDAIS.isNotEmpty else {return}
         
@@ -1036,17 +1039,21 @@ extension DataController {
         }//: LOOP (for ce in liveActivitiesForNotifications)
     }//: scheduleRegistrationReminders
     
-    /// Method for scheduling notifications related to ReinstatementInfo objects.  If the showReinstatementAlerts
-    /// settings is set to true, then notifications will be generated for ReinstatementInfo objects when other criteria
-    /// is met.
+    /// Method for scheduling notifications related to ReinstatementInfo objects.
+    /// If the showReinstatementAlerts settings is set to true, then notifications will be
+    /// generated for ReinstatementInfo objects when other criteria is met.
     ///
     /// This method just calls three sub-methods for generating individual notifications based on various credential
     /// reinstatement requirements and circumstances.  Those methods are:
     /// - scheduleReinstatementDeadlineNotifications()
     /// - scheduleReinstatementInterviewNotifications()
     /// - scheduleReinstatementTestingNotifications()
+    ///
+    /// - Important: Notifications will only be generated if the user also happens to be
+    /// a Pro subscriber (annual or monthly) as the ReinstatementInfo object is only available to
+    /// users at that purchase level.
     func scheduleRelevantReinstatementInfoNotifications() async {
-        guard showReinstatementAlerts else { return }
+        guard showReinstatementAlerts, purchaseStatus == PurchaseStatus.proSubscription.id else { return }
         
         await scheduleReinstatementDeadlineNotifications()
         await scheduleReinstatmentInterviewNotifications()

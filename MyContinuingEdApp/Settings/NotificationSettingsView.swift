@@ -115,11 +115,11 @@ struct NotificationSettingsView: View {
                     VStack {
                         Toggle("Upcoming Live Event Alerts", isOn: $dataController.showAllLiveEventAlerts)
                         
-                        Toggle("Expiring CE Activity Alerts", isOn: $dataController.showExpiringCesNotification)
+                        Toggle("Expiring CE Activity Alerts", isOn: $dataController.showExpiringCesNotifications)
                         
-                        Toggle("Renewal Period Ending Alerts", isOn: $dataController.showRenewalEndingNotification)
+                        Toggle("Renewal Period Ending Alerts", isOn: $dataController.showRenewalEndingNotifications)
                         
-                        Toggle("Renewal Late Fee Alerts", isOn: $dataController.showRenewalLateFeeNotification)
+                        Toggle("Renewal Late Fee Alerts", isOn: $dataController.showRenewalLateFeeNotifications)
                         
                         if dataController.purchaseStatus == PurchaseStatus.proSubscription.id {
                             Toggle("Disciplinary Action Notifications", isOn: $dataController.showDAINotifications)

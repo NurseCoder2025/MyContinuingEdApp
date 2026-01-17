@@ -60,7 +60,8 @@ struct ActivityRegistrationSectionView: View {
                                 text: $activity.ceItemsToBring,
                                 axis: .vertical
                             )
-                            .frame(minHeight: 75) // TODO: check in simulator
+                            // TODO: check in simulator
+                            .frame(minHeight: 75, alignment: .topLeading)
                             .onSubmit {
                                 dismissKeyboard()
                             }//: ON SUBMIT
