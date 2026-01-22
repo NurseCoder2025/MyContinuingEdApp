@@ -275,7 +275,7 @@ extension DataController {
     /// improve app performance after analsysis by Instruments where microhangs were detected whenever the getter was
     /// being called.
     func setTagBadgeCount(to: String) {
-        guard BadgeCountOption.allCases.contains(where: { $0.rawValue == to }) else { return }
+        guard BadgeCountOption.allCases.contains(where: { $0.id == to }) else { return }
         objectWillChange.send( )
         sharedSettings.set(to, forKey: "tagBadgeCountOf")
     }//: set TagBadgeCount

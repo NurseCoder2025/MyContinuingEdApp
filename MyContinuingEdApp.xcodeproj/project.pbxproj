@@ -70,6 +70,8 @@
 		3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */; };
 		3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */; };
 		3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */; };
+		3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */; };
+		3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
@@ -306,6 +308,8 @@
 		3F83C7C42F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeeAndDeadlineView.swift; sourceTree = "<group>"; };
 		3F83C7C62F0F4AA700FB4CF2 /* CeRequirementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeRequirementsView.swift; sourceTree = "<group>"; };
 		3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSCRowView.swift; sourceTree = "<group>"; };
+		3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralUISettingsView.swift; sourceTree = "<group>"; };
+		3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagBadgeExamples.swift; sourceTree = "<group>"; };
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9386CB2F1B31B90034B841 /* General Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "General Notes.rtf"; sourceTree = "<group>"; };
@@ -498,6 +502,8 @@
 			children = (
 				3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */,
 				3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */,
+				3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */,
+				3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */,
 				3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */,
 				3FBD7FD72EF4F54500A039C4 /* ContactDeveloperView.swift */,
 				3FBD7FDB2EF5077000A039C4 /* ComposeEmailView.swift */,
@@ -1248,6 +1254,7 @@
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
+				3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
 				F2AA2AAE2E8AFDFD00321667 /* LiveActivitySettings.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
@@ -1276,6 +1283,7 @@
 				3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */,
 				3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */,
 				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
+				3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */,
 				3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */,
 				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,

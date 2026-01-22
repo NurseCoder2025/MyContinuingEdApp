@@ -249,8 +249,26 @@ enum PageDestination: Hashable {
 ///
 /// - Important: Be sure to use the raw value when setting the value for each setting key, but
 /// can use the regular enum in pickers or other UI controls.
-enum BadgeCountOption: String, CaseIterable {
+///
+/// - Note: This enum has a computed property called labelText which returns a String value
+/// which can be used in any UI control such as Pickers when needed. The values are as follows:
+/// .allItems = "All Assigned CEs", .activeItems = "CEs to Complete", & .completedItems =
+/// "Completed CEs".
+enum BadgeCountOption: String, CaseIterable, Identifiable, Hashable {
     case allItems = "allItems"
     case activeItems = "activeItems"
     case completedItems = "completedItems"
+    
+    var id: String { self.rawValue }
+    
+    var labelText: String {
+        switch self {
+        case .allItems:
+            return "All Assigned CEs"
+        case .activeItems:
+            return "CEs To Complete"
+        case .completedItems:
+            return "Completed CEs"
+        }//: SWITCH
+    }//: labelText
 }//: BadgeCountOption
