@@ -69,6 +69,9 @@ class DataController: ObservableObject {
     @Published var products: [Product] = []
     /// String value for displaying to the user which subscription type that they currently have.
     @Published var currentSubscriptionType: String = ""
+    
+    // MARK: PreLoading Object Properties
+    private var preloadTasks: Task<Void, Never>?
    
     // MARK: - SAVING & DELETING METHODS
     
@@ -179,6 +182,8 @@ class DataController: ObservableObject {
             self.sharedSettings.removeObject(forKey: "purchaseStatus")
         #endif
         
+        // MARK: Sync Settings
+        sharedSettings.synchronize()
         // MARK: MONITOR TRANSACTIONS
         storeTask = Task {
             await monitorTransactions()
@@ -231,43 +236,27 @@ class DataController: ObservableObject {
                 print("Core Data store failed to load: \(error.localizedDescription)")
                 fatalError("Failed to load data from local storage: \(error)")
             }
-            // MARK: Preloading JSON Objects
-            // for first time app use load "Default CE Designations"
-            let request = CeDesignation.fetchRequest()
-            let count = (try? self?.container.viewContext.count(for: request))
-            if count == 0 {
-                self?.preloadCEDesignations()
-            }
-            // for first time app use or install load default Activity Types
-            let typeRequest = ActivityType.fetchRequest()
-            let typeCount = (try? self?.container.viewContext.count(for: typeRequest))
-            if typeCount == 0 {
-                self?.preloadActivityTypes()
-            }
-            // First-time use/install of app for loading default Countries
-            let countryRequest = Country.fetchRequest()
-            let countryCount = (try? self?.container.viewContext.count(for: countryRequest))
-            if countryCount == 0 {
-                self?.preloadCountries()
-            }
-            // First-time loading of U.S. states list
-            let statesRequest = USState.fetchRequest()
-            let stateCount = (try? self?.container.viewContext.count(for: statesRequest))
-            if stateCount == 0 {
-                self?.preloadStatesList()
-            }
-            
-            // Setting default values for all Settings keys (initial
-            // app launch ONLY
-            // MARK: Default Settings
-            self?.setDefaultSettingsKeys()
             
             // MARK: Spotlight Indexing
             self?.spotlightDelegate?.startSpotlightIndexing()
         }//: loadPersistentStores
         
-        // MARK: Sync Settings
-        sharedSettings.synchronize()
+        // Preload Other Objects
+        // Using a Task to help improve app performance by scheduling
+        // these function calls after the persistent stores are loaded.
+        preloadTasks = Task {
+            await preloadActivityTypes()
+            await preloadCEDesignations()
+            await preloadCountries()
+            await preloadStatesList()
+        }//: TASK
+        
+        // Setting default values for all Settings keys (initial
+        // app launch ONLY
+        // MARK: Default Settings
+        setDefaultSettingsKeys()
+        
+        
     } //: INIT
     
    

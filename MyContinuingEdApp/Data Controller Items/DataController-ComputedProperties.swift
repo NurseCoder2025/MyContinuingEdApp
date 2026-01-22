@@ -64,8 +64,10 @@ extension DataController {
         let typeCount = (try? context.count(for: atFetch)) ?? 0
         
         if typeCount == 0 {
-            preloadActivityTypes()
-        }
+            let _ = Task<Void, Never> {
+                await preloadActivityTypes()
+            }//: TASK
+        }//: IF
         
         let allTypes = (try? context.fetch(atFetch)) ?? []
         return allTypes

@@ -12,9 +12,12 @@ import SwiftUI
 
 struct SidebarTagsSectionView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @StateObject private var viewModel: ViewModel
     
+    @State private var tagBadgeNumber: Int = 0
     
+    // MARK: - CLOSURES
     // Callback for renaming tag
     var onRenameTag: (Filter) -> Void
     
@@ -27,8 +30,10 @@ struct SidebarTagsSectionView: View {
             Section {
                 ForEach(viewModel.convertedTagFilters) { filter in
                     NavigationLink(value: filter) {
-                        Label(filter.name, systemImage: filter.icon)
-                            .badge(filter.tagActivitiesCount)
+                        Label(filter.tag?.tagName ?? "Unnamed", systemImage: filter.icon)
+                        // MARK: BADGE
+                            .badge(tagBadgeNumber)
+                        // MARK: - CONTEXT MENU
                             .contextMenu {
                                 // Renaming tag button
                                 Button {
@@ -36,21 +41,26 @@ struct SidebarTagsSectionView: View {
                                 } label: {
                                     Label("Rename tag", systemImage: "pencil")
                                 }
-                                
+//                                
                                 // Deleting tag button
                                 Button(role: .destructive) {
                                     viewModel.deleteTag(filter)
                                 } label: {
                                     Label("Delete tag", systemImage: "trash")
                                 }//: BUTTON
-                                
+//                                
                             }//: CONTEXT MENU
                             .accessibilityElement()
                             .accessibilityLabel("Tag: \(filter.name)")
-                            .accessibilityHint("^[\(filter.tagActivitiesCount) activity](inflect: true)")
+                            .accessibilityHint("^[\(tagBadgeNumber) activity](inflect: true)")
+                        // MARK: - TASK
+                            .task {
+                                tagBadgeNumber = await  viewModel.getCEsCountFor(filter: filter)
+                            }//: TASK
                         
                     } //: NAV LINK
                 } //: LOOP
+                // MARK: - HEADER
             } header: {
                 HStack {
                     Text("Tags")
@@ -69,7 +79,6 @@ struct SidebarTagsSectionView: View {
             } //: SECTION (tags)
         }//: GROUP
         
-        
     }//: BODY
     
     // MARK: - INIT
@@ -83,4 +92,3 @@ struct SidebarTagsSectionView: View {
     
 }//: STRUCT
 
-// MARK: - PREVIEW

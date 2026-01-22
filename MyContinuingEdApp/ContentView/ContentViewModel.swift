@@ -53,7 +53,19 @@ extension ContentView {
         var shouldRequestReview: Bool {
             let tagCount = dataController.count(for: Tag.fetchRequest())
             let activityCount = dataController.count(for: CeActivity.fetchRequest())
-            return tagCount >= 5 && activityCount >= 5
+            
+            // TODO: Replace debug code with return true for release code
+            #if DEBUG
+            if tagCount >= 5 && activityCount >= 5 {
+                dataController.requestReviewCount += 1
+                
+                if dataController.requestReviewCount.isMultiple(of: 30) {
+                    return true
+                }//: IF (requestReviewCount)
+            }//: IF
+            #endif
+            
+            return false
         }//: shouldRequestReview
         
         // MARK: - FUNCTIONS

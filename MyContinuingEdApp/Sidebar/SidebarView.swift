@@ -164,8 +164,10 @@ struct SidebarView: View {
         
         
         // MARK: - SHEETS
+        // MARK: Renewal
         .sheet(item: $viewModel.renewalSheetData) { data in
             let currentRenewalNum = viewModel.dataController.currentNumberOfRenewals
+            let existingRenewal = data.renewal
             
             if paidStatus != .free {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
@@ -173,27 +175,34 @@ struct SidebarView: View {
             } else if paidStatus == .free && currentRenewalNum < 1 {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
                     .presentationDetents([.large])
+            } else if paidStatus == .free, currentRenewalNum == 1, let renewal = existingRenewal {
+                RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: renewal)
+                    .presentationDetents([.large])
             } else {
                 UpgradeToPaidSheet(itemMaxReached: "renewals")//: UpgradeToPaidSheet
             }//: IF - ELSE
         }//: SHEET
         
+        // MARK: Credential
         .sheet(item: $viewModel.newlyCreatedCredential) { _ in
             if let addedCred = viewModel.newlyCreatedCredential {
                 CredentialSheet(credential: addedCred)
             }
         }//: SHEET
         
+        // MARK: Renewal Progress
         .sheet(item: $viewModel.selectedRenewalForProgressCheck) { _ in
             if let selectedRenewal = viewModel.selectedRenewalForProgressCheck {
                 RenewalProgressSheet(renewal: selectedRenewal)
             }
         }//: SHEET
         
+        // MARK: Upgrade
         .sheet(isPresented: $showUpgradeToPaidSheet) {
             UpgradeToPaidSheet(itemMaxReached: viewModel.itemMaxedOut)
         }//: SHEET
         
+        // MARK: ReinstatementInfo
         .sheet(item: $viewModel.selectedReinstatementForProgressCheck) {reInfo in
             ReinstatementInfoSheet(reinstatement: reInfo)
         }//: SHEET

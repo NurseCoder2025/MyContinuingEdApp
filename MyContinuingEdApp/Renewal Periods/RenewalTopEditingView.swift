@@ -62,7 +62,7 @@ struct RenewalTopEditingView: View {
                 if paidStatus != .proSubscription {
                     PaidFeaturePromoView(
                         featureIcon: "graduationcap.fill",
-                        featureItem: "Remedial CE Hours",
+                        featureItem: "Credential Reinstatement",
                         featureUpgradeLevel: .ProOnly
                     )
                 } else {

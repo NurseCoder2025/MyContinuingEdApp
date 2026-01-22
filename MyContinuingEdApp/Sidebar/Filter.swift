@@ -18,29 +18,7 @@ struct Filter: Identifiable, Hashable {
     
     // MARK: - OTHER COMPUTED PROPERTIES
     
-    /// Computed Filter property that returns an Int of how many CeActivities are in a Tag object's "activities"
-    /// Set depending on the badge preference set by the user. If the user selected only active items or completed
-    /// items only, then the count will only reflect the number of CeActivities that meet the corresponding criteria.
-    ///
-    /// - Note: By default, all CeActivity objects associated with a given tag will be counted and returned.  This
-    /// property relies on the value of the tagBadgeCountOf settings key in DataController's sharedSettings @Published
-    /// property.  However, if the key happens to not yet be initialized, then all activities will be counted.
-    ///
-    /// Refer to the Tag-CoreDataHelper file for the three different computed properties that return the three different
-    /// arrays which this property applies the count method to.  An in-memory DataController instance is created in
-    /// this property in order to access the settings value.
-    var tagActivitiesCount: Int {
-        let controller = DataController(inMemory: true)
-        let badgeCountPreference = controller.tagBadgeCountOf
-        
-        if badgeCountPreference == BadgeCountOption.activeItems.rawValue {
-            return tag?.tagActiveActivities.count ?? 0
-        } else if badgeCountPreference == BadgeCountOption.completedItems.rawValue {
-            return tag?.tagCompletedActivities.count ?? 0
-        } else {
-            return tag?.tagAllActivities.count ?? 0
-        }
-    }//: tagActivitiesCount
+    
     
     
     /// Compluted Filter property that returns an Int (at least 0) of how many CeActivities are in the associated

@@ -17,11 +17,12 @@ extension DataController {
     // MARK: - PRELOADING  METHODS
     
     // MARK: CE Designations METHODS
+    
     /// This fucntion decodes all of the default CE designations in the "Defaut CE Designations" JSON file
     ///  and then creates a CeDesignation object for each JSON object IF there are currently no designations
     ///  stored.  This will load default values upon the first use of the app by the user.  Thereafter, the user
     ///  can edit the list as desired.
-    func preloadCEDesignations() {
+    func preloadCEDesignations() async {
         let request = CeDesignation.fetchRequest()
         let count = (try? container.viewContext.count(for: request)) ?? 0
         guard count == 0 else { return }
@@ -35,13 +36,13 @@ extension DataController {
             convertedItem.designationAKA = designation.designationAKA
         }
         save()
-    }
+    }//: preloadCEDesignations()
     
     // MARK: Preload Countries
     /// Like the preloadCEDesignations method, the preloadCountries creates Country objects
     ///  for each country in the "Country List.json" file and saves them to persistent storage on the
-    ///  first run of the app (or whenever the # of countries stored = 0.
-    func preloadCountries() {
+    ///  first run of the app (or whenever the # of countries stored = 0).
+    func preloadCountries() async {
         let request = Country.fetchRequest()
         let count = (try? container.viewContext.count(for: request)) ?? 0
         guard count == 0 else {return}
@@ -59,50 +60,106 @@ extension DataController {
         
         save()
     
-    }
+    }//: preloadCountries()
     
     // MARK: Preload ACTIVITY TYPE METHODS
-    /// Like the preloadCEDesignations() method, this function loads a set of default activity value types into the persisten container
-    ///  upon the initial run of the application (or after re-install).  However, after the defaults are created the user can edit them later.
-    func preloadActivityTypes() {
+    
+    /// Like the preloadCEDesignations() method, this function loads a set of default activity
+    /// value types into the persistent container upon the initial run of the
+    /// application (or after re-install).
+    ///
+    /// - Note: The number of activity types is pre-determined by the values in the
+    /// "Activity Types.json" file contained within the app bundle.  There should be a total
+    /// of 10 types.  These are NOT user-editable.
+    ///
+    /// Even though this method is marked as "async",  becuase it relies on CoreData fetching
+    /// all activity must take place on the main thread.
+    func preloadActivityTypes() async {
         let viewContext = container.viewContext
         let fetchTypes = ActivityType.fetchRequest()
+        fetchTypes.sortDescriptors = [
+            NSSortDescriptor(key: "typeName", ascending: true)
+        ]
         
         let count = (try? viewContext.count(for: fetchTypes)) ?? 0
-        guard count == 0 else { return }
+        guard count == 0 || count < 10 else { return }
         
-        let defaultActivityTypes: [ActivityTypeJSON] = Bundle.main.decode("Activity Types.json")
+        let defaultActivityTypes = ActivityTypeJSON.allActivityTypes
         
-        for type in defaultActivityTypes {
-            let item = ActivityType(context: viewContext)
-            item.activityTypeName = type.typeName
-        }
+        // If there is a partial list of activity types, then create
+        // new ActivityType objects only for the remaining ones
+        if count > 0 {
+            let existingTypes = (try? viewContext.fetch(fetchTypes)) ?? []
+            let existingNames = Set<String>(existingTypes.map(\.activityTypeName))
+            let allNames = Set<String>(defaultActivityTypes.map(\.typeName))
+            let newNames = allNames.subtracting(existingNames)
+            
+            for name in newNames {
+                let item = ActivityType(context: viewContext)
+                item.typeID = UUID()
+                item.activityTypeName = name
+            }//: LOOP
+        } else {
+            for type in defaultActivityTypes {
+                let item = ActivityType(context: viewContext)
+                item.typeID = UUID()
+                item.activityTypeName = type.typeName
+            }
+        }//: IF ELSE
         
         save()
-    }
+    }//: preloadActivityTypes()
     
     // MARK: State List
     /// Loads all 50 U.S. state objects as saved in the JSON file within the bundle.  This will be
     /// executed only upon first install of the app.  Thereafter, all 50 values will remain as the user
     /// cannot edit or delete any of these values.
-    func preloadStatesList() {
+    ///
+    /// - Note: Though this method is marked as being "async", due to the need to utilize
+    /// CoreData fetching, all instructions must be done on the main thread.
+    func preloadStatesList() async {
         let viewContext = container.viewContext
         let statesFetch = USState.fetchRequest()
+        statesFetch.sortDescriptors = [
+            NSSortDescriptor(key: "stateName", ascending: true)
+        ]
         
         let count = (try? viewContext.count(for: statesFetch)) ?? 0
-        guard count == 0 else {return}
+        guard count == 0 || count < 50 else {return}
         
         let defaultStates = USStateJSON.allStates
         
-        for state in defaultStates {
-            let item = USState(context: viewContext)
-            item.stateID = UUID()
-            item.stateName = state.stateName
-            item.abbreviation = state.abbreviation
-        }
-        
+        // If, for whatever reason, the preloading method was terminated
+        // before it could complete and there is less than 50 states but
+        // more than 0 just create new USState objects for the remaining
+        // ones.
+        if count > 0 {
+            let existingStates = (try? viewContext.fetch(statesFetch)) ?? []
+            let existingNames = Set<String>(existingStates.map(\.USStateName))
+            let allNames = Set<String>(defaultStates.map(\.stateName))
+            let newNames = allNames.subtracting(existingNames)
+            
+            let newStates = defaultStates.filter { state in
+                newNames.contains(state.stateName)
+            }
+            
+            for state in newStates {
+                let item = USState(context: viewContext)
+                item.stateID = UUID()
+                item.stateName = state.stateName
+                item.USStateAbbreviation = state.abbreviation
+                
+            }//: LOOP
+        } else {
+            for state in defaultStates {
+                let item = USState(context: viewContext)
+                item.stateID = UUID()
+                item.stateName = state.stateName
+                item.abbreviation = state.abbreviation
+            }
+        }//: IF ELSE
         save()
-    }
+    }//: preloadStatesList()
     
     // MARK: - Set Settings Keys Defaults
     
@@ -155,7 +212,7 @@ extension DataController {
             showRenewalLateFeeNotifications = true
             showDAINotifications = true
             showReinstatementAlerts = true
-            tagBadgeCountOf = BadgeCountOption.allItems.rawValue
+            setTagBadgeCount(to: BadgeCountOption.allItems.rawValue)
         
     }//: setDefaultSettingsKeys()
     

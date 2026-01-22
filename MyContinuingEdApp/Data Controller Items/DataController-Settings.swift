@@ -250,23 +250,53 @@ extension DataController {
     
     // MARK: Badge Indicators
     // TODO: Add UI controls in Settings for these properties
-    /// Computed getter & setter for the @Published property sharedSettings for a key
+    
+    /// Computed async getter for the @Published property sharedSettings for a key
     /// that controls the numerical value shown in the badge in each tag row in SidebarView.
     ///
     /// - Note: This is a String set to a default value of "allItems" (which comes from the BadgeCountOption enum raw value) upon initial app launch. Will also get a string value of "allItems" if the key is nil.
+    /// - Important: To change the value of for this key, use the setTagBadgeCount(to) method.
     /// - Important: Key name is "tagBadgeCountOf" and is part of the NSUbiquitousKeyValueStore.  Any
     /// changes to the name of the key should also be made to the settingsKeys array in handleKeyValueStoreChanges.
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
-    var tagBadgeCountOf: String {
-        get {
+    var tagBadgeCountFor: String {
+        get async {
             sharedSettings.string(forKey: "tagBadgeCountOf") ?? "allItems"
-        }
-        set {
-            objectWillChange.send( )
-            sharedSettings.set(newValue, forKey: "tagBadgeCountOf")
         }
     }//: tagBadgeIndicator
     
+    /// Method for setting the value of the tagBadgeCountOf settings key property.
+    /// - Parameter to: String representing one of the BadgeCountOption enum raw values for which the number of CEs
+    /// associated with a given tag are shown (i.e. completed activities only, all activities)
+    ///
+    /// - Important: The argument being passed in MUST be one of the BadgeCountOption enum raw values or else the
+    /// function will not set a new value for the key.
+    /// This method was created to replace the setter in tagBadgeCountFor due to the fact an async getter was needed to help
+    /// improve app performance after analsysis by Instruments where microhangs were detected whenever the getter was
+    /// being called.
+    func setTagBadgeCount(to: String) {
+        guard BadgeCountOption.allCases.contains(where: { $0.rawValue == to }) else { return }
+        objectWillChange.send( )
+        sharedSettings.set(to, forKey: "tagBadgeCountOf")
+    }//: set TagBadgeCount
+    
+    
+    // MARK: Rate App Indicator
+    
+    /// Computed getter & setter for a Settings key (@Published sharedSettings) intended for use only
+    /// within the development context where the number of app loads is tracked so that the prompt
+    /// for reviewing an app is only shown so often.
+    /// - Key: "requestReviewCount" (Int64)
+    var requestReviewCount: Int64 {
+        get {
+            sharedSettings.longLong(forKey: "requestReviewCount")
+        }
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "requestReviewCount")
+        }
+    }//: requestReviewCount
+   
     
     // MARK: - Methods
     

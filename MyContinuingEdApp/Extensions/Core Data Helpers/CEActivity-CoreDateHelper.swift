@@ -246,29 +246,22 @@ extension CeActivity {
     /// Computed property that returns True if the CeActivity that this property is called upon
     /// has a type property whose value is an ActivityType that is considered to be a "live activity".
     ///
+    ///- Warning: This computed property is called often in the creation of various UI elements,
+    /// including parts of ActivityRow and ActivityBasicInfo.  Can cause app to hang if the logic
+    /// is revised to be processor-heavy (i.e. creating an instance of DataController).
+    ///
     /// Live activities include the majority of the pre-created ActivityTypes (from the
     /// Activity Type.json file), and include: conference, course, journal club, podcast (live),
     /// simulation, webinar (live), and workshop.  Non-live activities are the article and
     /// recording types. If the type property has NOT been set by the user then this value will
     /// come back as false.
-    ///
-    /// In order to prevent a false return of false, this method creates a set of String values consisting
-    /// of each ActivityType's name property if it meets the criteria for being a live activity and then
-    /// compares the typeName of the assigned ActivityType for the current activity to those in the
-    /// list, and returns true if it is found in there.
     var isLiveActivity: Bool {
         guard let selectedType = self.type else {return false}
-        let controller = DataController(inMemory: true)
-        let allActivityTypes = controller.allActivityTypes
-        let liveActivities = allActivityTypes.filter{
-            $0.typeName != "Article" && $0.typeName != "Recording"
-        }
-        
-        var liveActivityNames: Set<String> = []
-        liveActivities.forEach { liveActivityNames.insert($0.activityTypeName) }
-        
-        return liveActivityNames.contains(selectedType.activityTypeName)
-        
+        let nonLiveNames: Set<String> = [
+            "Article",
+            "Recording"
+        ]
+        return nonLiveNames.doesNOTContain(selectedType.activityTypeName)
     }//: isLiveActivity
     
 }//: EXTENSION
@@ -286,9 +279,9 @@ extension CeActivity {
                 self.designation = newDesignation
             }
         }
-    }
+    }//: DESIGNATIONID
     
-}
+}//: EXTENSION
 
 // MARK: - Credential Related Properties
 extension CeActivity {
