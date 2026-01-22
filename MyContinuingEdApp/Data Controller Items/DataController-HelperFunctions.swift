@@ -32,8 +32,10 @@ extension DataController {
         let urlPrefixes: [String] = ["https://", "http://"]
             if propertyString.hasPrefix(urlPrefixes[0]) || propertyString.hasPrefix(urlPrefixes[1]) {
                 return URL(string: propertyString)!
+            } else if let genURL = URL(string: "https://\(propertyString)") {
+                return genURL
             } else {
-                return URL(string: "https://\(propertyString)")!
+                return nil
             }
     }//: createURLFromString
     

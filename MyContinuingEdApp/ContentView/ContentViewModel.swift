@@ -59,7 +59,7 @@ extension ContentView {
             if tagCount >= 5 && activityCount >= 5 {
                 dataController.requestReviewCount += 1
                 
-                if dataController.requestReviewCount.isMultiple(of: 30) {
+                if dataController.requestReviewCount.isMultiple(of: 100) {
                     return true
                 }//: IF (requestReviewCount)
             }//: IF

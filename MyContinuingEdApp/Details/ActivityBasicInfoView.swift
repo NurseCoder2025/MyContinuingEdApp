@@ -31,8 +31,6 @@ struct ActivityBasicInfoView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
-    @State var newWebURL: String = ""
-    
     // Properties for storing values for various activity fields
     @State private var selectedActivityType: ActivityType?
     
@@ -97,7 +95,7 @@ struct ActivityBasicInfoView: View {
             // MARK: Activity Website
             Section("Activity Website"){
                 WebSiteEntryView(
-                    propertyURLString: $newWebURL,
+                    propertyURLString: $activity.ceInfoWebsiteURL,
                     textEntryLabel: "Website Address",
                     textEntryPrompt: "If the activity has a website, enter it here",
                     linkLabel: "Activity's Website"
@@ -160,10 +158,6 @@ struct ActivityBasicInfoView: View {
             
         }//: SECTION
         }//: GROUP
-        // MARK: - ON CHANGE
-        .onChange(of: newWebURL) { urlAddress in
-            activity.ceInfoWebsiteURL = urlAddress
-        }//: ONCHANGE
          // MARK: - ON APPEAR
          .onAppear {
              selectedActivityType = activity.type
