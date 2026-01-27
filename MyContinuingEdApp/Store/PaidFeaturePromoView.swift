@@ -7,9 +7,18 @@
 
 import SwiftUI
 
+/// Template view used to highlight features that are only accessible at a certain app purchase level.
+///
+/// - Parameters:
+///     - featureIcon: String for a SF symbol compatible with versions of iOS 17 & later
+///     - oldiOSIcon: String for a SF symbol compatible with iOS 16 and earlier ONLY (OPTIONAL)
+///     - featureItem: String for the name of the feature being highlighted
+///     - featureUpgradeLevel: FeatureAvailability enum value (basicAndPro, ProOnly)
 struct PaidFeaturePromoView: View {
     // MARK: - PROPERTIES
     let featureIcon: String
+    var oldiOSIcon: String? = nil
+    
     let featureItem: String
     let featureUpgradeLevel: FeatureAvailability
     
@@ -27,10 +36,17 @@ struct PaidFeaturePromoView: View {
                 .accessibilityHidden(true)
             
             HStack {
-                Image(systemName: featureIcon)
-                    .font(.largeTitle)
-                    .foregroundStyle(Color(.gray))
-                    .padding(.trailing, 10)
+                if let oldIcon = oldiOSIcon {
+                    Image(systemName: oldIcon)
+                        .font(.largeTitle)
+                        .foregroundStyle(Color(.gray))
+                        .padding(.trailing, 10)
+                } else {
+                    Image(systemName: featureIcon)
+                        .font(.largeTitle)
+                        .foregroundStyle(Color(.gray))
+                        .padding(.trailing, 10)
+                }//: IF LET
                 
                 VStack(alignment: .leading) {
                     Text("\(featureUpgradeLevel == .basicAndPro ? "Paid" : "Pro") Feature:")

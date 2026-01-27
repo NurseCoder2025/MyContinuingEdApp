@@ -110,7 +110,7 @@ final class DevelopmentTest: BaseTestCase {
         let allTags = try context.fetch(tagFetch)
         
         for tag in allTags {
-            let activities = tag.activity as? Set<CeActivity> ?? []
+            let activities = tag.activities as? Set<CeActivity> ?? []
             let activityCount = activities.count
             XCTAssert(activityCount == 0, "\(tag.tagName ?? "Unknown") has \(activityCount) activities.")
         }//: LOOP

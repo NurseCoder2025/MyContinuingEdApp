@@ -15,7 +15,6 @@ struct SidebarTagsSectionView: View {
     @EnvironmentObject var dataController: DataController
     @StateObject private var viewModel: ViewModel
     
-    @State private var tagBadgeNumber: Int = 0
     
     // MARK: - CLOSURES
     // Callback for renaming tag
@@ -29,36 +28,13 @@ struct SidebarTagsSectionView: View {
         Group {
             Section {
                 ForEach(viewModel.convertedTagFilters) { filter in
-                    NavigationLink(value: filter) {
-                        Label(filter.tag?.tagName ?? "Unnamed", systemImage: filter.icon)
-                        // MARK: BADGE
-                            .badge(tagBadgeNumber)
-                        // MARK: - CONTEXT MENU
-                            .contextMenu {
-                                // Renaming tag button
-                                Button {
-                                   onRenameTag(filter)
-                                } label: {
-                                    Label("Rename tag", systemImage: "pencil")
-                                }
-//                                
-                                // Deleting tag button
-                                Button(role: .destructive) {
-                                    viewModel.deleteTag(filter)
-                                } label: {
-                                    Label("Delete tag", systemImage: "trash")
-                                }//: BUTTON
-//                                
-                            }//: CONTEXT MENU
-                            .accessibilityElement()
-                            .accessibilityLabel("Tag: \(filter.name)")
-                            .accessibilityHint("^[\(tagBadgeNumber) activity](inflect: true)")
-                        // MARK: - TASK
-                            .task {
-                                tagBadgeNumber = await  viewModel.getCEsCountFor(filter: filter)
-                            }//: TASK
-                        
-                    } //: NAV LINK
+                  TagRowLabelView(
+                    filter: filter,
+                    onDeleteTag: { filter in
+                        viewModel.deleteTag(filter)
+                    },
+                    onRenameTag: onRenameTag
+                  )
                 } //: LOOP
                 // MARK: - HEADER
             } header: {

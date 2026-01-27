@@ -35,7 +35,15 @@ extension Tag {
     /// method on the property and returns the result as an Int value.
     var tagActiveActivities: [CeActivity] {
         let result = activities?.allObjects as? [CeActivity] ?? []
-        return result.filter {$0.activityCompleted == false}
+        return result.filter {
+            if $0.isLiveActivity, let endDate = $0.endTime {
+                return $0.activityCompleted == false && endDate > Date.now
+            } else if $0.activityExpires, let expDate = $0.expirationDate {
+                return $0.activityCompleted == false && expDate > Date.now
+            } else {
+                return $0.activityCompleted == false
+            }
+        }
      }//: tagActiveActivities
     
     /// Computed CoreData helper property that returns an array of all completed

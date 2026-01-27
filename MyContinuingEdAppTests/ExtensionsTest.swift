@@ -97,7 +97,7 @@ final class ExtensionsTest: BaseTestCase {
         
         // Adding all tags to the sample activity
         for tag in sortedTags {
-            tag.addToActivity(testActivity)
+            tag.addToActivities(testActivity)
         }//: LOOP
         
         // Compare computed property activityTags with sortedTags array
@@ -131,7 +131,7 @@ final class ExtensionsTest: BaseTestCase {
         
         // Adding all tags to the sample activity
         for tag in sortedTags {
-            tag.addToActivity(testActivity)
+            tag.addToActivities(testActivity)
         }//: LOOP
         
         // Checking to see if the allActivityTagsString produces the same String as tagNames

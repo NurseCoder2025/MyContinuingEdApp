@@ -75,13 +75,13 @@ extension DataController {
     /// Even though this method is marked as "async",  becuase it relies on CoreData fetching
     /// all activity must take place on the main thread.
     func preloadActivityTypes() async {
-        let viewContext = container.viewContext
+        let context = container.viewContext
         let fetchTypes = ActivityType.fetchRequest()
         fetchTypes.sortDescriptors = [
             NSSortDescriptor(key: "typeName", ascending: true)
         ]
         
-        let count = (try? viewContext.count(for: fetchTypes)) ?? 0
+        let count = (try? context.count(for: fetchTypes)) ?? 0
         guard count == 0 || count < 10 else { return }
         
         let defaultActivityTypes = ActivityTypeJSON.allActivityTypes
@@ -89,19 +89,19 @@ extension DataController {
         // If there is a partial list of activity types, then create
         // new ActivityType objects only for the remaining ones
         if count > 0 {
-            let existingTypes = (try? viewContext.fetch(fetchTypes)) ?? []
+            let existingTypes = (try? context.fetch(fetchTypes)) ?? []
             let existingNames = Set<String>(existingTypes.map(\.activityTypeName))
             let allNames = Set<String>(defaultActivityTypes.map(\.typeName))
             let newNames = allNames.subtracting(existingNames)
             
             for name in newNames {
-                let item = ActivityType(context: viewContext)
+                let item = ActivityType(context: context)
                 item.typeID = UUID()
                 item.activityTypeName = name
             }//: LOOP
         } else {
             for type in defaultActivityTypes {
-                let item = ActivityType(context: viewContext)
+                let item = ActivityType(context: context)
                 item.typeID = UUID()
                 item.activityTypeName = type.typeName
             }
@@ -118,13 +118,13 @@ extension DataController {
     /// - Note: Though this method is marked as being "async", due to the need to utilize
     /// CoreData fetching, all instructions must be done on the main thread.
     func preloadStatesList() async {
-        let viewContext = container.viewContext
+        let context = container.viewContext
         let statesFetch = USState.fetchRequest()
         statesFetch.sortDescriptors = [
             NSSortDescriptor(key: "stateName", ascending: true)
         ]
         
-        let count = (try? viewContext.count(for: statesFetch)) ?? 0
+        let count = (try? context.count(for: statesFetch)) ?? 0
         guard count == 0 || count < 50 else {return}
         
         let defaultStates = USStateJSON.allStates
@@ -134,7 +134,7 @@ extension DataController {
         // more than 0 just create new USState objects for the remaining
         // ones.
         if count > 0 {
-            let existingStates = (try? viewContext.fetch(statesFetch)) ?? []
+            let existingStates = (try? context.fetch(statesFetch)) ?? []
             let existingNames = Set<String>(existingStates.map(\.USStateName))
             let allNames = Set<String>(defaultStates.map(\.stateName))
             let newNames = allNames.subtracting(existingNames)
@@ -144,7 +144,7 @@ extension DataController {
             }
             
             for state in newStates {
-                let item = USState(context: viewContext)
+                let item = USState(context: context)
                 item.stateID = UUID()
                 item.stateName = state.stateName
                 item.USStateAbbreviation = state.abbreviation
@@ -152,7 +152,7 @@ extension DataController {
             }//: LOOP
         } else {
             for state in defaultStates {
-                let item = USState(context: viewContext)
+                let item = USState(context: context)
                 item.stateID = UUID()
                 item.stateName = state.stateName
                 item.abbreviation = state.abbreviation

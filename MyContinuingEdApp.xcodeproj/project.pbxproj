@@ -84,6 +84,9 @@
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
 		3FB486A92EB9A4D300C58ED5 /* DataController-Computations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */; };
+		3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */; };
+		3FBA7E982F285A9400FE6C80 /* ContextualHelpButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */; };
+		3FBA7E9A2F285BAD00FE6C80 /* HelpSheetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */; };
 		3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */; };
 		3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */; };
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
@@ -323,6 +326,9 @@
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoCredSubTypeView.swift; path = "MyContinuingEdApp/Credentials/Sub Category Cat Sheet/NoCredSubTypeView.swift"; sourceTree = SOURCE_ROOT; };
 		3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Computations.swift"; sourceTree = "<group>"; };
+		3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRowLabelView.swift; sourceTree = "<group>"; };
+		3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualHelpButtonView.swift; sourceTree = "<group>"; };
+		3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSheetRowView.swift; sourceTree = "<group>"; };
 		3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightHelpers.swift; sourceTree = "<group>"; };
 		3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Notifications.swift"; sourceTree = "<group>"; };
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -691,8 +697,10 @@
 		3F2A42CE2EA2DFFB00B095CB /* UI Styles */ = {
 			isa = PBXGroup;
 			children = (
+				3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */,
 				3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */,
 				3F5D84F42F0DCDC500B179C4 /* HelpInfoSheetView.swift */,
+				3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */,
 				3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */,
 				3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */,
 				3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */,
@@ -875,6 +883,7 @@
 		3F9520A32EB167AF00F1B498 /* Tags Section */ = {
 			isa = PBXGroup;
 			children = (
+				3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */,
 				3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */,
 				3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */,
 			);
@@ -1212,6 +1221,7 @@
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
 				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,
+				3FBA7E9A2F285BAD00FE6C80 /* HelpSheetRowView.swift in Sources */,
 				F2B389F32E4C538100518868 /* CertificateShareView.swift in Sources */,
 				F22940A52E76563100BFE78A /* SpecialCategories-CoreDataHelper.swift in Sources */,
 				3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */,
@@ -1241,6 +1251,7 @@
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
 				3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */,
 				3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */,
+				3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */,
 				F2612A1D2E87275000CC463D /* ActivityBasicInfoView.swift in Sources */,
 				3F5D03332EB3F3BC00F5B1DC /* DataController-Achievements.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
@@ -1276,6 +1287,7 @@
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
 				3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */,
 				3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
+				3FBA7E982F285A9400FE6C80 /* ContextualHelpButtonView.swift in Sources */,
 				F229518D2E3179BF002550EC /* ActivityRatingScale.swift in Sources */,
 				3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */,
 				3F2064562EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift in Sources */,

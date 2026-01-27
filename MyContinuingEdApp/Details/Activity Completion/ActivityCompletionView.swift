@@ -15,6 +15,8 @@ struct ActivityCompletionView: View {
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
+    @State private var showEvalSubmissionAlert: Bool = false
+    
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
         switch dataController.purchaseStatus {
@@ -52,6 +54,7 @@ struct ActivityCompletionView: View {
                     if paidStatus == .free {
                         PaidFeaturePromoView(
                             featureIcon: "pencil.and.scribble",
+                            oldiOSIcon: "pencil.and.outline",
                             featureItem: "Activity Reflection",
                             featureUpgradeLevel: .basicAndPro
                         )
@@ -73,12 +76,16 @@ struct ActivityCompletionView: View {
             }//: SECTION (Activity Completion)
             // MARK: - ON CHANGE
             // MARK: Activity Completed? change
-            .onChange(of: activity.activityCompleted) { _ in
+            .onChange(of: activity.activityCompleted) { completed in
                 if paidStatus != .free {
                     if activity.reflection == nil {
                         let newReflection = dataController.createNewActivityReflection()
                         activity.reflection = newReflection
                     } //: IF
+                }//: IF
+                
+                if completed {
+                    showEvalSubmissionAlert = true
                 }//: IF
             } //: ON CHANGE
             
@@ -86,8 +93,14 @@ struct ActivityCompletionView: View {
             .onChange(of: activity.dateCompleted) { _ in
                 dataController.assignActivitiesToRenewalPeriods()
             }
-            
+           
         }//: GROUP
+         // MARK: - ALERTS
+        .alert("A Friendly Reminder", isPresented: $showEvalSubmissionAlert) {
+             Button("OK"){}
+         } message: {
+             Text("Remember to submit any required items like evaluation forms or post-test answers if you haven't already done so.")
+         }//: ALERT
         
     }//: BODY
 }//: STRUCT

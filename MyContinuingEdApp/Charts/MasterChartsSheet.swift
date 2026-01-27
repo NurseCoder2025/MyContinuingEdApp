@@ -25,8 +25,10 @@ struct MasterChartsSheet: View {
                     LazyVStack(spacing: 20) {
                         
                         CeEarnedByMonthChartView()
+                            .padding(.horizontal, 10)
                         
                         MoneySpentByMonthView()
+                            .padding(.horizontal, 10)
                            
                         Text("More enhancements and charts to come... 😀")
                             .font(.title3)

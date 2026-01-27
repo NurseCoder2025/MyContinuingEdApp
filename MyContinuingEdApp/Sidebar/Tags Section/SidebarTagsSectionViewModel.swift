@@ -37,29 +37,6 @@ extension SidebarTagsSectionView {
         
         // MARK: - FUNCTIONS
         
-        /// ViewModel method for SidebarTagsSectionView that returns the appropriate
-        /// number of CE activities that are associated with a given Tag object based on the
-        /// user's set preference in Settings.
-        /// - Parameter filter: Filter object containing a Tag object
-        /// - Returns: Int representing the # of CEs associated with a given tag, based
-        /// on the user's preference
-        ///
-        /// - Important: The Filter argument MUST have a Tag object with it in order to return
-        ///the correct number of CEs.
-        /// The user can choose to show either all CEs with the tag, only those activities which
-        /// have been completed, or only CEs that are still in-progress (or can be worked on).
-        func getCEsCountFor(filter: Filter) async -> Int {
-            let badgeCountPreference = await dataController.tagBadgeCountFor
-            
-            if badgeCountPreference == BadgeCountOption.activeItems.rawValue {
-                return filter.tag?.tagActiveActivities.count ?? 0
-            } else if badgeCountPreference == BadgeCountOption.completedItems.rawValue {
-                return filter.tag?.tagCompletedActivities.count ?? 0
-            } else {
-                return filter.tag?.tagAllActivities.count ?? 0
-            }
-        }//: getCEsCountFor(tag)
-        
         func delete(_ offsets: IndexSet) {
             for offset in offsets {
                 let item = tags[offset]
