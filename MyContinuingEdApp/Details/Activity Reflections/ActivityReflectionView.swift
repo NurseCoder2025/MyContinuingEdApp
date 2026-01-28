@@ -22,6 +22,7 @@ struct ActivityReflectionView: View {
             Section {
                 Text("Reflections on \(activity.ceTitle)")
                     .font(.largeTitle)
+                Text("To complete this reflection, please answer at least ")
             }//: HEADER SECTION
             
             Section("3 Main Points") {
@@ -85,6 +86,14 @@ struct ActivityReflectionView: View {
         }//: ON DISAPPEAR
         
     } //: BODY
+    
+    // MARK: - METHODS
+    
+    func reflectionCompleted() -> Bool {
+        // TODO: Update logic and return
+        let mainPointSummaryCount = reflection.reflectionThreeMainPoints.count
+        return false
+    }//: reflectionCompleted()
     
 }//: STRUCT
 

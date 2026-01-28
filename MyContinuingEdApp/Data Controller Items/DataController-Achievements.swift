@@ -69,8 +69,15 @@ extension DataController {
     }//: addAwardedCE()
     
         
-    // Function to determine whether an award has been earned
-    func hasEarned(award: Award) -> Bool {
+    /// Method that determines whether the user has earned a specific Achievement or not.
+    /// - Parameter award: Achievement object (CoreData entity) to check
+    /// - Returns: True if criteria for the achievement has been met; False if not
+    ///
+    /// The logic for this method utilizes the criterion property for each Achievement object.  If the
+    /// argument has a criterion property that is nil, then false will be returned along with a print statement
+    /// indicating that no achievement was made. Each criterion has its own unique set of fetch requests that
+    /// are run to determine if the achievement has been earned.
+    func hasEarned(award: Achievement) -> Bool {
         switch award.criterion {
             // # of hours earned achievements
         case "CEs":
@@ -87,6 +94,7 @@ extension DataController {
             fetchRequest.propertiesToFetch = ["ceAwarded"]
             
             let totalHours = addAwardedCE(for: fetchRequest)
+            
             return totalHours >= Double(award.value)
             
             // # of completed CEs
@@ -95,12 +103,14 @@ extension DataController {
             fetchRequest.predicate = NSPredicate(format: "activityCompleted == true")
             
             let totalCompleted = count(for: fetchRequest)
+            
             return totalCompleted >= award.value
             
             // # tags created
         case "tags":
             let fetchRequest = Tag.fetchRequest()
             let totalTags = count(for: fetchRequest)
+            
             return totalTags >= award.value
             
             // # activities rated as "loved"
@@ -108,6 +118,7 @@ extension DataController {
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 4)
             let totalLoved = count(for: fetchRequest)
+            
             return totalLoved >= award.value
             
             // # activities rated as "interesting"
@@ -115,6 +126,7 @@ extension DataController {
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 3)
             let totalUnliked = count(for: fetchRequest)
+            
             return totalUnliked >= award.value
             
             // # of activity reflections completed
@@ -122,6 +134,7 @@ extension DataController {
             let fetchRequest = ActivityReflection.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "completedYN == true")
             let totalReflections = count(for: fetchRequest)
+            
             return totalReflections >= award.value
             
             // # of activity reflections where something surprising was learned
@@ -129,6 +142,7 @@ extension DataController {
             let fetchRequest = ActivityReflection.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "surpriseEntered == true")
             let totalSurprises = count(for: fetchRequest)
+            
             return totalSurprises >= award.value
             
             // TODO: Determine why the default case is executing each time the award screen
@@ -143,7 +157,39 @@ extension DataController {
             print("Sorry, but no award to bestow...")
             return false
         
-        } //: hasEarned
-    }
+        }//: SWITCH
+    }//: hasEarned
     
+    /// Method for checking if any new Achievements have been made and, if so, set the dateEarned property to the current
+    /// time and schedule a notification to the user.
+    ///
+    /// Only Achievements which have a nil dateEarned property will be assessed with the hasEarned(award) method.  For those
+    /// that return a true value, the scheduleAchievementNotification(award) method will be called to schedule a notification 30
+    /// seconds after the current time.
+    ///
+    /// - Note: Call this method whenever a user might potentially earn a new Achievement, such as after completing a CE,
+    /// creating a tag, completing an activity reflection, etc.  Refer to the Awards.json file for possible achievements.
+    func checkForNewAchievements() {
+        let context = container.viewContext
+        let achievementFetch = Achievement.fetchRequest()
+        achievementFetch.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        achievementFetch.predicate = NSPredicate(format: "dateEarned == nil")
+        
+        let possibleAchievements = (try? context.fetch(achievementFetch)) ?? []
+        guard possibleAchievements.isNotEmpty else {return}
+        
+        
+        for achievement in possibleAchievements {
+            if hasEarned(award: achievement) {
+                achievement.dateEarned = Date.now
+                save()
+                let _: Task<Void, Never> = Task { @MainActor in
+                    await scheduleAchievementNotification(award: achievement)
+                }//: TASK
+            }//: IF (hasEarned)
+        }//: LOOP
+        
+    }//: checkForNewAchievements
 }//: DataController

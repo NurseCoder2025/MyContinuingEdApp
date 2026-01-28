@@ -19,16 +19,7 @@ class DataController: ObservableObject {
     
     // shared settings for app with iCloud
     @Published var sharedSettings = NSUbiquitousKeyValueStore.default
-    
-    // MARK: Earned CE Achievements
-    /// Published property to keep track of all awards earned by the user that have
-    /// already been notified about so duplicate notifications are not made.
-    ///
-    /// - Note: The removal of any achievement notification will NOT also
-    /// automatically remove the achievement from this set.  Must use the
-    /// removeEarnedAchievementReminders method for that to happen.
-    @Published var notifiedCEAchievements: Set<Award> = []
-    
+   
     // Property for showing the activity reflection view
     @Published var showActivityReflectionView: Bool = false
     
@@ -249,7 +240,15 @@ class DataController: ObservableObject {
             await preloadCEDesignations()
             await preloadCountries()
             await preloadStatesList()
+            await preloadAllAchievements()
         }//: TASK
+        
+        // First time use determination & setting the key if so
+        if isAppRunForFirstTime() {
+            isFirstRun = true
+        } else {
+            isFirstRun = false
+        }
         
         // Setting default values for all Settings keys (initial
         // app launch ONLY

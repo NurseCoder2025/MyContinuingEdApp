@@ -99,9 +99,10 @@ struct UpgradeToPaidSheet: View {
         Task { @MainActor in
             let purchaseResult = try await dataController.purchase(product)
             if purchaseResult {
+                dataController.checkForNewAchievements()
                 dismiss()
-            }
-        }
+            }//: IF
+        }//: TASK
     }//: purchase()
     
     

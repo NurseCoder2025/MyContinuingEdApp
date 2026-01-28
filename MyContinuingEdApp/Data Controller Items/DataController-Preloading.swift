@@ -23,18 +23,47 @@ extension DataController {
     ///  stored.  This will load default values upon the first use of the app by the user.  Thereafter, the user
     ///  can edit the list as desired.
     func preloadCEDesignations() async {
+        let context = container.viewContext
         let request = CeDesignation.fetchRequest()
-        let count = (try? container.viewContext.count(for: request)) ?? 0
-        guard count == 0 else { return }
+        // Ensuring that the fetch count is run on the main thread
+        let count = await MainActor.run {
+            (try? container.viewContext.count(for: request)) ?? 0
+        }
         
         let defaultCeDesignations: [CeDesignationJSON] = Bundle.main.decode("Default CE Designations.json")
         
-        for designation in defaultCeDesignations {
-            let convertedItem = CeDesignation(context: container.viewContext)
-            convertedItem.designationAbbreviation = designation.designationAbbreviation
-            convertedItem.designationName = designation.designationName
-            convertedItem.designationAKA = designation.designationAKA
-        }
+        guard count == 0 || count < defaultCeDesignations.count else { return }
+        
+        if count == 0 {
+            for designation in defaultCeDesignations {
+                let convertedItem = CeDesignation(context: context)
+                convertedItem.designationAbbreviation = designation.designationAbbreviation
+                convertedItem.designationName = designation.designationName
+                convertedItem.designationAKA = designation.designationAKA
+            }
+        } else {
+            // If the complete list of default CeDesignations wasn't loaded for whatever
+            // reason, add the missing ones
+            let existingDesignations = (try? context.fetch(request)) ?? []
+            let existingNames = Set<String>(existingDesignations.map(\.ceDesignationName))
+            let officialNamesList = Set<String>(defaultCeDesignations.map(\.designationName))
+            let missingNames = officialNamesList.subtracting(existingNames)
+            
+            if missingNames.isNotEmpty {
+                let missingDesignations = defaultCeDesignations.filter {
+                    missingNames.contains($0.designationName)
+                }
+                
+                for designation in missingDesignations {
+                    let newDesignation = CeDesignation(context: context)
+                    newDesignation.designationID = UUID()
+                    newDesignation.designationName = designation.designationName
+                    newDesignation.designationAbbreviation = designation.designationAbbreviation
+                    newDesignation.designationAKA = designation.designationAKA
+                }//: LOOP
+            }//: IF (missingNames.isNotEmpty)
+        }//: IF - ELSE
+        
         save()
     }//: preloadCEDesignations()
     
@@ -44,7 +73,11 @@ extension DataController {
     ///  first run of the app (or whenever the # of countries stored = 0).
     func preloadCountries() async {
         let request = Country.fetchRequest()
-        let count = (try? container.viewContext.count(for: request)) ?? 0
+        // Ensuring that the fetch count is run on the main thread
+        let count = await MainActor.run {
+            (try? container.viewContext.count(for: request)) ?? 0
+        }
+        
         guard count == 0 else {return}
         
         let defaultCountries: [CountryJSON] = Bundle.main.decode("Country List.json")
@@ -69,43 +102,64 @@ extension DataController {
     /// application (or after re-install).
     ///
     /// - Note: The number of activity types is pre-determined by the values in the
-    /// "Activity Types.json" file contained within the app bundle.  There should be a total
-    /// of 10 types.  These are NOT user-editable.
-    ///
-    /// Even though this method is marked as "async",  becuase it relies on CoreData fetching
-    /// all activity must take place on the main thread.
+    /// "Activity Types.json" file contained within the app bundle.  These are NOT user-editable.  If
+    /// there is a difference between the number of types in the json file and the objects saved in
+    /// CoreData, then this method will add and delete types as applicable.
     func preloadActivityTypes() async {
         let context = container.viewContext
         let fetchTypes = ActivityType.fetchRequest()
         fetchTypes.sortDescriptors = [
             NSSortDescriptor(key: "typeName", ascending: true)
         ]
-        
-        let count = (try? context.count(for: fetchTypes)) ?? 0
-        guard count == 0 || count < 10 else { return }
+        // Ensuring that the fetch count runs on the main thread
+        let count = await MainActor.run {
+            (try? context.count(for: fetchTypes)) ?? 0
+        }
         
         let defaultActivityTypes = ActivityTypeJSON.allActivityTypes
         
-        // If there is a partial list of activity types, then create
-        // new ActivityType objects only for the remaining ones
-        if count > 0 {
-            let existingTypes = (try? context.fetch(fetchTypes)) ?? []
-            let existingNames = Set<String>(existingTypes.map(\.activityTypeName))
-            let allNames = Set<String>(defaultActivityTypes.map(\.typeName))
-            let newNames = allNames.subtracting(existingNames)
-            
-            for name in newNames {
-                let item = ActivityType(context: context)
-                item.typeID = UUID()
-                item.activityTypeName = name
-            }//: LOOP
-        } else {
+        guard count == 0 || count != defaultActivityTypes.count else { return }
+        
+        if count == 0 {
             for type in defaultActivityTypes {
                 let item = ActivityType(context: context)
                 item.typeID = UUID()
                 item.activityTypeName = type.typeName
-            }
-        }//: IF ELSE
+            }//: LOOP
+        } else {
+            // If there is a partial list of activity types, then syncronize the
+            // ActivityType CoreData objects with the ones in the Activity Type.json
+            // file.
+            let existingTypes = (try? context.fetch(fetchTypes)) ?? []
+            let existingNames = Set<String>(existingTypes.map(\.activityTypeName))
+            let officialTypeNames = Set<String>(defaultActivityTypes.map(\.typeName))
+            let addedTypeNames = officialTypeNames.subtracting(existingNames)
+            let removedTypeNames = existingNames.subtracting(officialTypeNames)
+            
+            // Any ActivityTpes that have been added but not yet saved as CoreData
+            // objects
+            if addedTypeNames.isNotEmpty {
+                for name in addedTypeNames {
+                    let item = ActivityType(context: context)
+                    item.typeID = UUID()
+                    item.activityTypeName = name
+                }//: LOOP
+            }//: IF (addedTypeNames.isNotEmpty)
+            
+            // Deleting any ActivityType objects from CoreData that are no longer
+            // in the official list
+            if removedTypeNames.isNotEmpty {
+                for name in removedTypeNames {
+                    let matchingType = existingTypes.first { $0.activityTypeName == name }
+                    
+                    if let foundType = matchingType {
+                        delete(foundType)
+                    }//: IF LET
+                }//: LOOP
+                
+            }//: IF (removedTypeNames.isNotEmpty)
+            
+        }//: IF - ELSE
         
         save()
     }//: preloadActivityTypes()
@@ -161,6 +215,94 @@ extension DataController {
         save()
     }//: preloadStatesList()
     
+    // MARK: Achievements (awards)
+    /// Method for preloading Achievement CoreData entities based on the Awards.json file and
+    /// Award struct.
+    ///
+    /// - Note: This method has logic that syncs the values of the Awards.json file with the CoreData entities by
+    /// either adding or deleting Achievement objects as determined by the award name property for each Award object
+    /// in the static allAwards array if the number of objects in that array is not equal to the number of fetched
+    /// Achievement objects from CoreData.
+    func preloadAllAchievements() async {
+        let context = container.viewContext
+        let achievementsFetch = Achievement.fetchRequest()
+        achievementsFetch.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        let defaultAwards = Award.allAwards
+        
+        // Ensuring that context mutations occur on the main thread
+        let count = await MainActor.run {
+            (try? context.count(for: achievementsFetch)) ?? 0
+        }
+        // ONLY preload if there are either no Achievement entities OR
+        // if the # of Achievement entities is not equal to the number
+        // in the Award.allAwards array
+        guard count == 0 || count != defaultAwards.count else {return}
+        
+        if count == 0 {
+            for award in defaultAwards {
+                let item = Achievement(context: context)
+                item.id = UUID()
+                item.name = award.name
+                item.achievementDescript = award.description
+                item.notificationText = award.notificationText
+                item.criterion = award.criterion
+                item.value = Int32(award.value)
+                item.image = award.image
+                item.color = award.color
+            }//: LOOP
+        } else {
+            // Unable to run the fetch within the MainActor.run closure due to a warning
+            // that NSManagedObjects cannot conform to Sendable, which is a requirement
+            // for the closure.
+            let existingAchievements = (try? context.fetch(achievementsFetch)) ?? []
+            let existingNames = Set<String>(existingAchievements.map((\.achievementName)))
+            let officialAwardList = Set<String>(defaultAwards.map(\.name))
+            let addedAchievements = officialAwardList.subtracting(existingNames)
+            let removedAchievements = existingNames.subtracting(officialAwardList)
+            
+            // If there are any achievements that are in the offical list but NOT
+            // saved in CoreData, then create and save them.
+            if addedAchievements.isNotEmpty {
+                let achievementsToLoad: [Award] = defaultAwards.filter { addedAchievements.contains($0.name)
+                }
+                
+                for achievement in achievementsToLoad {
+                    let item = Achievement(context: context)
+                    item.id = UUID()
+                    item.name = achievement.name
+                    item.achievementDescript = achievement.description
+                    item.notificationText = achievement.notificationText
+                    item.criterion = achievement.criterion
+                    item.value = Int32(achievement.value)
+                    item.image = achievement.image
+                    item.color = achievement.color
+                }//: LOOP
+            }//: IF (addedAchievements.isNOTEmpty)
+            
+            // If there are any achievements that are NOT in the official list but
+            // are saved in CoreData, then delete those objects
+            if removedAchievements.isNotEmpty {
+                let achievementsToDelete: [Award] = defaultAwards.filter { removedAchievements.contains($0.name)
+                }
+                
+                for achievement in achievementsToDelete {
+                    let matchingAchievement = existingAchievements.first {
+                        $0.name == achievement.name
+                    }
+                    
+                    if let foundAchievement = matchingAchievement {
+                        delete(foundAchievement)
+                    }//: IF LET
+                }//: LOOP
+            }//: IF (removedAchievements.isNOTEmpty)
+            
+        }//: IF - ELSE
+        
+        save()
+    }//: preloadAllAchievements
+    
     // MARK: - Set Settings Keys Defaults
     
     /// Method that creates an initial value for all of the keys stored in the @Published property
@@ -215,5 +357,49 @@ extension DataController {
             setTagBadgeCount(to: BadgeCountOption.allItems.rawValue)
         
     }//: setDefaultSettingsKeys()
+    
+    /// Method for determining whether the app is being run for the very first time or not
+    /// - Returns: True if all conditions are met; otherwise, false
+    ///
+    /// The conditions for determining whether the app is being run for the first time include
+    /// the following:
+    ///     - 0 CeActivity objects in storage AND
+    ///     - 0 Credential objects in storage AND
+    ///     - 0 RenewalPeriod objects in storage AND
+    ///     - 0 Tag objects in storage AND
+    ///     - purchaseStatus = "free"
+    ///
+    /// If all five of the above conditions are met, then it is most likely that the user is launching
+    /// the app for the very first time.  If they had been previously using the app but are now
+    /// installing it on another device, then there should be some objects saved (but they may
+    /// still be a free user as they can create a limited number of objects with that status).
+    func isAppRunForFirstTime() -> Bool {
+        // To enhance performance, only run the rest of this function
+        // if the user is in free mode.  If they made a purchase then
+        // they have completed onboarding and have at the very least
+        // looked around within the app.
+        guard purchaseStatus == PurchaseStatus.free.id else { return false }
+        
+        let context = container.viewContext
+        // Conditions for determining for first run determination
+        let activityFetch = CeActivity.fetchRequest()
+        let credentialFetch = Credential.fetchRequest()
+        let renewalFetch = RenewalPeriod.fetchRequest( )
+        let tagFetch = Tag.fetchRequest( )
+        let appStatus = purchaseStatus
+        
+        // CoreData object counts
+        let activityCount = (try? context.count(for: activityFetch)) ?? 0
+        let credentialCount = (try? context.count(for: credentialFetch)) ?? 0
+        let renewalCount = (try? context.count(for: renewalFetch)) ?? 0
+        let tagCount = (try? context.count(for: tagFetch)) ?? 0
+        
+        if appStatus == PurchaseStatus.free.id, activityCount == 0, credentialCount == 0, renewalCount == 0, tagCount == 0 {
+            return true
+        } else {
+            return false
+        }
+        
+    }//: isAppRunForFirstTime
     
 }//: DataController

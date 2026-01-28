@@ -424,26 +424,16 @@ extension DataController {
     
     /// Method for removing any existing CE Achievement award notifications from the UNUserNotificationCenter.
     /// - Parameters:
-    ///   - award: Award object for which the notification is to be removed
+    ///   - award: Achievement object for which the notification is to be removed
     ///   - type: NotificationType (default: .achievementEarned) - should not be changed for the purposes of this method
-    ///
-    ///   Will also remove the Award from the notifiedCEAchievements Set (in DataController, main file) in order to ensure that the
-    ///   notification will be shown to the user in the future since it was cancelled.
-    func removeEarnedAchievementReminders(for award: Award, type: NotificationType = .achievementEarned) {
+    func removeEarnedAchievementReminders(for award: Achievement, type: NotificationType = .achievementEarned) {
         let center = UNUserNotificationCenter.current()
         
-            let uniqueID = award.id
-            let noticeNum: Int = Int(award.name.count)
+            let uniqueID = award.achievementID
+            let noticeNum: Int = Int(award.achievementName.count)
             let identifier = "\(uniqueID)-\(type.rawValue).\(noticeNum)"
             
             center.removePendingNotificationRequests(withIdentifiers: [identifier])
-        
-            // Removing the award from the notifiedCEAchievements Set becuase the notification was
-            // cancelled before being shown to the user, so want to make sure it can be shown to
-            // the user again.
-            if notifiedCEAchievements.contains(award) {
-                notifiedCEAchievements.remove(award)
-            }
     }//: removeEarnedAchievementReminders()
     
     /// This method removes any pending notifications for all eligible objects in the UNNotificationCenter.  Specifically,
@@ -629,10 +619,15 @@ extension DataController {
     }//: fetchCurrentReinstatementItems
     
     /// Method for capturing all CE related achievements that have been earned by the user for the purpose of notifying them.
-    /// - Returns: Array of Award objects that produce a result of true when used as the argurment for the hasEarned(award)
+    /// - Returns: Array of Achievement objects that produce a result of true when used as the argurment for the hasEarned(award)
     /// method.
-    func fetchEarnedAchievements() -> [Award] {
-        let possibleAchievements = Award.allAwards
+    func fetchEarnedAchievements() -> [Achievement] {
+        let context = container.viewContext
+        let achievementFetch = Achievement.fetchRequest()
+        achievementFetch.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        let possibleAchievements = (try? context.fetch(achievementFetch)) ?? []
         let earnedAwards = possibleAchievements.filter {hasEarned(award: $0)}
         return earnedAwards
     }//: fetchEarnedAchievements()
@@ -642,54 +637,66 @@ extension DataController {
     // ** It is important that all of the methods in this section are included
     // in the updateAllReminders() method **
     
-    /// Method for creating notifications based on any new CE achievements that the user earns.
+    /// Method for creating notifications based on any new CE achievements that the user earns. This
+    /// is a global-based method which calls the fetchEarnedAchievements method to schedule
+    /// notifications for all Achievements returned by that method.
     ///
-    /// All previously earned achievements are stored as a Set in the DataController @Published property notifiedCEAchievements, and is used
-    /// to compare what has already been earned with all earned achievements from the fetchEarnedAchivements method.  Only those that are
-    /// truly new for the user will have a notification scheduled.  The timing for the notifications is set to a random number of
-    /// minutes (between 1 to 30) from the current date & time to allow for spacing if multiple achievements are scheduled at the same time.
+    /// Only Achievements that are truly new for the user will have a notification scheduled.
+    /// The timing for the notifications is set to 30 seconds from the current time.
     ///
     ///- Important: This method needs to be called separately from the updateAllReminders method due to the fact that achievement
     /// notifications are directly tied to the values inside of the notifiedCEAchievements property and therefore should not be removed unless
     /// the removeEarnedAchievementReminders method can be called to both remove the notifcation AND the entry in the notifiedCEAchievements
     /// set in DataController.
-    ///
-    /// - Note: Due to the fact that the Award struct does not inherit from NSManagedObject, two separate methods were created to allow
-    /// for non-CoreData objects to get notifications scheduled, and they are based around objects conforming to Identifiable.
     func scheduleEarnedAwardNotifications() async {
         let currentlyEarnedAwards = fetchEarnedAchievements()
         guard currentlyEarnedAwards.isNotEmpty else { return }
         
         for achievement in currentlyEarnedAwards {
-            guard notifiedCEAchievements.doesNOTContain(achievement) else { continue }
-            
-            // Scheduling the notification for a random number of minutes from current time
-            // between 1 and 30 minutes
-            let calendar = Calendar.current
-            let triggerDate = Date.now
-            let timerSpacer: Int = Int.random(in: 1...30)
-            let triggerComponents = DateComponents(calendar: .current, minute: timerSpacer)
-            let triggerTime = calendar.date(byAdding: triggerComponents, to: triggerDate)
-            
-            if let notificationDate = triggerTime {
-                let title: String = "Congratulations! Another CE Achievement Earned!"
-                let body: String = "You just met the criteria to earn the CE award '\(achievement.name)' by \(achievement.notificationText) Keep up the amazing work with your CEs!"
-                
-                let noticeType: NotificationType = .achievementEarned
-                let noticeNumber: Int = Int(achievement.name.count)
-                
-                await addNonCoreDataObjReminder(
-                    for: achievement,
-                    title: title,
-                    body: body,
-                    onDate: notificationDate,
-                    notificationType: noticeType,
-                    noticeNum: noticeNumber
-                )
-            }//: IF LET
+            await scheduleAchievementNotification(award: achievement)
         }//: LOOP
 
     }//: scheduleEarnedAwardNotifications()
+    
+    
+    /// Method for scheduling a notification for an individual Achievement if one hasn't already been scheduled (indicated by the
+    /// Achievement object's notifiedOn property).
+    /// - Parameter award: Achievement object for scheduling the notification for
+    ///
+    /// - Important: To enhance app performance, this method does NOT check to see whether the arugment actually meets
+    /// the criteria for being an earned Achievement apart from not having a dateEarned or notifiedOn Date value.
+    /// Please use the hasEarned(award) method prior to calling this one to ensure that the Achievement has been earned.
+    func scheduleAchievementNotification(award: Achievement) async {
+        guard award.dateEarned != nil, award.notifiedOn == nil else { return }
+        
+        // Scheduling notification for 30 seconds after achievement has been earned
+        let calendar = Calendar.current
+        let triggerDate = Date.now
+        let triggerComponents = DateComponents(calendar: .current, second: 30)
+        let triggerTime = calendar.date(byAdding: triggerComponents, to: triggerDate)
+        
+        if let notificationDate = triggerTime {
+            let title: String = "CE Achievement Earned!"
+            let body: String = "You just met the criteria to earn the CE award '\(award.achievementName)' by \(award.achievementNotificationText) Keep up the amazing work with your CEs!"
+            
+            let noticeType: NotificationType = .achievementEarned
+            let noticeNumber: Int = Int(award.achievementName.count)
+            
+            await addReminder(
+                for: award,
+                title: title,
+                body: body,
+                onDate: notificationDate,
+                notificationType: noticeType,
+                noticeNum: noticeNumber
+            )
+            // Updating the notifiedOn property for each Achievement so futher notifications
+            // are not scheduled
+            award.notifiedOn = triggerTime
+            save()
+        }//: IF LET
+        
+    }//: scheduleAchievementNotification()
     
     /// This method creates two notifications for each CeActivity which meets the inclusion criteria for being an upcoming,
     /// expiring actiivty.  Each notification's trigger date is determined by what the user entered in settings for primary and

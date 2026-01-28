@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Achievement" representedClassName="Achievement" syncable="YES" codeGenerationType="class">
+        <attribute name="achievementDescript" optional="YES" attributeType="String"/>
+        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="criterion" optional="YES" attributeType="String"/>
+        <attribute name="dateEarned" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="image" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="notificationText" optional="YES" attributeType="String"/>
+        <attribute name="notifiedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="ActivityReflection" representedClassName="ActivityReflection" syncable="YES" codeGenerationType="class">
         <attribute name="audioReflections" optional="YES" attributeType="Binary"/>
         <attribute name="completedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -13,6 +25,7 @@
         <attribute name="threeMainPoints" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="wasSurprised" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ceToReflectUpon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="reflection" inverseEntity="CeActivity"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="reflection" inverseEntity="ReflectionResponse"/>
     </entity>
     <entity name="ActivityType" representedClassName="ActivityType" syncable="YES" codeGenerationType="class">
         <attribute name="typeID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -129,6 +142,20 @@
         <relationship name="country" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Country" inverseName="issuer" inverseEntity="Country"/>
         <relationship name="credential" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="issuer" inverseEntity="Credential"/>
         <relationship name="state" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="USState" inverseName="issuer" inverseEntity="USState"/>
+    </entity>
+    <entity name="ReflectionPrompt" representedClassName="ReflectionPrompt" syncable="YES" codeGenerationType="class">
+        <attribute name="customYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="question" optional="YES" attributeType="String"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="question" inverseEntity="ReflectionResponse"/>
+    </entity>
+    <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">
+        <attribute name="answer" optional="YES" attributeType="String"/>
+        <attribute name="completeAnswerYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="modifiedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="question" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReflectionPrompt" inverseName="responses" inverseEntity="ReflectionPrompt"/>
+        <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="responses" inverseEntity="ActivityReflection"/>
     </entity>
     <entity name="ReinstatementInfo" representedClassName="ReinstatementInfo" syncable="YES" codeGenerationType="class">
         <attribute name="additionalTestDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

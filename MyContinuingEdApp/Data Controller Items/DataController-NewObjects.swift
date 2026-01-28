@@ -26,6 +26,7 @@ extension DataController {
                 newTag.tagName = "New Tag"
                 
                 save()
+                checkForNewAchievements()
             } else {
                 throw UpgradeNeeded.maxTagsReached
             }
@@ -35,8 +36,10 @@ extension DataController {
             newTag.tagName = "New Tag"
             
             save()
+            checkForNewAchievements()
         }
-    }
+       
+    }//: createTag()
     
     // Alternative createTag function for specifying the name
     func createTagWithName(_ name: String) throws {
@@ -49,6 +52,7 @@ extension DataController {
                 newTag.tagName = name
                 
                 save()
+                checkForNewAchievements()
             } else {
                 throw UpgradeNeeded.maxTagsReached
             }
@@ -59,8 +63,9 @@ extension DataController {
             newTag.tagName = name
             
             save()
+            checkForNewAchievements()
         }
-    }
+    }//: createTagWithName
     
     /// Method for creating a new CeActivity object and saving it to the view context.  This particular method will
     /// be used when the user's device iOS is 17 or later due to Spotlight integration requirements.

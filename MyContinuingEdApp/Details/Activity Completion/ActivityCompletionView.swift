@@ -86,13 +86,20 @@ struct ActivityCompletionView: View {
                 
                 if completed {
                     showEvalSubmissionAlert = true
+                    dataController.checkForNewAchievements()
                 }//: IF
             } //: ON CHANGE
             
             // MARK: Date Completion change
             .onChange(of: activity.dateCompleted) { _ in
                 dataController.assignActivitiesToRenewalPeriods()
-            }
+            }//: ON CHANGE
+            
+            .onChange(of: activity.evalRating) { _ in
+                Task { @MainActor in
+                    dataController.checkForNewAchievements()
+                }//: TASK
+            }//: ON CHANGE
            
         }//: GROUP
          // MARK: - ALERTS

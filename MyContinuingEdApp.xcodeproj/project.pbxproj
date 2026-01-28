@@ -123,6 +123,9 @@
 		3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */; };
 		3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */; };
 		3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */; };
+		3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */; };
+		3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */; };
+		3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -365,6 +368,9 @@
 		3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementDocumentationView.swift; sourceTree = "<group>"; };
 		3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementAdditionalItemsView.swift; sourceTree = "<group>"; };
 		3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsToAddView.swift; sourceTree = "<group>"; };
+		3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionResponse-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionPrompt-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -787,6 +793,8 @@
 		3F2A42D72EA2E67000B095CB /* Core Data Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */,
+				3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */,
 				3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */,
 				3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */,
 				F2BC94AA2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift */,
@@ -801,6 +809,7 @@
 				F22940A42E76563100BFE78A /* SpecialCategories-CoreDataHelper.swift */,
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
 				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
+				3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */,
 			);
 			path = "Core Data Helpers";
 			sourceTree = "<group>";
@@ -1331,6 +1340,7 @@
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
+				3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
 				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,
 				3F5D03312EB3F35E00F5B1DC /* DataController-Preloading.swift in Sources */,
@@ -1359,6 +1369,7 @@
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
+				3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */,
 				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,
 				3FBD7FD82EF4F54500A039C4 /* ContactDeveloperView.swift in Sources */,
 				3FE3724C2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift in Sources */,
@@ -1392,6 +1403,7 @@
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,
+				3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */,
 				F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */,
 				F28E6BB62E7A095E003F4C95 /* DisciplinaryActionListSheet.swift in Sources */,
 				F2FBAAE52E5FDCE400348AAA /* ActivityType-CoreDataHelper.swift in Sources */,

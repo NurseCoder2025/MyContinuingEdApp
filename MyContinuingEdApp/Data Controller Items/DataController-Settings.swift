@@ -22,6 +22,31 @@ import Foundation
 extension DataController {
     // MARK: - Setting Keys
     // MARK: FIRST RUN
+    
+    /// Computed getter & setter for the @Published property sharedSettings that retrieves & sets values for
+    /// a settings key that tracks whether the app has been run previously or if it is the first time.
+    ///
+    /// - Important: Key name is "isFirstRun" and is part of the NSUbiquitousKeyValueStore.  Any
+    /// changes to the name of the key should also be made to the settingsKeys array in handleKeyValueStoreChanges.
+    /// Otherwise, proper syncing of changes in this setting will not occur between devices.
+    var isFirstRun: Bool {
+        get {
+            sharedSettings.bool(forKey: "isFirstRun")
+        }
+        
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "isFirstRun")
+        }
+    }//: isFirstRun
+    
+    
+    /// Computed getter & setter for the @Published property sharedSettings that retrieves & sets values for
+    /// a settings key that controls whether to show the onboarding screen or not.
+    ///
+    /// - Important: Key name is "showOnboardingScreen" and is part of the NSUbiquitousKeyValueStore.  Any
+    /// changes to the name of the key should also be made to the settingsKeys array in handleKeyValueStoreChanges.
+    /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var showOnboardingScreen: Bool {
         get {
             sharedSettings.bool(forKey: "showOnboardingScreen")
@@ -323,7 +348,8 @@ extension DataController {
             "showCredentialReinstatementAlerts",
             "firstLiveEventAlert",
             "secondLiveEventAlert",
-            "tagBadgeCountOf"
+            "tagBadgeCountOf",
+            "isFirstRun"
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}
