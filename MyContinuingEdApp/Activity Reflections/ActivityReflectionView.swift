@@ -15,8 +15,14 @@ struct ActivityReflectionView: View {
     var activity: CeActivity
     @ObservedObject var reflection: ActivityReflection
     
+    @State private var showPromptSelectionSheet: Bool = false
+    
     // MARK: - COMPUTED PROPERTIES
     var responsesCount: Int {return reflection.reflectionResponses.count}//: responsesCount
+    
+    var currentResponses: [ReflectionResponse] {
+        return reflection.reflectionResponses
+    }//: currentResponses
     
     var paidAppStatus: PurchaseStatus {
         let statusString = dataController.purchaseStatus
@@ -45,21 +51,26 @@ struct ActivityReflectionView: View {
                 // Prompt Selection
                 Menu {
                     Button {
-                        // TODO: Add action(s)
+                        createRandomPrompt()
                     } label: {
                         Text("Random Prompt")
                     }//: BUTTON
                     
                     Button {
-                        // TODO: Add action(s)
+                        showPromptSelectionSheet = true
                     } label: {
                         Text("Let Me Choose")
                     }//: BUTTON
                 } label: {
                     Text(responsesCount > 0 ? "Add Another Prompt" : "Add Prompt")
-                }
+                }//: MENU
                 
                 // PromptResponseViews
+                ForEach(currentResponses) { response in
+                    PromptResponseView(response: response) {
+                        showPromptSelectionSheet = true
+                    }
+                }//: LOOP
                 
             }//: SECTION
             
@@ -89,13 +100,13 @@ struct ActivityReflectionView: View {
             
         }//: FORM
          // MARK: - AUTO SAVING FUNCTIONS
-        .onSubmit {dataController.save()}
         .onReceive(reflection.objectWillChange) { _ in
             dataController.queueSave()
         }//: ON RECEIVE
         
         // MARK: - ON DISAPPEAR
         .onDisappear {
+            // TODO: Figure out why I need to call the showActivityReflectionView
             dataController.showActivityReflectionView = false
             dataController.save()
         }//: ON DISAPPEAR
@@ -116,7 +127,7 @@ struct ActivityReflectionView: View {
     ///
     /// - Note: The randomization is used to assign a random prompt (if the user is a subscriber, then any custom prompts will be included)
     /// to the creation of a new ReflectionResponse object, which has a ReflectionPrompt object as one of its relationship properties.
-    func createRandomPrompt() -> ReflectionResponse {
+    func createRandomPrompt() {
         let context = dataController.container.viewContext
         let promptFetch = ReflectionPrompt.fetchRequest()
         promptFetch.sortDescriptors = [
@@ -137,12 +148,12 @@ struct ActivityReflectionView: View {
             randomPrompt = allPrompts[randomIndex]
         }
         
-        let newResponse = dataController.createNewPromptResponseWithObject(
+        // Creating the response, assigning it to the current ActivityReflection
+        // and saving the context
+        dataController.createNewPromptResponse(
             using: randomPrompt,
             for: reflection
           )
-        
-        return newResponse
     }//: giveRandomPrompt()
     
 }//: STRUCT

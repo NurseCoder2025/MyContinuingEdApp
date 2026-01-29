@@ -41,6 +41,7 @@ struct PromptResponseView: View {
     
     // MARK: - BODY
     var body: some View {
+        // TODO: Add a button and method for deleting the object
         VStack {
             // Selected prompt question  + button to change
             if let savedPrompt = response.question {
