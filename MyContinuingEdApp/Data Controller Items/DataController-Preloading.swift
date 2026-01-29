@@ -22,6 +22,9 @@ extension DataController {
     ///  and then creates a CeDesignation object for each JSON object IF there are currently no designations
     ///  stored.  This will load default values upon the first use of the app by the user.  Thereafter, the user
     ///  can edit the list as desired.
+    ///
+    ///  - Note: The list of CE designations (i.e. CME, CLE, etc.) is user editable, so this function should only create
+    ///  objects when there are none stored in persistent storage.
     func preloadCEDesignations() async {
         let context = container.viewContext
         let request = CeDesignation.fetchRequest()
@@ -29,48 +32,28 @@ extension DataController {
         let count = await MainActor.run {
             (try? container.viewContext.count(for: request)) ?? 0
         }
+      
+        guard count == 0 else { return }
         
         let defaultCeDesignations: [CeDesignationJSON] = Bundle.main.decode("Default CE Designations.json")
-        
-        guard count == 0 || count < defaultCeDesignations.count else { return }
-        
-        if count == 0 {
-            for designation in defaultCeDesignations {
-                let convertedItem = CeDesignation(context: context)
-                convertedItem.designationAbbreviation = designation.designationAbbreviation
-                convertedItem.designationName = designation.designationName
-                convertedItem.designationAKA = designation.designationAKA
-            }
-        } else {
-            // If the complete list of default CeDesignations wasn't loaded for whatever
-            // reason, add the missing ones
-            let existingDesignations = (try? context.fetch(request)) ?? []
-            let existingNames = Set<String>(existingDesignations.map(\.ceDesignationName))
-            let officialNamesList = Set<String>(defaultCeDesignations.map(\.designationName))
-            let missingNames = officialNamesList.subtracting(existingNames)
-            
-            if missingNames.isNotEmpty {
-                let missingDesignations = defaultCeDesignations.filter {
-                    missingNames.contains($0.designationName)
-                }
-                
-                for designation in missingDesignations {
-                    let newDesignation = CeDesignation(context: context)
-                    newDesignation.designationID = UUID()
-                    newDesignation.designationName = designation.designationName
-                    newDesignation.designationAbbreviation = designation.designationAbbreviation
-                    newDesignation.designationAKA = designation.designationAKA
-                }//: LOOP
-            }//: IF (missingNames.isNotEmpty)
-        }//: IF - ELSE
+        for designation in defaultCeDesignations {
+            let convertedItem = CeDesignation(context: context)
+            convertedItem.designationAbbreviation = designation.designationAbbreviation
+            convertedItem.designationName = designation.designationName
+            convertedItem.designationAKA = designation.designationAKA
+        }
         
         save()
     }//: preloadCEDesignations()
     
     // MARK: Preload Countries
+    
     /// Like the preloadCEDesignations method, the preloadCountries creates Country objects
     ///  for each country in the "Country List.json" file and saves them to persistent storage on the
     ///  first run of the app (or whenever the # of countries stored = 0).
+    ///
+    ///  - Note: The list of countries IS user editable, so that is why this function will only
+    ///  create Country objects when there are none stored in persistent storage.
     func preloadCountries() async {
         let request = Country.fetchRequest()
         // Ensuring that the fetch count is run on the main thread
@@ -165,6 +148,7 @@ extension DataController {
     }//: preloadActivityTypes()
     
     // MARK: State List
+    
     /// Loads all 50 U.S. state objects as saved in the JSON file within the bundle.  This will be
     /// executed only upon first install of the app.  Thereafter, all 50 values will remain as the user
     /// cannot edit or delete any of these values.
@@ -216,6 +200,7 @@ extension DataController {
     }//: preloadStatesList()
     
     // MARK: Achievements (awards)
+    
     /// Method for preloading Achievement CoreData entities based on the Awards.json file and
     /// Award struct.
     ///
@@ -302,6 +287,66 @@ extension DataController {
         
         save()
     }//: preloadAllAchievements
+    
+    /// Async method for decoding all prompt questions contained in the "Reflection Prompts.json" file and
+    /// creating CoreData ReflectionPrompt objects out of them.
+    ///
+    /// - Note: This method calls the getJSONObjsToAddToCoreData and getCoreDataObjsToRemove methods from
+    /// the DataController-HelperFunctions file whenever there are prompts in persistent storage but the number
+    /// of them differs from the number of objects decoded from the reflection prompts JSON file to keep things
+    /// in sync.
+    ///
+    /// - Note: While the user can create their own custom prompts, this method ensures that all pre-created
+    /// prompts stay in-sync between what's in the JSON file and what's in persistent storage.
+    func preloadPromptQuestions() async {
+        let context = container.viewContext
+        
+        // Initial check to see if preloading is needed
+        let promptFetch = ReflectionPrompt.fetchRequest()
+        promptFetch.sortDescriptors = [
+            NSSortDescriptor(key: "question", ascending: true)
+        ]
+        promptFetch.predicate = NSPredicate(format: "customYN == false")
+        
+        // Ensuring that the fetch count is done on the main thread as that is required
+        let count = await MainActor.run {
+            (try? context.count(for: promptFetch)) ?? 0
+        }//: MainActor.run closure
+        
+        let promptsToLoad = PromptQuestionJSON.officialPrompts
+        let loadCount = promptsToLoad.count
+        guard count == 0 || count != loadCount else { return }
+        
+        if count == 0 {
+            for prompt in promptsToLoad {
+                convertPromptJSONToReflectionPrompt(prompt: prompt)
+            }//: LOOP
+        } else if count < loadCount {
+            // Adding prompts that have been added to the json file OR weren't originally
+            // loaded due to process interruption or other error
+            let existingPrompts: [ReflectionPrompt] = (try? context.fetch(promptFetch)) ?? []
+            let jsonQuestionsToAdd = getJSONObjsToAddToCoreData(
+                jsonItems: promptsToLoad, coreDataItems: existingPrompts
+            )
+            guard jsonQuestionsToAdd.isNotEmpty else { return }
+            for question in jsonQuestionsToAdd {
+                convertPromptJSONToReflectionPrompt(prompt: question)
+            }//: LOOP
+        } else if count > loadCount {
+            // Removing prompts that have been taken out of the json file
+            let existingPrompts: [ReflectionPrompt] = (try? context.fetch(promptFetch)) ?? []
+            let questionsToDelete = getCoreDataObjsToRemove(
+                coreDataItems: existingPrompts, jsonItems: promptsToLoad
+            )
+            guard questionsToDelete.isNotEmpty else {return}
+            for question in questionsToDelete {
+                delete(question)
+            }//: LOOP
+            
+        }//: IF ELSE
+        
+        save()
+    }// preloadPromptQuestions()
     
     // MARK: - Set Settings Keys Defaults
     
@@ -401,5 +446,18 @@ extension DataController {
         }
         
     }//: isAppRunForFirstTime
+    
+    // MARK: - SUPPORTING METHODS
+    
+    /// Method for converting a PromptQuestionJSON object to a CoreData entity (ReflectionPrompt) within the
+    /// preloadPromptQuestions method.
+    /// - Parameter prompt: PromptQuestionJSON object loaded from the static officialPrompts property
+    private func convertPromptJSONToReflectionPrompt(prompt: PromptQuestionJSON) {
+        let context = container.viewContext
+        let newPrompt = ReflectionPrompt(context: context)
+        newPrompt.id = UUID()
+        newPrompt.customYN = prompt.customYN
+        newPrompt.promptQuestion = prompt.question
+    }//: convertPromptJSONToReflectionPrompt
     
 }//: DataController

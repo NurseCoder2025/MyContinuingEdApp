@@ -272,3 +272,24 @@ enum BadgeCountOption: String, CaseIterable, Identifiable, Hashable {
         }//: SWITCH
     }//: labelText
 }//: BadgeCountOption
+
+// MARK: - View Controls
+
+/// Enum used in ActivityReflectionView and related sheets and sub-views for controlling
+/// what set of reflection prompts are shown to the user.
+///
+/// Raw String values are as follows:
+///     - builtInPrompts: "Standard Prompts"
+///     - userMadePrompts: "Your Prompts"
+///     - favoritePrompts: "Favorites"
+///
+///  - Note: Identifiable conformance is made via the raw value of each case
+enum PromptView: String, CaseIterable, Identifiable, Hashable {
+    case builtInPrompts = "Standard Prompts"
+    case userMadePrompts = "Your Prompts"
+    case favoritePrompts = "Favorites"
+    
+    var id: String { self.rawValue }
+    
+    
+}//: ViewType

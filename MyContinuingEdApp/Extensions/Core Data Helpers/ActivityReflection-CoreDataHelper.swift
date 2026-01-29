@@ -9,6 +9,7 @@ import Foundation
 
 
 extension ActivityReflection {
+    // MARK: - UI HELPERS
     
     var reflectionDateAdded: Date {
         get { dateAdded ?? Date.now }
@@ -43,9 +44,9 @@ extension ActivityReflection {
         reflectionID ?? UUID()
     }
     
-}
+}//: EXTENSION
 
-
+// MARK: - COMPUTED PROPERTIES
 extension ActivityReflection {
     
     // Adding another computed property that returns TRUE if the user
@@ -62,11 +63,8 @@ extension ActivityReflection {
             completedYN = false
             return false
         }
-    }
-}
+    }//: completedReflection
 
-extension ActivityReflection {
-    
     /// The enteredASurprise computed property is intended for use in fetch requests
     /// for awards related to the user journaling about what things surprised them
     /// during a given CE activity
@@ -79,9 +77,20 @@ extension ActivityReflection {
         } else {
             return false
         }
-    }
-}
+    }//: enteredASurprise
+    
+}//: EXTENSION
 
+// MARK: - RELATIONSHIPS
+extension ActivityReflection {
+    
+    /// Computed CoreData helper property that returns all ReflectionResponse objects connected to
+    /// a specific ActivityReflection object in an array.
+    var reflectionResponses: [ReflectionResponse] {
+        responses?.allObjects as? [ReflectionResponse] ?? []
+    }//: reflectionResponses
+    
+}//: EXTENSION
 
 // MARK: - Sample Reflection
 extension ActivityReflection {

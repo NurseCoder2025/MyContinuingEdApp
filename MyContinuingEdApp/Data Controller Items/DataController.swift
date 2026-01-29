@@ -62,6 +62,11 @@ class DataController: ObservableObject {
     @Published var currentSubscriptionType: String = ""
     
     // MARK: PreLoading Object Properties
+    
+    /// Private DataController property used for creating a Task for scheduling the execution
+    /// of preloading functions.  These functions load pre-made objects for use within the app's UI for
+    /// things like CE designation, Countries, States (U.S.), activity types, achievements, & reflection
+    /// prompts.  Value is set within the DataController's init method.
     private var preloadTasks: Task<Void, Never>?
    
     // MARK: - SAVING & DELETING METHODS
@@ -232,15 +237,17 @@ class DataController: ObservableObject {
             self?.spotlightDelegate?.startSpotlightIndexing()
         }//: loadPersistentStores
         
-        // Preload Other Objects
+        // MARK: Preload Other Objects
         // Using a Task to help improve app performance by scheduling
         // these function calls after the persistent stores are loaded.
+        
         preloadTasks = Task {
             await preloadActivityTypes()
             await preloadCEDesignations()
             await preloadCountries()
             await preloadStatesList()
             await preloadAllAchievements()
+            await preloadPromptQuestions()
         }//: TASK
         
         // First time use determination & setting the key if so

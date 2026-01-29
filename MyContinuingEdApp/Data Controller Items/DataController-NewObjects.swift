@@ -13,7 +13,7 @@ import Foundation
 
 
 extension DataController {
-    // MARK: - Creating NEW objects
+    // MARK: - NEW TAGS
     /// createActivity() makes a new instance of a CeActivity object with certain default values
     /// put into place for the activity title, description, expiration date, and such...
     func createTag() throws {
@@ -66,6 +66,8 @@ extension DataController {
             checkForNewAchievements()
         }
     }//: createTagWithName
+    
+    // MARK: - NEW ACTIVITIES
     
     /// Method for creating a new CeActivity object and saving it to the view context.  This particular method will
     /// be used when the user's device iOS is 17 or later due to Spotlight integration requirements.
@@ -174,6 +176,7 @@ extension DataController {
         return newActivity
     }
     
+    // MARK: - NEW SPECIAL CATS
     /// Method for creating, saving, and returning a new SpecialCategory object with general default properties
     /// - Returns: SpecialCategory object
     func createNewSpecialCategory() -> SpecialCategory {
@@ -189,6 +192,7 @@ extension DataController {
         
     }//: SpecialCategory
     
+    // MARK: - NEW RENEWALS
     /// Creating a new renewal period for which CEs need to be earned
     func createRenewalPeriod() -> RenewalPeriod {
         let newRenewalPeriod = RenewalPeriod(context: container.viewContext)
@@ -202,6 +206,7 @@ extension DataController {
         return newRenewalPeriod
     }
     
+    // MARK: - NEW REFLECTIONS
     /// Creating a new reflection for a given activity. Only two default values are made:
     /// 1. The reflection date and
     /// 2. The UUID value for the id property
@@ -215,6 +220,77 @@ extension DataController {
         return newReflection
     }
     
+    /// Method for allowing the user to create a custom activity reflection prompt.
+    /// - Parameter question: String containing the custom question by the user
+    /// - Returns: ReflectionPrompt object that was saved to persistent storage
+    ///
+    /// Method automatically assigns a UUID to the id property as well as sets the customYN
+    /// property to true prior to saving the new object.
+    func createNewCustomPrompt(with question: String) -> ReflectionPrompt {
+        let context = container.viewContext
+        let newCustomPrompt = ReflectionPrompt(context: context)
+        newCustomPrompt.id = UUID()
+        newCustomPrompt.question = question
+        newCustomPrompt.customYN = true
+        
+        save()
+        
+        return newCustomPrompt
+    }//: createNewCustomPrompt
+    
+    /// Method for creating new responses to a activity reflection prompt.
+    /// - Parameters:
+    ///   - prompt: ReflectionPrompt object containing the question for the user to answer
+    ///   - reflection: ActivityReflection object, which holds all reflections for a given CE activity
+    ///
+    /// - Note: This method assigns the arguments to the ReflectionResponse's question and reflection relationship properties.
+    /// It does NOT return the created object.
+    func createNewPromptResponse(
+        using prompt: ReflectionPrompt,
+        for reflection: ActivityReflection
+    ) {
+        let context = container.viewContext
+        
+        let response = ReflectionResponse(context: context)
+        response.id = UUID()
+        response.answer = ""
+        response.createdOn = Date.now
+        response.modifiedOn = Date.now
+        
+        // Assigning object to corresponding relationships
+        response.question = prompt
+        response.reflection = reflection
+        
+        save()
+    }//: createNewPromptResponse
+    
+    /// Method identical to createNewPromptResponse, with the difference being that this method
+    /// returns the object for immediate use and assignment to a variable.
+    /// - Parameters:
+    ///   - prompt: ReflectionPrompt object with the question for the user to answer
+    ///   - reflection: ActivityReflection object that the response is connected to
+    /// - Returns: newly created ReflectionResponse object
+    func createNewPromptResponseWithObject(
+        using prompt: ReflectionPrompt,
+        for reflection: ActivityReflection
+    ) -> ReflectionResponse {
+        let context = container.viewContext
+        
+        let response = ReflectionResponse(context: context)
+        response.id = UUID()
+        response.answer = ""
+        response.createdOn = Date.now
+        response.modifiedOn = Date.now
+        
+        // Assigning object to corresponding relationships
+        response.question = prompt
+        response.reflection = reflection
+        
+        save()
+        return response
+    }//: createNewPromptResponseWithObject
+    
+    // MARK: - NEW CREDENTIALS
     /// Function to create a new credential object with a default name value.
     /// - Returns: Credential object with default name value
     func createNewCredential() -> Credential {
@@ -231,6 +307,7 @@ extension DataController {
         return newCredential
     }
     
+    // MARK: - NEW ISSUERS
     /// Function to create a new Issuer object and save it to persistent storage
     /// - Returns: Issuer object with a UUID and name property set to "New Issuer", along
     ///   with a default country of the United States and state (Alabama)
@@ -251,6 +328,7 @@ extension DataController {
         return newIssuer
     }
     
+    // MARK: - NEW DAIs
     /// Function to create a new DisciplinaryActionItem object to be associated with a given Credential. Object creation will take place
     ///  in the DisciplinaryActionListSheet or from the NoDAI view when the appropriate button is tapped.
     /// - Returns: DisciplinaryActionItem object with a default name of "New Action", auto-generated UUID, and default setting of
@@ -267,6 +345,7 @@ extension DataController {
         return newDAI
     }
     
+    // MARK: - NEW REINSTATEMENTS
     /// Method for creating a new ReinstatementInfo object with values assigned to two properties: reinstatementID and renewal (with the
     /// renewal argument value).
     /// - Parameter renewal: RenewalPeriod for which credential reinstatement is needed

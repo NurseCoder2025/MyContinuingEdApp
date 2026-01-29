@@ -145,6 +145,7 @@
     </entity>
     <entity name="ReflectionPrompt" representedClassName="ReflectionPrompt" syncable="YES" codeGenerationType="class">
         <attribute name="customYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="favoriteYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="question" optional="YES" attributeType="String"/>
         <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="question" inverseEntity="ReflectionResponse"/>
@@ -152,6 +153,7 @@
     <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
         <attribute name="completeAnswerYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="createdOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="modifiedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="question" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReflectionPrompt" inverseName="responses" inverseEntity="ReflectionPrompt"/>

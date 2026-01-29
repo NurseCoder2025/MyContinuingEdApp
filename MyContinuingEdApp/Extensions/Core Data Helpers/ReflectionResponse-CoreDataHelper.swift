@@ -42,4 +42,22 @@ extension ReflectionResponse {
         }
     }//: markResponseAsComplete
     
+    // MARK: - EXAMPLE
+    
+    static var example: ReflectionResponse {
+        let controller = DataController(inMemory: true)
+        let context = controller.container.viewContext
+        
+        let sampleQuestion = ReflectionPrompt(context: context)
+        sampleQuestion.id = UUID()
+        sampleQuestion.question = "I really wish the speaker(s) would have..."
+        
+        let exampleResponse = ReflectionResponse(context: context)
+        exampleResponse.id = UUID()
+        exampleResponse.answer = "Used fewer PowerPoint slides, talked slower, and been more engaging with the audience."
+        exampleResponse.question = sampleQuestion
+        
+        return exampleResponse
+    }//: ReflectionResponse
+    
 }//: EXTENSION
