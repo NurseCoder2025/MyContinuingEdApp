@@ -39,8 +39,6 @@ struct ActivityReflectionView: View {
     // MARK: - BODY
     var body: some View {
         Form {
-            ActivityAudioReflectionView(reflection: reflection)
-            
             Section {
                 Text("Reflections on \(activity.ceTitle)")
                     .font(.largeTitle)
@@ -91,7 +89,7 @@ struct ActivityReflectionView: View {
             DisclosureGroup("Other Reflections") {
                 TextField(
                     "Other thoughts",
-                    text: $reflection.reflectionGeneralReflection,
+                    text: $reflection.afGeneralReflection,
                     prompt: Text("Do you have any other reflections or thoughts regarding this activity?"),
                     axis: .vertical
                 )
@@ -117,7 +115,7 @@ struct ActivityReflectionView: View {
     
     func reflectionCompleted() -> Bool {
         // TODO: Update logic and return
-        let mainPointSummaryCount = reflection.reflectionThreeMainPoints.count
+        
         return false
     }//: reflectionCompleted()
     

@@ -79,7 +79,7 @@ extension DataController {
     /// are run to determine if the achievement has been earned.
     func hasEarned(award: Achievement) -> Bool {
         switch award.criterion {
-            // # of hours earned achievements
+            // MARK: - CE HOURS
         case "CEs":
             let fetchRequest = CeActivity.fetchRequest()
             var cePredicates: [NSPredicate] = []
@@ -97,7 +97,7 @@ extension DataController {
             
             return totalHours >= Double(award.value)
             
-            // # of completed CEs
+            // MARK: - Completed CEs
         case "completed":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "activityCompleted == true")
@@ -106,14 +106,14 @@ extension DataController {
             
             return totalCompleted >= award.value
             
-            // # tags created
+            // MARK: - Tags created
         case "tags":
             let fetchRequest = Tag.fetchRequest()
             let totalTags = count(for: fetchRequest)
             
             return totalTags >= award.value
             
-            // # activities rated as "loved"
+            // MARK: - "Loved" CEs
         case "loved":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 4)
@@ -121,7 +121,7 @@ extension DataController {
             
             return totalLoved >= award.value
             
-            // # activities rated as "interesting"
+            // MARK: - "Interesting" CEs
         case "howInteresting":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 3)
@@ -129,6 +129,7 @@ extension DataController {
             
             return totalUnliked >= award.value
             
+            // MARK: - Reflections
             // # of activity reflections completed
         case "reflections":
             let fetchRequest = ActivityReflection.fetchRequest()
@@ -145,6 +146,7 @@ extension DataController {
             
             return totalSurprises >= award.value
             
+            // MARK: - SUPPORTER
             // TODO: Determine why the default case is executing each time the award screen
             // shows up. This also happens each time a button is pressed.
         case "unlock":

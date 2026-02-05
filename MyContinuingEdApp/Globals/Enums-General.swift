@@ -290,6 +290,83 @@ enum PromptView: String, CaseIterable, Identifiable, Hashable {
     case favoritePrompts = "Favorites"
     
     var id: String { self.rawValue }
-    
-    
 }//: ViewType
+
+/// Enum used in PromptResponseView to control whether the user enters a type-written response to a selected
+/// prompt or if they choose to record an audio response (Pro subscribers only).
+///
+/// Raw String values are used as the id property and are as follows:
+///     - writtenResponse: "Written Response"
+///     - audioResponse: "Audio Response"
+enum ResponseEntryType: String, CaseIterable, Identifiable, Hashable {
+    case writtenResponse = "Written Response"
+    case audioResponse = "Audio Response"
+    
+    var id: String { self.rawValue }
+}//: ResponseEntryType
+
+
+// MARK: - iCLOUD
+
+/// Enum that represents the possible statuses for the user's iCloud account: logged in but data
+/// sync was disabled, logged in but iCloud unavailable, logged in with a different ID, or logged out.
+///
+/// Raw values for each case are a String and are used for the id property:
+///     - loggedInNoSync: "Sync Disabled"
+///     - loggedInUnavailable: "iCloud Unavailable"
+///     - loggedInDifferentAppleID: "Different Apple ID"
+///     - loggedOut: "Logged Out"
+///
+///  This enum also has a userMessage property which shows a different message for the user
+///  for whichever status case applies.  This can be used in alerts and other UI elements.
+enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
+    case loggedInDisabled = "iCloud Disabled"
+    case loggedInUnavailable = "iCloud Unavailable"
+    case loggedINDifferentAppleID = "Different Apple ID"
+    case loggedOut = "Logged Out"
+    case noAccount = "No Account"
+    case iCloudRestricted = "Restricted"
+    case loggedIn = "Logged In"
+    case unableToCheck = "Problem Checking"
+    case needSyncingAccount = "Need Enabled iCloud Drive"
+    case cantLogin = "Can't Login to iCloud"
+    case initialStatus = "Initial"
+    
+    var id: String { self.rawValue }
+    
+    var userMessage: String {
+        switch self {
+        case .loggedInDisabled:
+            "You currently have iCloud drive disabled. This app works best when iCloud sync is enabled, so please enable it now, unless you only want to store data on this device."
+        case .loggedInUnavailable:
+            "iCloud is currently unavailable, but since you are logged in the app will sync any changes in your data once it becomes available again."
+        case .loggedINDifferentAppleID:
+            "You are logged in to iCloud with a different Apple Account than what you previously were using.  Is this the account you want to sync data with?  Any data saved under the other Apple Account will not be available until you sign in with it again."
+        case .loggedOut:
+            "You are currently logged out of your iCloud account, so the app cannot sync data between devices. Before making any changes to the existing data, please sign back in again. Otherwise, any changes made will be saved to your local device only."
+        case .noAccount:
+            "Currently you do not have an iCloud account. This app works best with one, and Apple offers a limited free version of the service. If you wish to sync data on this device with other Apple products, then please use your Apple Account (formerly Apple ID) to sign in to the service so you can begin using it."
+        case .iCloudRestricted:
+            "Unfortunately, your iCloud account has been restricted either by the person managing your account or by Apple. Please check with them to gain access so you can sync data for this app on other Apple devices. Until this is resolved, you can only save data locally to this device."
+        case .loggedIn:
+            ""
+        case .unableToCheck:
+            "The app was unable to determine if you have an active iCloud account or not at this time. Ensure that you have a working internet connection and restart the app at a later time to check again. Until then, data can only be saved locally to your device."
+        case .needSyncingAccount:
+            "Either you don't currently have an iCloud account or you have disabled iCloud Drive for this device. If you want access to saved CE data on other Apple devices, then please enable iCloud drive or create an account. Otherwise, any new items will be saved to the local device only."
+        case .cantLogin:
+            "According to your device, you can't be logged into iCloud because either you don't have an account, have a restricted iCloud account, or have disabled iCloud Drive. Until iCloud Drive is enabled and you're logged in without restrictions, then the app will only save data locally to the device."
+        case .initialStatus:
+            ""
+        }
+    }//: UserMessage
+}//: iCloudStatus
+
+/// Enum used to control whether CE certificates and audio recordings are saved locally or to iCloud.
+/// Identifiable conformance by using each case as the id.
+enum StorageToUse: Identifiable {
+    case local, cloud
+    
+    var id: Self { self }
+    
+}//: storageToUse

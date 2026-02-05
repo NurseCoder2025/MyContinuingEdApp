@@ -44,7 +44,7 @@ struct ActivityAudioReflectionView: View {
             // MARK: Audio Section
             Section("Audio Reflection") {
                 HStack(spacing: 8) {
-                    if reflection.audioReflections != nil {
+                    // TODO: Insert conditional HERE
                         Button {
                             if isPlaying {
                                 audioPlayer?.stop()
@@ -60,7 +60,7 @@ struct ActivityAudioReflectionView: View {
                             .labelStyle(.iconOnly)
                             .foregroundStyle(isPlaying ? .red : .blue)
                         }
-                    }//: If (no audio reflection data)
+                    //: If (no audio reflection data)
                     
                     Button {
                         if isRecording {
@@ -107,7 +107,7 @@ struct ActivityAudioReflectionView: View {
         if let url = recordingURL {
             do {
                 let data = try Data(contentsOf: url)
-                reflection.audioReflections = data
+                // TODO: Assign data to correct property
             } catch {
                 print("Failed to save audio data: \(error)")
             }
@@ -115,13 +115,14 @@ struct ActivityAudioReflectionView: View {
     }
     
     func playAudio() {
-        guard let audioData = reflection.audioReflections else { return }
+        // TODO: Update playAudio function logic
+//        guard let audioData = reflection.audioReflections else { return }
         do {
-            audioPlayer = try AVAudioPlayer(data: audioData)
-            audioPlayerDelegate = AudioPlayerDelegateWrapper { isPlaying = false }
-            audioPlayer?.delegate = audioPlayerDelegate
-            audioPlayer?.play()
-            isPlaying = true
+//            audioPlayer = try AVAudioPlayer(data: audioData)
+//            audioPlayerDelegate = AudioPlayerDelegateWrapper { isPlaying = false }
+//            audioPlayer?.delegate = audioPlayerDelegate
+//            audioPlayer?.play()
+//            isPlaying = true
         } catch {
             print("Failed to play audio: \(error)")
         }

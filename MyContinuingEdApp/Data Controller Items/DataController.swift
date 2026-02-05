@@ -5,9 +5,10 @@
 //  Created by Manann on 7/8/25.
 //
 
+import CloudKit
+import CoreData
 import StoreKit
 import Foundation
-import CoreData
 
 /// A class that handles the creatiion, saving, and deletion of all major objects in this app, including sample data.  It also manages
 /// data syncing between iCloud and local storage. Additional functionality such as activity searching and filtering is also handled by
@@ -19,7 +20,29 @@ class DataController: ObservableObject {
     
     // shared settings for app with iCloud
     @Published var sharedSettings = NSUbiquitousKeyValueStore.default
+    
+    // iCloud properties for image & audio syncing
+    let fileSystem = FileManager()
+    let defaultICloudContainer = CKContainer.default()
+    @Published var userICloudID: CKRecord.ID?
+    
+    /// Published DataController property that holds the URL for the default iCloud ubiqituity container that is set for the
+    /// user for this app.  This value is set by the assessUserICloudStatus method.
+    @Published var userCloudDriveURL: URL?
+    @Published var iCloudAvailability: iCloudStatus = .initialStatus
+    @Published var certificateAudioStorage: StorageToUse = .local
+    private var iCloudTasks: Task<Void, Never>?
+    
+    /// Constant DataController property that sets a URL for a directory within the app's
+    /// sandbox environment into which CE certificate images/PDFs and audio recordings
+    /// can be saved IF the user is not logged into iCloud.
+    ///
+    /// - Note: The directory's string path is "local assets".
+    /// - Important: This should ONLY be used if the user either does not have iCloud or
+    /// wishes to use it for the app.
+    let localStorage = URL.documentsDirectory.appending(path: "local assets", directoryHint: .isDirectory)
    
+    
     // Property for showing the activity reflection view
     @Published var showActivityReflectionView: Bool = false
     
@@ -152,9 +175,14 @@ class DataController: ObservableObject {
     
     
     // MARK: - Cloud storage syncronization methods
+    
+    /// DataController method designed to issue a general change announcement so that
+    /// each individual view within the app can respond appropriately whenever this
+    /// method is called with the NSPersistentStoreRemoteChange notification.
+    /// - Parameter notification: <#notification description#>
     func remoteStorageChanged(_ notification: Notification) {
         objectWillChange.send()
-    }
+    }// remoteStorageChanged
     
     // MARK: - PREVIEW
     static var preview: DataController = {
@@ -194,13 +222,17 @@ class DataController: ObservableObject {
                 true as NSNumber,
                 forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
             )
-            // MARK: OBSERVERS
+            // MARK: - OBSERVERS
             NotificationCenter.default.addObserver(
                 forName: .NSPersistentStoreRemoteChange,
                 object: container.persistentStoreCoordinator,
                 queue: .main,
                 using: remoteStorageChanged
             )
+            
+            
+            
+            
             // Adding an observer for incoming changes to the sharedSettings
             // property as it is an NSUbiquitousKeyValueStore and is synced
             // over iCloud.
@@ -233,11 +265,11 @@ class DataController: ObservableObject {
                 fatalError("Failed to load data from local storage: \(error)")
             }
             
-            // MARK: Spotlight Indexing
+            // MARK: - Spotlight Indexing
             self?.spotlightDelegate?.startSpotlightIndexing()
         }//: loadPersistentStores
         
-        // MARK: Preload Other Objects
+        // MARK: - Preload Other Objects
         // Using a Task to help improve app performance by scheduling
         // these function calls after the persistent stores are loaded.
         

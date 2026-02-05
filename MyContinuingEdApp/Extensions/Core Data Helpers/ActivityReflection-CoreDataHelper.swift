@@ -7,10 +7,9 @@
 
 import Foundation
 
-
+// MARK: - UI HELPERS
 extension ActivityReflection {
-    // MARK: - UI HELPERS
-    
+   
     var reflectionDateAdded: Date {
         get { dateAdded ?? Date.now }
         set { dateAdded = newValue }
@@ -20,64 +19,29 @@ extension ActivityReflection {
         lastModified ?? Date.now
     }
     
-    var reflectionThreeMainPoints: String {
-        get { threeMainPoints ?? "" }
-        set { threeMainPoints = newValue }
-    }
-    
     var reflectionSurprises: String {
         get { surprises ?? "" }
         set { surprises = newValue }
-    }
-    
-    var reflectionLearnMoreAbout: String {
-        get {learnMoreAbout ?? ""}
-        set {learnMoreAbout = newValue}
-    }
-    
-    var reflectionGeneralReflection: String {
-        get {generalReflection ?? ""}
-        set {generalReflection = newValue}
     }
     
     var reflectionReflectionID: UUID {
         reflectionID ?? UUID()
     }
     
+    var afGeneralReflection: String {
+        get {
+            generalReflection ?? ""
+        }
+        set {
+            generalReflection = newValue
+        }
+    }//: afGeneralReflection
+    
 }//: EXTENSION
 
 // MARK: - COMPUTED PROPERTIES
 extension ActivityReflection {
-    
-    // Adding another computed property that returns TRUE if the user
-    // typed in reflections in at least two of the four fields (generalReflection &
-    // threeMainPoints)
-    var completedReflection: Bool {
-        let actualGenReflection = reflectionGeneralReflection.trimmingCharacters(in: .whitespacesAndNewlines)
-        let actualThreeMainPoints = reflectionThreeMainPoints.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if actualGenReflection.count > 0 && actualThreeMainPoints.count > 0 {
-            completedYN = true
-            return true
-        } else {
-            completedYN = false
-            return false
-        }
-    }//: completedReflection
 
-    /// The enteredASurprise computed property is intended for use in fetch requests
-    /// for awards related to the user journaling about what things surprised them
-    /// during a given CE activity
-    var enteredASurprise: Bool {
-        let actualSurpriseText = reflectionSurprises.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        if actualSurpriseText.count > 0 {
-            surpriseEntered = true
-            return true
-        } else {
-            return false
-        }
-    }//: enteredASurprise
     
 }//: EXTENSION
 
@@ -89,6 +53,15 @@ extension ActivityReflection {
     var reflectionResponses: [ReflectionResponse] {
         responses?.allObjects as? [ReflectionResponse] ?? []
     }//: reflectionResponses
+    
+}//: EXTENSION
+
+// MARK: - METHODS
+extension ActivityReflection {
+    // TODO: Add 1 method to ActivityReflection extension
+    
+    // Add method that updates the surpriseEntered property when the user
+    // has entered a valid surprise
     
 }//: EXTENSION
 
@@ -105,11 +78,7 @@ extension ActivityReflection {
         Wow, this CE course was so helpful and interesting.  Hope to take more
         like this one!
         """
-        sampleReflection.reflectionThreeMainPoints = """
-        1. Study hard
-        2. Get lots of sleep
-        3. Eat healthy
-        """
+        
         sampleReflection.reflectionSurprises = """
         No real surprises here today...
         """

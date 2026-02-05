@@ -166,11 +166,7 @@ extension DataController {
                     reflection.generalReflection = """
                     Wow, this CE course was so helpful and interesting.  Hope to take more like this one!
                     """
-                    reflection.reflectionThreeMainPoints = """
-                        1. Study hard
-                        2. Get lots of sleep
-                        3. Eat healthy
-                        """
+                    
                     reflection.reflectionSurprises = """
                         No real surprises here today...
                         """

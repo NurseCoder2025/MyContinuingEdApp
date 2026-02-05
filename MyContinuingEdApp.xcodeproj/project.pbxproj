@@ -74,6 +74,7 @@
 		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
 		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
 		3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */; };
+		3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */; };
 		3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */; };
 		3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */; };
 		3F83C7C32F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */; };
@@ -82,6 +83,8 @@
 		3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */; };
 		3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */; };
 		3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */; };
+		3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */; };
+		3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */; };
@@ -97,6 +100,8 @@
 		3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */; };
 		3FBA7E982F285A9400FE6C80 /* ContextualHelpButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */; };
 		3FBA7E9A2F285BAD00FE6C80 /* HelpSheetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */; };
+		3FBBBFA92F33F27A00CDC7A0 /* CECertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBBBFA82F33F27A00CDC7A0 /* CECertificate.swift */; };
+		3FBBBFAB2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift */; };
 		3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */; };
 		3FBCBE642EB2E2020050D6A5 /* DataController-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */; };
 		3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */; };
@@ -328,6 +333,7 @@
 		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
 		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
 		3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxLabelView.swift; sourceTree = "<group>"; };
+		3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseEntryView.swift; sourceTree = "<group>"; };
 		3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementSpecialCat-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementInfoSheet.swift; sourceTree = "<group>"; };
@@ -336,6 +342,8 @@
 		3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RSCRowView.swift; sourceTree = "<group>"; };
 		3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralUISettingsView.swift; sourceTree = "<group>"; };
 		3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagBadgeExamples.swift; sourceTree = "<group>"; };
+		3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptHeaderView.swift; sourceTree = "<group>"; };
+		3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerControlView.swift; sourceTree = "<group>"; };
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F9386CB2F1B31B90034B841 /* General Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = "General Notes.rtf"; sourceTree = "<group>"; };
@@ -352,6 +360,8 @@
 		3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRowLabelView.swift; sourceTree = "<group>"; };
 		3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualHelpButtonView.swift; sourceTree = "<group>"; };
 		3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSheetRowView.swift; sourceTree = "<group>"; };
+		3FBBBFA82F33F27A00CDC7A0 /* CECertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CECertificate.swift; sourceTree = "<group>"; };
+		3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-iCloudDocs.swift"; sourceTree = "<group>"; };
 		3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightHelpers.swift; sourceTree = "<group>"; };
 		3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Notifications.swift"; sourceTree = "<group>"; };
 		3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -847,6 +857,7 @@
 		3F5D03382EB3F55A00F5B1DC /* Data Controller Items */ = {
 			isa = PBXGroup;
 			children = (
+				3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift */,
 				3FDF714B2F1850380036D490 /* DataController-Templates.swift */,
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
@@ -875,17 +886,13 @@
 		3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */ = {
 			isa = PBXGroup;
 			children = (
-				3F71B9922F2A9EBF00F1AA2C /* Reflection Prompts.json */,
-				3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */,
-				3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */,
-				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
+				3F84D1672F2D55A4001C3AB6 /* Prompt Questions */,
 				3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */,
-				3F71B9982F2AF84D00F1AA2C /* StandardPromptSelectionView.swift */,
-				3F71B99C2F2B043E00F1AA2C /* CustomPromptSelectionView.swift */,
-				3F71B99E2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift */,
-				3F71B99A2F2AFFF600F1AA2C /* PromptSelectionConfirmationView.swift */,
+				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
+				3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */,
 				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
 				3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */,
+				3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */,
 			);
 			path = "Activity Reflections";
 			sourceTree = "<group>";
@@ -916,6 +923,21 @@
 				3F83C7C82F0F4C2900FB4CF2 /* RSCRowView.swift */,
 			);
 			path = Reinstatement;
+			sourceTree = "<group>";
+		};
+		3F84D1672F2D55A4001C3AB6 /* Prompt Questions */ = {
+			isa = PBXGroup;
+			children = (
+				3F71B9922F2A9EBF00F1AA2C /* Reflection Prompts.json */,
+				3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */,
+				3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */,
+				3F71B99E2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift */,
+				3F71B99C2F2B043E00F1AA2C /* CustomPromptSelectionView.swift */,
+				3F71B9982F2AF84D00F1AA2C /* StandardPromptSelectionView.swift */,
+				3F71B99A2F2AFFF600F1AA2C /* PromptSelectionConfirmationView.swift */,
+				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
+			);
+			path = "Prompt Questions";
 			sourceTree = "<group>";
 		};
 		3F9520A32EB167AF00F1B498 /* Tags Section */ = {
@@ -1002,6 +1024,7 @@
 		F2772B862E1DDA9F006A94BD = {
 			isa = PBXGroup;
 			children = (
+				3FBBBFA82F33F27A00CDC7A0 /* CECertificate.swift */,
 				3F9386CB2F1B31B90034B841 /* General Notes.rtf */,
 				3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
@@ -1286,6 +1309,7 @@
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
 				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
+				3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */,
 				3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
@@ -1295,6 +1319,7 @@
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
 				3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
+				3FBBBFAB2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift in Sources */,
 				3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */,
 				3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */,
 				3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */,
@@ -1303,6 +1328,7 @@
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
 				3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */,
+				3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */,
 				3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
@@ -1352,6 +1378,7 @@
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
 				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
 				3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */,
+				3FBBBFA92F33F27A00CDC7A0 /* CECertificate.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
@@ -1407,6 +1434,7 @@
 				3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */,
 				3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */,
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
+				3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */,
@@ -1701,7 +1729,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyContinuingEdApp/Configuration/Info.plist;
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need access to your Photos library in order to select images of CE certificates that may be saved there";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is needed in order for you to use the audio reflections feature (if you wish to use it).";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your Photos library in order to select images of CE certificates that may be saved there";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -1732,7 +1761,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MyContinuingEdApp/Configuration/Info.plist;
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Need access to your Photos library in order to select images of CE certificates that may be saved there";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access is needed in order for you to use the audio reflections feature (if you wish to use it).";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your Photos library in order to select images of CE certificates that may be saved there";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";

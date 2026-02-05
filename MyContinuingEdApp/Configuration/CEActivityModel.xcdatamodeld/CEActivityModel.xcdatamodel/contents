@@ -13,16 +13,13 @@
         <attribute name="value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
     <entity name="ActivityReflection" representedClassName="ActivityReflection" syncable="YES" codeGenerationType="class">
-        <attribute name="audioReflections" optional="YES" attributeType="Binary"/>
         <attribute name="completedYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="dateAdded" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="generalReflection" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="lastModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="learnMoreAbout" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="reflectionID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="surpriseEntered" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="surprises" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
-        <attribute name="threeMainPoints" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="wasSurprised" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ceToReflectUpon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="reflection" inverseEntity="CeActivity"/>
         <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="reflection" inverseEntity="ReflectionResponse"/>
@@ -152,6 +149,7 @@
     </entity>
     <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
+        <attribute name="audioReflection" optional="YES" attributeType="Binary"/>
         <attribute name="completeAnswerYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="createdOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

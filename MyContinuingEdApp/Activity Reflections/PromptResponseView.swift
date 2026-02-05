@@ -26,18 +26,15 @@ struct PromptResponseView: View {
     
     @FocusState private var isTextFieldFocused: Bool
     
+    @State private var showDeleteResponseAlert: Bool = false
+   
+    
     // MARK: - COMPUTED PROPERTIES
-    var formattedModDate: String {
-        if let lastEdited = response.modifiedOn {
-            let localString = NSLocalizedString(lastEdited.formatted(date: .numeric, time: .shortened), comment: "Day & time when the user last edited their answer to a prompt.")
-            return localString
-        } else {
-            return "N/A (First time to respond to question!)"
-        }
-    }//: formattedModDate
+   
     
     // MARK: - CLOSURES
     var onSelectPrompt: () -> Void = { }
+    var onDeleteResponse: (ReflectionResponse) -> Void = { _ in }
     
     // MARK: - BODY
     var body: some View {
@@ -45,36 +42,27 @@ struct PromptResponseView: View {
         VStack {
             // Selected prompt question  + button to change
             if let savedPrompt = response.question {
-                HStack(spacing: 5) {
-                    Text(savedPrompt.promptQuestion)
-                    Spacer()
-                    Button {
-                        onSelectPrompt()
-                    } label: {
-                        Label("Change Prompt", systemImage: "arrow.branch")
-                            .labelsHidden()
-                    }//: BUTTON
-                    .buttonStyle(.bordered)
+                Group {
                     
-                }//: HSTACK
-                
-                Divider()
-                // TextField for answering question
-                // Updating field updates the modifiedOn property
-                Text("Last Updated: \(formattedModDate)")
-                    .foregroundStyle(.secondary)
-                    .font(.caption).bold()
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(.gray.opacity(0.3))
+                    PromptHeaderView(response: response, onSelectPrompt: {
+                        onSelectPrompt()
+                    })
+                    
+                    
+                    
+                    TextField("Enter Reflections", text: $response.responseAnswer, axis: .vertical)
+                        .multilineTextAlignment(.leading)
+                        .frame(minHeight: 150, alignment: .topLeading)
+                        .focused($isTextFieldFocused)
+                    
+                    // Delete Button
+                    DeleteObjectButtonView(
+                        buttonText: "Delete Response",
+                        onDelete: {
+                            showDeleteResponseAlert = true
+                        }
                     )
-                
-                TextField("Enter Reflections", text: $response.responseAnswer, axis: .vertical)
-                    .multilineTextAlignment(.leading)
-                    .frame(minHeight: 150, alignment: .topLeading)
-                    .focused($isTextFieldFocused)
-                
+                }//: GROUP
             } else {
                 VStack(spacing: 10) {
                     NoItemView(
@@ -99,14 +87,35 @@ struct PromptResponseView: View {
                 .foregroundStyle(.white)
                 .shadow(color: Color.black.opacity(0.3), radius: 3)
         )//: BACKGROUND
+        // TODO: Analyze potential for data races in onChange & onReceive
         // MARK: - ON CHANGE
         .onChange(of: response.answer) { _ in
             if !isTextFieldFocused {
                 response.modifiedOn = Date.now
             }//: IF
         }//: ON CHANGE
+        // MARK: - ON RECEIVE
+        .onReceive(response.objectWillChange) { _ in
+            if !isTextFieldFocused {
+                Task {
+                    try await Task.sleep(for: .seconds(0.1))
+                    await response.markResponseAsComplete()
+                }//: TASK
+            }//: IF (isTextFieldFocused)
+        }//: ON RECEIVE
+        // MARK: - ALERTS
+        .alert("Delete Response?", isPresented: $showDeleteResponseAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                onDeleteResponse(response)
+            }
+        } message: {
+            Text("Are you sure you wish to delete your response to this prompt? This will permanently delete both any written text and recorded audio associated with the prompt.")
+        }//: ALERT
+
         
     }//: BODY
+    
 }//: STRUCT
 
 // MARK: - PREVIEW
