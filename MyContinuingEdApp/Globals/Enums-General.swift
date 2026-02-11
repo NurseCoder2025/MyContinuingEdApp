@@ -360,6 +360,33 @@ enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
             ""
         }
     }//: UserMessage
+    
+    var useLocalStorage: Bool {
+        switch self {
+        case .loggedInDisabled:
+            return true
+        case .loggedInUnavailable:
+            return false
+        case .loggedINDifferentAppleID:
+            return false
+        case .loggedOut:
+            return true
+        case .noAccount:
+            return true
+        case .iCloudRestricted:
+            return true
+        case .loggedIn:
+            return false
+        case .unableToCheck:
+            return true
+        case .needSyncingAccount:
+            return true
+        case .cantLogin:
+            return true
+        case .initialStatus:
+            return true
+        }
+    }//: useLocalStorage
 }//: iCloudStatus
 
 /// Enum used to control whether CE certificates and audio recordings are saved locally or to iCloud.

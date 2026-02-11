@@ -35,12 +35,12 @@ class DataController: ObservableObject {
     
     /// Constant DataController property that sets a URL for a directory within the app's
     /// sandbox environment into which CE certificate images/PDFs and audio recordings
-    /// can be saved IF the user is not logged into iCloud.
+    /// can be saved IF the user is not logged into iCloud.  This uses the default documents
+    /// directory as the top-level folder.
     ///
-    /// - Note: The directory's string path is "local assets".
     /// - Important: This should ONLY be used if the user either does not have iCloud or
     /// wishes to use it for the app.
-    let localStorage = URL.documentsDirectory.appending(path: "local assets", directoryHint: .isDirectory)
+    let localStorage = URL.documentsDirectory
    
     
     // Property for showing the activity reflection view
@@ -228,10 +228,17 @@ class DataController: ObservableObject {
                 object: container.persistentStoreCoordinator,
                 queue: .main,
                 using: remoteStorageChanged
-            )
+            )//: OBSERVER
             
-            
-            
+            // Observer for updating the UI whenever the system
+            // detects a user logging in/out of iCloud OR the data
+            // sync setting changes for iCloud Drive
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleUbiquityIdChange(_:)),
+                name: .NSUbiquityIdentityDidChange,
+                object: nil
+            )//: OBSERVER
             
             // Adding an observer for incoming changes to the sharedSettings
             // property as it is an NSUbiquitousKeyValueStore and is synced
@@ -241,9 +248,15 @@ class DataController: ObservableObject {
                 selector: #selector(handleKeyValueStoreChanges(_:)),
                 name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
                 object: sharedSettings
-                )
-        }//: IF inMemory
+            )//: OBSERVER
+            
+            iCloudTasks = Task {
+                await assessUserICloudStatus()
+            }//: TASK
+            
+        }//: IF ELSE
         
+        // MARK: - SPOTLIGHT SETUP
         // Spotlight configuration & setup
         // Configuring persistent history tracking
         if let description = self.container.persistentStoreDescriptions.first {
@@ -282,6 +295,8 @@ class DataController: ObservableObject {
             await preloadPromptQuestions()
         }//: TASK
         
+        
+        // MARK: - Setting Key Values
         // First time use determination & setting the key if so
         if isAppRunForFirstTime() {
             isFirstRun = true

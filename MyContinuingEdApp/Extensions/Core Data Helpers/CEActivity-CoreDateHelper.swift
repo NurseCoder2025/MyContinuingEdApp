@@ -285,11 +285,32 @@ extension CeActivity {
 
 // MARK: - Credential Related Properties
 extension CeActivity {
-    // Computed property to retrieve all Credential objects associated with a given CE object
+    
+    /// Computed property to retrieve all Credential objects associated with a given CE object
     var activityCredentials: [Credential] {
         let result = credentials?.allObjects as? [Credential] ?? []
         return result.sorted()
-    }
+    }//: activityCredentials
+    
+    var assignedRenewals: [RenewalPeriod] {
+        let result = renewals?.allObjects as? [RenewalPeriod] ?? []
+        return result
+    }//: assignedRenewalPeriod
+    
+    var renewalsWithCredentials: [Credential: RenewalPeriod] {
+        var result: [Credential: RenewalPeriod] = [:]
+        let allRenewals = assignedRenewals
+        guard allRenewals.isNotEmpty else { return [:] }
+        let renewalsWithCreds = allRenewals.filter {
+            $0.credential != nil
+        }
+        for renewal in renewalsWithCreds {
+            if let assignedCred = renewal.credential {
+                result[assignedCred] = renewal
+            }//: IF LET
+        }//: LOOP
+        return result
+    }//: renewalsWithCredentials
 }//: EXTENSION
 
 

@@ -19,8 +19,6 @@ extension DataController {
     }//: isICloudAvailable
     
     
-    
-    
     // MARK: - METHODS
     
     /// Method for updating iCloud Document related properties in DataController whenever a user logs in/out of their
@@ -31,7 +29,7 @@ extension DataController {
     /// if a different Apple Account is now signed in, if a new Account has been signed in for the first time, if the system can't
     /// authenticate into the user's account due to there not being one or iCloud Drive is disabled by the user. The
     /// certificateAudioStorage property is also updated by this method, depending on what the situation with iCloud is.
-    @objc private func handleUbiquityIdChange(_ notification: Notification) {
+    @objc func handleUbiquityIdChange(_ notification: Notification) {
         // Whenever the user logs in/out of iCloud, or changes data sync
         // setting
         defaultICloudContainer.fetchUserRecordID { (recordID, error) in

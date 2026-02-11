@@ -118,6 +118,7 @@
 		3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F792F0349A6002360AB /* StartButtonView.swift */; };
 		3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */; };
 		3FDF714C2F1850380036D490 /* DataController-Templates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FDF714B2F1850380036D490 /* DataController-Templates.swift */; };
+		3FE3567B2F3BF4B800F88F60 /* CertificateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3567A2F3BF4B800F88F60 /* CertificateController.swift */; };
 		3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */; };
 		3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */; };
 		3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */; };
@@ -378,6 +379,7 @@
 		3FD74F792F0349A6002360AB /* StartButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonView.swift; sourceTree = "<group>"; };
 		3FD74F7B2F035E3A002360AB /* DeleteObjectButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteObjectButtonView.swift; sourceTree = "<group>"; };
 		3FDF714B2F1850380036D490 /* DataController-Templates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Templates.swift"; sourceTree = "<group>"; };
+		3FE3567A2F3BF4B800F88F60 /* CertificateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CertificateController.swift; path = MyContinuingEdApp/CertificateController.swift; sourceTree = "<group>"; };
 		3FE372382ECE54E500CCF0FC /* UpgradeToPaidSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeToPaidSheet.swift; sourceTree = "<group>"; };
 		3FE3723B2ECE572F00CCF0FC /* AppUpgradeCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpgradeCardView.swift; sourceTree = "<group>"; };
 		3FE3723D2ECE575100CCF0FC /* PurchaseFeatureRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseFeatureRowView.swift; sourceTree = "<group>"; };
@@ -1025,6 +1027,7 @@
 			isa = PBXGroup;
 			children = (
 				3FBBBFA82F33F27A00CDC7A0 /* CECertificate.swift */,
+				3FE3567A2F3BF4B800F88F60 /* CertificateController.swift */,
 				3F9386CB2F1B31B90034B841 /* General Notes.rtf */,
 				3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
@@ -1273,6 +1276,7 @@
 				F2CFCE642E7119DA00443C5C /* CredentialListSheet.swift in Sources */,
 				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
 				3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */,
+				3FE3567B2F3BF4B800F88F60 /* CertificateController.swift in Sources */,
 				3F71B99F2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift in Sources */,
 				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
