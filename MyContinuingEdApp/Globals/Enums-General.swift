@@ -143,7 +143,10 @@ enum CredentialType: String, CaseIterable {
         CredentialType.allCases.map { $0.displaySingularName }
     }
 }
-    
+
+// MARK: - MEDIA File Types
+enum CertType: Codable {case image, pdf}
+enum SaveLocation: Codable {case local, cloud}
 
 // MARK: - Notification ENUMs
 
@@ -397,3 +400,17 @@ enum StorageToUse: Identifiable {
     var id: Self { self }
     
 }//: storageToUse
+
+
+// MARK: - FILE I/O
+
+enum FileIOError: Error {
+    case noError
+    case writeFailed
+    case fileMissing
+    case unableToDelete
+    case unableToMove
+    case operationUnneeded
+    case saveLocationUnavailable
+    case unknownError
+}

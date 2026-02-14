@@ -30,6 +30,8 @@
 		3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */; };
 		3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */; };
 		3F39AFD32EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD22EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift */; };
+		3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */; };
+		3F3B45502F403A08002792D7 /* CertificateDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3B454F2F403A08002792D7 /* CertificateDocument.swift */; };
 		3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */; };
 		3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */; };
 		3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC402EFA001300BBE427 /* TutorialStep.swift */; };
@@ -288,6 +290,8 @@
 		3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalSheetData.swift; sourceTree = "<group>"; };
 		3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSmartFilterRow.swift; sourceTree = "<group>"; };
 		3F39AFD22EA18C53003F5E78 /* RenewalPeriodSheetTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalPeriodSheetTitleView.swift; sourceTree = "<group>"; };
+		3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileProtocols.swift; sourceTree = "<group>"; };
+		3F3B454F2F403A08002792D7 /* CertificateDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CertificateDocument.swift; path = MyContinuingEdApp/CertificateDocument.swift; sourceTree = "<group>"; };
 		3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCardView.swift; sourceTree = "<group>"; };
 		3F3EAC402EFA001300BBE427 /* TutorialStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialStep.swift; sourceTree = "<group>"; };
@@ -775,6 +779,7 @@
 		3F2A42D12EA2E22700B095CB /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */,
 				3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */,
 				3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */,
 				3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */,
@@ -1028,6 +1033,7 @@
 			children = (
 				3FBBBFA82F33F27A00CDC7A0 /* CECertificate.swift */,
 				3FE3567A2F3BF4B800F88F60 /* CertificateController.swift */,
+				3F3B454F2F403A08002792D7 /* CertificateDocument.swift */,
 				3F9386CB2F1B31B90034B841 /* General Notes.rtf */,
 				3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
@@ -1293,6 +1299,7 @@
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
 				3F71B9972F2AB50600F1AA2C /* GeneralProtocols.swift in Sources */,
 				3F71B9952F2A9EEA00F1AA2C /* PromptQuestionJSON.swift in Sources */,
+				3F3B45502F403A08002792D7 /* CertificateDocument.swift in Sources */,
 				F2011DC12E624B5400D5DF92 /* Issuer-CoreDataHelper.swift in Sources */,
 				3FBA7E9A2F285BAD00FE6C80 /* HelpSheetRowView.swift in Sources */,
 				F2B389F32E4C538100518868 /* CertificateShareView.swift in Sources */,
@@ -1440,6 +1447,7 @@
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
 				3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
+				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */,
 				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,

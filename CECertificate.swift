@@ -7,13 +7,11 @@
 
 import Foundation
 
-struct CECertificate: Identifiable, Codable {
-    enum CertType: Codable {case image, pdf}
-    enum SaveLocation: Codable {case local, cloud}
+struct CECertificate: MediaObjectModel {
     // MARK: - PROPERTIES
     var id: UUID = UUID()
     let type: CertType
-    let assignedCeId: UUID
+    let assignedObjectId: UUID
     let earnedDate: Date
     var fileExtension: String
     var isDownloaded: Bool = false
@@ -22,7 +20,7 @@ struct CECertificate: Identifiable, Codable {
     // MARK: - COMPUTED PROPERTIES
     
     var fileName: String {
-       "\(earnedDate.formatted(date: .numeric, time: .omitted))_CE certificate.\(fileExtension)"
+        "\(assignedObjectId.uuidString)_\(earnedDate.formatted(date: .numeric, time: .omitted))_CE certificate.\(fileExtension)"
     }//: certFileURLName
     
     // MARK: - METHODS
@@ -45,10 +43,28 @@ struct CECertificate: Identifiable, Codable {
     // MARK: - EXAMPLE
     static let example: CECertificate = CECertificate(
         type: .image,
-        assignedCeId: UUID(),
+        assignedObjectId: UUID(),
         earnedDate: Date.now,
         fileExtension: "heic"
     )
+    
+    // MARK: - HASHABLE CONFROMANCE
+    
+    /// Method creating custom Hashable conformance for CECertificate objects.
+    /// - Parameter hasher: Hasher object (system handled)
+    ///
+    /// Only the following 3 properties are used for creating Hashable conformance:
+    ///     - assignedCeId
+    ///     - earnedDate
+    ///     - fileExtension
+    ///
+    /// - Note: All three of these properties are part of the fileName computed property, which allows
+    /// for the creation of CECertificate objects just based on file names.
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(assignedObjectId)
+        hasher.combine(earnedDate)
+        hasher.combine(fileExtension)
+    }//: hash
     
     
 }//: CECertificate
