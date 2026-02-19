@@ -146,6 +146,7 @@ enum CredentialType: String, CaseIterable {
 
 // MARK: - MEDIA File Types
 enum CertType: Codable {case image, pdf}
+enum MediaType: Codable {case image, pdf, audio}
 enum SaveLocation: Codable {case local, cloud}
 
 // MARK: - Notification ENUMs

@@ -59,6 +59,8 @@ extension CeActivity {
         activityAddedDate ?? .now
     }
     
+    /// Computed CoreData helper property for CeActivity's dateCompleted property.  If the property is
+    /// nil then the getter will return the futureCompletion contsant for the Date struct.
     var ceActivityCompletedDate: Date {
         dateCompleted ?? .futureCompletion
     }

@@ -174,7 +174,7 @@ class DataController: ObservableObject {
     }
     
     
-    // MARK: - Cloud storage syncronization methods
+    // MARK: - Notification (observer) methods
     
     /// DataController method designed to issue a general change announcement so that
     /// each individual view within the app can respond appropriately whenever this
@@ -183,6 +183,7 @@ class DataController: ObservableObject {
     func remoteStorageChanged(_ notification: Notification) {
         objectWillChange.send()
     }// remoteStorageChanged
+    
     
     // MARK: - PREVIEW
     static var preview: DataController = {
@@ -249,6 +250,7 @@ class DataController: ObservableObject {
                 name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
                 object: sharedSettings
             )//: OBSERVER
+            
             
             iCloudTasks = Task {
                 await assessUserICloudStatus()

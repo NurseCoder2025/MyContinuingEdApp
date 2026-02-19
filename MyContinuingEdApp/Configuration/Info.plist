@@ -2,10 +2,51 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<string>cert</string>
+			<key>CFBundleTypeName</key>
+			<string>ceCertificate</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.pixelcraftlabsltd.certificate</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
+		</dict>
+		<dict/>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>CeCache Certificate Package</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.pixelcraftlabsltd.cecache-certficate</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cert</string>
+				</array>
+			</dict>
+		</dict>
 	</array>
 </dict>
 </plist>
