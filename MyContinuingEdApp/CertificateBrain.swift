@@ -67,253 +67,268 @@ final class CertificateBrain: ObservableObject {
         }
     }//: cloudCertsURL
     
-    /// Computed property in CertificateBrain that sets the URL for the top-level directory into which the
-    /// certificate coordinator JSON file will be saved to.
-    ///
-    /// If the storageAvailability is .local, the user's ubiquitiy container's URL can be obtained, AND
-    /// if the user wishes to save CE certificates in iCloud, then the following
-    /// will be appended to it:  ApplicationSupport/[String's cloucCertCoordinatorFile static property].
-    /// Otherwise, the URL will be set to the .localCertCoordinatorsFolder property of String.
-    ///
-    /// - Note: Even if all 3 conditions are met for creating an iCloud URL, if the user's iCloud storage
-    /// has been maxed out, then ultimately the methods that call this property will end up throwing
-    /// an error.  However, in the catch blocks of those methods the FileIOError enum case
-    /// "saveLocationUnavailable" will be set for the handlingError published property of the CertificateBrain
-    /// class along with a custom error message that will advise the user to check both their iCloud settings
-    /// and storage capacity remaining.
-    var allCoordinatorsListURL: URL {
-        if dataController.prefersCertificatesInICloud,
-            storageAvailability == .cloud,
-            let cloudDrive = cloudCertsFolderURL {
-            let coordinatorURL = URL(
-                filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
-                directoryHint: .notDirectory,
-                relativeTo: cloudDrive
-             )
-            return coordinatorURL
-        } else {
-            return URL.localCertCoordinatorsListFile
-        }
-    }//: allCoordinatorsListURL
+    // MARK: - COORDINATOR LIST
     
-    /// Private computed property in Certificate Brain that returns the iCloud-based URL for the
-    /// coordinator JSON file IF it can be obtained.  Nil if not.
-    ///
-    /// The path for the file is: .\ApplicationSupport\[String.cloudCertCoordinatorFile] for
-    /// whatever ubiquity container is associated with the current Apple Account.
-    private var coordinatorCloudStoredListURL: URL? {
-        if let cloudDrive = dataController.userCloudDriveURL {
-            let coordinatorURL = URL(
-                filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
-                directoryHint: .notDirectory,
-                relativeTo: cloudDrive
-             )
-            return coordinatorURL
-        } else {
-            return nil
-        }
-    }//: coordinatorCloudStoredListURL
+        // MARK: COMPUTED PROPERTIES
     
-    // MARK: - METHODS
-    
-    // Matching certificate with completed CE Activity
-    
-    /// Private method that does the work of finding the CeActivity stored in CoreData that the user is saving
-    /// a CE certificate object for.
-    /// - Parameter metaData: CertificateMetaData object, which has the ID for the CeActivity
-    /// - Returns: the CeActivity entity matching the assignedObjectID property in CertificateMetaData
-    private func matchCertificateWithActivity(using metaData: CertificateMetadata) -> CeActivity? {
-        let idToMatch = metaData.assignedObjectId
-        let context = dataController.container.viewContext
-        
-        let activityFetch = CeActivity.fetchRequest()
-        activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
-        activityFetch.predicate = NSPredicate(format: "activityID == %@", idToMatch as CVarArg)
-        
-        let fetchedActivities = (try? context.fetch(activityFetch)) ?? []
-        guard fetchedActivities.count == 1 else { return nil }
-        
-        let matchedActivity: CeActivity = fetchedActivities.first!
-        return matchedActivity
-    }//: matchCertificatewithActivity
-    
-    /// Private method for obtaining all of the file URLs for any and all CertificateDocuments that have been saved at a specified location (url).
-    /// - Parameters:
-    ///     - location: the URL for the directory that is to be searched
-    /// - Returns: An array of URLs that correspond to saved certificates within the location argument
-    ///
-    /// - Important: This method only returns the URLs for individual CertificateDocument files.  If the URLs
-    /// for sub-directories are needed, a separate method will be needed.  Also, the file extension MUST be "cert" in order for the URL to be added
-    /// to the returned array.
-    ///
-    /// The methodology employed by this method goes by the general file structure envisioned for this app, which is thus:  Within the Documents
-    /// folder for the app (either local or iCloud), there should be a Certificates folder and within that subfolders for every certificate saved that has
-    /// a matching CeActivity with a non-nil activityTitle property.  However, in the rare event a CeActivity does not have a title, then certificates for
-    /// those activities are to be saved in the top level of the Certificates folder.
-    ///
-    /// Based on that structure, the method first searches the Certificates folder for any "cert" files and adds those URLs to the array that will be
-    /// returned. Next, it then iterates through all sub-folders in Certificates and retrieves the individual file URLs from each of them and adds those
-    /// to the array.
-    ///
-    /// - Note: All URLs are created by the createDocURL(with metaData, for saveLocale) private method, which will place all certificates inside of
-    /// a folder with the name of the CeActivity assigned to it within the respective ./Certificates folder, but if a CeActivity happens to have a blank title,
-    /// then any assigned certificates will be placed in the ./Certificates directory.
-    private func getAllSavedCertificateURLs(from location: URL) -> [URL] {
-        var foundURLs: [URL] = []
-        
-        // Checking for any saved certificates in the top-level Certificates folder
-        // These would be any that are assigned to a CeActivity that has a nil activityTitle property value.
-        let topLevelCerts = (
-            try? fileSystem.contentsOfDirectory(
-                at: location,
-                includingPropertiesForKeys: [.isRegularFileKey],
-                options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
-            )) ?? []
-        if topLevelCerts.isNotEmpty {
-            topLevelCerts.forEach { cert in
-                if cert.pathExtension == fileExtension {
-                    foundURLs.append(cert)
+            /// Computed property in CertificateBrain that sets the URL for the top-level directory into which the
+            /// certificate coordinator JSON file will be saved to.
+            ///
+            /// If the storageAvailability is .local, the user's ubiquitiy container's URL can be obtained, AND
+            /// if the user wishes to save CE certificates in iCloud, then the following
+            /// will be appended to it:  ApplicationSupport/[String's cloucCertCoordinatorFile static property].
+            /// Otherwise, the URL will be set to the .localCertCoordinatorsFolder property of String.
+            ///
+            /// - Note: Even if all 3 conditions are met for creating an iCloud URL, if the user's iCloud storage
+            /// has been maxed out, then ultimately the methods that call this property will end up throwing
+            /// an error.  However, in the catch blocks of those methods the FileIOError enum case
+            /// "saveLocationUnavailable" will be set for the handlingError published property of the CertificateBrain
+            /// class along with a custom error message that will advise the user to check both their iCloud settings
+            /// and storage capacity remaining.
+            var allCoordinatorsListURL: URL {
+                if dataController.prefersCertificatesInICloud,
+                    storageAvailability == .cloud,
+                    let cloudDrive = cloudCertsFolderURL {
+                    let coordinatorURL = URL(
+                        filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
+                        directoryHint: .notDirectory,
+                        relativeTo: cloudDrive
+                     )
+                    return coordinatorURL
+                } else {
+                    return URL.localCertCoordinatorsListFile
                 }
-            }//: forEach(topLevelCerts)
-        }//: IF
-        
-        // Going through all sub-directories, which is the activity name
-        let subDirectories = (
-            try? fileSystem.contentsOfDirectory(
-                at: location,
-                includingPropertiesForKeys: [.isDirectoryKey],
-                options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
-            )) ?? []
-        
-        guard subDirectories.isNotEmpty else { return foundURLs }
-        
-        subDirectories.forEach { file in
-            // TODO: Check whether the correct property key was used as the argument
-            let certsInFile = (
-                try? fileSystem.contentsOfDirectory(
-                    at: file,
-                    includingPropertiesForKeys: [.isRegularFileKey],
-                    options: .skipsHiddenFiles
-                )) ?? []
+            }//: allCoordinatorsListURL
             
-            if certsInFile.count > 0 {
-                certsInFile.forEach { cert in
-                    if cert.pathExtension == fileExtension {
-                        foundURLs.append(cert)
+            /// Private computed property in Certificate Brain that returns the iCloud-based URL for the
+            /// coordinator JSON file IF it can be obtained.  Nil if not.
+            ///
+            /// The path for the file is: .\ApplicationSupport\[String.cloudCertCoordinatorFile] for
+            /// whatever ubiquity container is associated with the current Apple Account.
+            private var coordinatorCloudStoredListURL: URL? {
+                if let cloudDrive = dataController.userCloudDriveURL {
+                    let coordinatorURL = URL(
+                        filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
+                        directoryHint: .notDirectory,
+                        relativeTo: cloudDrive
+                     )
+                    return coordinatorURL
+                } else {
+                    return nil
+                }
+            }//: coordinatorCloudStoredListURL
+    
+        // MARK: SYNC LIST
+    
+            /// Private method that ensures the JSON file containing all CertificateCoordinator objects is in sync with all files saved both locally and on
+            /// iCloud.
+            ///
+            /// The method first looks for the JSON file on iCloud, and if it exists then those values are decoded to the allCoordinators property.  It then
+            /// checks the user's cloud sync preference for certificates and if it is for local storage only, then the JSON file is moved to the local device.
+            /// If the file is not on iCloud or it does not contain any data, then the local directory for the JSON file will be checked and, again, if the user's
+            /// certificate storage preference is set to iCloud then the file will be moved to iCloud if possible.
+            ///
+            /// If there are values in the allCoordinators property after the initial file check and decoding, then the method will update it by comparing the
+            /// existing set in allCoordinators with the coordinators set returned by the private method getCoordinatorsForAllFiles().  Any new coordinators
+            /// will be added to the allCoordinators set.
+            ///
+            /// If no values are in allCoordinators, then the getCoordinatorsForAllFliles method is called to create coordinator objects for any CE certificates
+            /// saved both on iCloud (if available) and on the local device.  Thoe objects are then used to set the value of allCoordinators and it is then
+            /// encoded to disk, using the URL returned from the allCoordinatorsListURL computed property.
+            private func syncCoordinatorList() async {
+                // Find & retrieve previously saved list, if available
+                if let cloudList = coordinatorCloudStoredListURL, let _ = try? Data(contentsOf: cloudList) {
+                    decodeCoordinatorList(from: cloudList)
+                    if dataController.prefersCertificatesInICloud == false {
+                        moveCertCoordListTo(location: .local)
+                    }//: IF (!prefersCertificatesInICloud)
+                } else {
+                    let localList = URL.localCertCoordinatorsListFile
+                    if let _ = try? Data(contentsOf: localList) {
+                        decodeCoordinatorList(from: localList)
+                        if dataController.prefersCertificatesInICloud {
+                            moveCertCoordListTo(location: .cloud)
+                        } //: IF LET
+                    }//: IF LET
+                }//: IF ELSE
+                
+                if allCoordinators.isNotEmpty {
+                    let currentCoordinators = await getCoordinatorsForAllFiles()
+                    let coordinatorsToAdd = currentCoordinators.subtracting(allCoordinators)
+                    if coordinatorsToAdd.isNotEmpty {
+                        let updatedList = allCoordinators.union(coordinatorsToAdd)
+                        allCoordinators = updatedList
                     }
-                }//: forEach (certsInFile)
-            }//: IF
-        }//: forEach (localDirectories)
-        
-        return foundURLs
-    }//: getAllLocallySavedCertURLS()
+                    encodeCoordinatorList()
+                } else {
+                    // If no previously saved list, get new coordinator objects,
+                    // assign them to the allCoordinators list and then write that
+                    // list to file in the appropriate location.
+                    let newCoordinators = await getCoordinatorsForAllFiles()
+                    allCoordinators = newCoordinators
+                    encodeCoordinatorList()
+                }//: IF - ELSE
+                
+                allCloudCoordinators = []
+            }//: syncCoordinatorList()
+    
+        // MARK: LIST HELPERS
+    
+            /// Private method that encodes the allCoordinators set as a JSON file and then writes the file to
+            /// the url set by the allCoordinatorsListURL computed property.
+            /// - Parameters:
+            ///     - location: OPTIONAL URL value if a location other than what is computed by the
+            ///     allCoordinatorsListURL property is needed
+            private func encodeCoordinatorList(to location: URL? = nil) {
+                let encoder = JSONEncoder()
+                let encodedList = try? encoder.encode(allCoordinators)
+                if let data = encodedList {
+                    do {
+                        if let specifiedURL = location {
+                            try data.write(to: specifiedURL)
+                        } else {
+                            try data.write(to: allCoordinatorsListURL)
+                        }
+                    } catch {
+                        handlingError = .writeFailed
+                        errorMessage = "Encountered an error writing the file that keeps track of where ce certficicates are saved to."
+                        NSLog(">>> CertificateCoordinator encoding error:")
+                        NSLog(errorMessage)
+                        return
+                    }
+                }//: IF LET
+            }//: encodeCoorsinatorList()
+            
+            /// Private method that decodes and reads the CertificateCoordinator objects contained within the
+            /// JSON file saved at the url set by the allCoordinatorsListURL computed property.
+            /// - Parameters:
+            ///     - location: OPTIONAL URL if a different location from the one produced by the
+            ///     allCoordinatorsListURL property is needed
+            ///
+            /// - Note: This method assigns the value of the decoded JSON file to the allCoordinators property if there is
+            /// anything there and it can be decoded.  If not, then no changes will be made to the allCoordinators property.
+            ///
+            /// The reason for the optional location argument is due to the fact that if it remains nil then the method will use the
+            /// computed property allCoordinatorsListURL to set the URL from which to decode the JSON file.  Depending on the
+            /// method this function is being called in, a specific location URL may need to be passed in, so this method can handle
+            /// any situation.
+            private func decodeCoordinatorList(from location: URL? = nil) {
+                let decoder = JSONDecoder()
+                if let specifiedLocation = location, let data = try? Data(contentsOf: specifiedLocation) {
+                    allCoordinators = (try? decoder.decode(Set<CertificateCoordinator>.self, from: data)) ?? []
+                } else {
+                    if let data = try? Data(contentsOf: allCoordinatorsListURL) {
+                        allCoordinators = (try? decoder.decode(Set<CertificateCoordinator>.self, from: data)) ?? []
+                    }//: IF LET
+                }//: IF - ELSE
+            }//: decodeCoordinatorList()
+            
+            /// Private method which moves the certificate coordinator JSON file from local storage to the app's
+            /// ubiquity container in iCloud.
+            /// - Parameters:
+            ///     - location: SaveLocation enum value indicating whether the list should be moved to iCloud or
+            ///     local device
+            ///
+            /// - Dependencies:
+            ///     - URL.localCertCoordinatorsFolder static property
+            ///     - cloudCertsFolderURL computed property
+            ///     - allCoordinatorsListURL computed property
+            private func moveCertCoordListTo(location: SaveLocation) {
+                switch location {
+                case .local:
+                    guard let cloudList = coordinatorCloudStoredListURL,
+                        let _ = try? Data(contentsOf: cloudList) else {
+                        handlingError = .unableToMove
+                        errorMessage = "Unable to transfer certificate related data to your device."
+                        return
+                        }//: GUARD
+                    
+                    let _: Task<Void, Never> = Task.detached {
+                        do {
+                            try self.fileSystem.setUbiquitous(
+                                false, itemAt: cloudList,
+                                destinationURL: URL.localCertCoordinatorsListFile
+                            )
+                        } catch {
+                            self.handlingError = .unableToMove
+                            self.errorMessage = "Encountered an error when trying to move certificate related data from iCloud to the local device."
+                        }//: DO - CATCH
+                    }//: TASK
+                    
+                case .cloud:
+                    let savedCoordList = try? Data(contentsOf: URL.localCertCoordinatorsListFile)
+                    guard let _ = savedCoordList,
+                        dataController.iCloudAvailability.useLocalStorage == false,
+                       let _ = cloudCertsFolderURL
+                    else {
+                        handlingError = .unableToMove
+                        errorMessage = "Unable to transfer certificate related data to iCloud."
+                        return
+                    }//: GUARD
+                    
+                        let _: Task<Void, Never> = Task.detached {
+                            do {
+                                try self.fileSystem.setUbiquitous(
+                                    true,
+                                    itemAt: URL.localCertCoordinatorsListFile,
+                                    destinationURL: self.allCoordinatorsListURL
+                                )
+                            } catch {
+                                self.handlingError = .unableToMove
+                                self.errorMessage = "Encountered an error when trying to move certificate related data from the local device to iCloud."
+                            }
+                        }//: TASK (detached)
+                }//: SWITCH
+               
+            }//: moveLocalCoordListToICloud()
+            
+            /// Private method in CertificateBrain that searches the local app sandbox (documentsDirectory/Certificates)
+            /// and creates a new set of CertificateCoordinator objects for each which is then used to set the value
+            /// of the allCoordinators property in CertificateBrain, along with any values in the allCloudCoordinators property.
+            /// - Returns:
+            ///     - Set of CertificateCoordinator objects for every valid URL in the app's certificates iCloud folder and local device folder
+            ///
+            /// - Important: The allCloudCoordinators property must be set before this method is called; otherwise, only
+            /// coordinator objects for locally saved certificates will be returned.  The handling of allCloudCoordinators is handled by
+            /// the private startICloudCertSearch method.
+            private func getCoordinatorsForAllFiles() async -> Set<CertificateCoordinator>{
+                var createdCoordinators: Set<CertificateCoordinator> = []
+                var problemFiles: [URL] = []
+                let localFiles = getAllSavedCertificateURLs(from: URL.localCertificatesFolder)
+              
+                // Iterating through all locally saved certificates to create new coordinators
+                // for each
+                for file in localFiles {
+                    var pulledMetadata = extractMetadataFromDoc(at: file)
+                    if pulledMetadata.isExampleOnly == false {
+                        pulledMetadata.whereSaved = .local
+                        let newCoordinator = CertificateCoordinator(
+                            file: file,
+                            metaData: pulledMetadata,
+                            version: MediaFileVersion(fileAt: file, version: 1.0)
+                        )
+                        createdCoordinators.insert(newCoordinator)
+                    } else {
+                        problemFiles.append(file)
+                    }
+                }//: LOOP
+                
+                guard problemFiles.isEmpty else {
+                    handlingError = .syncError
+                    errorMessage = "A problem was encountered while trying to sync certificate data saved on this device and iCloud. If you don't see a certificate that you previously saved then try quitting the app, wait a few minutes, and reopen the app again."
+                    return []
+                }//: GUARD
+                
+                let cloudFileCoordinators = allCloudCoordinators
+                cloudFileCoordinators.forEach { coordinator in
+                    createdCoordinators.insert(coordinator)
+                }//: closure
+                
+                return createdCoordinators
+            }//: getCoordinatorsForAllFiles()
     
     
      // MARK: - Saving Certificates
-    
-    /// Private function that creates the URL for a given CertificateDocument object to be saved to.
-    /// - Parameters:
-    ///     - metaData: CertificateMetadata object that has the assignedObjectId for the CeActivity the
-    /// certificate was earned for
-    ///     - saveLocale: SaveLocation enum indicating whether the URL to be created is for local storage or iCloud
-    /// - Returns: URL (non-optional) for saving the CertificateDocument object to the specified url location
-    ///
-    ///- Important: If creating a CertificateDocument for the first time, please use the .local SaveLocation value FIRST
-    /// to save the data locally, and then call this method a second time for moving it to iCloud.  If the URL for the iCloud ubiquity container
-    /// remains nil at the time this function is called, then be aware that a local url will be created.
-    ///
-    /// The way the URL is created by this function can be broken down into three main possible formats:
-    ///     - Matching CeActivity without a title (unlikely but possible):  .\Certificates\CE Certificate_01/01/2026.cert
-    ///     - Matching CeActivity: .\Certificates\CE_activity's_title_trimmed\CE Certificate_01/01/2026.cert
-    ///     - No matching CeActivity: .\Certificates\CE Certificate_saved_at_01/01/2026 at 12:00 PM.cert
-    ///
-    /// The parent directory for the URL created is either the documents directory for local devices, or if using iCloud, the iCloud ubiquity
-    /// container URL (as stored in the DataController's userCloudDriveURL property) along with the Documents folder for that URL.
-    private func createDocURL(with metaData: CertificateMetadata, for saveLocale: SaveLocation) -> URL {
-        var baseFileName: String = ""
-        let topFolderURL: URL
-        
-        switch saveLocale {
-        case .local:
-            topFolderURL = URL.localCertificatesFolder
-        case .cloud:
-            if let cloudURL = cloudCertsFolderURL {
-                topFolderURL = cloudURL
-            } else {
-                topFolderURL = URL.localCertificatesFolder
-            }
-        }//: SWITCH
-        
-        if let assignedActivity = matchCertificateWithActivity(using: metaData) {
-            let completionDate = assignedActivity.ceActivityCompletedDate
-            baseFileName = "CE Certificate_\(completionDate.formatted(date: .numeric, time: .omitted))"
-            
-            // If there is a matching CeActivity, but there is no title for it for whatever reason
-            // don't create a folder for the activity, but instead just save the certificate in the
-            // Certificates folder (topFolderURL) with the completion date of the activity.
-            guard assignedActivity.ceTitle.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 else {
-                    let finalURLPart = "\(baseFileName).\(fileExtension)"
-                    let fullURL = topFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
-                    return fullURL
-                }//: GUARD
-            
-            // Creating a folder with the activity's name IF a matching one was found
-            let activityFolderName = assignedActivity.ceTitle.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
-            let activityFolderURL = topFolderURL.appending(path: activityFolderName, directoryHint: .isDirectory)
-            
-            let finalURLPart = "\(baseFileName).\(fileExtension)"
-            let finalURL = activityFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
-            return finalURL
-        } else {
-            let saveTime: Date = Date.now
-            let baseFileName = "CE Certificate_saved at_\(saveTime.formatted(date: .numeric, time: .shortened))"
-            let finalURLPart = "\(baseFileName).\(fileExtension)"
-            let fullURL = topFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
-            return fullURL
-        }
-    }//: createDocURL
-    
-    /// Method for creating CertificateMetadata objects based on the CeActivity object for which the certificate was earned.
-    /// - Parameters:
-    ///   - activity: CeActivity object marked as completed by the user for which they want to add a certificate
-    ///   - location: SaveLocation enum value indicating whether to save the certificate locally or in iCloud
-    ///   - fileType: MediaType enum indicating whether the certificate data the metadata is for is an image or PDF
-    /// - Returns: CertificateMetadata object with properties set
-    ///
-    /// - Note: If the CeActivity argument happens to not have an activityID property set, then this method will create
-    /// a new UUID value, assign it to the object, and then call the DataController's save method to save the context prior
-    /// to creating and returning the new CertificateMetadata object.
-    private func createCertificateMetadata(
-        forCE activity: CeActivity,
-        saveTo location: SaveLocation,
-        fileType: MediaType
-    ) -> CertificateMetadata {
-        if let assignedID = activity.activityID {
-            return CertificateMetadata(saved: location, forCeId: assignedID, as: fileType)
-        } else {
-            let newID = UUID()
-            activity.activityID = newID
-            dataController.save()
-            
-            return CertificateMetadata(saved: location, forCeId: newID, as: fileType)
-        }//: IF - ELSE
-    }//: CertificateMetadata()
-    
-    
-    // Create the CertificateCoordinator using that url & CertificateMetadata object
-    
-    /// Private method that creates and returns a CertificateCoordinator object as part of the new CE certificate document creation and saving.
-    /// - Parameter metaData: CertificateMetadata object for the certificate
-    /// - Returns: CertificateCoordinator with the local URL that the data is saved to first along with the meta data
-    ///
-    /// - Note: If saving the certificate document to iCloud, the save method will handle that process as Apple recommends first saving the data
-    /// to local disk prior to saving to iCloud.  Once the file is moved, the coordinator's file url property can be updated.
-    private func createCertificateCoordinator(with metaData: CertificateMetadata, fileAt location: URL) -> CertificateCoordinator {
-        let versionInfo = MediaFileVersion(fileAt: location, version: 1.0)
-        return CertificateCoordinator(file: location, metaData: metaData, version: versionInfo)
-    }//: createCertificateCoordinator()
-    
-    // Create the new CertificateDocument using the custom init
     
     /// Method for creating and saving CE Certificates in the app.
     /// - Parameters:
@@ -377,7 +392,128 @@ final class CertificateBrain: ObservableObject {
                 }//: DOC
             }//: TASK
     }//: addNewCeCertificate()
-   
+    
+        // MARK: SAVE HELPERS
+    
+            /// Private function that creates the URL for a given CertificateDocument object to be saved to.
+            /// - Parameters:
+            ///     - metaData: CertificateMetadata object that has the assignedObjectId for the CeActivity the
+            /// certificate was earned for
+            ///     - saveLocale: SaveLocation enum indicating whether the URL to be created is for local storage or iCloud
+            /// - Returns: URL (non-optional) for saving the CertificateDocument object to the specified url location
+            ///
+            ///- Important: If creating a CertificateDocument for the first time, please use the .local SaveLocation value FIRST
+            /// to save the data locally, and then call this method a second time for moving it to iCloud.  If the URL for the iCloud ubiquity container
+            /// remains nil at the time this function is called, then be aware that a local url will be created.
+            ///
+            /// The way the URL is created by this function can be broken down into three main possible formats:
+            ///     - Matching CeActivity without a title (unlikely but possible):  .\Certificates\CE Certificate_01/01/2026.cert
+            ///     - Matching CeActivity: .\Certificates\CE_activity's_title_trimmed\CE Certificate_01/01/2026.cert
+            ///     - No matching CeActivity: .\Certificates\CE Certificate_saved_at_01/01/2026 at 12:00 PM.cert
+            ///
+            /// The parent directory for the URL created is either the documents directory for local devices, or if using iCloud, the iCloud ubiquity
+            /// container URL (as stored in the DataController's userCloudDriveURL property) along with the Documents folder for that URL.
+            private func createDocURL(with metaData: CertificateMetadata, for saveLocale: SaveLocation) -> URL {
+                var baseFileName: String = ""
+                let topFolderURL: URL
+                
+                switch saveLocale {
+                case .local:
+                    topFolderURL = URL.localCertificatesFolder
+                case .cloud:
+                    if let cloudURL = cloudCertsFolderURL {
+                        topFolderURL = cloudURL
+                    } else {
+                        topFolderURL = URL.localCertificatesFolder
+                    }
+                }//: SWITCH
+                
+                if let assignedActivity = matchCertificateWithActivity(using: metaData) {
+                    let completionDate = assignedActivity.ceActivityCompletedDate
+                    baseFileName = "CE Certificate_\(completionDate.formatted(date: .numeric, time: .omitted))"
+                    
+                    // If there is a matching CeActivity, but there is no title for it for whatever reason
+                    // don't create a folder for the activity, but instead just save the certificate in the
+                    // Certificates folder (topFolderURL) with the completion date of the activity.
+                    guard assignedActivity.ceTitle.trimmingCharacters(in: .whitespacesAndNewlines).count > 0 else {
+                            let finalURLPart = "\(baseFileName).\(fileExtension)"
+                            let fullURL = topFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
+                            return fullURL
+                        }//: GUARD
+                    
+                    // Creating a folder with the activity's name IF a matching one was found
+                    let activityFolderName = assignedActivity.ceTitle.trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
+                    let activityFolderURL = topFolderURL.appending(path: activityFolderName, directoryHint: .isDirectory)
+                    
+                    let finalURLPart = "\(baseFileName).\(fileExtension)"
+                    let finalURL = activityFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
+                    return finalURL
+                } else {
+                    let saveTime: Date = Date.now
+                    let baseFileName = "CE Certificate_saved at_\(saveTime.formatted(date: .numeric, time: .shortened))"
+                    let finalURLPart = "\(baseFileName).\(fileExtension)"
+                    let fullURL = topFolderURL.appending(path: finalURLPart, directoryHint: .notDirectory)
+                    return fullURL
+                }
+            }//: createDocURL
+            
+            /// Method for creating CertificateMetadata objects based on the CeActivity object for which the certificate was earned.
+            /// - Parameters:
+            ///   - activity: CeActivity object marked as completed by the user for which they want to add a certificate
+            ///   - location: SaveLocation enum value indicating whether to save the certificate locally or in iCloud
+            ///   - fileType: MediaType enum indicating whether the certificate data the metadata is for is an image or PDF
+            /// - Returns: CertificateMetadata object with properties set
+            ///
+            /// - Note: If the CeActivity argument happens to not have an activityID property set, then this method will create
+            /// a new UUID value, assign it to the object, and then call the DataController's save method to save the context prior
+            /// to creating and returning the new CertificateMetadata object.
+            private func createCertificateMetadata(
+                forCE activity: CeActivity,
+                saveTo location: SaveLocation,
+                fileType: MediaType
+            ) -> CertificateMetadata {
+                if let assignedID = activity.activityID {
+                    return CertificateMetadata(saved: location, forCeId: assignedID, as: fileType)
+                } else {
+                    let newID = UUID()
+                    activity.activityID = newID
+                    dataController.save()
+                    
+                    return CertificateMetadata(saved: location, forCeId: newID, as: fileType)
+                }//: IF - ELSE
+            }//: CertificateMetadata()
+            
+            /// Private method that creates and returns a CertificateCoordinator object as part of the new CE certificate document creation and saving.
+            /// - Parameter metaData: CertificateMetadata object for the certificate
+            /// - Returns: CertificateCoordinator with the local URL that the data is saved to first along with the meta data
+            ///
+            /// - Note: If saving the certificate document to iCloud, the save method will handle that process as Apple recommends first saving the data
+            /// to local disk prior to saving to iCloud.  Once the file is moved, the coordinator's file url property can be updated.
+            private func createCertificateCoordinator(with metaData: CertificateMetadata, fileAt location: URL) -> CertificateCoordinator {
+                let versionInfo = MediaFileVersion(fileAt: location, version: 1.0)
+                return CertificateCoordinator(file: location, metaData: metaData, version: versionInfo)
+            }//: createCertificateCoordinator()
+            
+            /// Private method that does the work of finding the CeActivity stored in CoreData that the user is saving
+            /// a CE certificate object for.
+            /// - Parameter metaData: CertificateMetaData object, which has the ID for the CeActivity
+            /// - Returns: the CeActivity entity matching the assignedObjectID property in CertificateMetaData
+            private func matchCertificateWithActivity(using metaData: CertificateMetadata) -> CeActivity? {
+                let idToMatch = metaData.assignedObjectId
+                let context = dataController.container.viewContext
+                
+                let activityFetch = CeActivity.fetchRequest()
+                activityFetch.sortDescriptors = [NSSortDescriptor(key: "activityTitle", ascending: true)]
+                activityFetch.predicate = NSPredicate(format: "activityID == %@", idToMatch as CVarArg)
+                
+                let fetchedActivities = (try? context.fetch(activityFetch)) ?? []
+                guard fetchedActivities.count == 1 else { return nil }
+                
+                let matchedActivity: CeActivity = fetchedActivities.first!
+                return matchedActivity
+            }//: matchCertificatewithActivity
+        
+            
    
     // MARK: - Deleting Certificates
     
@@ -395,6 +531,7 @@ final class CertificateBrain: ObservableObject {
         }) else {
             handlingError = .unableToDelete
             errorMessage = "Unable to delete the certificate as the app was unable to locate where the data was saved. Try using the Files app or Finder to manually remove the file."
+            NSLog(">>>Error while attempting to delete CE certificate due to a missing coordinator for the specified activity.  Activity: \(activity.ceTitle)")
             return
         }//: GUARD
         
@@ -405,6 +542,7 @@ final class CertificateBrain: ObservableObject {
         } catch {
             handlingError = .unableToDelete
             errorMessage = "Unable to delete the certificate at the specified save location. You may need to manually delete it using the Files app or Finder."
+            NSLog(">>>Error while attempting to delete a CE certificate at \(certCoordinator.fileURL).")
             return
         }
         
@@ -428,6 +566,7 @@ final class CertificateBrain: ObservableObject {
         }) else {
             handlingError = .loadingError
             errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
+            NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
             return
         }//: GUARD
         
@@ -436,6 +575,7 @@ final class CertificateBrain: ObservableObject {
             guard success else {
                 self?.handlingError = .loadingError
                 self?.errorMessage = "Unable to load the certificate data from the saved file location."
+                NSLog(">>>Error opening CertificateDocument at \(certCoordinator.fileURL)")
                 return
             }
             
@@ -448,6 +588,7 @@ final class CertificateBrain: ObservableObject {
                     } else {
                         self?.handlingError = .loadingError
                         self?.errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
+                        NSLog(">>>Error creating thumbnail image for the certificate saved at \(certCoordinator.fileURL)")
                     }
                 case .pdf:
                     if let pdfData = certData.fullCertificate {
@@ -455,6 +596,7 @@ final class CertificateBrain: ObservableObject {
                     } else {
                         self?.handlingError = .loadingError
                         self?.errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
+                        NSLog(">>>Error loading PDF data for the certificate saved at \(certCoordinator.fileURL)")
                     }
                 case .audio:
                     return
@@ -462,6 +604,7 @@ final class CertificateBrain: ObservableObject {
             } else {
                 self?.handlingError = .loadingError
                 self?.errorMessage = "Unable to read the metadata for the certificate file which is needed to display the image or PDF."
+                NSLog(">>>Error reading CertificateMetadata for the certificate saved at \(certCoordinator.fileURL)")
             }//: IF - ELSE
         }//: open
         
@@ -482,6 +625,7 @@ final class CertificateBrain: ObservableObject {
         }) else {
             handlingError = .unableToMove
             errorMessage = "Unable to move certificate because the location on disk was not found."
+            NSLog(">>>Error finding certificate coordinator for CE activity \(activity.ceTitle) while attempting to move the certificate to iCloud.")
             return
         }//: GUARD
         
@@ -502,6 +646,7 @@ final class CertificateBrain: ObservableObject {
         else {
             handlingError = .unableToMove
             errorMessage = "Unable to move the locally saved certificate because either the certificate data could not be located on disk, there was an issue connecting to iCloud, or the file's metadata could not be accessed."
+            NSLog(">>>Error while attempting to move a CE certificate to iCloud due to either no coordinator object with the local URL in it's fileURL property, an inaccessible URL for the user's iCloud container, or error in downcasting the CertificateMetadata object from the coordinator object.")
             return
         }//: GUARD
         
@@ -514,225 +659,90 @@ final class CertificateBrain: ObservableObject {
                         destinationURL: moveToURL
                     )
                     assignedCoordinator.fileURL = moveToURL
-                    certMeta.whereSaved = .cloud
+                    certMeta.markSavedOniCloud()
                     self.encodeCoordinatorList()
                 } catch {
                     self.handlingError = .unableToMove
                     self.errorMessage = "Unable to move certificate to iCloud."
+                    NSLog(">>>Error while trying to move a local certificate to the user's iCloud container. From \(localCertToMove) to iCloud: \(moveToURL)")
                 }
             }//: TASK (detached)
      
     }//: moveCertToCloud
     
+        // MARK: MOVE HELPERS
     
-    // MARK: - STORAGE SYNC
-    
-    /// Private method that ensures the JSON file containing all CertificateCoordinator objects is in sync with all files saved both locally and on
-    /// iCloud.
-    ///
-    /// The method first looks for the JSON file on iCloud, and if it exists then those values are decoded to the allCoordinators property.  It then
-    /// checks the user's cloud sync preference for certificates and if it is for local storage only, then the JSON file is moved to the local device.
-    /// If the file is not on iCloud or it does not contain any data, then the local directory for the JSON file will be checked and, again, if the user's
-    /// certificate storage preference is set to iCloud then the file will be moved to iCloud if possible.
-    ///
-    /// If there are values in the allCoordinators property after the initial file check and decoding, then the method will update it by comparing the
-    /// existing set in allCoordinators with the coordinators set returned by the private method getCoordinatorsForAllFiles().  Any new coordinators
-    /// will be added to the allCoordinators set.
-    ///
-    /// If no values are in allCoordinators, then the getCoordinatorsForAllFliles method is called to create coordinator objects for any CE certificates
-    /// saved both on iCloud (if available) and on the local device.  Thoe objects are then used to set the value of allCoordinators and it is then
-    /// encoded to disk, using the URL returned from the allCoordinatorsListURL computed property.
-    private func syncCoordinatorList() async {
-        // Find & retrieve previously saved list, if available
-        if let cloudList = coordinatorCloudStoredListURL, let _ = try? Data(contentsOf: cloudList) {
-            decodeCoordinatorList(from: cloudList)
-            if dataController.prefersCertificatesInICloud == false {
-                do {
-                    try fileSystem.setUbiquitous(
-                        false, itemAt: cloudList,
-                        destinationURL: URL.localCertCoordinatorsListFile
-                    )
-                } catch {
-                    handlingError = .unableToMove
-                    errorMessage = "Encountered an error when trying to move certificate related data from iCloud to the local device."
-                }//: DO - CATCH
-            }//: IF (!prefersCertificatesInICloud)
-        } else {
-            let localList = URL.localCertCoordinatorsListFile
-            if let _ = try? Data(contentsOf: localList) {
-                decodeCoordinatorList(from: localList)
-                if dataController.prefersCertificatesInICloud, let cloudList = coordinatorCloudStoredListURL {
-                    do {
-                        try fileSystem.setUbiquitous(
-                            true, itemAt: localList,
-                            destinationURL: cloudList
-                        )
-                    } catch {
-                        handlingError = .unableToMove
-                        errorMessage = "Unable to transfer local certificate data to iCloud."
-                    }//: DO - CATCH
+            /// Private method for obtaining all of the file URLs for any and all CertificateDocuments that have been saved at a specified location (url).
+            /// - Parameters:
+            ///     - location: the URL for the directory that is to be searched
+            /// - Returns: An array of URLs that correspond to saved certificates within the location argument
+            ///
+            /// - Important: This method only returns the URLs for individual CertificateDocument files.  If the URLs
+            /// for sub-directories are needed, a separate method will be needed.  Also, the file extension MUST be "cert" in order for the URL to be added
+            /// to the returned array.
+            ///
+            /// The methodology employed by this method goes by the general file structure envisioned for this app, which is thus:  Within the Documents
+            /// folder for the app (either local or iCloud), there should be a Certificates folder and within that subfolders for every certificate saved that has
+            /// a matching CeActivity with a non-nil activityTitle property.  However, in the rare event a CeActivity does not have a title, then certificates for
+            /// those activities are to be saved in the top level of the Certificates folder.
+            ///
+            /// Based on that structure, the method first searches the Certificates folder for any "cert" files and adds those URLs to the array that will be
+            /// returned. Next, it then iterates through all sub-folders in Certificates and retrieves the individual file URLs from each of them and adds those
+            /// to the array.
+            ///
+            /// - Note: All URLs are created by the createDocURL(with metaData, for saveLocale) private method, which will place all certificates inside of
+            /// a folder with the name of the CeActivity assigned to it within the respective ./Certificates folder, but if a CeActivity happens to have a blank title,
+            /// then any assigned certificates will be placed in the ./Certificates directory.
+            private func getAllSavedCertificateURLs(from location: URL) -> [URL] {
+                var foundURLs: [URL] = []
+                
+                // Checking for any saved certificates in the top-level Certificates folder
+                // These would be any that are assigned to a CeActivity that has a nil activityTitle property value.
+                let topLevelCerts = (
+                    try? fileSystem.contentsOfDirectory(
+                        at: location,
+                        includingPropertiesForKeys: [.isRegularFileKey],
+                        options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
+                    )) ?? []
+                if topLevelCerts.isNotEmpty {
+                    topLevelCerts.forEach { cert in
+                        if cert.pathExtension == fileExtension {
+                            foundURLs.append(cert)
+                        }
+                    }//: forEach(topLevelCerts)
+                }//: IF
+                
+                // Going through all sub-directories, which is the activity name
+                let subDirectories = (
+                    try? fileSystem.contentsOfDirectory(
+                        at: location,
+                        includingPropertiesForKeys: [.isDirectoryKey],
+                        options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]
+                    )) ?? []
+                
+                guard subDirectories.isNotEmpty else { return foundURLs }
+                
+                subDirectories.forEach { file in
+                    // TODO: Check whether the correct property key was used as the argument
+                    let certsInFile = (
+                        try? fileSystem.contentsOfDirectory(
+                            at: file,
+                            includingPropertiesForKeys: [.isRegularFileKey],
+                            options: .skipsHiddenFiles
+                        )) ?? []
                     
-                } //: IF LET
-            }//: IF LET
-        }//: IF ELSE
+                    if certsInFile.count > 0 {
+                        certsInFile.forEach { cert in
+                            if cert.pathExtension == fileExtension {
+                                foundURLs.append(cert)
+                            }
+                        }//: forEach (certsInFile)
+                    }//: IF
+                }//: forEach (localDirectories)
+                
+                return foundURLs
+            }//: getAllLocallySavedCertURLS()
         
-        if allCoordinators.isNotEmpty {
-            let currentCoordinators = await getCoordinatorsForAllFiles()
-            let coordinatorsToAdd = currentCoordinators.subtracting(allCoordinators)
-            if coordinatorsToAdd.isNotEmpty {
-                let updatedList = allCoordinators.union(coordinatorsToAdd)
-                allCoordinators = updatedList
-            }
-            encodeCoordinatorList()
-        } else {
-            // If no previously saved list, get new coordinator objects,
-            // assign them to the allCoordinators list and then write that
-            // list to file in the appropriate location.
-            let newCoordinators = await getCoordinatorsForAllFiles()
-            allCoordinators = newCoordinators
-            encodeCoordinatorList()
-        }//: IF - ELSE
-    }//: syncCoordinatorList()
-    
-    
-    
-   
-    // MARK: - COORDINATOR LIST
-    
-    /// Private method that encodes the allCoordinators set as a JSON file and then writes the file to
-    /// the url set by the allCoordinatorsListURL computed property.  If successful, will then set the
-    /// allCoordinators set to an empty value in order to free up memory.
-    /// - Parameters:
-    ///     - location: OPTIONAL URL value if a location other than what is computed by the
-    ///     allCoordinatorsListURL property is needed
-    private func encodeCoordinatorList(to location: URL? = nil) {
-        let encoder = JSONEncoder()
-        let encodedList = try? encoder.encode(allCoordinators)
-        if let data = encodedList {
-            do {
-                if let specifiedURL = location {
-                    try data.write(to: specifiedURL)
-                    allCoordinators = []
-                } else {
-                    try data.write(to: allCoordinatorsListURL)
-                    allCoordinators = []
-                }
-            } catch {
-                handlingError = .writeFailed
-                errorMessage = "Unable to save certificates due to an error writing the file that keeps track of where they are saved to."
-                return
-            }
-        }//: IF LET
-    }//: encodeCoorsinatorList()
-    
-    /// Private method that decodes and reads the CertificateCoordinator objects contained within the
-    /// JSON file saved at the url set by the allCoordinatorsListURL computed property.
-    /// - Parameters:
-    ///     - location: OPTIONAL URL if a different location from the one produced by the
-    ///     allCoordinatorsListURL property is needed
-    ///
-    /// - Note: This method assigns the value of the decoded JSON file to the allCoordinators property if there is
-    /// anything there and it can be decoded.  If not, then no changes will be made to the allCoordinators property.
-    ///
-    /// The reason for the optional location argument is due to the fact that if it remains nil then the method will use the
-    /// computed property allCoordinatorsListURL to set the URL from which to decode the JSON file.  Depending on the
-    /// method this function is being called in, a specific location URL may need to be passed in, so this method can handle
-    /// any situation.
-    private func decodeCoordinatorList(from location: URL? = nil) {
-        let decoder = JSONDecoder()
-        if let specifiedLocation = location, let data = try? Data(contentsOf: specifiedLocation) {
-            allCoordinators = (try? decoder.decode(Set<CertificateCoordinator>.self, from: data)) ?? []
-        } else {
-            if let data = try? Data(contentsOf: allCoordinatorsListURL) {
-                allCoordinators = (try? decoder.decode(Set<CertificateCoordinator>.self, from: data)) ?? []
-            }//: IF LET
-        }//: IF - ELSE
-    }//: decodeCoordinatorList()
-    
-    /// Private method which moves the certificate coordinator JSON file from local storage to the app's
-    /// ubiquity container in iCloud.
-    ///
-    /// - Dependencies:
-    ///     - URL.localCertCoordinatorsFolder static property
-    ///     - cloudCertsFolderURL computed property
-    ///     - allCoordinatorsListURL computed property
-    private func moveLocalCoordListToICloud() {
-        let savedCoordList = try? Data(contentsOf: URL.localCertCoordinatorsListFile)
-        guard let _ = savedCoordList,
-            dataController.iCloudAvailability.useLocalStorage == false,
-           let _ = cloudCertsFolderURL
-        else { return }
-        
-            let _: Task<Void, Never> = Task.detached {
-                try? self.fileSystem.setUbiquitous(
-                    true,
-                    itemAt: URL.localCertCoordinatorsListFile,
-                    destinationURL: self.allCoordinatorsListURL
-                )
-            }//: TASK (detached)
-    }//: moveLocalCoordListToICloud()
-    
-    
-    /// Private method in CertificateBrain that searches the local app sandbox (documentsDirectory/Certificates) and the iCloud ubiquity
-    /// container (if available) and creates a new set of CertificateCoordinator objects for each which is then used to set the value
-    /// of the allCoordinators property in CertificateBrain.
-    /// - Returns:
-    ///     - Set of CertificateCoordinator objects for every valid URL in the app's certificates iCloud folder and local device folder
-    private func getCoordinatorsForAllFiles() async -> Set<CertificateCoordinator>{
-        var createdCoordinators: Set<CertificateCoordinator> = []
-        var allCloudSavedFiles: [URL] = []
-        var problemFiles: [URL] = []
-        let localFiles = getAllSavedCertificateURLs(from: URL.localCertificatesFolder)
-        if let cloudDrive = cloudCertsFolderURL {
-             let cloudFiles = getAllSavedCertificateURLs(from: cloudDrive)
-             cloudFiles.forEach { allCloudSavedFiles.append($0) }
-        }//:IF LET
-        
-        // Iterating through all locally saved certificates to create new coordinators
-        // for each
-        for file in localFiles {
-            var pulledMetadata = extractMetadataFromDoc(at: file)
-            if pulledMetadata.isExampleOnly == false {
-                pulledMetadata.whereSaved = .local
-                let newCoordinator = CertificateCoordinator(
-                    file: file,
-                    metaData: pulledMetadata,
-                    version: MediaFileVersion(fileAt: file, version: 1.0)
-                )
-                createdCoordinators.insert(newCoordinator)
-            } else {
-                problemFiles.append(file)
-            }
-        }//: LOOP
-        
-        // Creating coordinator objects fro all cloud-based certificates
-        if allCloudSavedFiles.count > 0 {
-            for file in allCloudSavedFiles {
-                var pulledMetadata = extractMetadataFromDoc(at: file)
-                if pulledMetadata.isExampleOnly == false {
-                    pulledMetadata.whereSaved = .cloud
-                    let newCoordinator = CertificateCoordinator(
-                        file: file,
-                        metaData: pulledMetadata,
-                        version: MediaFileVersion(fileAt: file, version: 1.0)
-                    )
-                    
-                    createdCoordinators.insert(newCoordinator)
-                } else {
-                    problemFiles.append(file)
-                }//: IF - ELSE
-            }//: LOOP
-        }//: IF (count > 0)
-        
-        guard problemFiles.isEmpty else {
-            handlingError = .syncError
-            errorMessage = "A problem was encountered while trying to sync certificate data saved on this device and iCloud. If you don't see a certificate that you previously saved then try quitting the app, wait a few minutes, and reopen the app again."
-            return []
-        }//: GUARD
-        
-        return createdCoordinators
-    }//: getCoordinatorsForAllFiles()
-    
     // MARK: - OBSERVER METHODS
     
     /// Observer method that simply logs whenever a batch of query results is completed and the notification is sent by
@@ -754,9 +764,14 @@ final class CertificateBrain: ObservableObject {
             let resultItem = certQuery.result(at: item)
             if let certResult = resultItem as? NSMetadataItem,
                let certURL = certResult.value(forAttribute: .resultURL) as? URL  {
-                let itemMeta = extractMetadataFromDoc(at: certURL)
-                let coordinator = createCertificateCoordinator(with: itemMeta, fileAt: certURL)
-                cloudCoordinators.insert(coordinator)
+                var itemMeta = extractMetadataFromDoc(at: certURL)
+                if itemMeta.isExampleOnly == false {
+                    itemMeta.markSavedOniCloud()
+                    let coordinator = createCertificateCoordinator(with: itemMeta, fileAt: certURL)
+                    cloudCoordinators.insert(coordinator)
+                } else {
+                    continue
+                }
             }//: IF LET (as NSMetadataItem)
         }//: LOOP
         
@@ -773,6 +788,11 @@ final class CertificateBrain: ObservableObject {
             name: .NSMetadataQueryDidFinishGathering,
             object: certQuery
         )
+        
+        let _: Task<Void, Never> = Task.detached {
+            await self.syncCoordinatorList()
+        }//: TASK
+        
     }//: cloudCertSearchFinished
     
     /// Private selector method used in the .NSUbiquityIdentityDidChange observer for the CertificateBrain class that
@@ -780,9 +800,18 @@ final class CertificateBrain: ObservableObject {
     /// by the allCoordinatorsURL computed property.
     /// - Parameter notification: Notification object that is generated when the ubiquity idenity value changes
     @objc private func syncCertFileStorage(_ notification: Notification) {
-        // TODO: Add logic
+        startICloudCertSearch()
+        
+        let _: Task<Void, Never> = Task.detached {
+            await self.syncCoordinatorList()
+        }//: TASK
        
     }//: moveLocalCoordListToiCloudUpon()
+    
+    @objc private func cloudPreferenceChanged(_ notification: Notification) {
+        // TODO: Add logic
+    }//: cloudPreferenceChange()
+    
     
     // MARK: - HELPER METHODS (private)
     
@@ -844,10 +873,7 @@ final class CertificateBrain: ObservableObject {
     init(dataController: DataController) {
         self.dataController = dataController
       
-        
-        let _: Task<Void, Never> = Task {
-            
-        }//: TASK
+        startICloudCertSearch()
         
         // MARK: - OBSERVERS
         
@@ -858,7 +884,21 @@ final class CertificateBrain: ObservableObject {
             object: nil
         )
         
-       
+        let certificateStoragePrefChange = Notification.Name(.cloudStoragePreferenceChanged)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(cloudPreferenceChanged(_:)),
+            name: certificateStoragePrefChange,
+            object: nil
+        )
+        
         
     }//: INIT
+    
+    // MARK: - DEINIT
+    deinit {
+        encodeCoordinatorList()
+        
+    }//: DEINIT
 }//: CertificateController

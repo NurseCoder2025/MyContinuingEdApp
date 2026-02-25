@@ -26,10 +26,20 @@ import Foundation
 ///  CertificateCoordinator's assignedObjectId property as well.
 struct CertificateMetadata: MediaMetadata {
     // MARK: - PROPERTIES
-    var whereSaved: SaveLocation = .local
+    internal var whereSaved: SaveLocation = .local
     let assignedObjectId: UUID
     var mediaAs: MediaType = .image
     var isExampleOnly: Bool = false
+    
+    // MARK: - METHODS
+    
+    mutating func markSavedOniCloud() {
+        whereSaved = .cloud
+    }//: markSaveOniCloud()
+    
+    mutating func markSavedOnDevice() {
+        whereSaved = .local
+    }//: markSavedOnDevice()
     
     // MARK: - EXAMPLE
     static let example = CertificateMetadata(forCeId: UUID(), exampleOnly: true)

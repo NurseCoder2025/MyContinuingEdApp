@@ -332,6 +332,8 @@ extension DataController {
         set {
             objectWillChange.send()
             sharedSettings.set(newValue, forKey: "prefersCertificatesInICloud")
+            let updateNotification = Notification.Name(.cloudStoragePreferenceChanged)
+            NotificationCenter.default.post(name: updateNotification, object: nil)
         }
     }//: prefersCertificatesInICloud
     

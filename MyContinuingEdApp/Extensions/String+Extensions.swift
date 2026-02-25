@@ -50,4 +50,9 @@ extension String {
     /// decodeICloudUserIDFile.
     static let iCloudUserID: String = "iCloudUserID.json"
     
+    // MARK: - OBSERVER NAMES
+    
+    static let cloudStoragePreferenceChanged: String = "certificateMediaStoragePreferenceChanged"
+    
+    
 }//: EXTENSION
