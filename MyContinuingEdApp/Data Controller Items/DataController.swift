@@ -212,7 +212,7 @@ class DataController: ObservableObject {
         // MARK: MONITOR TRANSACTIONS
         storeTask = Task {
             await monitorTransactions()
-        }
+        }//: TASK
         
         // identifying the name of the stored data to load and use
         if inMemory {
@@ -251,7 +251,7 @@ class DataController: ObservableObject {
                 object: sharedSettings
             )//: OBSERVER
             
-            
+            // MARK: ICLOUD TASK
             iCloudTasks = Task {
                 await assessUserICloudStatus()
             }//: TASK

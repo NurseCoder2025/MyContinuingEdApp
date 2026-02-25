@@ -33,13 +33,17 @@ extension DataController {
         // Whenever the user logs in/out of iCloud, or changes data sync
         // setting
         defaultICloudContainer.fetchUserRecordID { (recordID, error) in
-            if let newID = recordID, let savedID = self.userICloudID, error == nil {
-                self.compareAppleAccountIDs(oldID: savedID, newID: newID)
+            self.decodeICloudUserIDFile()
+            if let newID = recordID,
+                let savedID = self.userICloudID,
+                error == nil {
+                    self.compareAppleAccountIDs(oldID: savedID, newID: newID)
             } else if let newID = recordID, error == nil {
                 self.userICloudID = newID
                 self.iCloudAvailability = .loggedIn
                 self.certificateAudioStorage = .cloud
                 self.userCloudDriveURL = self.fileSystem.url(forUbiquityContainerIdentifier: nil)
+                self.encodeICloudUserIDFile()
             } else if recordID == nil, error == nil {
                 self.iCloudAvailability = .needSyncingAccount
                 self.certificateAudioStorage = .local
@@ -85,11 +89,14 @@ extension DataController {
                     // being used to sign-in for iCloud has changed from
                     // what was previously saved.
                    let obtainedID = try await defaultICloudContainer.userRecordID()
+                   decodeICloudUserIDFile()
+                    
                     if let savedID = userICloudID {
                         compareAppleAccountIDs(oldID: savedID, newID: obtainedID)
                     } else {
                         userICloudID = obtainedID
                         iCloudAvailability = .loggedIn
+                        encodeICloudUserIDFile()
                     }
                 } catch {
                     // Per Apple's documentation, the userRecordID() method
@@ -102,7 +109,7 @@ extension DataController {
                     // for any restrictions, so if an error is thrown here
                     // it is most likely due to the user disabling the sync.
                     iCloudAvailability = .loggedInDisabled
-                }
+                }//: DO-CATCH
                 certificateAudioStorage = .cloud
                 userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
             case .noAccount:
@@ -125,6 +132,47 @@ extension DataController {
     }//: assessUserICloudStatus()
     
     
+    // MARK: - SUPPORTING (PRIVATE) METHODS
+    
+    /// Private method that writes the obtained userICloudID property to local disk for long-term
+    /// storage via the NSCoding protocol.
+    ///
+    /// - Important: There are two constants used for creating the key and URL for saving
+    /// the file:  the key is set by the String.userIDKey and the URL is set by the URL's
+    /// localICloudUserFile property.  See the respective extensions for details.
+    private func encodeICloudUserIDFile() {
+        if let userID = userICloudID {
+            let coder = NSKeyedArchiver(requiringSecureCoding: false)
+            coder.encode(userID, forKey: String.userIDKey)
+            coder.finishEncoding()
+            
+            let data = coder.encodedData
+            try? data.write(to: URL.localICloudUserFile)
+        }//: IF LET
+    }//: encodeICloudUserIDFile()
+    
+    /// Private DataController method that loads the encoded user iCloud record (CKRecord.ID) data
+    /// from the URL.localICloudUserFile and places it into memory via the userICloudID property.
+    ///
+    /// - Note: This only will set a value if data has been previously saved.  The method
+    /// will simply return in the case of first-time app runs on a user's device.  If the decoding of the
+    /// data from that file throws an error then the method will just return with no changes made to the
+    /// userICloudID property.
+    private func decodeICloudUserIDFile() {
+        if let savedUserInfo = try? Data(contentsOf: URL.localICloudUserFile) {
+            do {
+                let loader = try NSKeyedUnarchiver(forReadingFrom: savedUserInfo)
+                loader.requiresSecureCoding = false
+                if let decodedData = loader.decodeObject(forKey: String.userIDKey) {
+                    userICloudID = decodedData as? CKRecord.ID
+                }
+            } catch {
+                return
+            }//: DO - CATCH
+        }//: IF LET
+    }//: decodeICloudUserIDFile()
+    
+    
     /// Private method that compares two different iCloud Container record ID properties to see if they are equal or not. If they
     /// are, then the iCloudAvailability property is set to the iCloudStatus.loggedIn enum value; otherwise, it is set to
     /// iCloudStatus.loggedINDifferentAppleID.
@@ -137,7 +185,9 @@ extension DataController {
             certificateAudioStorage = .cloud
         } else {
             userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
+            userICloudID = newID
             iCloudAvailability = .loggedINDifferentAppleID
+            encodeICloudUserIDFile()
         }
     }//: compareAppleAccountIDs()
     

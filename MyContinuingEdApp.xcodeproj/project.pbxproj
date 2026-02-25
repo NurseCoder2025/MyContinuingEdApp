@@ -11,6 +11,8 @@
 		3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */; };
 		3F0095DF2E9458B400101310 /* CredentialSubCatListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */; };
 		3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */; };
+		3F0648472F49C7F20077626C /* NSFileVersion+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0648462F49C7F20077626C /* NSFileVersion+Extensions.swift */; };
+		3F0648492F49F8FA0077626C /* MediaFileVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0648482F49F8FA0077626C /* MediaFileVersion.swift */; };
 		3F09F75F2EAAA94400FE5277 /* SidebarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F75E2EAAA94400FE5277 /* SidebarViewModel.swift */; };
 		3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */; };
 		3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */; };
@@ -277,6 +279,8 @@
 		3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialCatBoxView.swift; sourceTree = "<group>"; };
 		3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSubCatListSheet.swift; sourceTree = "<group>"; };
 		3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
+		3F0648462F49C7F20077626C /* NSFileVersion+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSFileVersion+Extensions.swift"; sourceTree = "<group>"; };
+		3F0648482F49F8FA0077626C /* MediaFileVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileVersion.swift; sourceTree = "<group>"; };
 		3F09F75E2EAAA94400FE5277 /* SidebarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewModel.swift; sourceTree = "<group>"; };
 		3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionViewModel.swift; sourceTree = "<group>"; };
 		3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialsSectionHeaderViewModel.swift; sourceTree = "<group>"; };
@@ -613,6 +617,7 @@
 		3F2A42C32EA2C72B00B095CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				3F0648462F49C7F20077626C /* NSFileVersion+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
 				3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */,
@@ -882,6 +887,7 @@
 			children = (
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift */,
+				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3FDF714B2F1850380036D490 /* DataController-Templates.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
 				3F5D03302EB3F35E00F5B1DC /* DataController-Preloading.swift */,
@@ -894,7 +900,6 @@
 				3F5D03322EB3F3BC00F5B1DC /* DataController-Achievements.swift */,
 				3F5D84F82F0E02D600B179C4 /* DataController-SpecialCats.swift */,
 				3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */,
-				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */,
 				3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */,
 				3F5D032E2EB3F2E500F5B1DC /* DataController-Automation.swift */,
@@ -1074,6 +1079,7 @@
 			children = (
 				3F47D9A32F468D8E00B02580 /* CertificateData.swift */,
 				3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */,
+				3F0648482F49F8FA0077626C /* MediaFileVersion.swift */,
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
 				3F83C7C12F0F3C1E00FB4CF2 /* Reinstatement */,
 				3FD74F782F033771002360AB /* Onboarding */,
@@ -1367,6 +1373,7 @@
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
+				3F0648492F49F8FA0077626C /* MediaFileVersion.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
@@ -1404,6 +1411,7 @@
 				F291AE8A2E5E55D900ECA8CD /* DesignationBoxView.swift in Sources */,
 				F2612A212E874D6500CC463D /* ActivityExpirationDetailsView.swift in Sources */,
 				F2BDFC112E83657A00A8CDAA /* RenewalPeriodDatesView.swift in Sources */,
+				3F0648472F49C7F20077626C /* NSFileVersion+Extensions.swift in Sources */,
 				3F5D03292EB3F15800F5B1DC /* DataController-NewObjects.swift in Sources */,
 				3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */,
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,

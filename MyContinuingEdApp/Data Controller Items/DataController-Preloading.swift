@@ -400,6 +400,8 @@ extension DataController {
             showDAINotifications = true
             showReinstatementAlerts = true
             setTagBadgeCount(to: BadgeCountOption.allItems.rawValue)
+            prefersCertificatesInICloud = true
+            prefersAudioReflectionsInICloud = true
         
     }//: setDefaultSettingsKeys()
     

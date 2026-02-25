@@ -334,6 +334,8 @@ enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
     case unableToCheck = "Problem Checking"
     case needSyncingAccount = "Need Enabled iCloud Drive"
     case cantLogin = "Can't Login to iCloud"
+    case incompatibleAppVersion = "Outdated App Version"
+    case icloudDriveFull = "Storage Full"
     case initialStatus = "Initial"
     
     var id: String { self.rawValue }
@@ -360,6 +362,10 @@ enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
             "Either you don't currently have an iCloud account or you have disabled iCloud Drive for this device. If you want access to saved CE data on other Apple devices, then please enable iCloud drive or create an account. Otherwise, any new items will be saved to the local device only."
         case .cantLogin:
             "According to your device, you can't be logged into iCloud because either you don't have an account, have a restricted iCloud account, or have disabled iCloud Drive. Until iCloud Drive is enabled and you're logged in without restrictions, then the app will only save data locally to the device."
+        case .incompatibleAppVersion:
+            "You are running an out-of-date version of the app which can no longer sync with iCloud. Please update the app to continue using iCloud sync. Otherwise, CE data will be stored on this device only."
+        case .icloudDriveFull:
+            "You have met the limit of your iCloud Drive's storage capacity, so the app can no longer save any new data to it until you either upgrade your iCloud storage or free up space to allow for the saving of data from this app. Any new items will be saved to the local device only until space is available on your iCloud Drive again."
         case .initialStatus:
             ""
         }
@@ -387,6 +393,10 @@ enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
             return true
         case .cantLogin:
             return true
+        case .incompatibleAppVersion:
+            return true
+        case .icloudDriveFull:
+            return true
         case .initialStatus:
             return true
         }
@@ -413,5 +423,7 @@ enum FileIOError: Error {
     case unableToMove
     case operationUnneeded
     case saveLocationUnavailable
+    case loadingError
+    case syncError
     case unknownError
 }

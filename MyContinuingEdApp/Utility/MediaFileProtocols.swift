@@ -35,7 +35,7 @@ protocol MediaMetadata: Identifiable, Codable, Hashable {
 
 extension MediaMetadata {
     var id: UUID { return UUID() }
-    var versionNumber: Double {1.0}
+    var versionNumber: Double{ return 1.0 }
 }//: EXTENSION
 
 // MARK: - Media Coordination
@@ -49,16 +49,18 @@ extension MediaMetadata {
 ///         - fileURL: URL (get & set)
 ///         - assignedObjectID: UUID (get)
 ///         - mediaMetadata: any object conforming to the MediaMetadata protocol
+///         - fileVersion: a NSFileVersion class instance for the fileURL being represented
 ///
 ///  - Note: Default values are set for the id propetry (as a new UUID value) & the assignedObjectID
 ///  property (from the mediaMetadata object's assignedObjectID property) via protocol extension.  Also,
-///  a custom hash function sets the hash value as consisting of the coordinator's id and assignedObjectID
-///  values.
-protocol MediaCoordinator: Identifiable, Hashable {
+///  a custom hash function sets the hash value as the fileURL property as all urls should be unique and
+///  this will prevent potential conflicts where two coordinators have the same URL.
+protocol MediaCoordinator: Identifiable, Hashable, Codable {
     var id: UUID {get}
     var fileURL: URL {get set}
     var assignedObjectID: UUID {get}
     var mediaMetadata: any MediaMetadata {get}
+    var fileVersion: MediaFileVersion {get set}
 }//: PROTOCOL
 
 extension MediaCoordinator {
@@ -66,8 +68,7 @@ extension MediaCoordinator {
     var assignedObjectID: UUID {mediaMetadata.assignedObjectId}
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(mediaMetadata.assignedObjectId)
+        hasher.combine(fileURL)
     }//: hash
 }//: EXTENSION
 

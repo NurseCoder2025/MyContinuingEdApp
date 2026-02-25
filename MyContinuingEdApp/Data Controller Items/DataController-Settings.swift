@@ -321,6 +321,30 @@ extension DataController {
             sharedSettings.set(newValue, forKey: "requestReviewCount")
         }
     }//: requestReviewCount
+    
+    
+    // MARK: iCLOUD STORAGE
+    
+    var prefersCertificatesInICloud: Bool {
+        get {
+            sharedSettings.bool(forKey: "prefersCertificatesInICloud")
+        }
+        set {
+            objectWillChange.send()
+            sharedSettings.set(newValue, forKey: "prefersCertificatesInICloud")
+        }
+    }//: prefersCertificatesInICloud
+    
+    var prefersAudioReflectionsInICloud: Bool {
+        get {
+            sharedSettings.bool(forKey: "prefersAudioReflectionsInICloud")
+        }
+        set {
+            sharedSettings.set(newValue, forKey: "prefersAudioReflectionsInICloud")
+            objectWillChange.send( )
+        }
+        
+    }//: prefersAudioReflectionsInICloud
    
     
     // MARK: - Methods
@@ -349,7 +373,9 @@ extension DataController {
             "firstLiveEventAlert",
             "secondLiveEventAlert",
             "tagBadgeCountOf",
-            "isFirstRun"
+            "isFirstRun",
+            "prefersCertificatesInICloud",
+            "prefersAudioReflectionsInICloud"
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}
