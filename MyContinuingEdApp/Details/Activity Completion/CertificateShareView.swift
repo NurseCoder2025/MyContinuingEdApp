@@ -15,7 +15,7 @@ struct CertificateShareView: View {
     // MARK: - BODY
     var body: some View {
        // Save a copy of the file to temporary storage for sharing
-        if let url = createTempFileURL(for: activity, with: certificateData) {
+        if let url = HelperFunctions.createTempFileURL(for: activity, with: certificateData) {
             ShareLink(item: url) {
                 Label("Export Certificate", systemImage: "square.and.arrow.up")
             } //: SHARE LINK

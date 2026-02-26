@@ -95,7 +95,7 @@ struct ReinstatementCEProgressView: View {
 // MARK: - PREVIEW
 #Preview {
     let controller = DataController(inMemory: true)
-    let sampleCred = controller.createSampleCredential()
+    let _ = controller.createSampleCredential()
     let sampleRenewal = controller.createSampleRenewalPeriod(reinstateYN: true)
     
     if let reinstatement = sampleRenewal.reinstatement {

@@ -42,7 +42,7 @@ struct AwardsView: View {
     /// Computed property in AwardsView that returns a String composed of either the award's description and
     /// when it was earned on, just the award's description (if no date is available), or an empty string.
     var awardMessage: String {
-        if let award = selectedAward, let desc = award.achievementDescript, let awardDate = award.dateEarned {
+        if let award = selectedAward, let desc = award.achievementDescript, let _ = award.dateEarned {
             return "\(desc)/n/nEarned on \(earnedDate)"
         } else if let award = selectedAward, let desc = award.achievementDescript {
             return "\(desc)"
@@ -73,7 +73,7 @@ struct AwardsView: View {
                                     .frame(width: 100, height: 100)
                                     .foregroundStyle(getAwardColor(award: award))
                                     .overlay(alignment: .bottom) {
-                                        if let awardDate = award.dateEarned {
+                                        if award.dateEarned != nil {
                                             // TODO: Adjust coloring
                                             Text(earnedDate)
                                                 .bold()

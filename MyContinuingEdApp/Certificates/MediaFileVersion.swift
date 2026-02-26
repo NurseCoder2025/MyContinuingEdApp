@@ -32,6 +32,19 @@ struct MediaFileVersion: Codable, Equatable {
         NSFileVersion.currentVersionOfItem(at: fileLocation)
     }//: createFileVersionObject(with)
     
+    
+    /// Struct method that returns the name of the file represented by MediaFileVersion
+    /// via the NSFileVersion's localizedName property.
+    /// - Returns: localizedName for the NSFileVersion of the object or
+    /// "Unknown File Name" if that can't be obtained.
+    func getFileName() -> String {
+        if let fileVersion = createFileVersionOfObject() {
+            return fileVersion.localizedName ?? "Unknown File Name"
+        } else {
+            return "Unknown File Name"
+        }
+    }//: getFileName()
+    
     // MARK: - PROTOCOL CONFORMANCE
     static func ==(lhs: MediaFileVersion, rhs: MediaFileVersion) -> Bool {
         if lhs.fileLocation == rhs.fileLocation && lhs.version == rhs.version {

@@ -54,5 +54,7 @@ extension String {
     
     static let cloudStoragePreferenceChanged: String = "certificateMediaStoragePreferenceChanged"
     
+    static let certCoordinatorListSyncCompleted: String = "certCoordinatorListSynced"
+    
     
 }//: EXTENSION

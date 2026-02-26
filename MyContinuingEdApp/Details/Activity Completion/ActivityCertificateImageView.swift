@@ -59,11 +59,11 @@ struct ActivityCertificateImageView: View {
                         )
                         
                         if let data = activity.completionCertificate, data.count > 0 {
-                            if isPDF(data) {
+                            if HelperFunctions.isPDF(data) {
                                 PDFKitView(data: data)
                                     .frame(height: 300)
                                     .accessibilityLabel("PDF view of your CE Certificate for this activity.")
-                            } else if let certImage = decodeCertImage(from: data) {
+                            } else if let certImage = HelperFunctions.decodeCertImage(from: data) {
                                 Image(uiImage: certImage)
                                     .resizable()
                                     .scaledToFit()

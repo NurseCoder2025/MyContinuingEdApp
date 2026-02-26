@@ -308,6 +308,7 @@ extension DataController {
     
     // MARK: Rate App Indicator
     
+    #if DEBUG
     /// Computed getter & setter for a Settings key (@Published sharedSettings) intended for use only
     /// within the development context where the number of app loads is tracked so that the prompt
     /// for reviewing an app is only shown so often.
@@ -321,6 +322,8 @@ extension DataController {
             sharedSettings.set(newValue, forKey: "requestReviewCount")
         }
     }//: requestReviewCount
+    #endif
+    
     
     
     // MARK: iCLOUD STORAGE
@@ -333,7 +336,14 @@ extension DataController {
             objectWillChange.send()
             sharedSettings.set(newValue, forKey: "prefersCertificatesInICloud")
             let updateNotification = Notification.Name(.cloudStoragePreferenceChanged)
-            NotificationCenter.default.post(name: updateNotification, object: nil)
+            // Need to be explicit about posting on the main thread due to
+            // an observer method (moveCertFiles) that needs to be run on
+            // background threads and is called within a detached Task by a
+            // selector method running on the thread this notification comes
+            // from.
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: updateNotification, object: nil)
+            }//: DISPATCH QUEUE
         }
     }//: prefersCertificatesInICloud
     

@@ -41,7 +41,7 @@ struct PromptResponseView: View {
         // TODO: Add a button and method for deleting the object
         VStack {
             // Selected prompt question  + button to change
-            if let savedPrompt = response.question {
+            if response.question != nil {
                 Group {
                     
                     PromptHeaderView(response: response, onSelectPrompt: {
