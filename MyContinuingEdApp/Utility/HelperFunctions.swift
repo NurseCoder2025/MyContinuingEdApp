@@ -18,7 +18,7 @@ final class HelperFunctions {
     /// - Parameters:
     ///   - data: data for the CE certificate being shared
     /// - Returns: a URL for the temporary location where the file is being stored at
-   class func createTempFileURL(for activity: CeActivity, with data: Data) -> URL? {
+   class func createTempFileURL(for activity: CeActivity, with data: Data) throws -> URL? {
         let tempDir = FileManager.default.temporaryDirectory
         var fileExtension: String = ""
         if isPDF(data) {
@@ -26,8 +26,10 @@ final class HelperFunctions {
         } else if let imageExt = getImageFileType(for: data) {
             fileExtension = imageExt
         } else {
-            return nil
-        }
+            NSLog(">>>Error encountered in trying to identify whether the data argument for createTempFileURL(for) is an image or PDF file.")
+            NSLog(">>>This method was called for the CE activity: \(activity.ceTitle).")
+            throw FileIOError.cantIdentifyFileType
+        }//: IF ELSE
        
         guard fileExtension.isNotEmpty else { return nil }
         let fileName = "\(activity.ceTitle) Certificate.\(fileExtension)"
@@ -37,8 +39,11 @@ final class HelperFunctions {
             try data.write(to: fileURL)
             return fileURL
         } catch  {
-            return nil
-        }
+            NSLog(">>>Error countered writing the data passed into createTempFileURL(for) to the default temp directory on a user's local device.")
+            NSLog(">>>However, the file type was identified as: '\(fileExtension)'.")
+            NSLog(">>>The temporary file URL that was attempted to be written to was: \(fileURL.absoluteString)")
+            throw FileIOError.writeFailed
+        }//: DO-CATCH
     }//: tempFileURL()
 
     // MARK: - FILE TYPE HANDLING

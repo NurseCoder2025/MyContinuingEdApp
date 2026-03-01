@@ -430,4 +430,5 @@ enum FileIOError: Error {
     case loadingError
     case syncError
     case unknownError
+    case cantIdentifyFileType
 }

@@ -24,6 +24,9 @@ struct ActivityCertificateImageView: View {
     // to it via an @Binding property.
     @State private var certificateData: Data?
     
+    // Alerts
+    @State private var showChangeCertificateErrorAlert: Bool = false
+    
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -111,15 +114,18 @@ struct ActivityCertificateImageView: View {
         .alert("Change Certificate?", isPresented: $viewModel.showCertificateChangeWarning) {
             Button(role: .destructive) {
                 if let newData = certificateData {
-                    viewModel.updateCertificate(with: newData)
-                    viewModel.saveLoadedCertificate(with: newData)
+                    do {
+                        try viewModel.updateCertificate(with: newData)
+                        viewModel.saveLoadedCertificate(with: newData)
+                    } catch {
+                        showChangeCertificateErrorAlert = true
+                    }//: DO-CATCH
                 }//: IF LET
             } label: {
                 Text("Confirm")
             }//: BUTTON
-            Button("Cancel", role: .cancel) {}
+            Button("Cancel", role: .cancel) {viewModel.certDisplayStatus = .loaded}
         } message: {
-            // TODO: Add messaging for change
             Text("You already have a certificate saved for this activity. Are you sure you wish to change it?")
         }//: ALERT (change)
         
@@ -130,6 +136,14 @@ struct ActivityCertificateImageView: View {
         } message: {
             Text("Are you sure you wish to delete the certificate? If using iCloud, then this will remove it from all your devices.")
         }//: ALERT (delete)
+        
+        // MARK: Change Error Alert
+        .alert("Certificate Error", isPresented: $showChangeCertificateErrorAlert) {
+            Button("OK"){}
+        } message: {
+            Text("There was a problem saving the new certificate you selected. Please ensure that it is a valid PDF or image (jpeg, png, tiff, heic) file. It's possible the file may be corrupted.")
+        }//: ALERT (error)
+
         
     }//: BODY
     // MARK: - INIT

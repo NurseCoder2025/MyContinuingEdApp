@@ -428,7 +428,7 @@ final class CertificateBrain: ObservableObject {
     ///   to utilize it, then the document file is moved to iCloud.  If an issue arises with saving to iCloud because the iCloud url can't
     ///   be obtained, then the method updates the CertificateBrain's handlingError and errorMessage published properties so the user
     ///   can be alerted.
-    func addNewCeCertificate(for activity: CeActivity, with data: Data, dataType: MediaType) async {
+    func addNewCeCertificate(for activity: CeActivity, with data: Data, dataType: MediaType) async throws {
         let saveCompletedNotification = Notification.Name(.certSaveCompletedNotification)
         // 1. Create metadata using activity
         let certMetaData = createCertificateMetadata(forCE: activity, saveTo: .local, fileType: dataType)
@@ -457,22 +457,21 @@ final class CertificateBrain: ObservableObject {
               let _ = cloudCertsFolderURL else {
             if dataController.prefersCertificatesInICloud {
                 await MainActor.run {
+                    // In this situation, the user wants to save certificates
+                    // to iCloud but can't do so for one of several possible
+                    // reasons, including a completely full drive, iCloud
+                    // Drive turned off, etc.
                     handlingError = .saveLocationUnavailable
                     errorMessage = "The app is currently set to save CE certificates to iCloud, but, unfortunately, iCloud cannot be used at this time. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
                 }//: MAIN ACTOR
                 await coordinatorAccess.insertCoordinator(newCoordinator)
                 await encodeCoordinatorList()
-                await MainActor.run {
-                    NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
-                }//: MAIN ACTOR
+                throw handlingError
             } else {
                 // In this situation, the user has indicated that CE certificates are to be saved to
                 // the local device only via the control in Settings
                 await coordinatorAccess.insertCoordinator(newCoordinator)
                 await encodeCoordinatorList()
-                await MainActor.run {
-                    NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
-                }//: MAIN ACTOR
             }//: IF - ELSE
                 return
             }//: GUARD
@@ -494,9 +493,7 @@ final class CertificateBrain: ObservableObject {
                     }//: MAIN ACTOR
                     await coordinatorAccess.insertCoordinator(newCoordinator)
                     await encodeCoordinatorList()
-                    await MainActor.run {
-                        NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
-                    }//: MAIN ACTOR
+                    throw handlingError
                 }//: DOC
     }//: addNewCeCertificate()
     
@@ -633,7 +630,7 @@ final class CertificateBrain: ObservableObject {
     /// remove. If a matching coordinator object cannot be returned or if the removeItem(at) method throws an error, the user
     /// will be presented with a custom error message letting them know that they may need to delete the certificate
     /// data manually (based on the class handlingError and errorMessage values).
-    func deleteCertificate(for activity: CeActivity) async {
+    func deleteCertificate(for activity: CeActivity) async throws {
         let deleteNotification = Notification.Name(.certDeletionCompletedNotification)
         
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
@@ -645,10 +642,9 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .unableToDelete
                 errorMessage = "Unable to delete the certificate as the app was unable to locate where the data was saved. Try using the Files app or Finder to manually remove the file."
-                NotificationCenter.default.post(name: deleteNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error while attempting to delete CE certificate due to a missing coordinator for the specified activity.  Activity: \(activity.ceTitle)")
-            return
+            throw handlingError
         }//: GUARD
         
         do {
@@ -660,11 +656,10 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .unableToDelete
                 errorMessage = "Unable to delete the certificate at the specified save location. You may need to manually delete it using the Files app or Finder."
-                NotificationCenter.default.post(name: deleteNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error while attempting to delete a CE certificate at \(certCoordinator.fileURL).")
-            return
-        }
+            throw handlingError
+        }//: DO-CATCH
         
     }//: deleteCertificate(for)
    
@@ -678,7 +673,7 @@ final class CertificateBrain: ObservableObject {
     /// saved to the respective coordinator object) to determine which of the two computed properties in CertificateData to
     /// call: fullCertificate (for the PDF) or certImageThumbnail (for images). The result of either computed property is what is
     /// assigned to the selectedCertificate property in the CertificateBrain class.
-    func loadSavedCertificate(for activity: CeActivity) async {
+    func loadSavedCertificate(for activity: CeActivity) async throws {
         let loadCompletedNotification = Notification.Name(.certLoadingDoneNotification)
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
         let coordinators = await coordinatorAccess.allCoordinators
@@ -688,10 +683,9 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
-                NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
-            return
+            throw handlingError
         }//: GUARD
         
         let savedCert = await CertificateDocument(certURL: certCoordinator.fileURL)
@@ -701,27 +695,31 @@ final class CertificateBrain: ObservableObject {
                 switch certMeta.mediaAs {
                 case .image:
                     if let thumbImage = certData.certImageThumbnail {
-                        selectedCertificate = thumbImage
-                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                        await MainActor.run {
+                            selectedCertificate = thumbImage
+                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                        }//: MAIN ACTOR
                     } else {
                         await MainActor.run {
                             handlingError = .loadingError
                             errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
-                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                         }//: MAIN ACTOR
                         NSLog(">>>Error creating thumbnail image for the certificate saved at \(certCoordinator.fileURL)")
+                        throw handlingError
                     }//: IF ELSE
                 case .pdf:
                     if let pdfData = certData.fullCertificate {
-                       selectedCertificate = pdfData
-                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                        await MainActor.run {
+                            selectedCertificate = pdfData
+                             NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                        }//: MAIN ACTOR
                     } else {
                         await MainActor.run {
                             handlingError = .loadingError
                             errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
-                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                         }//: MAIN ACTOR
                         NSLog(">>>Error loading PDF data for the certificate saved at \(certCoordinator.fileURL)")
+                        throw handlingError
                     }//: IF ELSE
                 case .audio:
                     return
@@ -730,17 +728,17 @@ final class CertificateBrain: ObservableObject {
                 await MainActor.run {
                     handlingError = .loadingError
                     errorMessage = "Unable to read the metadata for the certificate file which is needed to display the image or PDF."
-                    NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                 }//: MAIN ACTOR
                 NSLog(">>>Error reading CertificateMetadata for the certificate saved at \(certCoordinator.fileURL)")
+                throw handlingError
             }//: IF - ELSE
         } else {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data from the saved file location."
-                NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error opening CertificateDocument at \(certCoordinator.fileURL)")
+            throw handlingError
         }//: IF - ELSE (open)
         
         await savedCert.close()
@@ -751,9 +749,8 @@ final class CertificateBrain: ObservableObject {
     /// with a specific CE activity.
     /// - Parameter activity: CeActivity with a cooresponding CE certificate (as determined by the coordinator)
     /// - Returns: Data object if the certificate was found and the raw data read, nil if not
-    func getSavedCertData(for activity: CeActivity) async -> Data? {
+    func getSavedCertData(for activity: CeActivity) async throws -> Data? {
         var dataToReturn: Data?
-        let rawDataLoaded = Notification.Name(.certGettingRawDataDone)
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
         let coordinators = await coordinatorAccess.allCoordinators
         guard let certCoordinator = coordinators.first(where: { coordinator in
@@ -762,10 +759,9 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
-                NotificationCenter.default.post(name: rawDataLoaded, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
-            return nil
+            throw handlingError
         }//: GUARD
         
         let savedCert = await CertificateDocument(certURL: certCoordinator.fileURL)
@@ -773,11 +769,25 @@ final class CertificateBrain: ObservableObject {
             let docData = await savedCert.certBinaryData
             if let rawData = docData.certData {
                 dataToReturn = rawData
-            }//:IF LET
-        }//: open()
-        NSLog(">>>Certificate Coordinator error: Unable to open the certificate for the CE activity \(activity.ceTitle)")
+            } else {
+                await MainActor.run {
+                    handlingError = .loadingError
+                    errorMessage = "Unable to read the binary data saved for the CE certificate."
+                }//: MAIN ACTOR
+                NSLog(">>>Error reading the raw data from the saved certificate for the CE activity \(activity.ceTitle)")
+                NSLog(">>>The  certData property of the CertificateDocument object was nil.")
+                throw handlingError
+            }//: IF ELSE
+        } else {
+            NSLog(">>>Certificate Coordinator error: Unable to open the certificate for the CE activity \(activity.ceTitle)")
+            await MainActor.run {
+                handlingError = .loadingError
+                errorMessage = "Unable to get the certificate data because the app was unable to open the saved file."
+            }//: MAIN ACTOR
+            throw handlingError
+        }//: IF ELSE
+       
         await savedCert.close()
-        NotificationCenter.default.post(name: rawDataLoaded, object: nil)
         return dataToReturn
     }//: loadSavedCertData(for)
    

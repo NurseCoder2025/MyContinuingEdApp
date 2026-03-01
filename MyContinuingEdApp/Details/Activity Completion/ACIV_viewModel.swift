@@ -54,30 +54,64 @@ extension ActivityCertificateImageView {
         /// method to update the errorAlertMessage and errorAlertTitle properties if an error was encountered
         /// in the loadSavedCertificate(for) method.
         func loadExistingCert() {
-            guard certificateSavedYN else {return}
+            guard certificateSavedYN, certDisplayStatus != .loaded else {return}
             certDisplayStatus = .loading
             
-            Task {
-                await certBrain.loadSavedCertificate(for: activity)
+            NotificationCenter.default.removeObserver(self, name: loadCompleted, object: nil)
+            
+            // Registering an observer before loading the certificate in order
+            // to prevent a race condition where the load method completes
+            // before the observer is registered
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleCertLoaded(_:)),
+                name: loadCompleted,
+                object: nil
+            )
+            
+            Task {@MainActor [weak self] in
+                do {
+                    if let specificCe = self?.activity,
+                        let cBrain = self?.certBrain {
+                        try await cBrain.loadSavedCertificate(for: specificCe)
+                    }
+                } catch {
+                    self?.errorAlertTitle = "Certificate Loading Error"
+                    self?.errorAlertMessage = self?.certBrain.errorMessage ?? "Unknown error"
+                    self?.certDisplayStatus = .error
+                }
             }//: TASK
         }//: loadExistingCert()
         
         func deleteSavedCert() {
             guard certificateSavedYN else {return}
             
-            Task {
-                await certBrain.deleteCertificate(for: activity)
+            Task {@MainActor [weak self] in
+                do {
+                    if let cBrain = self?.certBrain,
+                    let selectedCE = self?.activity {
+                        try await cBrain.deleteCertificate(for: selectedCE)
+                    }//: IF LET
+                } catch {
+                    self?.errorAlertTitle = "Certificate Deletion Error"
+                    self?.errorAlertMessage = self?.certBrain.errorMessage ?? "Unknown error"
+                    self?.certDisplayStatus = .error
+                }//: DO - CATCH
             }//: TASK
         }//: deleteSavedCert()
         
         /// ViewModel method that sets the value of the @Published certificateToShow property
         /// to whatever PDF or Image data is passed in as an argument.
         /// - Parameter data: Binary Data type corresponding to a PDF or UIImage file
-        func updateCertificate(with data: Data)  {
+        @MainActor
+        func updateCertificate(with data: Data) throws {
             if let pdfData = PDFDocument(data: data) {
                certificateToShow = pdfData
             } else if let imageData = HelperFunctions.decodeCertImage(from: data) {
                 certificateToShow = imageData
+            } else {
+                NSLog(">>>The data argument for updateCertificate(with) was not a PDF or image file that the decodeCertImage(from) method could identify.")
+                throw FileIOError.cantIdentifyFileType
             }
         }//: updateCertificate(with)
         
@@ -85,16 +119,24 @@ extension ActivityCertificateImageView {
         /// a new Certificate object with the data (using updateCertificate(with) or triggers the boolean for showing
         /// the user an alert to confirm they wish to change the certificate for the CE activity.
         /// - Parameter data: Binary Data type (should be an image or PDF)
+        @MainActor
         func addOrChangeCertificate(with data: Data) {
             certDisplayStatus = .loading
             if certificateToShow != nil {
                 showCertificateChangeWarning = true
             } else {
-                updateCertificate(with: data)
-                saveLoadedCertificate(with: data)
-            }
+                do {
+                    try updateCertificate(with: data)
+                    saveLoadedCertificate(with: data)
+                } catch {
+                    errorAlertTitle = "Certificate Error"
+                    errorAlertMessage = "Unable to save certificate because the underlying data is either not in a supported format (PDF or supported image format like jpeg, png, or tiff) or it might have been corrupted somehow."
+                    certDisplayStatus = .error
+                }//: DO-CATCH
+            }//: IF - ELSE
         }//: addOrChangeCertificate(with)
         
+        @MainActor
         func saveLoadedCertificate(with data: Data) {
             guard let loadedCert = certificateToShow else { return }
             
@@ -106,46 +148,44 @@ extension ActivityCertificateImageView {
                 fileType = .pdf
             }//: SWITCH
             
-            Task {
-                await certBrain.addNewCeCertificate(for: activity, with: data, dataType: fileType)
+            Task {@MainActor [weak self] in
+                if let cBrain = self?.certBrain,
+                    let someCE = self?.activity {
+                    do {
+                        try await cBrain.addNewCeCertificate(for: someCE, with: data, dataType: fileType)
+                    } catch {
+                        self?.errorAlertTitle = "Certificate Save Error"
+                        self?.errorAlertMessage =  cBrain.errorMessage
+                        self?.certDisplayStatus = .error
+                    }
+                }//: IF LET
             }//: TASK
         }//: saveLoadedCertificate()
         
         // MARK: - SELECTORS
         
         @objc private func handleCertLoaded(_ notification: Notification) {
-            if certBrain.handlingError != .noError {
-                errorAlertTitle = "Certificate Loading Error"
-                errorAlertMessage = certBrain.errorMessage
-                certDisplayStatus = .error
-            } else if let savedCert = certBrain.selectedCertificate {
-                certificateToShow = savedCert
-                certDisplayStatus = .loaded
-            }//: IF ELSE LET
+            Task{@MainActor [weak self] in
+                self?.certificateToShow = self?.certBrain.selectedCertificate
+                self?.certDisplayStatus = .loaded
+            }//: TASK
         }//: handleCertLoaded
         
         @objc private func handleCertDeleted(_ notification: Notification) {
-            if certBrain.handlingError != .noError {
-                errorAlertTitle = "Certificate Deletion Error"
-                errorAlertMessage = certBrain.errorMessage
-                certDisplayStatus = .error
-            } else {
-                certDisplayStatus = .blank
-                certificateToShow = nil
-                activity.hasCompletionCertificate = false
-                certificateSavedYN = false
-            }
+            Task{@MainActor [weak self] in
+                self?.certDisplayStatus = .blank
+                self?.certificateToShow = nil
+                self?.activity.hasCompletionCertificate = false
+                self?.certificateSavedYN = false
+            }//: TASK
         }//: handleCertDeleted()
         
         @objc private func handleCertSaved(_ notification: Notification) {
-            if certBrain.handlingError != .noError {
-                errorAlertTitle = "Certificate Save Error"
-                errorAlertMessage = certBrain.errorMessage
-            } else {
-                certDisplayStatus = .loaded
-                activity.hasCompletionCertificate = true
-                certificateSavedYN = true
-            }//: IF ELSE
+            Task{@MainActor [weak self] in
+                self?.certDisplayStatus = .loaded
+                self?.activity.hasCompletionCertificate = true
+                self?.certificateSavedYN = true
+            }//: TASK
         }//: handleCertSaved()
         
         // MARK: - INIT
@@ -161,13 +201,6 @@ extension ActivityCertificateImageView {
             self.certificateSavedYN = activity.hasCompletionCertificate
             
             // MARK: - OBSERVERS
-            
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handleCertLoaded(_:)),
-                name: loadCompleted,
-                object: nil
-            )
             
             NotificationCenter.default.addObserver(
                 self,

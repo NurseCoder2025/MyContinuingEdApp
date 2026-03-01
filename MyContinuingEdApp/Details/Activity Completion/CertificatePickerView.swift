@@ -46,8 +46,8 @@ struct CertificatePickerView: View {
                     if let data = data {
                         certificateData = data
                     } else {
-                        showCertSelectionErrorAlert = true
                         errorMessage = "Unable to properly read the image data from the image captured by the device's camera. Please try again."
+                        showCertSelectionErrorAlert = true
                         NSLog(">>>Error encountered while the user was trying to capture a certificate image using the device's camera. Could not covert the image to a UIImage or could not capture the data from CameraPickerView.")
                     }
                 }//: CameraPickerView
@@ -83,16 +83,16 @@ struct CertificatePickerView: View {
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self){
                     // Checking to ensure that an image can be read
-                    if let selectedUiImage = UIImage(data: data) {
+                    if UIImage(data: data) != nil {
                         certificateData = data
                     } else {
-                        showCertSelectionErrorAlert = true
                         errorMessage = "The saved image you selected could not be read. It might be saved in an unrecognized format or have corrupted data."
-                        NSLog(">>>Error enountered while trying to load a selected image from the photo picker. Unable to create a UIIMage from the data with the decodeCertImage helper function.")
+                        showCertSelectionErrorAlert = true
+                        NSLog(">>>Error enountered while trying to load a selected image from the photo picker. Unable to create a UIIMage from the data.")
                     }//: IF ELSE (decodeCertImage)
                 } else {
-                    showCertSelectionErrorAlert = true
                     errorMessage = "The saved image you selected could not be read. It might be saved in an unrecognized format or have corrupted data."
+                    showCertSelectionErrorAlert = true
                     NSLog(">>>Error loading photo data from the photo picker for a selected item. The loadTransferable method threw an error.")
                 }//: IF ELSE (data)
             }//: TASK
