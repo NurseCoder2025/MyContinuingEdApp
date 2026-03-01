@@ -309,6 +309,10 @@ enum ResponseEntryType: String, CaseIterable, Identifiable, Hashable {
     var id: String { self.rawValue }
 }//: ResponseEntryType
 
+enum MediaLoadingState: String, CaseIterable {
+    case blank, loading, loaded, error
+}//: CertificateLoadingState
+
 
 // MARK: - iCLOUD
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G517" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Achievement" representedClassName="Achievement" syncable="YES" codeGenerationType="class">
         <attribute name="achievementDescript" optional="YES" attributeType="String"/>
         <attribute name="color" optional="YES" attributeType="String"/>
@@ -39,7 +39,6 @@
         <attribute name="activityTitle" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="ceAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="clockHoursAwarded" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="completionCertificate" optional="YES" attributeType="Binary"/>
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="currentStatus" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -48,6 +47,7 @@
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="expirationReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="forReinstatementYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hasCompletionCertificate" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="infoWebsiteURL" optional="YES" attributeType="String"/>
         <attribute name="itemsToBring" optional="YES" attributeType="String"/>

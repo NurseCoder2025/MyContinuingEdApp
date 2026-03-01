@@ -12,6 +12,7 @@ import CoreSpotlight
 @main
 struct MyContinuingEdAppApp: App {
     @StateObject var dataController: DataController = DataController()
+    @State var certificateBrain: CertificateBrain?
     @State var spotlightCentral: SpotlightCentral?
     @Environment(\.scenePhase) var scenePhase
     
@@ -31,6 +32,7 @@ struct MyContinuingEdAppApp: App {
                 .environment(\.managedObjectContext, dataController.container.viewContext)
                 .environmentObject(dataController)
                 .environment(\.spotlightCentral, spotlightCentral)
+                .environment(\.certificateBrain, certificateBrain)
                 // MARK: - ON CHANGE OF
                 // Saves changes if the app is moved to the background by the user
                 .onChange(of: scenePhase) { phase in
@@ -42,7 +44,11 @@ struct MyContinuingEdAppApp: App {
                 .onAppear {
                     if spotlightCentral == nil {
                         spotlightCentral = SpotlightCentral(dataController: dataController)
-                    }
+                    }//: IF (spotlightCentral)
+                    
+                    if certificateBrain == nil {
+                        certificateBrain = CertificateBrain(dataController: dataController)
+                    }//: IF (certificateBrain)
                 }//: ON APPEAR
                 
                 // MARK: - SPOTLIGHT

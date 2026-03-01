@@ -9,24 +9,21 @@
 // property, along with code related to the deletion and changing of an activity's certificate
 // image or PDF
 
-import PDFKit
-import PhotosUI
 import SwiftUI
 import UIKit
 
 struct ActivityCertificateImageView: View {
     // MARK: - PROPERTIES
+    @Environment(\.certificateBrain) var certificateBrain
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
+    @StateObject var viewModel: ViewModel
     
-    // Properties related to changes with the CE certificate
-    @State private var showCertificateChangeAlert: Bool = false
-    @State private var certificateToConfirm: CertificateDataWrapper?
-    @State private var previousCertificate: Data?
-    @State private var okToShowAlert: Bool = true
+    // For holding binary data for a new certificate that the
+    // user selects using CertificatePickerView which is passed up
+    // to it via an @Binding property.
+    @State private var certificateData: Data?
     
-    // Properties related to deleting the saved certificate
-    @State private var showDeleteCertificateWarning: Bool = false
     
     // MARK: - COMPUTED PROPERTIES
     var paidStatus: PurchaseStatus {
@@ -55,106 +52,104 @@ struct ActivityCertificateImageView: View {
                     Section("Certificate Image") {
                         CertificatePickerView(
                             activity: activity,
-                            certificateData: $activity.completionCertificate
-                        )
+                            certificateData: $certificateData
+                        )//: CertificatePickerView
                         
-                        if let data = activity.completionCertificate, data.count > 0 {
-                            if HelperFunctions.isPDF(data) {
-                                PDFKitView(data: data)
-                                    .frame(height: 300)
-                                    .accessibilityLabel("PDF view of your CE Certificate for this activity.")
-                            } else if let certImage = HelperFunctions.decodeCertImage(from: data) {
-                                Image(uiImage: certImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(maxHeight: 300)
-                                    .accessibilityLabel(Text("Image of your CE Certificate for this activity."))
-                            } else {
-                                Text("Unfortunately, the certificate you saved is not in a PDF or recognizable image format (jpg, png, tiff, gif, heiff). Try re-saving the image, take a picture of it with the camera, or convert the certificate file to a PDF or supported image.")
-                                    
-                            }
-                        }//: IF LET (data)
-                        
-                        // MARK: - Certificate Sharing
-                        if let data = activity.completionCertificate {
-                            CertificateShareView(activity: activity, certificateData: data)
+                        switch viewModel.certDisplayStatus {
+                        case .blank:
+                            NoItemView(
+                                noItemTitleText: "No CE Certificate",
+                                noItemMessage: "A certificate has not yet been saved for this CE activity.",
+                                noItemImage: "trophy.circle.fill"
+                            )
+                            .accessibilityLabel("No CE Certificates have been added for this activity yet.")
+                        case .loading:
+                            VStack {
+                                ProgressView("Loading certificate...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                Text("Loading certificate for this activity...")
+                            }//: VSTACK
+                        case .loaded:
+                            CertificatePreviewView(savedCert: viewModel.certificateToShow)
                             
-                            Button(role: .destructive) {
-                                showDeleteCertificateWarning = true
-                            } label: {
-                                Text("Delete Certificate")
-                            }
-                        }//: IF-LET (data)
+                            // MARK: Certificate DETAILS & SHARING
+                            if activity.hasCompletionCertificate,
+                                let certBrain = certificateBrain {
+                                    CertificateShareView(activity: activity, certBrain: certBrain)
+                                
+                                // MARK: DELETE CERTIFICATE
+                                DeleteObjectButtonView(buttonText: "Delete Certificate") {
+                                    viewModel.showCertDeletionWarning = true
+                                }//: DeleteObjectButtonView
+                            }//: IF-LET (hasCompletionCertificate, certBrain)
+                        case .error:
+                            NoItemView(
+                                noItemTitleText: viewModel.errorAlertTitle,
+                                noItemMessage: viewModel.errorAlertMessage,
+                                noItemImage: "exclamationmark.triangle"
+                            )
+                            .accessibilityLabel(Text(viewModel.errorAlertMessage))
+                        }//: SWITCH
                     }//: Certificate Section
                 }//: IF ELSE
             } //: IF activity completed
         }//: GROUP
         // MARK: - ON APPEAR
         .onAppear {
-            previousCertificate = activity.completionCertificate
+            viewModel.loadExistingCert()
         }//: ON APPEAR
         
         // MARK: - ON CHANGE
-        .onChange(of: activity.completionCertificate) { newCertificate in
-            // Prevent alert from appearing after user cancels a change
-            if okToShowAlert == false {
-                okToShowAlert = true
-                previousCertificate = newCertificate
-                return
-            }
-            
-            // once a certificate has been saved, bring up an alert each
-            // time the user wishes to change it...
-            if let oldCert = previousCertificate,
-               let newCert = newCertificate {
-                       certificateToConfirm = CertificateDataWrapper(newData: newCert, oldData: oldCert)
-                }
-            
-            previousCertificate = newCertificate
-        }
+        .onChange(of: certificateData) { newCert in
+            if let certData = newCert {
+                viewModel.addOrChangeCertificate(with: certData)
+            }//: IF LET
+        }//: onChange(of)
+        
         // MARK: - ALERTS
         // MARK: Change CE Certificate Alert
-        .alert(item: $certificateToConfirm) { wrapper in
-            Alert(
-                title: Text("Change Certificate?"),
-                message: Text("Are you sure you wish to change the certificate associated with this activity?"),
-                primaryButton: .default(Text("Confirm")) {
-                    activity.completionCertificate = wrapper.newData
-                   
-                },
-                secondaryButton: .cancel() {
-                    okToShowAlert = false
-                    if let data = wrapper.oldData {
-                        activity.completionCertificate = data
-                    }
-                }
-            )
-        } //: Change ALERT
-        
-        // MARK: Delete CE Certificate Alert
-        .alert("Delete Certificate", isPresented: $showDeleteCertificateWarning) {
-            Button("DELETE", role: .destructive) {
-                activity.completionCertificate = nil
-            }
-            
+        .alert("Change Certificate?", isPresented: $viewModel.showCertificateChangeWarning) {
+            Button(role: .destructive) {
+                if let newData = certificateData {
+                    viewModel.updateCertificate(with: newData)
+                    viewModel.saveLoadedCertificate(with: newData)
+                }//: IF LET
+            } label: {
+                Text("Confirm")
+            }//: BUTTON
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("You are about to delete the saved CE certificate. Are you sure?  This cannot be undone.")
-        }
+            // TODO: Add messaging for change
+            Text("You already have a certificate saved for this activity. Are you sure you wish to change it?")
+        }//: ALERT (change)
+        
+        // MARK: Delete CE Certificate Alert
+        .alert("Delete Certificate", isPresented: $viewModel.showCertDeletionWarning) {
+            Button("DELETE", role: .destructive) {viewModel.deleteSavedCert()}//: Delete Button
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Are you sure you wish to delete the certificate? If using iCloud, then this will remove it from all your devices.")
+        }//: ALERT (delete)
         
     }//: BODY
+    // MARK: - INIT
+    init(
+        dataController: DataController,
+        certificateBrain: CertificateBrain,
+        activity: CeActivity
+    ){
+        self.activity = activity
+        let viewModel = ViewModel(
+            dataController: dataController,
+            certBrain: certificateBrain,
+            activity: activity
+        )
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }//: INIT
 }//: STRUCT
-
-
-// MARK: - Certificate Data Wrapper struct
-struct CertificateDataWrapper: Identifiable {
-    let id = UUID()
-    let newData: Data
-    let oldData: Data?
-}
-
 
 // MARK: - PREVIEW
 #Preview {
-    ActivityCertificateImageView(activity: .example)
-}
+    
+    
+}//: PREVIEw

@@ -35,7 +35,7 @@ actor CertificateCoordinatorActor {
             allCoordinators.remove(coordinator)
         }//: removeCoordinator
         
-        func setAllCoordinatorsValues(_ values: Set<CertificateCoordinator>) {
+        func setAllCoordinatorsValues(with values: Set<CertificateCoordinator>) {
             allCoordinators = values
         }//: setAllCoordinatorsValues
     
@@ -51,7 +51,7 @@ actor CertificateCoordinatorActor {
             allCloudCoordinators.remove(coordinator)
         }//: removeAllCloudCoordinators
     
-        func setAllCloudCoordinatorsValues(_ values: Set<CertificateCoordinator>) {
+        func setAllCloudCoordinatorsValues(with values: Set<CertificateCoordinator>) {
             allCloudCoordinators = values
         }//: setAllCloudCoordinatorsValues
     

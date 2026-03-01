@@ -18,12 +18,15 @@ final class CertificateBrain: ObservableObject {
     let fileExtension: String = "cert"
     
     // Error handling properties
-    @Published var errorMessage: String = ""
-    @Published var handlingError: FileIOError = .noError
+     var errorMessage: String = ""
+     var handlingError: FileIOError = .noError
     
     // Loaded certificate properties
-    @Published var loadedCertificates: [Certificate] = []
-    @Published var selectedCertificate: Certificate?
+    var loadedCertificates: [Certificate] = []
+    
+    /// Published property for holding a PDF/Image (Certificate) object for a specific
+    /// CeActivity as obtained by the loadSavedCertificate(for) method.
+    var selectedCertificate: Certificate?
     
     var dataController: DataController
     private let fileSystem = FileManager()
@@ -157,10 +160,15 @@ final class CertificateBrain: ObservableObject {
                 let coordinators = await coordinatorAccess.allCoordinators
                 if await coordinatorAccess.doesAllCoordinatorsHaveValues() {
                     let currentCoordinators = await getCoordinatorsForAllFiles()
+                    let coordinatorsToRemove = coordinators.subtracting(currentCoordinators)
                     let coordinatorsToAdd = currentCoordinators.subtracting(coordinators)
                     if coordinatorsToAdd.isNotEmpty {
                         let updatedList = coordinators.union(coordinatorsToAdd)
-                        await coordinatorAccess.setAllCoordinatorsValues(updatedList)
+                        await coordinatorAccess.setAllCoordinatorsValues(with: updatedList)
+                    }
+                    if coordinatorsToRemove.isNotEmpty {
+                        let updatedList = coordinators.subtracting(coordinatorsToRemove)
+                        await coordinatorAccess.setAllCoordinatorsValues(with: updatedList)
                     }
                     await encodeCoordinatorList()
                 } else {
@@ -169,7 +177,7 @@ final class CertificateBrain: ObservableObject {
                     // list to file in the appropriate location.
                     let newCoordinators = await getCoordinatorsForAllFiles()
                     // TODO: Perform on MainActor
-                    await coordinatorAccess.setAllCoordinatorsValues(newCoordinators)
+                    await coordinatorAccess.setAllCoordinatorsValues(with: newCoordinators)
                     await encodeCoordinatorList()
                 }//: IF - ELSE
                 
@@ -237,7 +245,7 @@ final class CertificateBrain: ObservableObject {
                 }//: IF - ELSE
                 
                 if certCoordinators.isNotEmpty {
-                    await coordinatorAccess.setAllCoordinatorsValues(certCoordinators)
+                    await coordinatorAccess.setAllCoordinatorsValues(with: certCoordinators)
                 }//: IF
             }//: decodeCoordinatorList()
             
@@ -421,6 +429,7 @@ final class CertificateBrain: ObservableObject {
     ///   be obtained, then the method updates the CertificateBrain's handlingError and errorMessage published properties so the user
     ///   can be alerted.
     func addNewCeCertificate(for activity: CeActivity, with data: Data, dataType: MediaType) async {
+        let saveCompletedNotification = Notification.Name(.certSaveCompletedNotification)
         // 1. Create metadata using activity
         let certMetaData = createCertificateMetadata(forCE: activity, saveTo: .local, fileType: dataType)
         
@@ -453,11 +462,17 @@ final class CertificateBrain: ObservableObject {
                 }//: MAIN ACTOR
                 await coordinatorAccess.insertCoordinator(newCoordinator)
                 await encodeCoordinatorList()
+                await MainActor.run {
+                    NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
+                }//: MAIN ACTOR
             } else {
                 // In this situation, the user has indicated that CE certificates are to be saved to
                 // the local device only via the control in Settings
                 await coordinatorAccess.insertCoordinator(newCoordinator)
                 await encodeCoordinatorList()
+                await MainActor.run {
+                    NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
+                }//: MAIN ACTOR
             }//: IF - ELSE
                 return
             }//: GUARD
@@ -469,6 +484,9 @@ final class CertificateBrain: ObservableObject {
                     newCoordinator.fileURL = iCloudURL
                     await coordinatorAccess.insertCoordinator(newCoordinator)
                     await encodeCoordinatorList()
+                    await MainActor.run {
+                        NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
+                    }//: MAIN ACTOR
                 } catch {
                     await MainActor.run {
                         handlingError = .saveLocationUnavailable
@@ -476,8 +494,10 @@ final class CertificateBrain: ObservableObject {
                     }//: MAIN ACTOR
                     await coordinatorAccess.insertCoordinator(newCoordinator)
                     await encodeCoordinatorList()
+                    await MainActor.run {
+                        NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
+                    }//: MAIN ACTOR
                 }//: DOC
-            
     }//: addNewCeCertificate()
     
         // MARK: SAVE HELPERS
@@ -614,7 +634,10 @@ final class CertificateBrain: ObservableObject {
     /// will be presented with a custom error message letting them know that they may need to delete the certificate
     /// data manually (based on the class handlingError and errorMessage values).
     func deleteCertificate(for activity: CeActivity) async {
+        let deleteNotification = Notification.Name(.certDeletionCompletedNotification)
+        
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
+        
         let coordinators = await coordinatorAccess.allCoordinators
         guard let certCoordinator = coordinators.first(where: { coordinator in
             coordinator.assignedObjectID == activity.activityID
@@ -622,6 +645,7 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .unableToDelete
                 errorMessage = "Unable to delete the certificate as the app was unable to locate where the data was saved. Try using the Files app or Finder to manually remove the file."
+                NotificationCenter.default.post(name: deleteNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error while attempting to delete CE certificate due to a missing coordinator for the specified activity.  Activity: \(activity.ceTitle)")
             return
@@ -631,10 +655,12 @@ final class CertificateBrain: ObservableObject {
             try fileSystem.removeItem(at: certCoordinator.fileURL)
             await coordinatorAccess.removeCoordinator(certCoordinator)
             await encodeCoordinatorList()
+            NotificationCenter.default.post(name: deleteNotification, object: nil)
         } catch {
             await MainActor.run {
                 handlingError = .unableToDelete
                 errorMessage = "Unable to delete the certificate at the specified save location. You may need to manually delete it using the Files app or Finder."
+                NotificationCenter.default.post(name: deleteNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error while attempting to delete a CE certificate at \(certCoordinator.fileURL).")
             return
@@ -653,6 +679,7 @@ final class CertificateBrain: ObservableObject {
     /// call: fullCertificate (for the PDF) or certImageThumbnail (for images). The result of either computed property is what is
     /// assigned to the selectedCertificate property in the CertificateBrain class.
     func loadSavedCertificate(for activity: CeActivity) async {
+        let loadCompletedNotification = Notification.Name(.certLoadingDoneNotification)
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
         let coordinators = await coordinatorAccess.allCoordinators
         guard let certCoordinator = coordinators.first(where: { coordinator in
@@ -661,6 +688,7 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
+                NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
             return
@@ -674,20 +702,24 @@ final class CertificateBrain: ObservableObject {
                 case .image:
                     if let thumbImage = certData.certImageThumbnail {
                         selectedCertificate = thumbImage
+                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                     } else {
                         await MainActor.run {
                             handlingError = .loadingError
                             errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
+                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                         }//: MAIN ACTOR
                         NSLog(">>>Error creating thumbnail image for the certificate saved at \(certCoordinator.fileURL)")
                     }//: IF ELSE
                 case .pdf:
                     if let pdfData = certData.fullCertificate {
                        selectedCertificate = pdfData
+                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                     } else {
                         await MainActor.run {
                             handlingError = .loadingError
                             errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
+                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                         }//: MAIN ACTOR
                         NSLog(">>>Error loading PDF data for the certificate saved at \(certCoordinator.fileURL)")
                     }//: IF ELSE
@@ -698,6 +730,7 @@ final class CertificateBrain: ObservableObject {
                 await MainActor.run {
                     handlingError = .loadingError
                     errorMessage = "Unable to read the metadata for the certificate file which is needed to display the image or PDF."
+                    NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
                 }//: MAIN ACTOR
                 NSLog(">>>Error reading CertificateMetadata for the certificate saved at \(certCoordinator.fileURL)")
             }//: IF - ELSE
@@ -705,13 +738,48 @@ final class CertificateBrain: ObservableObject {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data from the saved file location."
+                NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
             }//: MAIN ACTOR
             NSLog(">>>Error opening CertificateDocument at \(certCoordinator.fileURL)")
         }//: IF - ELSE (open)
         
         await savedCert.close()
-        // TODO: reset allCoordinators to []??
     }//: loadSavedCertificate
+    
+    
+    /// CertificateBrain method for retrieving the raw binary data for a saved CE certificate that is associated
+    /// with a specific CE activity.
+    /// - Parameter activity: CeActivity with a cooresponding CE certificate (as determined by the coordinator)
+    /// - Returns: Data object if the certificate was found and the raw data read, nil if not
+    func getSavedCertData(for activity: CeActivity) async -> Data? {
+        var dataToReturn: Data?
+        let rawDataLoaded = Notification.Name(.certGettingRawDataDone)
+        if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
+        let coordinators = await coordinatorAccess.allCoordinators
+        guard let certCoordinator = coordinators.first(where: { coordinator in
+            coordinator.assignedObjectID == activity.activityID
+        }) else {
+            await MainActor.run {
+                handlingError = .loadingError
+                errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
+                NotificationCenter.default.post(name: rawDataLoaded, object: nil)
+            }//: MAIN ACTOR
+            NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
+            return nil
+        }//: GUARD
+        
+        let savedCert = await CertificateDocument(certURL: certCoordinator.fileURL)
+        if await savedCert.open() {
+            let docData = await savedCert.certBinaryData
+            if let rawData = docData.certData {
+                dataToReturn = rawData
+            }//:IF LET
+        }//: open()
+        NSLog(">>>Certificate Coordinator error: Unable to open the certificate for the CE activity \(activity.ceTitle)")
+        await savedCert.close()
+        NotificationCenter.default.post(name: rawDataLoaded, object: nil)
+        return dataToReturn
+    }//: loadSavedCertData(for)
    
     // MARK: - MOVING FILES
     
@@ -994,7 +1062,7 @@ final class CertificateBrain: ObservableObject {
                 NSLog(">>>Out of the \(totalCount) files found on iCloud, \(problemFiles.count) could not be read due to metadata being unreadable.")
             }//: IF (isNotEmpty)
             
-            await coordinatorAccess.setAllCloudCoordinatorsValues(cloudCoordinators)
+            await coordinatorAccess.setAllCloudCoordinatorsValues(with: cloudCoordinators)
             
             // Removing observers
             NotificationCenter.default.removeObserver(
@@ -1135,6 +1203,14 @@ final class CertificateBrain: ObservableObject {
         return extractedMetaData
     }//: extractMetadataFromDoc
     
+    // MARK: - PREVIEW
+    #if DEBUG
+    static var preview: CertificateBrain = {
+        let dcPreview = DataController.preview
+        let cbPreview = CertificateBrain(dataController: dcPreview)
+        return cbPreview
+    }()
+    #endif
     // MARK: - INIT
     
     /// Initializer for the CertificateController class.

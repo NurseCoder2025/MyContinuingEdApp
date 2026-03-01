@@ -10,18 +10,18 @@ import SwiftUI
 
 struct PDFKitView: UIViewRepresentable {
     // MARK: - Properties
-    let data: Data
+    let document: PDFDocument
     
     // MARK: - Methods
     
     func makeUIView(context: Context) -> PDFView {
         let pdfView = PDFView()
-        pdfView.document = PDFDocument(data: data)
+        pdfView.document = document
         pdfView.autoScales = true
         return pdfView
-    }
+    }//: makeUIView(context)
     
     func updateUIView(_ uiView: PDFView, context: Context) {}
     
     
-}
+}//: STRUCt

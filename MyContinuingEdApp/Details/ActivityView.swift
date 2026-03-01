@@ -12,6 +12,7 @@ import SwiftUI
 struct ActivityView: View {
     // MARK: - Properties
     @Environment(\.spotlightCentral) var spotlightCentral
+    @Environment(\.certificateBrain) var certificateBrain
     @EnvironmentObject var dataController: DataController
     @ObservedObject var activity: CeActivity
     
@@ -51,8 +52,13 @@ struct ActivityView: View {
             ActivityCompletionView(activity: activity)
             
             // MARK: Certificate Image section
-            ActivityCertificateImageView(activity: activity)
-            
+            if let certBrain = certificateBrain {
+                ActivityCertificateImageView(
+                    dataController: dataController,
+                    certificateBrain: certBrain,
+                    activity: activity
+                )
+            }
         } //: FORM
         // MARK: - SHEETS
         // Credential(s) selection

@@ -74,3 +74,27 @@ For reference use ONLY
         }
             
     }//: getSubscriptionIntroOfferText
+
+
+  class func getImageFileType(for data: Data) -> String? {
+    if data.starts(with: [0xFF, 0xD8, 0xFF]) {
+        print("Data type detected: jpg image")
+        return "jpg"
+    } else if data.starts(with: [0x89, 0x50, 0x4E, 0x47]) {
+        print("Data type detected: png image")
+        return "png"
+    } else if data.starts(with: [0x47, 0x49, 0x46, 0x38]) {
+        print("Data type detected: gif image")
+        return "gif"
+    } else if data.starts(with: [0x49, 0x49, 0x2A, 0x00]) {
+        print("Data type detected: tiff image")
+        return "tiff"
+    } else if case let (true, brand) = isHEIFF(data), let brand = brand {
+        print("Data type detected: \(brand)")
+        return brand
+    }
+    
+    print("Unable to determine image file data type...sadly")
+    return nil
+    
+}

@@ -186,6 +186,10 @@ class DataController: ObservableObject {
     
     
     // MARK: - PREVIEW
+    
+    /// Computed property in DataController that creates an instance of the entire
+    /// DataController class but with the inMemory argument set to true along with
+    /// sample data created for previewing purposes.
     static var preview: DataController = {
         let controller = DataController(inMemory: true)
         controller.createSampleData()

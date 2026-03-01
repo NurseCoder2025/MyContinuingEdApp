@@ -18,12 +18,19 @@ final class HelperFunctions {
     /// - Parameters:
     ///   - data: data for the CE certificate being shared
     /// - Returns: a URL for the temporary location where the file is being stored at
-    ///
-    ///- Note: Method was updated so that a file extension string value will not be added to the file name.  This is due to difficulty
-    /// with the getImageFileType & isHEIFF functions not recognizing an image in Apple's HEIFF format.
    class func createTempFileURL(for activity: CeActivity, with data: Data) -> URL? {
         let tempDir = FileManager.default.temporaryDirectory
-        let fileName = "\(activity.ceTitle) Certificate"
+        var fileExtension: String = ""
+        if isPDF(data) {
+               fileExtension = "pdf"
+        } else if let imageExt = getImageFileType(for: data) {
+            fileExtension = imageExt
+        } else {
+            return nil
+        }
+       
+        guard fileExtension.isNotEmpty else { return nil }
+        let fileName = "\(activity.ceTitle) Certificate.\(fileExtension)"
         let fileURL = tempDir.appendingPathComponent(fileName)
         
         do {
@@ -41,27 +48,30 @@ final class HelperFunctions {
     /// - Returns: a String value IF there is a match with one of the four most common
     ///      image types (jpg, png, gif, and tiff)
   class func getImageFileType(for data: Data) -> String? {
-    if data.starts(with: [0xFF, 0xD8, 0xFF]) {
-        print("Data type detected: jpg image")
-        return "jpg"
-    } else if data.starts(with: [0x89, 0x50, 0x4E, 0x47]) {
-        print("Data type detected: png image")
-        return "png"
-    } else if data.starts(with: [0x47, 0x49, 0x46, 0x38]) {
-        print("Data type detected: gif image")
-        return "gif"
-    } else if data.starts(with: [0x49, 0x49, 0x2A, 0x00]) {
-        print("Data type detected: tiff image")
-        return "tiff"
-    } else if case let (true, brand) = isHEIFF(data), let brand = brand {
-        print("Data type detected: \(brand)")
-        return brand
-    }
+      if data.starts(with: [0xFF, 0xD8, 0xFF]) {
+          print("Data type detected: jpg image")
+          return "jpg"
+      } else if data.starts(with: [0x89, 0x50, 0x4E, 0x47]) {
+          print("Data type detected: png image")
+          return "png"
+      } else if data.starts(with: [0x47, 0x49, 0x46, 0x38]) {
+          print("Data type detected: gif image")
+          return "gif"
+      } else if data.starts(with: [0x49, 0x49, 0x2A, 0x00]) {
+          print("Data type detected: tiff image")
+          return "tiff"
+      } else if #available(iOS 17.0, *), let imageData = UIImage(data: data), let _ = imageData.heicData() {
+          print("Data type detected: HEIFF brand")
+          return "heic"
+      } else if case let (true, brand) = isHEIFF(data), let brand = brand {
+          print("HEIFF brand detected: \(brand)")
+          return brand
+      } else {
+          NSLog("Unable to determine image file data type...sadly")
+          return nil
+      }//: IF ELSE
     
-    print("Unable to determine image file data type...sadly")
-    return nil
-    
-}
+    }//: getImageFileType(for)
 
     /// Function to check whether the passed in data is in the PDF format or not.  The Boolean returned
     /// will be used to display the file correctly.

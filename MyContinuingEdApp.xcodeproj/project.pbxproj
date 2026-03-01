@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3F0044942F525B88006DA9F3 /* CertificatePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0044932F525B88006DA9F3 /* CertificatePreviewView.swift */; };
+		3F0044962F52837F006DA9F3 /* CertificateShareView-ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0044952F52837F006DA9F3 /* CertificateShareView-ViewModel.swift */; };
 		3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DA2E944A5800101310 /* CredentialManagementSheet.swift */; };
 		3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */; };
 		3F0095DF2E9458B400101310 /* CredentialSubCatListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */; };
@@ -43,6 +45,9 @@
 		3F47D9A42F468D8E00B02580 /* CertificateData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A32F468D8E00B02580 /* CertificateData.swift */; };
 		3F47D9A62F46938100B02580 /* MediaFile+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */; };
 		3F47D9A82F469D8600B02580 /* CertificateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */; };
+		3F4D0E7C2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */; };
+		3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */; };
+		3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */; };
 		3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */; };
 		3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */; };
 		3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */; };
@@ -276,6 +281,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3F0044932F525B88006DA9F3 /* CertificatePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePreviewView.swift; sourceTree = "<group>"; };
+		3F0044952F52837F006DA9F3 /* CertificateShareView-ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CertificateShareView-ViewModel.swift"; sourceTree = "<group>"; };
 		3F0095DA2E944A5800101310 /* CredentialManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialManagementSheet.swift; sourceTree = "<group>"; };
 		3F0095DC2E9450ED00101310 /* CredentialCatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialCatBoxView.swift; sourceTree = "<group>"; };
 		3F0095DE2E9458B400101310 /* CredentialSubCatListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSubCatListSheet.swift; sourceTree = "<group>"; };
@@ -313,6 +320,9 @@
 		3F47D9A32F468D8E00B02580 /* CertificateData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateData.swift; sourceTree = "<group>"; };
 		3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaFile+Extensions.swift"; sourceTree = "<group>"; };
 		3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateCoordinator.swift; sourceTree = "<group>"; };
+		3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CertificateBrain-Helpers.swift"; sourceTree = "<group>"; };
+		3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateDataWrapper.swift; sourceTree = "<group>"; };
+		3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACIV_viewModel.swift; sourceTree = "<group>"; };
 		3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDAISectionView.swift; sourceTree = "<group>"; };
 		3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatViewModel.swift; sourceTree = "<group>"; };
 		3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Credentials.swift"; sourceTree = "<group>"; };
@@ -585,6 +595,8 @@
 		3F0C7AA72F4FD6CB001B6034 /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */,
+				3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */,
 				3F0C7AA82F4FD7DF001B6034 /* CertificateCoordinatorActor.swift */,
 				3FBBBFA82F33F27A00CDC7A0 /* CertificateMetadata.swift */,
 				3FE3567A2F3BF4B800F88F60 /* CertificateBrain.swift */,
@@ -815,11 +827,12 @@
 		3F2A42D12EA2E22700B095CB /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */,
+				3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */,
 				3F3B45512F403CA7002792D7 /* FileTypes.swift */,
 				3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */,
 				3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */,
 				3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */,
-				3FBCBE612EB2A8AA0050D6A5 /* SpotlightHelpers.swift */,
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
 				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
 				3F71B9962F2AB50600F1AA2C /* GeneralProtocols.swift */,
@@ -844,10 +857,13 @@
 			children = (
 				F2AA2AAF2E8AFFC300321667 /* ActivityCompletionView.swift */,
 				F2AA2AB12E8B03D200321667 /* ActivityCertificateImageView.swift */,
+				3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */,
+				3F0044932F525B88006DA9F3 /* CertificatePreviewView.swift */,
 				F2B389F02E4C49BD00518868 /* PDFKitView.swift */,
 				F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */,
 				F25DCC732E553470006EFEDE /* CameraPickerView.swift */,
 				F2B389F22E4C537C00518868 /* CertificateShareView.swift */,
+				3F0044952F52837F006DA9F3 /* CertificateShareView-ViewModel.swift */,
 			);
 			path = "Activity Completion";
 			sourceTree = "<group>";
@@ -893,7 +909,6 @@
 			children = (
 				F21A7F2D2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift */,
 				F21A7F2E2E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift */,
-				3F9520A42EB16FF600F1B498 /* SpotlightCentral.swift */,
 			);
 			path = "Custom Classes";
 			sourceTree = "<group>";
@@ -1091,13 +1106,13 @@
 			isa = PBXGroup;
 			children = (
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
+				3F2A42C52EA2C73C00B095CB /* Configuration */,
 				3F0C7AA72F4FD6CB001B6034 /* Certificates */,
 				3F83C7C12F0F3C1E00FB4CF2 /* Reinstatement */,
 				3FD74F782F033771002360AB /* Onboarding */,
 				3FE3723A2ECE552400CCF0FC /* Store */,
 				3F817DD52EC6755B00791223 /* Charts */,
 				3F2A42D62EA2E62D00B095CB /* Removed Code */,
-				3F2A42C52EA2C73C00B095CB /* Configuration */,
 				3F2A42CD2EA2DF0E00B095CB /* Globals */,
 				3F2A42C32EA2C72B00B095CB /* Extensions */,
 				3F03BEA22EECE83A003B89E7 /* Settings */,
@@ -1318,6 +1333,7 @@
 				3FE372482ECEA05B00CCF0FC /* UpgradeOptionsView.swift in Sources */,
 				3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */,
 				3FE3567B2F3BF4B800F88F60 /* CertificateBrain.swift in Sources */,
+				3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */,
 				3F71B99F2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift in Sources */,
 				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
@@ -1351,6 +1367,7 @@
 				3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */,
 				F2B580162E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift in Sources */,
 				3FBD7FDC2EF5077000A039C4 /* ComposeEmailView.swift in Sources */,
+				3F0044942F525B88006DA9F3 /* CertificatePreviewView.swift in Sources */,
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
 				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
@@ -1378,9 +1395,11 @@
 				3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */,
 				3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
+				3F4D0E7C2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
 				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
+				3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
@@ -1493,6 +1512,7 @@
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
+				3F0044962F52837F006DA9F3 /* CertificateShareView-ViewModel.swift in Sources */,
 				3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */,
 				F20C4AF72E71FE1600A2B4AE /* IssuerRowView.swift in Sources */,
 				3FBD7FD82EF4F54500A039C4 /* ContactDeveloperView.swift in Sources */,
