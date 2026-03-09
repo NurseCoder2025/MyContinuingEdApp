@@ -82,6 +82,13 @@
             ReferencedContainer = "container:MyContinuingEdApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "CG_PDF_VERBOSE"
+            value = "1"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <StoreKitConfigurationFileReference
          identifier = "../../MyContinuingEdApp/Configuration/PaidAppConfigurations.storekit">
       </StoreKitConfigurationFileReference>

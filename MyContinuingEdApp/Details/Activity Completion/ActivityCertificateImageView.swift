@@ -76,15 +76,14 @@ struct ActivityCertificateImageView: View {
                             CertificatePreviewView(savedCert: viewModel.certificateToShow)
                             
                             // MARK: Certificate DETAILS & SHARING
-                            if activity.hasCompletionCertificate,
-                                let certBrain = certificateBrain {
-                                    CertificateShareView(activity: activity, certBrain: certBrain)
+                            if activity.hasCompletionCertificate {
+                                CertificateShareView(activity: activity, certBrain: viewModel.certBrain)
                                 
                                 // MARK: DELETE CERTIFICATE
                                 DeleteObjectButtonView(buttonText: "Delete Certificate") {
                                     viewModel.showCertDeletionWarning = true
                                 }//: DeleteObjectButtonView
-                            }//: IF-LET (hasCompletionCertificate, certBrain)
+                            }//: IF-LET (hasCompletionCertificate)
                         case .error:
                             NoItemView(
                                 noItemTitleText: viewModel.errorAlertTitle,
@@ -92,6 +91,22 @@ struct ActivityCertificateImageView: View {
                                 noItemImage: "exclamationmark.triangle"
                             )
                             .accessibilityLabel(Text(viewModel.errorAlertMessage))
+                        case .localOnly:
+                            CertificatePreviewView(savedCert: viewModel.certificateToShow)
+                            
+                            // MARK: Add button for moving to iCloud
+                            if viewModel.certBrain.storageAvailability == .cloud {
+                                Button {
+                                    Task {@MainActor in
+                                        await viewModel.certBrain.moveCertToCloud(for: activity)
+                                    }//: TASK
+                                } label: {
+                                    Label("Move to iCloud", systemImage: "icloud.and.arrow.up")
+                                        .labelStyle(.titleAndIcon)
+                                        .foregroundStyle(.white)
+                                }//: BUTTON
+                                .buttonStyle(.borderedProminent)
+                            }//: IF
                         }//: SWITCH
                     }//: Certificate Section
                 }//: IF ELSE
@@ -143,6 +158,13 @@ struct ActivityCertificateImageView: View {
         } message: {
             Text("There was a problem saving the new certificate you selected. Please ensure that it is a valid PDF or image (jpeg, png, tiff, heic) file. It's possible the file may be corrupted.")
         }//: ALERT (error)
+        
+        // MARK: General Save Alert
+        .alert("Certificate Save Error", isPresented: $viewModel.showSaveErrorAlert){
+            Button("OK"){}
+        } message: {
+            Text(viewModel.errorAlertMessage)
+        }//: ALERT
 
         
     }//: BODY

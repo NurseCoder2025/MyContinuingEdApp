@@ -26,16 +26,15 @@ import Foundation
 protocol MediaMetadata: Identifiable, Codable, Hashable {
     var id: UUID {get}
     var versionNumber: Double {get}
-    var whereSaved: SaveLocation {get set}
     var assignedObjectId: UUID {get}
-    var mediaAs: MediaType {get set}
-    
+    var mediaAs: MediaType { get set }
+    var isExampleOnly: Bool { get set }
+    var fileVersion: MediaFileVersion {get set}
 }//: PROTOCOL
 
 
 extension MediaMetadata {
     var id: UUID { return UUID() }
-    var versionNumber: Double{ return 1.0 }
 }//: EXTENSION
 
 // MARK: - Media Coordination
@@ -56,16 +55,24 @@ extension MediaMetadata {
 ///  a custom hash function sets the hash value as the fileURL property as all urls should be unique and
 ///  this will prevent potential conflicts where two coordinators have the same URL.
 protocol MediaCoordinator: Identifiable, Hashable, Codable {
+    // MARK: Properties
     var id: UUID {get}
     var fileURL: URL {get set}
+    var whereSaved: SaveLocation {get set}
     var assignedObjectID: UUID {get}
     var mediaMetadata: any MediaMetadata {get}
-    var fileVersion: MediaFileVersion {get set}
+   
+    // MARK: Methods
+    mutating func markSavedOniCloud()
+    mutating func markSavedOnDevice()
 }//: PROTOCOL
 
 extension MediaCoordinator {
     var id: UUID { return UUID() }
     var assignedObjectID: UUID {mediaMetadata.assignedObjectId}
+    
+    mutating func markSavedOniCloud() {whereSaved = .cloud}//: markSavedOniCloud
+    mutating func markSavedOnDevice() {whereSaved = .local}//: markSavedOnDevice
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(fileURL)

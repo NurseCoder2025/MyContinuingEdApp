@@ -53,12 +53,12 @@ struct ActivityView: View {
             
             // MARK: Certificate Image section
             if let certBrain = certificateBrain {
-                ActivityCertificateImageView(
-                    dataController: dataController,
-                    certificateBrain: certBrain,
-                    activity: activity
-                )
-            }
+                    ActivityCertificateImageView(
+                        dataController: dataController,
+                        certificateBrain: certBrain,
+                        activity: activity
+                    )
+            }//: IF LET
         } //: FORM
         // MARK: - SHEETS
         // Credential(s) selection

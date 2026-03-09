@@ -14,13 +14,17 @@ import Foundation
 /// The main reason this struct was created was due to the fact that the NSFileVersion class conforms neither
 /// to Codable nor to NSCoding, so the only way to utilize that class in the CertificateCoordinator object, or
 /// anywhere else for that matter, was to essentially "wrap" it inside of a struct that could conform to Codable.
-struct MediaFileVersion: Codable, Equatable {
+struct MediaFileVersion: Codable, Equatable, Hashable {
     // MARK: - PROPERTIES
-    let fileLocation: URL
+    var fileLocation: URL
     let version: Double
     let localizedName: String?
     let savedComputer: String?
     let modifiedOn: Date?
+    var isExampleOnly: Bool = false
+    
+    // MARK: - EXAMPLE Object
+    static let example = MediaFileVersion(fileAt: URL.documentsDirectory.appending(path: "example.txt", directoryHint: .notDirectory), version: 1.0, isExampleOnly: true)
     
     // MARK: - METHODS
     
@@ -54,10 +58,16 @@ struct MediaFileVersion: Codable, Equatable {
         }
     }//: ==
     
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(fileLocation)
+        hasher.combine(version)
+    }//: hash
+    
     // MARK: - INIT
-    init(fileAt: URL, version: Double) {
+    init(fileAt: URL, version: Double, isExampleOnly: Bool = false) {
         self.fileLocation = fileAt
         self.version = version
+        self.isExampleOnly = isExampleOnly
         
         if let tempFV = NSFileVersion.currentVersionOfItem(at: fileAt) {
             self.localizedName = tempFV.localizedName

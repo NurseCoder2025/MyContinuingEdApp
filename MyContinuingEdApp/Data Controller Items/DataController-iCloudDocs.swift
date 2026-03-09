@@ -78,6 +78,7 @@ extension DataController {
     ///
     /// - Note: The StorageToUse enum is used to set the certificateAudioStorage property, which
     /// will determine where any new CE certificates and/or audio reflections are saved to.
+    @MainActor
     func assessUserICloudStatus() async {
         do {
             let currentStatus = try await defaultICloudContainer.accountStatus()
@@ -94,10 +95,12 @@ extension DataController {
                     if let savedID = userICloudID {
                         compareAppleAccountIDs(oldID: savedID, newID: obtainedID)
                     } else {
-                        userICloudID = obtainedID
-                        iCloudAvailability = .loggedIn
-                        encodeICloudUserIDFile()
-                    }
+                        await MainActor.run {
+                            userICloudID = obtainedID
+                            iCloudAvailability = .loggedIn
+                            encodeICloudUserIDFile()
+                        }//: MAIN ACTOR
+                    }//: IF LET ELSE
                 } catch {
                     // Per Apple's documentation, the userRecordID() method
                     // throws a CKError.Code.notAuthorized value only when
@@ -108,27 +111,41 @@ extension DataController {
                     // presence or absence of an iCloud account as well as
                     // for any restrictions, so if an error is thrown here
                     // it is most likely due to the user disabling the sync.
-                    iCloudAvailability = .loggedInDisabled
+                    await MainActor.run {
+                        iCloudAvailability = .loggedInDisabled
+                    }//: MAIN ACTOR
                 }//: DO-CATCH
-                certificateAudioStorage = .cloud
-                userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
+                await MainActor.run {
+                    certificateAudioStorage = .cloud
+                    userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
+                }//: MAIN ACTOR
             case .noAccount:
-                iCloudAvailability = .noAccount
-                certificateAudioStorage = .local
+                await MainActor.run {
+                    iCloudAvailability = .noAccount
+                    certificateAudioStorage = .local
+                }//: MAIN ACTOR
             case .restricted:
-                iCloudAvailability = .iCloudRestricted
-                certificateAudioStorage = .local
+                await MainActor.run {
+                    iCloudAvailability = .iCloudRestricted
+                    certificateAudioStorage = .local
+                }//: MAIN ACTOR
             default:
+                await MainActor.run {
+                    iCloudAvailability = .unableToCheck
+                    certificateAudioStorage = .local
+                }//: MAIN ACTOR
+            }//: SWITCH
+        } catch {
+            await MainActor.run {
                 iCloudAvailability = .unableToCheck
                 certificateAudioStorage = .local
-            }
-        } catch {
-            iCloudAvailability = .unableToCheck
-            certificateAudioStorage = .local
-            print("Could not determine the user's iCloud status.  Error: \(error.localizedDescription)")
-        }
+                print("Could not determine the user's iCloud status.  Error: \(error.localizedDescription)")
+            }//: MAIN ACTOR
+        }// DO-CATCH
         
-        objectWillChange.send()
+        await MainActor.run {
+            objectWillChange.send()
+        }//: MAIN ACTOR
     }//: assessUserICloudStatus()
     
     

@@ -310,7 +310,7 @@ enum ResponseEntryType: String, CaseIterable, Identifiable, Hashable {
 }//: ResponseEntryType
 
 enum MediaLoadingState: String, CaseIterable {
-    case blank, loading, loaded, error
+    case blank, loading, loaded, localOnly, error
 }//: CertificateLoadingState
 
 
@@ -431,4 +431,8 @@ enum FileIOError: Error {
     case syncError
     case unknownError
     case cantIdentifyFileType
+    case invalidArgument
+    case noDirectoryAvailable
+    case incompleteMove
+    case metaDataUpdateError
 }

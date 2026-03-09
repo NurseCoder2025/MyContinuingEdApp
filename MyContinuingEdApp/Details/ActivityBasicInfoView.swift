@@ -121,14 +121,13 @@ struct ActivityBasicInfoView: View {
             }//: IF
             
             // MARK: Credentials
-            Section("Activity For Credential(s)...") {
+            if allCredentials.count > 1 {
+                Section("Activity For Credential(s)...") {
                     // Credential(s) to which activity is assigned to
                     if activity.activityCredentials.isNotEmpty {
                         Text("Assigned Credential(s): \(assignedCredentials)")
                     }
                     
-                    // Show Credential Selection Sheet button
-                if allCredentials.count > 1 {
                     Button {
                         showACS()
                     } label: {
@@ -138,9 +137,8 @@ struct ActivityBasicInfoView: View {
                             Label("Manage Credential Assignments", systemImage: "list.bullet.clipboard.fill")
                         }
                     }//: BUTTON
-                }//: IF
-                
-            } //: SECTION (credential assignments)
+                } //: SECTION (credential assignments)
+            }//: IF
             
             // MARK: Description
             Section("Description") {

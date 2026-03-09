@@ -12,6 +12,8 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
     let product: T
+    
+    @State private var introEligible: Bool = false
 
     let cardHeight: CGFloat
     let columns = Array(repeating: GridItem(.flexible()), count: 2)
@@ -41,7 +43,16 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
     
     var asProduct: Product? {
         return product as? Product
-    }
+    }//: asProduct
+    
+    var introductoryPrice: String? {
+        if let prod = asProduct, let subInfo = prod.subscription, introEligible, let introOffer = subInfo.introductoryOffer {
+            let introPrice = introOffer.displayPrice
+            return introPrice
+        } else {
+            return nil
+        }
+    }//: currentProductPrice
     
     // MARK: - BODY
     var body: some View {
@@ -68,9 +79,18 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
                             )
                             .padding([.leading, .top], 10)
                         Spacer()
-                        Text(product.displayPrice)
-                            .foregroundStyle(.secondary)
-                            .padding(.trailing, 20)
+                        HStack(spacing: 0) {
+                            Text(product.displayPrice)
+                                .foregroundStyle(.secondary)
+                                .padding(.trailing, 10)
+                                .strikethrough(introEligible, color: Color.secondary)
+                            
+                            if let offerPrice = introductoryPrice {
+                                Text(offerPrice)
+                                    .foregroundStyle(.secondary).bold()
+                                    .padding(.trailing, 10)
+                            }//: IF LET (offerPrice)
+                        }//: HSTACK
                     }//: HSTACK
                     
                         Text(product.description)
@@ -146,6 +166,13 @@ struct AppUpgradeCardView<T: StorePreviewProtocol>: View {
         }//: ZSTACK
         .frame(maxWidth: 350)
         .padding()
+        // MARK: - TASK
+        .task {
+            if let prod = asProduct {
+                guard let subscription = prod.subscription else { return }
+                introEligible = await subscription.isEligibleForIntroOffer
+            }//: IF LET
+        }//: TASK
         
     }//: BODY
     

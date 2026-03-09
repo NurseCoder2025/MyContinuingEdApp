@@ -62,10 +62,7 @@ actor CertificateCoordinatorActor {
     
     func getCoordinatorsForLocation(_ location: SaveLocation) -> Set<CertificateCoordinator> {
         
-        allCoordinators.filter { coordinator in
-            guard let metaData = coordinator.mediaMetadata as? CertificateMetadata else {return false}
-            return metaData.whereSaved == location
-        }//: filter
+        allCoordinators.filter {$0.whereSaved == location}//: filter
         
     }//: getCoordinatorsForLocation()
     

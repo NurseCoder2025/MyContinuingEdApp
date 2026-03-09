@@ -13,7 +13,14 @@ import Foundation
 ///
 /// - Parameters:
 ///     - fileURL: the url where the actual ce certificate data is saved to
+///     - whereSaved: SaveLocation enum type corresponding to either iCloud or local device
 ///     - mediaMetaData: the meta data object model for the certificate
+///     - fileVersion: MediaFileVersion struct with the file info for the certificate
+///
+/// - Note: In addition to the properties listed above, this method also has two mutating
+/// methods which have default implementations provided via the MediaCoordinator protocol:
+/// markSaveOniCloud() and markSavedOnDevice() which update the whereSaved property
+/// respectively.
 ///
 /// This object is intended to facilitate the syncing of CE certificate files with CoreData in
 /// that whenever a CE certificate is added to a completed CeActivity, this coordinator
@@ -25,8 +32,8 @@ import Foundation
 struct CertificateCoordinator: MediaCoordinator {
     // MARK: - PROPERTIES
     var fileURL: URL
+    var whereSaved: SaveLocation
     let mediaMetadata: any MediaMetadata
-    var fileVersion: MediaFileVersion
     
     // MARK: - CONFORMANCE
     
@@ -56,14 +63,11 @@ struct CertificateCoordinator: MediaCoordinator {
             let rightMediaType = rightMeta.mediaAs
             
             let leftURL = lhs.fileURL
-            let leftVersion = lhs.fileVersion
             let rightURL = rhs.fileURL
-            let rightVersion = rhs.fileVersion
             
             if leftObject == rightObject,
                 leftMediaType == rightMediaType,
-                leftURL == rightURL,
-                leftVersion == rightVersion
+                leftURL == rightURL
             {
                 return true
             } else {
@@ -74,13 +78,13 @@ struct CertificateCoordinator: MediaCoordinator {
         }
     }//: ==
     
-    enum CertificateKeys: CodingKey { case fileURL, mediaMetaData, fileVersion }
+    enum CertificateKeys: CodingKey { case fileURL, whereSaved, mediaMetaData, fileVersion }
     
    func encode(to encoder: Encoder) throws {
        var container = encoder.container(keyedBy: CertificateKeys.self)
        try container.encode(fileURL, forKey: .fileURL)
+       try container.encode(whereSaved, forKey: .whereSaved)
        try container.encode(mediaMetadata, forKey: .mediaMetaData)
-       try container.encode(fileVersion, forKey: .fileVersion)
     }//: encode
     
     // MARK: - INIT
@@ -92,12 +96,12 @@ struct CertificateCoordinator: MediaCoordinator {
     ///   - fileVersion: MediaFileVersion object for the saved certificate
     init(
         file fileURL: URL,
-        metaData mediaMetadata: any MediaMetadata,
-        version fileVersion: MediaFileVersion
+        whereSaved: SaveLocation,
+        metaData mediaMetadata: any MediaMetadata
     ) {
         self.fileURL = fileURL
+        self.whereSaved = whereSaved
         self.mediaMetadata = mediaMetadata
-        self.fileVersion = fileVersion
     }//:INIT
     
     /// Initializer for decoding an existing CertificateCoordinator object from file
@@ -105,8 +109,8 @@ struct CertificateCoordinator: MediaCoordinator {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CertificateKeys.self)
         self.fileURL = try container.decode(URL.self, forKey: .fileURL)
+        self.whereSaved = try container.decode(SaveLocation.self, forKey: .whereSaved)
         self.mediaMetadata = try container.decode(CertificateMetadata.self, forKey: .mediaMetaData)
-        self.fileVersion = try container.decode(MediaFileVersion.self, forKey: .fileVersion)
     }//: INIT (from decoder)
     
 }//: CertificateCoordinator

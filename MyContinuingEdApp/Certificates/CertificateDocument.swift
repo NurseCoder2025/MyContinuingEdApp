@@ -76,7 +76,8 @@ final class CertificateDocument: UIDocument {
             rawCertData = nil
             return wrapperDirectory
         } else {
-            return FileWrapper()
+            NSLog(">>>Error: Failed to create FileWrapper object with binary data and metadata.")
+            throw FileIOError.writeFailed
         }
     }//: contents(forType)
     
@@ -85,7 +86,10 @@ final class CertificateDocument: UIDocument {
     ///   - contents: FileWrapper object (which should be a directory - the fileWrapper property of this class)
     ///   - typeName: file extension for the type of document this is ("cert")
     override func load(fromContents contents: Any, ofType typeName: String?) throws {
-        guard let fileWrapper = contents as? FileWrapper else { return }
+        guard let fileWrapper = contents as? FileWrapper else {
+            NSLog(">>>Error: Failed to downcast the fromContents argument to a FileWrapper object.")
+            throw FileIOError.loadingError
+        }//: GUARD
         self.fileWrapper = fileWrapper
     }//: load()
     

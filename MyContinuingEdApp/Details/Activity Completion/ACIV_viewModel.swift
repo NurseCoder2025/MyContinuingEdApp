@@ -33,6 +33,7 @@ extension ActivityCertificateImageView {
         // Properties for alerting the user about any errors encountered
         @Published var errorAlertTitle: String = ""
         @Published var errorAlertMessage: String = ""
+        @Published var showSaveErrorAlert: Bool = false
         
         // Notifications
         let loadCompleted = Notification.Name(.certLoadingDoneNotification)
@@ -53,6 +54,7 @@ extension ActivityCertificateImageView {
         /// - Note: Error handling is accomplished via an observer object that runs the handleCertLoaded
         /// method to update the errorAlertMessage and errorAlertTitle properties if an error was encountered
         /// in the loadSavedCertificate(for) method.
+        @MainActor
         func loadExistingCert() {
             guard certificateSavedYN, certDisplayStatus != .loaded else {return}
             certDisplayStatus = .loading
@@ -83,6 +85,7 @@ extension ActivityCertificateImageView {
             }//: TASK
         }//: loadExistingCert()
         
+        @MainActor
         func deleteSavedCert() {
             guard certificateSavedYN else {return}
             
@@ -153,11 +156,17 @@ extension ActivityCertificateImageView {
                     let someCE = self?.activity {
                     do {
                         try await cBrain.addNewCeCertificate(for: someCE, with: data, dataType: fileType)
+                        self?.certDisplayStatus = .loaded
                     } catch {
                         self?.errorAlertTitle = "Certificate Save Error"
                         self?.errorAlertMessage =  cBrain.errorMessage
-                        self?.certDisplayStatus = .error
-                    }
+                        if self?.certBrain.handlingError == .saveLocationUnavailable {
+                            self?.showSaveErrorAlert = true
+                            self?.certDisplayStatus = .localOnly
+                        } else {
+                            self?.certDisplayStatus = .error
+                        }
+                    }//: DO-CATCH
                 }//: IF LET
             }//: TASK
         }//: saveLoadedCertificate()

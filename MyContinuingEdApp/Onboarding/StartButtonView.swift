@@ -14,7 +14,7 @@ struct StartButtonView: View {
     // MARK: - BODY
     var body: some View {
         Button {
-            dataController.showOnboardingScreen.toggle()
+            dataController.showOnboardingScreen = false
         } label: {
             HStack {
                 Text("Get Started!")

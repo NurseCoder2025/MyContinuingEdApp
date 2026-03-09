@@ -42,9 +42,11 @@
 		3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */; };
 		3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC402EFA001300BBE427 /* TutorialStep.swift */; };
 		3F3EAC452EFA013700BBE427 /* TutorialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC432EFA013700BBE427 /* TutorialData.swift */; };
+		3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4607F52F57B41600CCD094 /* PDF_EnvironmentKey.swift */; };
 		3F47D9A42F468D8E00B02580 /* CertificateData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A32F468D8E00B02580 /* CertificateData.swift */; };
 		3F47D9A62F46938100B02580 /* MediaFile+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */; };
 		3F47D9A82F469D8600B02580 /* CertificateCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */; };
+		3F483E352F58EA7000C21940 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */; };
 		3F4D0E7C2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */; };
 		3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */; };
 		3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */; };
@@ -317,9 +319,11 @@
 		3F3EAC402EFA001300BBE427 /* TutorialStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialStep.swift; sourceTree = "<group>"; };
 		3F3EAC432EFA013700BBE427 /* TutorialData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialData.swift; sourceTree = "<group>"; };
 		3F44C83A2EA9BDD500645B13 /* PerformanceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerformanceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F4607F52F57B41600CCD094 /* PDF_EnvironmentKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDF_EnvironmentKey.swift; sourceTree = "<group>"; };
 		3F47D9A32F468D8E00B02580 /* CertificateData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateData.swift; sourceTree = "<group>"; };
 		3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaFile+Extensions.swift"; sourceTree = "<group>"; };
 		3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateCoordinator.swift; sourceTree = "<group>"; };
+		3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CertificateBrain-Helpers.swift"; sourceTree = "<group>"; };
 		3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateDataWrapper.swift; sourceTree = "<group>"; };
 		3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACIV_viewModel.swift; sourceTree = "<group>"; };
@@ -601,6 +605,7 @@
 				3FBBBFA82F33F27A00CDC7A0 /* CertificateMetadata.swift */,
 				3FE3567A2F3BF4B800F88F60 /* CertificateBrain.swift */,
 				3F3B454F2F403A08002792D7 /* CertificateDocument.swift */,
+				3F4607F52F57B41600CCD094 /* PDF_EnvironmentKey.swift */,
 				3F47D9A32F468D8E00B02580 /* CertificateData.swift */,
 				3F47D9A72F469D8600B02580 /* CertificateCoordinator.swift */,
 				3F0648482F49F8FA0077626C /* MediaFileVersion.swift */,
@@ -645,6 +650,7 @@
 		3F2A42C32EA2C72B00B095CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */,
 				3F0648462F49C7F20077626C /* NSFileVersion+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
@@ -1402,6 +1408,7 @@
 				3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
+				3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				3F0648492F49F8FA0077626C /* MediaFileVersion.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
@@ -1548,6 +1555,7 @@
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,
 				3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */,
+				3F483E352F58EA7000C21940 /* FileManager+Extensions.swift in Sources */,
 				F2F6D57C2E2B53E500E1FB5F /* ExpirationTypeEnum.swift in Sources */,
 				F28E6BB62E7A095E003F4C95 /* DisciplinaryActionListSheet.swift in Sources */,
 				F2FBAAE52E5FDCE400348AAA /* ActivityType-CoreDataHelper.swift in Sources */,
