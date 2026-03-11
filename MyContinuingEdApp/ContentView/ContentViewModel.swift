@@ -7,6 +7,7 @@
 
 import CoreData
 import Foundation
+import SwiftUI
 import UIKit
 
 extension ContentView {
@@ -14,6 +15,8 @@ extension ContentView {
     class ViewModel: NSObject, ObservableObject, NSFetchedResultsControllerDelegate {
         // MARK: - PROPERTIES
         var dataController: DataController
+        
+        @Environment(\.spotlightCentral) var spotlightCentral
         
         // Properties for deleting an activity in the activity list
         @Published var activityToDelete: CeActivity?
@@ -79,6 +82,23 @@ extension ContentView {
             
         } //: DELETE Method
         
+        /// Method for the ContentView view model that ONLY deletes a CeActivity object in CoreData.
+        /// - Parameter activity: CeActivity object that is to be deleted
+        ///
+        /// - Important: If the activity argument happens to have any media files associated with
+        /// it (ex. certificate and/or audio reflections), and those are not deleted prior to calling this
+        /// method then they will remain stored and coordinator objects will continue to be made for them,
+        /// though the assignedObjectId property will be referencing an activity that no longer exists. This will
+        /// cause more space to be taken up on the user's device and on iCloud.
+        func deleteCeActivityCoreDataObject(_ activity: CeActivity) {
+            if #available(iOS 17.0, *) {
+                dataController.delete(activity)
+            } else {
+                spotlightCentral?.removeCeActivityFromDefaultIndex(activity)
+                dataController.delete(activity)
+            }//: IF #available
+        }//: deleteCeActivityCoreDataObject(_ activity)
+        
         /// Method for updating the values of allCredentials and allActivities whenever a Credential or
         /// CeActivity object is added/deleted.  This method will then update the view model properties
         /// so that UI depending on those properties will be updated.
@@ -132,7 +152,8 @@ extension ContentView {
                 try activitiesController.performFetch()
                 allActivities = activitiesController.fetchedObjects ?? []
             } catch {
-                print("Failed to load any credentials or activities.")
+                NSLog(">>>ContentViewModel init error: \(error.localizedDescription)")
+                NSLog(">>>Failed to load any credentials or activities.")
             }
             
         }//: INIT

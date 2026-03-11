@@ -1283,7 +1283,7 @@ final class CertificateBrain: ObservableObject {
             NotificationCenter.default.removeObserver(self, name: notificationToRemove, object: nil)
         }//: moveCertFiles
     
-    // MARK: - HELPER METHODS (private)
+    // MARK: - HELPER METHODS
     
     private func extractMetadataFromDoc(at url: URL) async -> CertificateMetadata {
         var extractedMetaData: CertificateMetadata = CertificateMetadata.example
@@ -1301,6 +1301,31 @@ final class CertificateBrain: ObservableObject {
         
         return extractedMetaData
     }//: extractMetadataFromDoc
+    
+    /// Method for determining if an individual CeActivity has a certificate saved for it, based on a matching coordinator object.
+    /// - Parameter activity: CeActivity that is to be checked for a CE certificate
+    /// - Returns: True if a matching coordinator can be found and the CertiifcateDocument can be opened at the
+    /// coordinator's fileURL property.  False if otherwise.
+    func ceActivityHasCertificateSaved(_ activity: CeActivity) async -> Bool {
+        if await coordinatorAccess.isAllCoordinatorsEmpty(){await decodeCoordinatorList()}//: IF await (isAllCoordinatorsEmpty)
+        
+        let coordinators = await coordinatorAccess.allCoordinators
+        guard coordinators.isNotEmpty else { return false }
+        
+        let matchingCoordinator = coordinators.first { coordinator in
+            coordinator.assignedObjectID == activity.activityID
+        }//: closure
+        
+        guard let foundCoordinator = matchingCoordinator else { return false }
+        
+        let savedCert = await CertificateDocument(certURL: foundCoordinator.fileURL)
+        if await savedCert.open() {
+            await savedCert.close()
+            return true
+        } else {
+            return false
+        }//: IF await
+    }//: ceActivityHasCertificateSaved(activity)
     
     // MARK: - PREVIEW
     #if DEBUG

@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     // MARK: - Properties
     @EnvironmentObject var dataController: DataController
+    @Environment(\.certificateBrain) var certificateBrain
 
     @Environment(\.spotlightCentral) var spotlightCentral
     @Environment(\.requestReview) var requestReview
@@ -19,7 +20,9 @@ struct ContentView: View {
     @State private var showUpgradetoPaidSheet: Bool = false
     @State private var selectedUpgradeOption: PurchaseStatus? = nil
     
-    var deletionWarningMessage: String = ""
+    // Deletion properties
+    @State private var showDeletionErrorAlert: Bool = false
+    @State private var deletionErrorMessage: String = ""
     
     // MARK: - BODY
     var body: some View {
@@ -86,26 +89,31 @@ struct ContentView: View {
             // MARK: - ALERTS
                 .alert("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
                     Button("Delete", role: .destructive) {
-                        if let activity = viewModel.activityToDelete {
-                            if #available(iOS 17, *) {
-                                viewModel.dataController.delete(activity)
-                            } else {
-                                spotlightCentral?.removeCeActivityFromDefaultIndex(activity)
-                                viewModel.dataController.delete(activity)
-                            }//: IF AVAILABLE
+                        if let selectedActivity = viewModel.activityToDelete {
+                            fullyDeleteCeActivity(selectedActivity)
                         }//: IF LET
-                        
-                        viewModel.activityToDelete = nil
                     } //: DELETE button
-                    
-                    Button("Cancel", role: .cancel) {
-                        viewModel.activityToDelete = nil
-                    }
+                    Button("Cancel", role: .cancel) {viewModel.activityToDelete = nil}
                 } message: {
                     if let activity = viewModel.activityToDelete {
                         Text("Warning! You are about to delete the activity '\(activity.ceTitle)'.  This will delete its certificate along with any reflections.  This action cannot be undone.")
-                    }
-                }
+                    }//: IF LET
+                }//: ALERT (delete)
+            
+                .alert("CE Deletion Error", isPresented: $showDeletionErrorAlert) {
+                    Button("OK"){}
+                } message: {
+                    Text(deletionErrorMessage)
+                }//: ALERT (deletion error)
+            
+            // MARK: - ON CHANGE
+                .onChange(of: deletionErrorMessage) {_ in
+                    let trimmedMessage = deletionErrorMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if trimmedMessage.isNotEmpty {
+                        showDeletionErrorAlert = true
+                    }//: IF
+                }//: ON CHANGE
+            
             // MARK: - TOOLBAR
                 .toolbar {
                     ContentViewToolbarView() {
@@ -150,6 +158,50 @@ struct ContentView: View {
             requestReview()
         }
     }//: askForReview
+    
+    /// ContentView method that deletes a selected CeActivity CoreData object along with all media files associated with it.
+    /// - Parameter activity: CeActivity that is to be deleted
+    ///
+    /// The method first checks if the activity has a CE certificate and/or any audio reflections associated with it, and then
+    /// deletes them first.  Once those are successfully deleted, then the core data object is removed.  However, since the
+    /// media-related deletion methods can throw errors, this method will update the deletionErrorMessage and return without
+    /// removing the CoreData object instead.  Once the deletionErrorMessage updates, then a new alert will be generated for
+    /// the user.
+    func fullyDeleteCeActivity(_ activity: CeActivity) {
+        if let certBrain = certificateBrain, activity.hasCompletionCertificate {
+            Task { @MainActor in
+                let confirmedCert = await certBrain.ceActivityHasCertificateSaved(activity)
+                guard confirmedCert else {
+                    NSLog(">>> Invalid hasCompletionCertificate value for \(activity.ceTitle).")
+                    NSLog(">>> Unable to find a certificate or coordinator object for the activity when there should be one.")
+                    deletionErrorMessage = "The app's internal information on this activity shows that there should be a certificate saved, but none was found (or could be found). Reach out to the developer for assistance."
+                    return
+                }//: GUARD
+                
+                do {
+                    try await certBrain.deleteCertificate(for: activity)
+                } catch {
+                    NSLog(">>> Error deleting the CE activity \(activity.ceTitle) due to an error when trying to delete the associated certificate file.")
+                    NSLog(">>> Neither the activity nor certificate were deleted.")
+                    NSLog(">>> Likely cause is an invalid URL in the certificate coordinator for the associated certificate due to the actual file being moved or deleted without updating the coordinator list accordingly.")
+                    deletionErrorMessage = "Unable to delete the certificate because an error was encountered while trying to delete the certificate associated with it. Try manually deleting the certificate first and then try again."
+                    return
+                }//: DO - CATCH
+                
+                viewModel.deleteCeActivityCoreDataObject(activity)
+                return
+            }//: TASK
+        } else if activity.hasCompletionCertificate {
+            NSLog(">>>Error deleting the CE activity \(activity.ceTitle) due to a nil certificateBrain value. However, the hasCompletionCertificate property is still true.")
+            deletionErrorMessage = "Unable to delete the certificate because an error was encountered while trying to delete the certificate associated with it. Try manually deleting the certificate first and then try again."
+            return
+        }//: IF - ELSE IF
+        
+        viewModel.deleteCeActivityCoreDataObject(activity)
+        viewModel.activityToDelete = nil
+    }//: fullyDeleteCeActivity
+    
+    
     
     // MARK: - INIT
     init(dataController: DataController) {
