@@ -106,7 +106,12 @@ struct ActivityCertificateImageView: View {
                                         .foregroundStyle(.white)
                                 }//: BUTTON
                                 .buttonStyle(.borderedProminent)
-                            }//: IF
+                            }//: IF (storageAvailability = .cloud)
+                            
+                            // MARK: DELETE CERTIFICATE
+                            DeleteObjectButtonView(buttonText: "Delete Certificate") {
+                                viewModel.showCertDeletionWarning = true
+                            }//: DeleteObjectButtonView
                         }//: SWITCH
                     }//: Certificate Section
                 }//: IF ELSE
@@ -158,6 +163,13 @@ struct ActivityCertificateImageView: View {
         } message: {
             Text("There was a problem saving the new certificate you selected. Please ensure that it is a valid PDF or image (jpeg, png, tiff, heic) file. It's possible the file may be corrupted.")
         }//: ALERT (error)
+        
+        // MARK: Deletion Error
+        .alert("Deletion Error", isPresented: $viewModel.showCertDeletErrorAlert) {
+            Button("OK"){}
+        } message: {
+            Text(viewModel.errorAlertMessage)
+        }//: ALERT (deletion error)
         
         // MARK: General Save Alert
         .alert("Certificate Save Error", isPresented: $viewModel.showSaveErrorAlert){

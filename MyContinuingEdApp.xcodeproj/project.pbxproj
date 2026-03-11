@@ -109,6 +109,7 @@
 		3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */; };
 		3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */; };
 		3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */; };
+		3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
@@ -388,6 +389,7 @@
 		3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreExtensions.swift; path = MyContinuingEdApp/Extensions/StoreExtensions.swift; sourceTree = SOURCE_ROOT; };
 		3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProduct.swift; sourceTree = "<group>"; };
 		3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseButtonLabelView.swift; sourceTree = "<group>"; };
+		3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStorageSettingsView.swift; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NoCredSubTypeView.swift; path = "MyContinuingEdApp/Credentials/Sub Category Cat Sheet/NoCredSubTypeView.swift"; sourceTree = SOURCE_ROOT; };
@@ -580,6 +582,7 @@
 		3F03BEA22EECE83A003B89E7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */,
 				3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */,
 				3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */,
 				3F83F11F2F22185900FCF350 /* GeneralUISettingsView.swift */,
@@ -1516,6 +1519,7 @@
 				3FF979222F457E8A00DD8363 /* String+Extensions.swift in Sources */,
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
 				3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */,
+				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,

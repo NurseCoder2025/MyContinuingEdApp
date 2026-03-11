@@ -22,23 +22,31 @@ struct SettingsSheet: View {
                     
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 20) {
-                        // App Purchase Level
+                        // MARK: App Purchase Level
                         AppPurchaseLevelView()
                             .padding(.horizontal, 10)
                         
-                        // Subscription/Purchase info
+                        // MARK: Subscription/Purchase info
                         PurchaseInfoView()
                             .padding(.horizontal, 10)
                         
-                        // General UI Settings
+                        // MARK: iCloud usage preference for media files
+                        // Passing in the DataController as an
+                        // argument due to initializing view @State
+                        // properties with values from the
+                        // sharedSettings in DataController.
+                        MediaStorageSettingsView(dataController: dataController)
+                            .padding(.horizontal, 10)
+                        
+                        // MARK: General UI Settings
                         GeneralUISettingsView()
                             .padding(.horizontal, 10)
                         
-                        // Notification Settings
+                        // MARK: Notification Settings
                         NotificationSettingsView()
                             .padding(.horizontal, 10)
                         
-                        // Help - contact developer
+                        // MARK: Help - contact developer
                         ContactDeveloperView()
                             .padding(.horizontal, 10)
                         

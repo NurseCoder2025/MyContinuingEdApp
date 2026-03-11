@@ -29,6 +29,7 @@ extension ActivityCertificateImageView {
         
         // Certificate deletion properties
         @Published var showCertDeletionWarning: Bool = false
+        @Published var showCertDeletErrorAlert: Bool = false
         
         // Properties for alerting the user about any errors encountered
         @Published var errorAlertTitle: String = ""
@@ -98,7 +99,7 @@ extension ActivityCertificateImageView {
                 } catch {
                     self?.errorAlertTitle = "Certificate Deletion Error"
                     self?.errorAlertMessage = self?.certBrain.errorMessage ?? "Unknown error"
-                    self?.certDisplayStatus = .error
+                    self?.showCertDeletErrorAlert = true
                 }//: DO - CATCH
             }//: TASK
         }//: deleteSavedCert()
@@ -126,8 +127,11 @@ extension ActivityCertificateImageView {
         func addOrChangeCertificate(with data: Data) {
             certDisplayStatus = .loading
             if certificateToShow != nil {
+                // Warn users about changing an existing certificate
                 showCertificateChangeWarning = true
             } else {
+                // For adding a certificate to an activity that previously doesn't
+                // have one
                 do {
                     try updateCertificate(with: data)
                     saveLoadedCertificate(with: data)
