@@ -96,22 +96,6 @@ final class CertificateDocument: UIDocument {
     
     // MARK: - PRIVATE METHODS
     
-    /// Private method that encodes an individual object into JSON and then inserts into a FileWrapper regular data file
-    /// object for use in the contents(forType) method.
-    /// - Parameter object: Any Codable object, but specifically only the CertificateData and CertificateMetadata objects
-    /// should be passed in as arguments
-    /// - Returns: FileWrapper file data object with the encoded object if encoding was successful; nil if not
-    private func encodeToJSONForWrapper(toEncode object: Codable) -> FileWrapper? {
-        let encoder = JSONEncoder()
-        let encodedData = (try? encoder.encode(object))
-        if let savedData = encodedData {
-            let wrapper = FileWrapper(regularFileWithContents: savedData)
-            return wrapper
-        } else {
-            return nil
-        }
-    }//: encodeToJSONForWrapper()
-    
     /// Private method that is used in both computed properties in CertificateDocument to load the individual files within the
     /// FileWrapper directory to the respective computed property.
     /// - Parameter wrapper: String value representing the dictionary key for which the corresponding FileWrapper data

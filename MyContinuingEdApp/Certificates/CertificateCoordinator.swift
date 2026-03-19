@@ -31,9 +31,14 @@ import Foundation
 /// object) and then using the fileURL property to remove the file.
 struct CertificateCoordinator: MediaCoordinator {
     // MARK: - PROPERTIES
+    let id: UUID
     var fileURL: URL
     var whereSaved: SaveLocation
     let mediaMetadata: any MediaMetadata
+    
+    // Per MediaCoordinator protocol, the assignedObjectID property is
+    // also available since it's value was set to be what is in
+    // the metadata object by the protocol extension.
     
     // MARK: - CONFORMANCE
     
@@ -78,10 +83,11 @@ struct CertificateCoordinator: MediaCoordinator {
         }
     }//: ==
     
-    enum CertificateKeys: CodingKey { case fileURL, whereSaved, mediaMetaData, fileVersion }
+    enum CertificateKeys: CodingKey { case id, fileURL, whereSaved, mediaMetaData }
     
    func encode(to encoder: Encoder) throws {
        var container = encoder.container(keyedBy: CertificateKeys.self)
+       try container.encode(id, forKey: .id)
        try container.encode(fileURL, forKey: .fileURL)
        try container.encode(whereSaved, forKey: .whereSaved)
        try container.encode(mediaMetadata, forKey: .mediaMetaData)
@@ -95,10 +101,12 @@ struct CertificateCoordinator: MediaCoordinator {
     ///   - mediaMetadata: CertificateMetadata object for the saved certificate
     ///   - fileVersion: MediaFileVersion object for the saved certificate
     init(
+        id: UUID = UUID(),
         file fileURL: URL,
         whereSaved: SaveLocation,
         metaData mediaMetadata: any MediaMetadata
     ) {
+        self.id = id
         self.fileURL = fileURL
         self.whereSaved = whereSaved
         self.mediaMetadata = mediaMetadata
@@ -108,6 +116,7 @@ struct CertificateCoordinator: MediaCoordinator {
     /// - Parameter decoder: a JSON decoder that will decode the saved object
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CertificateKeys.self)
+        self.id = try container.decode(UUID.self, forKey: .id)
         self.fileURL = try container.decode(URL.self, forKey: .fileURL)
         self.whereSaved = try container.decode(SaveLocation.self, forKey: .whereSaved)
         self.mediaMetadata = try container.decode(CertificateMetadata.self, forKey: .mediaMetaData)

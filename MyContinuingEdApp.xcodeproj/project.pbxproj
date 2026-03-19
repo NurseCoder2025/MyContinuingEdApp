@@ -30,7 +30,15 @@
 		3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
 		3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */; };
+		3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F33A35A2F6A206E00C24210 /* Recording.swift */; };
 		3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */; };
+		3F396C9E2F6320AF0025F786 /* AudioReflectionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396C9D2F6320AF0025F786 /* AudioReflectionData.swift */; };
+		3F396CA02F6320D40025F786 /* ARDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396C9F2F6320D40025F786 /* ARDocument.swift */; };
+		3F396CA22F6321090025F786 /* ARMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396CA12F6321090025F786 /* ARMetadata.swift */; };
+		3F396CA42F63213B0025F786 /* ARCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396CA32F63213B0025F786 /* ARCoordinator.swift */; };
+		3F396CA62F63214E0025F786 /* ARCoordinatorActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396CA52F63214E0025F786 /* ARCoordinatorActor.swift */; };
+		3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */; };
+		3F396CAA2F635D720025F786 /* AudioReflectionBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */; };
 		3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */; };
 		3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */; };
 		3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */; };
@@ -307,7 +315,15 @@
 		3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
 		3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Reinstatement.swift"; sourceTree = "<group>"; };
+		3F33A35A2F6A206E00C24210 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
 		3F3905F02ECC209D006EB291 /* TotalRenewalProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalRenewalProgressBar.swift; sourceTree = "<group>"; };
+		3F396C9D2F6320AF0025F786 /* AudioReflectionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionData.swift; sourceTree = "<group>"; };
+		3F396C9F2F6320D40025F786 /* ARDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARDocument.swift; sourceTree = "<group>"; };
+		3F396CA12F6321090025F786 /* ARMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARMetadata.swift; sourceTree = "<group>"; };
+		3F396CA32F63213B0025F786 /* ARCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoordinator.swift; sourceTree = "<group>"; };
+		3F396CA52F63214E0025F786 /* ARCoordinatorActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCoordinatorActor.swift; sourceTree = "<group>"; };
+		3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDocument+Extensions.swift"; sourceTree = "<group>"; };
+		3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionBrain.swift; sourceTree = "<group>"; };
 		3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewToolbarView.swift; sourceTree = "<group>"; };
 		3F39AFCE2EA18A15003F5E78 /* RenewalSheetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalSheetData.swift; sourceTree = "<group>"; };
 		3F39AFD02EA18AC5003F5E78 /* SidebarSmartFilterRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarSmartFilterRow.swift; sourceTree = "<group>"; };
@@ -653,6 +669,7 @@
 		3F2A42C32EA2C72B00B095CB /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */,
 				3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */,
 				3F0648462F49C7F20077626C /* NSFileVersion+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
@@ -922,6 +939,20 @@
 			path = "Custom Classes";
 			sourceTree = "<group>";
 		};
+		3F396C9C2F631D1C0025F786 /* Audio Reflections */ = {
+			isa = PBXGroup;
+			children = (
+				3F396C9D2F6320AF0025F786 /* AudioReflectionData.swift */,
+				3F396CA12F6321090025F786 /* ARMetadata.swift */,
+				3F396CA32F63213B0025F786 /* ARCoordinator.swift */,
+				3F396CA52F63214E0025F786 /* ARCoordinatorActor.swift */,
+				3F396C9F2F6320D40025F786 /* ARDocument.swift */,
+				3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */,
+				3F33A35A2F6A206E00C24210 /* Recording.swift */,
+			);
+			path = "Audio Reflections";
+			sourceTree = "<group>";
+		};
 		3F5D03382EB3F55A00F5B1DC /* Data Controller Items */ = {
 			isa = PBXGroup;
 			children = (
@@ -954,6 +985,7 @@
 		3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */ = {
 			isa = PBXGroup;
 			children = (
+				3F396C9C2F631D1C0025F786 /* Audio Reflections */,
 				3F84D1672F2D55A4001C3AB6 /* Prompt Questions */,
 				3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */,
 				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
@@ -1351,6 +1383,7 @@
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
+				3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */,
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
@@ -1368,6 +1401,7 @@
 				F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */,
 				3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */,
 				3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */,
+				3F396CAA2F635D720025F786 /* AudioReflectionBrain.swift in Sources */,
 				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
 				F2B937A52E8393B300AF9155 /* CredentialNextExpirationSectionView.swift in Sources */,
 				3FBCBE622EB2A8AA0050D6A5 /* SpotlightHelpers.swift in Sources */,
@@ -1418,6 +1452,7 @@
 				3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */,
 				F272591F2E78F0F700210F11 /* MultipleSelectionGridView.swift in Sources */,
 				F2AA2AAE2E8AFDFD00321667 /* LiveActivitySettings.swift in Sources */,
+				3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
 				3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
@@ -1430,10 +1465,12 @@
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
 				3F7B68032EF0DBF100069528 /* PurchaseInfoView.swift in Sources */,
+				3F396CA42F63213B0025F786 /* ARCoordinator.swift in Sources */,
 				3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
+				3F396CA02F6320D40025F786 /* ARDocument.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
 				3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */,
 				3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
@@ -1457,11 +1494,13 @@
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
 				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
 				3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */,
+				3F396C9E2F6320AF0025F786 /* AudioReflectionData.swift in Sources */,
 				3FBBBFA92F33F27A00CDC7A0 /* CertificateMetadata.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				3F3B45522F403CA7002792D7 /* FileTypes.swift in Sources */,
+				3F396CA22F6321090025F786 /* ARMetadata.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
 				3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */,
 				3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */,
@@ -1521,6 +1560,7 @@
 				3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */,
 				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
+				3F396CA62F63214E0025F786 /* ARCoordinatorActor.swift in Sources */,
 				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				3F0044962F52837F006DA9F3 /* CertificateShareView-ViewModel.swift in Sources */,
@@ -1822,6 +1862,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1854,6 +1895,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

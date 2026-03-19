@@ -68,7 +68,6 @@ protocol MediaCoordinator: Identifiable, Hashable, Codable {
 }//: PROTOCOL
 
 extension MediaCoordinator {
-    var id: UUID { return UUID() }
     var assignedObjectID: UUID {mediaMetadata.assignedObjectId}
     
     mutating func markSavedOniCloud() {whereSaved = .cloud}//: markSavedOniCloud

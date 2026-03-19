@@ -50,17 +50,16 @@ extension ReflectionResponse {
             } else {
                 self.completeAnswerYN = false
             }
-        } else if let recordedAudio = self.audioReflection {
-            do {
-                let audioPlayer = try AVAudioPlayer(data: recordedAudio)
-                let recordingLength = audioPlayer.duration
-                if recordingLength >= 10 {
-                    self.completeAnswerYN = true
-                }
-            } catch {
-                print("Failed to retrieve audio from data: \(error.localizedDescription)")
+        } else if self.hasAudioReflection, let transcribedText = self.answer {
+            let trimmedAnswer = transcribedText.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmedAnswer.count >= 75 {
+                self.completeAnswerYN = true
+            } else {
+                self.completeAnswerYN = false
             }
-        }//: IF - ELSE
+        } else {
+            self.completeAnswerYN = false
+        }//: IF ELSE
     }//: markResponseAsComplete
     
     // MARK: - EXAMPLE

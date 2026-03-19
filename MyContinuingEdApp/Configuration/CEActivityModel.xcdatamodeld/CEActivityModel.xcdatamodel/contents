@@ -149,9 +149,9 @@
     </entity>
     <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
-        <attribute name="audioReflection" optional="YES" attributeType="Binary"/>
         <attribute name="completeAnswerYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="createdOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hasAudioReflection" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="modifiedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="question" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReflectionPrompt" inverseName="responses" inverseEntity="ReflectionPrompt"/>

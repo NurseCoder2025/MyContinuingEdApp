@@ -18,7 +18,20 @@
 			<key>LSTypeIsPackage</key>
 			<true/>
 		</dict>
-		<dict/>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<string></string>
+			<key>CFBundleTypeName</key>
+			<string>audioReflection</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.pixelcraftlabsltd.reflection</string>
+			</array>
+			<key>LSTypelsPackage</key>
+			<false/>
+		</dict>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -47,8 +60,26 @@
 				</array>
 			</dict>
 		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+				<string>public.content</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>CeCache Audio Reflection Package</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.pixelcraftlabsltd.cecache-reflection</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>refl</string>
+				</array>
+			</dict>
+		</dict>
 	</array>
-	<key>UISupportsDocumentBrowser</key>
-	<true/>
 </dict>
 </plist>

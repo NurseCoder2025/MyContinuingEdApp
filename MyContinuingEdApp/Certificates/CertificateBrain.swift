@@ -15,7 +15,7 @@ final class CertificateBrain: ObservableObject {
     // MARK: - PROPERTIES
    
     private var coordinatorAccess = CertificateCoordinatorActor()
-    let fileExtension: String = "cert"
+    let fileExtension: String = .certFileExtension
     
     // Error handling properties
      var errorMessage: String = ""
@@ -311,6 +311,10 @@ final class CertificateBrain: ObservableObject {
                                 NSLog(">>>Error: setUbiquitous method threw an error when trying to move certificate related data from the local device to iCloud.")
                             }
                         }//: TASK (detached)
+                case .unknown:
+                    handlingError = .unableToMove
+                    errorMessage = "Unable to move certificate related data to a different location on disk."
+                    NSLog(">>> Invalid SaveLocation enum value passed into the moveCertCoordListTo(location) method. The 'unknown' value was used instead of cloud or local.")
                 }//: SWITCH
                
             }//: moveLocalCoordListToICloud()
@@ -375,7 +379,6 @@ final class CertificateBrain: ObservableObject {
             /// This method essentially filters the allCoordinators property using the mediaMetaData property of each coordinator object to retrieve
             /// the whereSaved property from the CertificateMetaData object contained within it.
             private func getCoordinatorsForFiles(savedAt: SaveLocation) async -> Set<CertificateCoordinator> {
-                _ = await coordinatorAccess.allCoordinators
                 if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
             
                     var fileCoordinators: Set<CertificateCoordinator> = []
@@ -385,10 +388,13 @@ final class CertificateBrain: ObservableObject {
                        fileCoordinators = await coordinatorAccess.getCoordinatorsForLocation(.local)
                     case .cloud:
                         fileCoordinators = await coordinatorAccess.getCoordinatorsForLocation(.cloud)
+                    case .unknown:
+                        NSLog(">>> Error getting coordinators for saved certificates because the 'unknown' SaveLocation enum type was passed into the getCoordiantorsForFailes(savedAt) method as an argument.")
+                        return fileCoordinators
                     }//: SWITCH
                     
                     return fileCoordinators
-                }//: getCoordinatorsForLocalFiles
+                }//: getCoordinatorsForFiles
     
     
      // MARK: - Saving Certificates
@@ -562,6 +568,9 @@ final class CertificateBrain: ObservableObject {
                     } else {
                         topFolderURL = URL.localCertificatesFolder
                     }
+                case .unknown:
+                    NSLog(">>> 'unknown' SaveLocation value passed in as an argument to the getCoordinatorsForFiles(savedAt) method in CertificateBrain. Using the local certificates file as the top folder URL.")
+                    topFolderURL = URL.localCertificatesFolder
                 }//: SWITCH
                 
                 let topFolderExists = (try? fileSystem.doesFolderExistAt(path: topFolderURL)) ?? false
@@ -622,6 +631,11 @@ final class CertificateBrain: ObservableObject {
                             NSLog(">>>Error trying to save certificate to iCloud due to the ubiquity container URL being a nil value at this time. Saving to the local device's Documents folder.")
                             return URL.documentsDirectory.appending(path: certFileName, directoryHint: .notDirectory)
                         }//: IF - ELSE (cloudURL)
+                    case .unknown:
+                        let localURL = URL.documentsDirectory.appending(path: certFileName, directoryHint: .notDirectory)
+                        NSLog(">>> Returning a local URL for a certificate due to the 'unknown' SaveLocation value type being passed into the createDocURL(with, for) method as an argument.")
+                        NSLog(">>> The new URL being returned is: \(localURL.absoluteString)")
+                        return localURL
                     }//: SWITCH
                 }//: IF ELSE
             }//: createDocURL
@@ -1027,6 +1041,10 @@ final class CertificateBrain: ObservableObject {
                                 }//: MAIN ACTOR
                                 NSLog(">>>Error while trying to move a local certificate to the user's iCloud container. From \(originalLocation) to iCloud: \(newLocation)")
                                 throw handlingError
+                            case .unknown:
+                                errorMessage = "Unable to move certificate to new location on disk."
+                                NSLog(">>> Invalid SaveLocation value (unknown) passed in as an argument to the moveSavedCertificate(using, to, nowAt) method.")
+                                throw handlingError
                             }//: SWITCH
                             
                         }//: DO - CATCH
@@ -1084,15 +1102,9 @@ final class CertificateBrain: ObservableObject {
         }//: certificatesChanged
     
         private func cloudCertSearchFinished(_ notification: Notification) {
-            let finishTask: Task<Void, Never> = Task.detached {
+            Task.detached {
                 await self.cloudCertSearchEndedHandler()
             }//: TASK
-            
-            if finishTask.isCancelled {
-                handlingError = .syncError
-                errorMessage = "Failed to locate certificates in iCloud"
-                NSLog(">>>Error: cloudCertSearchEndedHandler cancelled")
-            }//: isCancelled
         }//: cloudCertSearchFinished
         
         /// Private observer method that fills the allCloudCoordinators property with CertificateCoordinator objects whenever the
@@ -1191,7 +1203,7 @@ final class CertificateBrain: ObservableObject {
         // Creating observer that will recieve notification when the coordinator list JSON
         // file has been updated and saved, following the completion of the startICloudCertSearch
         // and cloudCertSearchFinished methods.  Since it is unknown how long it will take
-        // to query iCloud for saved certificate objects, using a coordinator to ensure that
+        // to query iCloud for saved certificate objects, using an observer to ensure that
         // the movement of files doesn't begin until after all coordinator objects are
         // updated.
         let syncCompleted = Notification.Name(.certCoordinatorListSyncCompleted)
