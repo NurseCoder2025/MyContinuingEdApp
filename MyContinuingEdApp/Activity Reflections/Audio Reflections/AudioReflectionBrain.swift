@@ -31,6 +31,8 @@ final class AudioReflectionBrain: ObservableObject {
     enum RecordingStatus {
         case waiting
         case recording
+        case paused
+        case stopped
         case transcribing
         case completed(Recording)
         case error
@@ -789,8 +791,6 @@ final class AudioReflectionBrain: ObservableObject {
     /// will be presented with a custom error message letting them know that they may need to delete the reflection
     /// data manually (based on the class handlingError and errorMessage values).
     func deleteAudioReflection(for response: ReflectionResponse) async throws {
-        let deleteNotification = Notification.Name(.audioDeletionCompletedNotification)
-        
         guard let audioCoordinator = await findMatchingCoordinatorFor(response: response) else {
             await MainActor.run {
                 handlingError = .unableToDelete
@@ -804,7 +804,6 @@ final class AudioReflectionBrain: ObservableObject {
             try fileSystem.removeItem(at: audioCoordinator.fileURL)
             await coordinatorAccess.removeCoordinator(audioCoordinator)
             await encodeCoordinatorList()
-            NotificationCenter.default.post(name: deleteNotification, object: nil)
         } catch {
             await MainActor.run {
                 handlingError = .unableToDelete
@@ -813,7 +812,6 @@ final class AudioReflectionBrain: ObservableObject {
             NSLog(">>>Error while attempting to delete an audio reflection at \(audioCoordinator.fileURL).")
             throw handlingError
         }//: DO-CATCH
-        
     }//: deleteAudioReflection(for)
     
     
@@ -1019,6 +1017,7 @@ final class AudioReflectionBrain: ObservableObject {
     }//: requestTranscribingPermission()
     
     private func startRecording() {
+        setupAudioObservers()
         let settings = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
             AVSampleRateKey: 44100,
@@ -1030,16 +1029,27 @@ final class AudioReflectionBrain: ObservableObject {
             try recordingSession.setActive(true)
             
             audioRecorder = try AVAudioRecorder(url: tempRecordingURL, settings: settings)
-            audioRecorder?.record()
             recordingState = .recording
+            audioRecorder?.record()
         } catch {
             NSLog(">>> Error recording audio: \(error.localizedDescription)")
             recordingErrorMessage = "Failed to configure the recording for your audio reflection: \(error.localizedDescription)"
         }//: DO - CATCH
     }//: startRecording()
     
+    func pauseRecording() {
+        audioRecorder?.pause()
+        recordingState = .paused
+    }//: pauseRecording()
+    
+    func resumeRecording() {
+        recordingState = .recording
+        audioRecorder?.record()
+    }//: resumeRecording()
+    
     func stopRecording(for prompt: ReflectionPrompt, in response: ReflectionResponse) {
         audioRecorder?.stop()
+        recordingState = .stopped
         transcribeRecording(for: prompt, in: response)
     }//: stopRecording()
     
@@ -1122,6 +1132,152 @@ final class AudioReflectionBrain: ObservableObject {
             recordingErrorMessage = "Unable to save the recorded audio because the audio data could not be retrieved for transcribing. Please try re-recording again."
         }//: IF ELSE (let Data(contentsOf)
     }//: transcribeRecording()
+    
+    /// AudioReflectionBrain method for creating a new transcripition of previously saved audio data for a specific
+    /// ReflectionResponse object and then using that to update the ReflectionResponse's answer property.
+    /// - Parameters:
+    ///   - data: Data object representing audio binary data
+    ///   - response: ReflectionResponse whose answer property is to be updated with the transcription
+    ///
+    /// - Important: This method does NOT update the Recording object previously saved in the ARDocument that
+    /// was assigned to the ReflectionResponse object (as determined by the ARCoordinator).
+    func transcribeRecordingFrom(data: Data, for response: ReflectionResponse) async {
+        do {
+            recordingState = .recording
+            let recordingData = try AVAudioPlayer(data: data)
+            try recordingData.data?.write(to: tempRecordingURL)
+            
+            let recognizer = SFSpeechRecognizer()
+            
+            let audioSaved = try Data(contentsOf: tempRecordingURL)
+            if audioSaved.count > 0 {
+                let speechRequest = SFSpeechURLRecognitionRequest(url: tempRecordingURL)
+                speechRequest.addsPunctuation = true
+                speechRequest.requiresOnDeviceRecognition = true
+                speechRequest.shouldReportPartialResults = false
+                speechRequest.taskHint = .dictation
+                
+                recognizer?.recognitionTask(with: speechRequest) { result, error in
+                    guard let result else {
+                        self.recordingState = .error
+                        self.errorMessage = "Unable to transcribe recorded audio data. Please try again."
+                        NSLog(">>> Error with the recognitionTask in transcribeRecordingFrom(data:) method.")
+                        NSLog(">>> Error details: \(error?.localizedDescription ?? "No error details provided.")")
+                        return
+                    }//: GUARD
+                    
+                    let transcribedAnswer = result.bestTranscription.formattedString
+                    var recordingFileName: String = ""
+                    var transcriptFileName: String = ""
+                    
+                    Task{@MainActor in
+                        recordingFileName = response.getAssignedPrompt().trimWordsTo(length: 30) + "_response" + String.audioFormatExtension
+                        transcriptFileName = "transcription_\(response.getAssignedPrompt().trimWordsTo(length: 15)).txt"
+                       
+                         let newRecording = Recording(
+                             fileName: recordingFileName,
+                             transcriptionFilename: transcriptFileName,
+                             transcription: transcribedAnswer
+                         )
+                        
+                        response.answer = transcribedAnswer
+                        self.dataController.save()
+                        self.recordingState = .completed(newRecording)
+                    }//: TASK
+                }//: recognitionTask
+            }//: IF (count)
+        } catch {
+            NSLog(">>> Error trying to transcribe existing recording.")
+            NSLog(">>> Error details: \(error.localizedDescription)")
+            recordingState = .error
+            errorMessage = "Unable to transcribe recorded audio data. Please try again."
+        }//: DO-CATCH
+    }//: transcribeRecordingFrom(data)
+    
+    /// AudioReflectionBrain method for setting the value of a specific ReflectionResponse's answer property to
+    /// be equal to the original transcription from the audio recording as previously saved in an ARDocument.
+    /// - Parameter response: ReflectionResponse object for which the user wishes to revert the answer
+    /// property back to what was originally transcribed when they first recorded an audio reflection.
+    ///
+    /// This method exists mainly for user convenience.  If a user has access to the audio reflections feature (as a Pro
+    /// subscriber), then they record an audio answer for a selected CeActivity reflection prompt, only to later edit the text
+    /// (as the answer property is a string) in the user interface.  Should they later wish to revert back to their original recording,
+    /// then this method can be called for them to replace the ReflectionResponse answer String with what was transcribed from
+    /// the original audio recording.
+    func restoreOriginalTranscription(for response: ReflectionResponse) async {
+        guard let matchedCoordinator = await findMatchingCoordinatorFor(response: response) else {
+            NSLog(">>> Error finding a matching coordinator for the ReflectionResponse argument in restoreOriginalTranscription(for) method.")
+            await MainActor.run {
+                errorMessage = "Unable to restore the original transcription for the audio reflection due to missing file data."
+            }//: MAIN ACTOR
+            return
+        }//: GUARD
+        
+        let savedAudio = await ARDocument(audioURL: matchedCoordinator.fileURL)
+        if await savedAudio.open() {
+            let audioRecording = await savedAudio.audioRecordingInfo
+            if audioRecording.transcription.count > 0 {
+                Task{@MainActor in
+                    response.answer = audioRecording.transcription
+                    self.dataController.save()
+                }//: TASK
+            } else {
+                NSLog(">>> Error updating the ReflectionResponse answer property due to the transcription property within the ARDocument for the assigned ReflectionResponse being empty.")
+                await MainActor.run {
+                    errorMessage = "The transcription file for the recorded audio is empty, so nothing could be restored."
+                }//: MAIN ACTOR
+            }//: IF ELSE
+            await savedAudio.close()
+        } else {
+            NSLog(">>> Error trying to open the ARDocument file at: \(matchedCoordinator.fileURL.absoluteString)")
+            await MainActor.run {
+                errorMessage = "Error encountered while trying to open the file where the recording data is saved."
+            }//: MAIN ACTOR
+        }//: IF AWAIT (open)
+    }//: restoreOriginalTranscription(for)
+    
+    // MARK: - AUDIO OBSERVERS
+    
+    /// AudioReflectionBrain method intended to create observers that handle system events that can interrupt an audio recording
+    /// session, such as a phone call.
+    ///
+    /// This method always removes any existing interruption observers before creating a new one.
+    private func setupAudioObservers() {
+        let noticeCenter = NotificationCenter.default
+        let interruptNotification = AVAudioSession.interruptionNotification
+        
+        noticeCenter.removeObserver(self, name: interruptNotification, object: recordingSession)
+        
+        noticeCenter.addObserver(
+            self,
+            selector: #selector(handleAudioInterruptions(_:)),
+            name: interruptNotification,
+            object: recordingSession
+        )//: OBSERVER
+    }//: setupAudioObservers()
+    
+    /// Selector method in AudioReflectionBrain for handling situations when an active recording session is interrupted by a device event,
+    /// such as a phone call or similar event.
+    /// - Parameter notification: Notification with the name "interruptNotification" (as part of AVAudioSession)
+    ///
+    /// This method will only pause the recording automatically.  Recording must be resumed manually by the user after the interruption
+    /// ends.  This helps for a better user experience as it is best that the user decides when to resume recording after an interruption.
+    @objc private func handleAudioInterruptions(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+                let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+                let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return } //: GUARD
+        
+        switch type {
+        case .began:
+            pauseRecording()
+        case .ended:
+            return
+        @unknown default:
+            NSLog(">>> A new interruption type was added to the AVAudioSession.InterruptionType enum. Please update the switch statement in AudioReflectionBrain.swift")
+            pauseRecording()
+        }//: SWITCH
+        
+    }//: handleAudioInterruptions()
     
     // MARK: - iCLOUD
     

@@ -23,10 +23,14 @@ struct AudioPlayerControlView: View {
         "delete": "trash.fill"
     ]
     
+    // MARK: - CLOSURES
+    
+    var onGoBackButton: () -> Void = { }
+    var onGoForwardButton: () -> Void = { }
+    var onPlayButton: () -> Void = { }
+    
     // MARK: - BODY
     var body: some View {
-        
-        
         
         
         // MARK: - MAIN BUTTONS

@@ -62,6 +62,20 @@ extension ReflectionResponse {
         }//: IF ELSE
     }//: markResponseAsComplete
     
+    // MARK: - RELATIONSHIPS
+    
+    /// ReflectionResponse CoreData helper method that retrieves the question text from the ReflectionPrompt object
+    /// assigned to the question relationship property for each ReflectionResponse object.
+    /// - Returns: The question String value from the ReflectionPrompt object, or "No question assigned yet" if either
+    /// no question has been assigned yet or the question property is nil
+    func getAssignedPrompt() -> String {
+        if let assignedPrompt = self.question, let questionText = assignedPrompt.question {
+            return questionText
+        } else {
+            return "No question assigned yet..."
+        }
+    }//: getAssignedPrompt()
+    
     // MARK: - EXAMPLE
     
     static var example: ReflectionResponse {

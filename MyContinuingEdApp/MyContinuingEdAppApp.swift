@@ -13,6 +13,7 @@ import CoreSpotlight
 struct MyContinuingEdAppApp: App {
     @StateObject var dataController: DataController = DataController()
     @State var certificateBrain: CertificateBrain?
+    @State var audioBrain: AudioReflectionBrain?
     @State var spotlightCentral: SpotlightCentral?
     @Environment(\.scenePhase) var scenePhase
     
@@ -33,6 +34,7 @@ struct MyContinuingEdAppApp: App {
                 .environmentObject(dataController)
                 .environment(\.spotlightCentral, spotlightCentral)
                 .environment(\.certificateBrain, certificateBrain)
+                .environment(\.audioBrain, audioBrain)
                 // MARK: - ON CHANGE OF
                 // Saves changes if the app is moved to the background by the user
                 .onChange(of: scenePhase) { phase in
@@ -49,6 +51,10 @@ struct MyContinuingEdAppApp: App {
                     if certificateBrain == nil {
                         certificateBrain = CertificateBrain(dataController: dataController)
                     }//: IF (certificateBrain)
+                    
+                    if audioBrain == nil {
+                        audioBrain = AudioReflectionBrain(dataController: dataController)
+                    }//: IF (audioBrain)
                 }//: ON APPEAR
                 
                 // MARK: - SPOTLIGHT

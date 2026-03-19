@@ -87,7 +87,7 @@ struct ARCoordinator: MediaCoordinator {
         self.mediaMetadata = mediaMetadata
         
         let fileSystem = FileManager()
-        self.whereSaved = (try? fileSystem.identifyFileURLLocation(for: fileURL)) ?? .local
+        self.whereSaved = (try? fileSystem.identifyFileURLLocation(for: fileURL)) ?? .unknown
         
     }//: INIT
     
