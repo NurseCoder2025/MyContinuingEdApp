@@ -436,3 +436,9 @@ enum FileIOError: Error {
     case incompleteMove
     case metaDataUpdateError
 }
+
+
+// MARK: - AUDIO
+
+enum RecordingStatus { case waiting, recording, paused, stopped, error }
+enum TranscribingStatus { case waiting, transcribing, completed, error }

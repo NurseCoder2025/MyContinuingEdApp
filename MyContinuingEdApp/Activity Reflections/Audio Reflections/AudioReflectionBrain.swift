@@ -23,30 +23,6 @@ final class AudioReflectionBrain: ObservableObject {
     
     // MARK: Audio playing properties
     @Published var loadedAudio: [UUID: URL] = [:]
-    @Published var audioPlayerStatus: PlaybackStatus = .stopped
-    private var audioPlayer: AVAudioPlayer?
-    enum PlaybackStatus { case playing, paused, stopped }
-    
-    // MARK: Recording Properties
-    enum RecordingStatus {
-        case waiting
-        case recording
-        case paused
-        case stopped
-        case transcribing
-        case completed(Recording)
-        case error
-    }//: RecordingStatus
-    
-    @Published var recordingState: RecordingStatus = .waiting
-    @Published var recordingErrorMessage: String = ""
-
-    private var recordingSession = AVAudioSession.sharedInstance()
-    private var audioRecorder: AVAudioRecorder?
-    private let tempRecordingURL = URL.temporaryDirectory.appending(
-        path: "recording\(String.audioFormatExtension)",
-        directoryHint: .notDirectory
-    )//: appending
     
     var dataController: DataController
     private let fileSystem = FileManager()
@@ -420,7 +396,7 @@ final class AudioReflectionBrain: ObservableObject {
     ///   to utilize it, then the document file is moved to iCloud.  If an issue arises with saving to iCloud because the iCloud url can't
     ///   be obtained, then the method updates the AudioReflectionBrain''s handlingError and errorMessage properties so the user
     ///   can be alerted.
-    private func saveNewAudioReflection(
+    func saveNewAudioReflection(
         for response: ReflectionResponse,
         with data: Data,
         promptUsed: ReflectionPrompt,
@@ -467,7 +443,10 @@ final class AudioReflectionBrain: ObservableObject {
         
         // 5. Save CertificateDocument to disk locally
         if await newReflectionDoc.save(to: localURL, for: .forCreating) {
-               // TODO: Add code to update hasAudioReflection property
+                Task{@MainActor in
+                    response.hasAudioReflection = true
+                    dataController.save()
+                }//: TASK
             } else {
                 NSLog(">>>Error saving ARDocument to the local url: \(localURL)")
                 NSLog(">>>Exiting the saveNewAudioREflection(for) method early without attempting to save to iCloud.")
@@ -526,10 +505,10 @@ final class AudioReflectionBrain: ObservableObject {
                 // metadata for the file, then post the notification that the move is complete.
                 do {
                     try await updateARDocMetaAfterMove(to: .cloud, at: iCloudURL)
-                    
-                    await MainActor.run {
+                   
+                    Task {@MainActor in
                         NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
-                    }//: MAIN ACTOR
+                    }//: TASK
                 } catch {
                     NSLog(">>>Error trying to update the metadata for an ARDocument that was successfully moved to iCloud. The whereSaved property is still set to .local")
                     NSLog(">>> The url for the moved reflectoin is: \(iCloudURL.absoluteString)")
@@ -537,7 +516,7 @@ final class AudioReflectionBrain: ObservableObject {
         
     }//: addNewCeCertificate()
     
-    private func saveAudioReflectionWithoutTranscription(
+    func saveAudioReflectionWithoutTranscription(
         for response: ReflectionResponse,
         with data: Data,
         promptUsed: ReflectionPrompt
@@ -735,6 +714,7 @@ final class AudioReflectionBrain: ObservableObject {
     /// - Note: The transcription for the audio was previously saved to the ReflectionResponse's answer property within the
     /// transcribeRecording method, so it can be accessed directly via CoreData.
     func loadSavedAudioReflection(for response: ReflectionResponse) async throws {
+        guard response.hasAudioReflection else { return }
         let loadCompletedNotification = Notification.Name(.audioLoadingDoneNotification)
        
         guard let audioCoordinator = await findMatchingCoordinatorFor(response: response)
@@ -804,6 +784,10 @@ final class AudioReflectionBrain: ObservableObject {
             try fileSystem.removeItem(at: audioCoordinator.fileURL)
             await coordinatorAccess.removeCoordinator(audioCoordinator)
             await encodeCoordinatorList()
+            Task{@MainActor in
+                response.hasAudioReflection = false
+                dataController.save()
+            }//: TASK
         } catch {
             await MainActor.run {
                 handlingError = .unableToDelete
@@ -910,374 +894,6 @@ final class AudioReflectionBrain: ObservableObject {
            await movedARDoc.close()
         }//: updateARDocMetaAfterMove()
     
-    // MARK: - PLAYING AUDIO
-    
-    func playAudio(for response: ReflectionResponse) {
-        if let responseID = response.id, let audioLocation: URL = loadedAudio[responseID] {
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: audioLocation)
-                if let player = audioPlayer {
-                    player.prepareToPlay()
-                    audioPlayerStatus = .playing
-                    player.play()
-                }//: IF LET
-            } catch {
-                NSLog(">>> Error playing audio at the url: \(audioLocation.absoluteString)")
-                NSLog(">>> Details: \(error.localizedDescription)")
-                errorMessage = "Encountered an error while trying to play the recorded audio for this prompt."
-                handlingError = .loadingError
-            }//: DO-CATCH
-            
-        } else {
-            NSLog(">>> Error: No audio file found for this response.")
-            NSLog(">>> Specifically, either a response id key was not found in the loadedAudio dictionary or a URL was not associated with that key. It's also possible that the response id property is nil.")
-            errorMessage = "Encountered an error while trying to play the recorded audio for this prompt."
-            handlingError = .loadingError
-        }//: IF ELSE
-    }//: playAudio()
-    
-    func pauseAudio() {
-        guard let player = audioPlayer else {
-            NSLog(">>> Error pausing audio due to a nil audioPlayer property value.")
-            return
-        }//: GUARD
-        player.pause()
-        audioPlayerStatus = .paused
-    }//: pauseAudio()
-    
-    func stopAudioPlayback() {
-        guard let player = audioPlayer else { return }
-        
-        player.stop()
-        player.currentTime = 0
-        audioPlayerStatus = .stopped
-    }//: stopAudioPlayback()
-    
-    func goBack(seconds: Double) {
-        guard let player = audioPlayer else { return }
-        let newTime = player.currentTime - seconds
-        player.play(atTime: newTime)
-    }//: goBack(seconds)
-    
-    func goForward(seconds: Double) {
-        guard let player = audioPlayer else { return }
-        let newTime = player.currentTime + seconds
-        player.play(atTime: newTime)
-    }//: goForward(seconds)
-    
-    
-    // MARK: - TRANSCRIPTION
-    
-    func requestRecordingPermission() {
-        // Using different methods based on iOS version due to Apple deprecating the requestRecordPermission
-        // method after iOS 16 (and equivalent).
-        if #available(iOS 17.0, *) {
-            let recordingSystem = AVAudioApplication.shared
-            switch recordingSystem.recordPermission {
-            case .undetermined:
-                recordingErrorMessage = "Unable to record audio due to permission uncertainty. Please check your device's Privacy settings and enable microphone access for this app."
-            case .denied:
-                recordingErrorMessage = "Unable to record audio because permission has been denied. Please grant the app permission to the microphone in your device's Privacy settings in order to use the audio reflection feature."
-            case .granted:
-                requestTranscribingPermission()
-            @unknown default:
-                recordingErrorMessage = "Unable to record audio due to an unknown permission status. Please check your device's Privacy settings and enable microphone access for this app."
-            }//: SWITCH
-        } else if #available(iOS 16.0, *) {
-            recordingSession.requestRecordPermission { granted in
-                Task{@MainActor in
-                    if granted {
-                        self.requestTranscribingPermission()
-                    } else {
-                        self.recordingErrorMessage = "Unable to record audio because permission has been denied. Please grant the app permission to the microphone in your device's Privacy settings in order to use the audio reflection feature."
-                    }
-                }//: requestRecordPermission
-            }//: TASK
-        }//: IF ELSE (#available)
-        
-    }//: requestRecordingPermission()
-    
-    private func requestTranscribingPermission() {
-        SFSpeechRecognizer.requestAuthorization { authStatus in
-            Task {@MainActor in
-                switch authStatus {
-                case .notDetermined:
-                    self.recordingErrorMessage = "Unable to transcribe audio due to an unknown authorization status for the Speech Recognition feature on your device. Please add this app to the list of approved apps in your device's Privacy & Security settings."
-                case .denied:
-                    self.recordingErrorMessage = "Unable to transcribe audio until you grant the app permission to use the device's Speech Recognition feature. You can change this in your device's Privacy & Security settings."
-                case .restricted:
-                    self.recordingErrorMessage = "This app needs full permission to use the Speech Recognition feature on your device in order to transcribe your audio reflections. However, currently access is restricted. Please change this in your device's Privacy & Security settings."
-                case .authorized:
-                    self.startRecording()
-                @unknown default:
-                    self.recordingErrorMessage = "Unable to transcribe audio due to an unknown authorization status for the Speech Recognition feature on your device. Please add this app to the list of approved apps in your device's Privacy & Security settings."
-                }//: SWITCH
-            }//: TASK
-        }//: requestAuthorization (closure)
-    }//: requestTranscribingPermission()
-    
-    private func startRecording() {
-        setupAudioObservers()
-        let settings = [
-            AVFormatIDKey: kAudioFormatMPEG4AAC,
-            AVSampleRateKey: 44100,
-            AVNumberOfChannelsKey: 1
-        ]
-        
-        do {
-            try recordingSession.setCategory(.playAndRecord)
-            try recordingSession.setActive(true)
-            
-            audioRecorder = try AVAudioRecorder(url: tempRecordingURL, settings: settings)
-            recordingState = .recording
-            audioRecorder?.record()
-        } catch {
-            NSLog(">>> Error recording audio: \(error.localizedDescription)")
-            recordingErrorMessage = "Failed to configure the recording for your audio reflection: \(error.localizedDescription)"
-        }//: DO - CATCH
-    }//: startRecording()
-    
-    func pauseRecording() {
-        audioRecorder?.pause()
-        recordingState = .paused
-    }//: pauseRecording()
-    
-    func resumeRecording() {
-        recordingState = .recording
-        audioRecorder?.record()
-    }//: resumeRecording()
-    
-    func stopRecording(for prompt: ReflectionPrompt, in response: ReflectionResponse) {
-        audioRecorder?.stop()
-        recordingState = .stopped
-        transcribeRecording(for: prompt, in: response)
-    }//: stopRecording()
-    
-    private func transcribeRecording(for prompt: ReflectionPrompt, in response: ReflectionResponse) {
-        recordingState = .transcribing
-        let recognizer = SFSpeechRecognizer()
-        
-        if let recordedData = try? Data(contentsOf: tempRecordingURL) {
-            
-            let request = SFSpeechURLRecognitionRequest(url: tempRecordingURL)
-            request.requiresOnDeviceRecognition = true
-            request.shouldReportPartialResults = false
-            request.addsPunctuation = true
-            request.taskHint = .dictation
-            
-            recognizer?.recognitionTask(with: request) { result, error in
-                guard let result else {
-                    Task{
-                        await self.saveAudioReflectionWithoutTranscription(for: response, with: recordedData, promptUsed: prompt)
-                    }//: TASK
-                    self.recordingState = .error
-                    self.recordingErrorMessage = "Failed to transcribe the audio. Will save the audio to disk if possible."
-                    return
-                }//: GUARD
-                
-                var recording: Recording = .example
-                if let questionText = prompt.question {
-                    let recordingName = questionText.trimWordsTo(length: 30) + "_response" + String.audioFormatExtension
-                    let transcriptionFile = "transcription_\(questionText.trimWordsTo(length: 15)).txt"
-                    recording = Recording(
-                        fileName: recordingName,
-                        recordingDate: Date.now,
-                        transcriptionFilename: transcriptionFile,
-                        transcription: result.bestTranscription.formattedString,
-                        isExample: false
-                    )
-                } else {
-                    let calendar = Calendar.current
-                    let transcriptTime = Date.now
-                    let yearComponent = calendar.component(.year, from: transcriptTime)
-                    let monthComponent = calendar.component(.month, from: transcriptTime)
-                    let dayComponent = calendar.component(.day, from: transcriptTime)
-                    let transcriptStamp = "\(monthComponent)-\(dayComponent)-\(yearComponent)"
-                    let recordingName = "promptAudioResponse\(transcriptStamp)" + String.audioFormatExtension
-                    let transcriptionFile = "transcription_\(transcriptStamp).txt"
-                    recording = Recording(
-                        fileName: recordingName,
-                        recordingDate: transcriptTime,
-                        transcriptionFilename: transcriptionFile,
-                        transcription: result.bestTranscription.formattedString,
-                        isExample: false
-                    )
-                }//: IF LET ELSE (questionText = prompt.question)
-                
-                if recording.isExampleOnly == false {
-                    Task{
-                        do {
-                            try await self.saveNewAudioReflection(
-                                for: response,
-                                with: recordedData,
-                                promptUsed: prompt,
-                                recordingInfo: recording
-                            )
-                            self.recordingState = .completed(recording)
-                            // Saving the transcription to the ReflectionResponse's answer property
-                            response.answer = recording.transcription
-                            self.dataController.save()
-                        } catch {
-                            self.recordingState = .error
-                            self.recordingErrorMessage = self.errorMessage
-                        }//: DO-CATCH
-                    }//: TASK
-                } else {
-                    self.recordingState = .error
-                    self.recordingErrorMessage = "Unable to save the recorded audio because the transcription data could not be properly saved."
-                }//: IF ELSE (isExampleOnly == false)
-            }//: recognitionTask(with)
-        } else {
-            recordingState = .error
-            recordingErrorMessage = "Unable to save the recorded audio because the audio data could not be retrieved for transcribing. Please try re-recording again."
-        }//: IF ELSE (let Data(contentsOf)
-    }//: transcribeRecording()
-    
-    /// AudioReflectionBrain method for creating a new transcripition of previously saved audio data for a specific
-    /// ReflectionResponse object and then using that to update the ReflectionResponse's answer property.
-    /// - Parameters:
-    ///   - data: Data object representing audio binary data
-    ///   - response: ReflectionResponse whose answer property is to be updated with the transcription
-    ///
-    /// - Important: This method does NOT update the Recording object previously saved in the ARDocument that
-    /// was assigned to the ReflectionResponse object (as determined by the ARCoordinator).
-    func transcribeRecordingFrom(data: Data, for response: ReflectionResponse) async {
-        do {
-            recordingState = .recording
-            let recordingData = try AVAudioPlayer(data: data)
-            try recordingData.data?.write(to: tempRecordingURL)
-            
-            let recognizer = SFSpeechRecognizer()
-            
-            let audioSaved = try Data(contentsOf: tempRecordingURL)
-            if audioSaved.count > 0 {
-                let speechRequest = SFSpeechURLRecognitionRequest(url: tempRecordingURL)
-                speechRequest.addsPunctuation = true
-                speechRequest.requiresOnDeviceRecognition = true
-                speechRequest.shouldReportPartialResults = false
-                speechRequest.taskHint = .dictation
-                
-                recognizer?.recognitionTask(with: speechRequest) { result, error in
-                    guard let result else {
-                        self.recordingState = .error
-                        self.errorMessage = "Unable to transcribe recorded audio data. Please try again."
-                        NSLog(">>> Error with the recognitionTask in transcribeRecordingFrom(data:) method.")
-                        NSLog(">>> Error details: \(error?.localizedDescription ?? "No error details provided.")")
-                        return
-                    }//: GUARD
-                    
-                    let transcribedAnswer = result.bestTranscription.formattedString
-                    var recordingFileName: String = ""
-                    var transcriptFileName: String = ""
-                    
-                    Task{@MainActor in
-                        recordingFileName = response.getAssignedPrompt().trimWordsTo(length: 30) + "_response" + String.audioFormatExtension
-                        transcriptFileName = "transcription_\(response.getAssignedPrompt().trimWordsTo(length: 15)).txt"
-                       
-                         let newRecording = Recording(
-                             fileName: recordingFileName,
-                             transcriptionFilename: transcriptFileName,
-                             transcription: transcribedAnswer
-                         )
-                        
-                        response.answer = transcribedAnswer
-                        self.dataController.save()
-                        self.recordingState = .completed(newRecording)
-                    }//: TASK
-                }//: recognitionTask
-            }//: IF (count)
-        } catch {
-            NSLog(">>> Error trying to transcribe existing recording.")
-            NSLog(">>> Error details: \(error.localizedDescription)")
-            recordingState = .error
-            errorMessage = "Unable to transcribe recorded audio data. Please try again."
-        }//: DO-CATCH
-    }//: transcribeRecordingFrom(data)
-    
-    /// AudioReflectionBrain method for setting the value of a specific ReflectionResponse's answer property to
-    /// be equal to the original transcription from the audio recording as previously saved in an ARDocument.
-    /// - Parameter response: ReflectionResponse object for which the user wishes to revert the answer
-    /// property back to what was originally transcribed when they first recorded an audio reflection.
-    ///
-    /// This method exists mainly for user convenience.  If a user has access to the audio reflections feature (as a Pro
-    /// subscriber), then they record an audio answer for a selected CeActivity reflection prompt, only to later edit the text
-    /// (as the answer property is a string) in the user interface.  Should they later wish to revert back to their original recording,
-    /// then this method can be called for them to replace the ReflectionResponse answer String with what was transcribed from
-    /// the original audio recording.
-    func restoreOriginalTranscription(for response: ReflectionResponse) async {
-        guard let matchedCoordinator = await findMatchingCoordinatorFor(response: response) else {
-            NSLog(">>> Error finding a matching coordinator for the ReflectionResponse argument in restoreOriginalTranscription(for) method.")
-            await MainActor.run {
-                errorMessage = "Unable to restore the original transcription for the audio reflection due to missing file data."
-            }//: MAIN ACTOR
-            return
-        }//: GUARD
-        
-        let savedAudio = await ARDocument(audioURL: matchedCoordinator.fileURL)
-        if await savedAudio.open() {
-            let audioRecording = await savedAudio.audioRecordingInfo
-            if audioRecording.transcription.count > 0 {
-                Task{@MainActor in
-                    response.answer = audioRecording.transcription
-                    self.dataController.save()
-                }//: TASK
-            } else {
-                NSLog(">>> Error updating the ReflectionResponse answer property due to the transcription property within the ARDocument for the assigned ReflectionResponse being empty.")
-                await MainActor.run {
-                    errorMessage = "The transcription file for the recorded audio is empty, so nothing could be restored."
-                }//: MAIN ACTOR
-            }//: IF ELSE
-            await savedAudio.close()
-        } else {
-            NSLog(">>> Error trying to open the ARDocument file at: \(matchedCoordinator.fileURL.absoluteString)")
-            await MainActor.run {
-                errorMessage = "Error encountered while trying to open the file where the recording data is saved."
-            }//: MAIN ACTOR
-        }//: IF AWAIT (open)
-    }//: restoreOriginalTranscription(for)
-    
-    // MARK: - AUDIO OBSERVERS
-    
-    /// AudioReflectionBrain method intended to create observers that handle system events that can interrupt an audio recording
-    /// session, such as a phone call.
-    ///
-    /// This method always removes any existing interruption observers before creating a new one.
-    private func setupAudioObservers() {
-        let noticeCenter = NotificationCenter.default
-        let interruptNotification = AVAudioSession.interruptionNotification
-        
-        noticeCenter.removeObserver(self, name: interruptNotification, object: recordingSession)
-        
-        noticeCenter.addObserver(
-            self,
-            selector: #selector(handleAudioInterruptions(_:)),
-            name: interruptNotification,
-            object: recordingSession
-        )//: OBSERVER
-    }//: setupAudioObservers()
-    
-    /// Selector method in AudioReflectionBrain for handling situations when an active recording session is interrupted by a device event,
-    /// such as a phone call or similar event.
-    /// - Parameter notification: Notification with the name "interruptNotification" (as part of AVAudioSession)
-    ///
-    /// This method will only pause the recording automatically.  Recording must be resumed manually by the user after the interruption
-    /// ends.  This helps for a better user experience as it is best that the user decides when to resume recording after an interruption.
-    @objc private func handleAudioInterruptions(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-                let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-                let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return } //: GUARD
-        
-        switch type {
-        case .began:
-            pauseRecording()
-        case .ended:
-            return
-        @unknown default:
-            NSLog(">>> A new interruption type was added to the AVAudioSession.InterruptionType enum. Please update the switch statement in AudioReflectionBrain.swift")
-            pauseRecording()
-        }//: SWITCH
-        
-    }//: handleAudioInterruptions()
     
     // MARK: - iCLOUD
     
@@ -1548,7 +1164,7 @@ final class AudioReflectionBrain: ObservableObject {
     /// audio reflections for.
     /// - Parameter metaData: ARMetadata object, which has the ID for the ReflectionResponse
     /// - Returns: the CeActivity entity based on the ActivityReflection to which the ReflectionResponse object is associated with
-    private func matchAudioReflectionWithActivity(using metaData: ARMetadata) -> CeActivity? {
+    func matchAudioReflectionWithActivity(using metaData: ARMetadata) -> CeActivity? {
         let idToMatch = metaData.assignedObjectId
         let context = dataController.container.viewContext
         
@@ -1578,7 +1194,7 @@ final class AudioReflectionBrain: ObservableObject {
     /// property within the coordinator.
     /// - Parameter response: ReflectionResponse object for which a coordinator is needed
     /// - Returns: ARCoordinator whose assignedObjectId property matches the ReflectionResponse's id property.
-    private func findMatchingCoordinatorFor(response: ReflectionResponse) async -> ARCoordinator? {
+     func findMatchingCoordinatorFor(response: ReflectionResponse) async -> ARCoordinator? {
         if await coordinatorAccess.allCoordinators.isEmpty { await decodeCoordinatorList() }
         let coordinators = await coordinatorAccess.allCoordinators
         

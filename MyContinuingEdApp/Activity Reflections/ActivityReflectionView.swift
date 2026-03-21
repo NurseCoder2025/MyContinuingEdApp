@@ -5,6 +5,8 @@
 //  Created by Manann on 7/28/25.
 //
 
+// Note: This view is a complete screen (not a sheet) due to a NavigationLink on ActivityCompletionView
+
 import CoreData
 import SwiftUI
 
@@ -60,7 +62,7 @@ struct ActivityReflectionView: View {
                         Text("Let Me Choose")
                     }//: BUTTON
                 } label: {
-                    Text(responsesCount > 0 ? "Add Another Prompt" : "Add Prompt")
+                    Text(responsesCount > 0 ? "Select Another Prompt" : "Select Prompt")
                 }//: MENU
                 
                 // PromptResponseViews

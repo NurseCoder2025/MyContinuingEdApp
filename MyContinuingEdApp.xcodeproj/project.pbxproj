@@ -27,6 +27,8 @@
 		3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645A2EB036F10036C4B1 /* IssuerSheetViewModel.swift */; };
 		3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */; };
 		3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */; };
+		3F207EAE2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */; };
+		3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
 		3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */; };
 		3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F33A35A2F6A206E00C24210 /* Recording.swift */; };
@@ -118,6 +120,13 @@
 		3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */; };
 		3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */; };
 		3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */; };
+		3FA59F292F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */; };
+		3FA59F2B2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */; };
+		3FA59F2D2F6DDF8800EA1418 /* RecordAudioButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2C2F6DDF8800EA1418 /* RecordAudioButtonView.swift */; };
+		3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */; };
+		3FA59F312F6DF9BC00EA1418 /* AudioMetricBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */; };
+		3FA59F332F6E6DFD00EA1418 /* AudioRecordingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */; };
+		3FA59F352F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */; };
 		3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
@@ -313,6 +322,8 @@
 		3F20645A2EB036F10036C4B1 /* IssuerSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = IssuerSheetViewModel.swift; path = "MyContinuingEdApp/Issuer/Issuer Sheet/IssuerSheetViewModel.swift"; sourceTree = SOURCE_ROOT; };
 		3F20645C2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionListSheetViewModel.swift; sourceTree = "<group>"; };
+		3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerController_ViewModel.swift; sourceTree = "<group>"; };
+		3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerProgressBar.swift; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
 		3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Reinstatement.swift"; sourceTree = "<group>"; };
 		3F33A35A2F6A206E00C24210 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
@@ -407,6 +418,13 @@
 		3FA2961D2EE22993000F5D12 /* StoreExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreExtensions.swift; path = MyContinuingEdApp/Extensions/StoreExtensions.swift; sourceTree = SOURCE_ROOT; };
 		3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProduct.swift; sourceTree = "<group>"; };
 		3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseButtonLabelView.swift; sourceTree = "<group>"; };
+		3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionRecordAndPlayView.swift; sourceTree = "<group>"; };
+		3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionRecordAndPlayViewModel.swift; sourceTree = "<group>"; };
+		3FA59F2C2F6DDF8800EA1418 /* RecordAudioButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAudioButtonView.swift; sourceTree = "<group>"; };
+		3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingTimerView.swift; sourceTree = "<group>"; };
+		3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMetricBar.swift; sourceTree = "<group>"; };
+		3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingControlView.swift; sourceTree = "<group>"; };
+		3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderControlViewModel.swift; sourceTree = "<group>"; };
 		3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStorageSettingsView.swift; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
@@ -666,6 +684,32 @@
 				3F09F7642EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift */,
 			);
 			path = "Credential Section";
+			sourceTree = "<group>";
+		};
+		3F207EAB2F6E9309004693AE /* Recorder Controls */ = {
+			isa = PBXGroup;
+			children = (
+				3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */,
+				3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */,
+				3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */,
+				3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */,
+				3FA59F2C2F6DDF8800EA1418 /* RecordAudioButtonView.swift */,
+			);
+			path = "Recorder Controls";
+			sourceTree = "<group>";
+		};
+		3F207EAC2F6E936A004693AE /* AR Data Model */ = {
+			isa = PBXGroup;
+			children = (
+				3F396C9D2F6320AF0025F786 /* AudioReflectionData.swift */,
+				3F396CA12F6321090025F786 /* ARMetadata.swift */,
+				3F396CA32F63213B0025F786 /* ARCoordinator.swift */,
+				3F396CA52F63214E0025F786 /* ARCoordinatorActor.swift */,
+				3F396C9F2F6320D40025F786 /* ARDocument.swift */,
+				3F8DC7CB2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift */,
+				3F33A35A2F6A206E00C24210 /* Recording.swift */,
+			);
+			path = "AR Data Model";
 			sourceTree = "<group>";
 		};
 		3F2A42C32EA2C72B00B095CB /* Extensions */ = {
@@ -945,15 +989,8 @@
 			children = (
 				3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */,
 				3F8DC7CD2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift */,
-				3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */,
 				3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */,
-				3F396C9D2F6320AF0025F786 /* AudioReflectionData.swift */,
-				3F396CA12F6321090025F786 /* ARMetadata.swift */,
-				3F396CA32F63213B0025F786 /* ARCoordinator.swift */,
-				3F396CA52F63214E0025F786 /* ARCoordinatorActor.swift */,
-				3F396C9F2F6320D40025F786 /* ARDocument.swift */,
-				3F8DC7CB2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift */,
-				3F33A35A2F6A206E00C24210 /* Recording.swift */,
+				3F207EAC2F6E936A004693AE /* AR Data Model */,
 			);
 			path = "Audio Reflections";
 			sourceTree = "<group>";
@@ -991,11 +1028,10 @@
 			isa = PBXGroup;
 			children = (
 				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
+				3FA59F272F6C8E6900EA1418 /* Prompt Response */,
+				3FA59F262F6C8E5700EA1418 /* Prompt Selection */,
 				3F396C9C2F631D1C0025F786 /* Audio Reflections */,
 				3F84D1672F2D55A4001C3AB6 /* Prompt Questions */,
-				3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */,
-				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
-				3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */,
 			);
 			path = "Activity Reflections";
 			sourceTree = "<group>";
@@ -1051,6 +1087,29 @@
 				3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */,
 			);
 			path = "Tags Section";
+			sourceTree = "<group>";
+		};
+		3FA59F262F6C8E5700EA1418 /* Prompt Selection */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Prompt Selection";
+			sourceTree = "<group>";
+		};
+		3FA59F272F6C8E6900EA1418 /* Prompt Response */ = {
+			isa = PBXGroup;
+			children = (
+				3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */,
+				3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */,
+				3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */,
+				3F207EAB2F6E9309004693AE /* Recorder Controls */,
+				3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */,
+				3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */,
+				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
+				3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */,
+				3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */,
+			);
+			path = "Prompt Response";
 			sourceTree = "<group>";
 		};
 		3FB486A52EB9757800C58ED5 /* Management Sheet */ = {
@@ -1380,10 +1439,12 @@
 				3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */,
 				3F71B99F2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift in Sources */,
 				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
+				3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
+				3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */,
@@ -1404,6 +1465,7 @@
 				F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */,
 				3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */,
 				3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */,
+				3FA59F352F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift in Sources */,
 				3F396CAA2F635D720025F786 /* AudioReflectionBrain.swift in Sources */,
 				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
 				F2B937A52E8393B300AF9155 /* CredentialNextExpirationSectionView.swift in Sources */,
@@ -1416,6 +1478,7 @@
 				3F0044942F525B88006DA9F3 /* CertificatePreviewView.swift in Sources */,
 				3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */,
 				F254BB9F2E74FA350020DB28 /* NoIssuersView.swift in Sources */,
+				3FA59F2D2F6DDF8800EA1418 /* RecordAudioButtonView.swift in Sources */,
 				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
 				3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */,
@@ -1446,6 +1509,7 @@
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
 				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
 				3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */,
+				3FA59F332F6E6DFD00EA1418 /* AudioRecordingControlView.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */,
@@ -1464,6 +1528,7 @@
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
+				3FA59F2B2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
@@ -1505,7 +1570,9 @@
 				3F396CA22F6321090025F786 /* ARMetadata.swift in Sources */,
 				F22940A12E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift in Sources */,
 				3FE3723C2ECE572F00CCF0FC /* AppUpgradeCardView.swift in Sources */,
+				3F207EAE2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift in Sources */,
 				3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */,
+				3FA59F312F6DF9BC00EA1418 /* AudioMetricBar.swift in Sources */,
 				3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */,
 				3F71B99D2F2B043E00F1AA2C /* CustomPromptSelectionView.swift in Sources */,
 				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
@@ -1530,6 +1597,7 @@
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
 				3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
+				3FA59F292F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift in Sources */,
 				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,
 				3F5D03312EB3F35E00F5B1DC /* DataController-Preloading.swift in Sources */,
 				F2B937A12E837A8E00AF9155 /* ActiveCredentialSectionView.swift in Sources */,
