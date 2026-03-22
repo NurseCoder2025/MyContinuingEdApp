@@ -24,6 +24,10 @@ final class AudioReflectionBrain: ObservableObject {
     // MARK: Audio playing properties
     @Published var loadedAudio: [UUID: URL] = [:]
     
+    // Transcription monitoring properties
+    @Published var audioToBeTranscribed: Bool = false
+    @Published var audioTranscriptionFinished: Bool = false
+    
     var dataController: DataController
     private let fileSystem = FileManager()
     private let audioQuery = NSMetadataQuery()

@@ -82,7 +82,7 @@
 		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
 		3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */; };
 		3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */; };
-		3F71B98F2F2A973600F1AA2C /* PromptResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */; };
+		3F71B98F2F2A973600F1AA2C /* OldPromptResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B98E2F2A973600F1AA2C /* OldPromptResponseView.swift */; };
 		3F71B9912F2A977800F1AA2C /* PromptSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */; };
 		3F71B9932F2A9EBF00F1AA2C /* Reflection Prompts.json in Resources */ = {isa = PBXBuildFile; fileRef = 3F71B9922F2A9EBF00F1AA2C /* Reflection Prompts.json */; };
 		3F71B9952F2A9EEA00F1AA2C /* PromptQuestionJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */; };
@@ -99,7 +99,7 @@
 		3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DD82EC687A200791223 /* RenewalProgressView.swift */; };
 		3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */; };
 		3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */; };
-		3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */; };
+		3F83A6272F2C1ABF00EDF256 /* PromptResponseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83A6262F2C1ABF00EDF256 /* PromptResponseView.swift */; };
 		3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */; };
 		3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */; };
 		3F83C7C32F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */; };
@@ -121,7 +121,6 @@
 		3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */; };
 		3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */; };
 		3FA59F292F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */; };
-		3FA59F2B2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */; };
 		3FA59F2D2F6DDF8800EA1418 /* RecordAudioButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2C2F6DDF8800EA1418 /* RecordAudioButtonView.swift */; };
 		3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */; };
 		3FA59F312F6DF9BC00EA1418 /* AudioMetricBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */; };
@@ -147,6 +146,10 @@
 		3FBD7FDE2EF5419400A039C4 /* LeftAlignedTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */; };
 		3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */; };
 		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
+		3FCED3E82F6F740900BF407C /* PromptResponseTextEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */; };
+		3FCED3EA2F6F79EB00BF407C /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */; };
+		3FCED3EC2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */; };
+		3FCED3EE2F6F84AE00BF407C /* AudioReflection+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3ED2F6F84AE00BF407C /* AudioReflection+Helper.swift */; };
 		3FD56A372F17101200D74515 /* ActivityRegistrationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */; };
 		3FD56A602F1713CC00D74515 /* DataController-HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */; };
 		3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */; };
@@ -380,7 +383,7 @@
 		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
 		3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptCardView.swift; sourceTree = "<group>"; };
-		3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseView.swift; sourceTree = "<group>"; };
+		3F71B98E2F2A973600F1AA2C /* OldPromptResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldPromptResponseView.swift; sourceTree = "<group>"; };
 		3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptSelectionSheet.swift; sourceTree = "<group>"; };
 		3F71B9922F2A9EBF00F1AA2C /* Reflection Prompts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Reflection Prompts.json"; sourceTree = "<group>"; };
 		3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptQuestionJSON.swift; sourceTree = "<group>"; };
@@ -396,7 +399,7 @@
 		3F817DD82EC687A200791223 /* RenewalProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalProgressView.swift; sourceTree = "<group>"; };
 		3F817DDA2EC68DFA00791223 /* SpecialCatProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatProgressView.swift; sourceTree = "<group>"; };
 		3F82F7D22F0480D100597A66 /* GroupBoxLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupBoxLabelView.swift; sourceTree = "<group>"; };
-		3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseEntryView.swift; sourceTree = "<group>"; };
+		3F83A6262F2C1ABF00EDF256 /* PromptResponseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseView.swift; sourceTree = "<group>"; };
 		3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReinstatementSpecialCat-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3F83C7C22F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementInfoSheet.swift; sourceTree = "<group>"; };
@@ -419,7 +422,6 @@
 		3FA2961F2EE22AF3000F5D12 /* MockProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProduct.swift; sourceTree = "<group>"; };
 		3FA296212EE22DEF000F5D12 /* PurchaseButtonLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseButtonLabelView.swift; sourceTree = "<group>"; };
 		3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionRecordAndPlayView.swift; sourceTree = "<group>"; };
-		3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionRecordAndPlayViewModel.swift; sourceTree = "<group>"; };
 		3FA59F2C2F6DDF8800EA1418 /* RecordAudioButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAudioButtonView.swift; sourceTree = "<group>"; };
 		3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingTimerView.swift; sourceTree = "<group>"; };
 		3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMetricBar.swift; sourceTree = "<group>"; };
@@ -445,6 +447,10 @@
 		3FBD7FDD2EF5419400A039C4 /* LeftAlignedTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedTextView.swift; sourceTree = "<group>"; };
 		3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CoreData.swift"; sourceTree = "<group>"; };
 		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
+		3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseTextEntryView.swift; sourceTree = "<group>"; };
+		3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
+		3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseTextEntry_ViewModel.swift; sourceTree = "<group>"; };
+		3FCED3ED2F6F84AE00BF407C /* AudioReflection+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioReflection+Helper.swift"; sourceTree = "<group>"; };
 		3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRegistrationSectionView.swift; sourceTree = "<group>"; };
 		3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-HelperFunctions.swift"; sourceTree = "<group>"; };
 		3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSiteEntryView.swift; sourceTree = "<group>"; };
@@ -618,6 +624,7 @@
 		3F03BEA22EECE83A003B89E7 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */,
 				3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */,
 				3FBCBE652EB2FDCE0050D6A5 /* Settings.swift */,
 				3F03BE9F2EECE791003B89E7 /* SettingsSheet.swift */,
@@ -690,6 +697,7 @@
 			isa = PBXGroup;
 			children = (
 				3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */,
+				3FCED3ED2F6F84AE00BF407C /* AudioReflection+Helper.swift */,
 				3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */,
 				3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */,
 				3FA59F2E2F6DEEF500EA1418 /* AudioRecordingTimerView.swift */,
@@ -987,9 +995,9 @@
 		3F396C9C2F631D1C0025F786 /* Audio Reflections */ = {
 			isa = PBXGroup;
 			children = (
+				3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */,
 				3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */,
 				3F8DC7CD2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift */,
-				3F396CA92F635D720025F786 /* AudioReflectionBrain.swift */,
 				3F207EAC2F6E936A004693AE /* AR Data Model */,
 			);
 			path = "Audio Reflections";
@@ -1028,10 +1036,10 @@
 			isa = PBXGroup;
 			children = (
 				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
-				3FA59F272F6C8E6900EA1418 /* Prompt Response */,
-				3FA59F262F6C8E5700EA1418 /* Prompt Selection */,
-				3F396C9C2F631D1C0025F786 /* Audio Reflections */,
 				3F84D1672F2D55A4001C3AB6 /* Prompt Questions */,
+				3FA59F262F6C8E5700EA1418 /* Prompt Selection */,
+				3FA59F272F6C8E6900EA1418 /* Prompt Response */,
+				3F396C9C2F631D1C0025F786 /* Audio Reflections */,
 			);
 			path = "Activity Reflections";
 			sourceTree = "<group>";
@@ -1070,11 +1078,6 @@
 				3F71B9922F2A9EBF00F1AA2C /* Reflection Prompts.json */,
 				3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */,
 				3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */,
-				3F71B99E2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift */,
-				3F71B99C2F2B043E00F1AA2C /* CustomPromptSelectionView.swift */,
-				3F71B9982F2AF84D00F1AA2C /* StandardPromptSelectionView.swift */,
-				3F71B99A2F2AFFF600F1AA2C /* PromptSelectionConfirmationView.swift */,
-				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
 			);
 			path = "Prompt Questions";
 			sourceTree = "<group>";
@@ -1092,6 +1095,11 @@
 		3FA59F262F6C8E5700EA1418 /* Prompt Selection */ = {
 			isa = PBXGroup;
 			children = (
+				3F71B99E2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift */,
+				3F71B99C2F2B043E00F1AA2C /* CustomPromptSelectionView.swift */,
+				3F71B9982F2AF84D00F1AA2C /* StandardPromptSelectionView.swift */,
+				3F71B99A2F2AFFF600F1AA2C /* PromptSelectionConfirmationView.swift */,
+				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
 			);
 			path = "Prompt Selection";
 			sourceTree = "<group>";
@@ -1099,15 +1107,14 @@
 		3FA59F272F6C8E6900EA1418 /* Prompt Response */ = {
 			isa = PBXGroup;
 			children = (
-				3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */,
-				3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */,
-				3FA59F2A2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift */,
-				3F207EAB2F6E9309004693AE /* Recorder Controls */,
-				3F71B98E2F2A973600F1AA2C /* PromptResponseView.swift */,
-				3F83A6262F2C1ABF00EDF256 /* PromptResponseEntryView.swift */,
+				3F83A6262F2C1ABF00EDF256 /* PromptResponseView.swift */,
+				3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */,
 				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
-				3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */,
-				3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */,
+				3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */,
+				3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */,
+				3F71B98E2F2A973600F1AA2C /* OldPromptResponseView.swift */,
+				3FCED3E62F6F706100BF407C /* Audio Player */,
+				3F207EAB2F6E9309004693AE /* Recorder Controls */,
 			);
 			path = "Prompt Response";
 			sourceTree = "<group>";
@@ -1148,6 +1155,16 @@
 				F2011DC22E62527800D5DF92 /* USStatesList.json */,
 			);
 			path = "Issuer Sheet";
+			sourceTree = "<group>";
+		};
+		3FCED3E62F6F706100BF407C /* Audio Player */ = {
+			isa = PBXGroup;
+			children = (
+				3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */,
+				3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */,
+				3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */,
+			);
+			path = "Audio Player";
 			sourceTree = "<group>";
 		};
 		3FD74F782F033771002360AB /* Onboarding */ = {
@@ -1494,6 +1511,7 @@
 				3FBBBFAB2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift in Sources */,
 				3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */,
 				3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */,
+				3FCED3EE2F6F84AE00BF407C /* AudioReflection+Helper.swift in Sources */,
 				3F47D9A42F468D8E00B02580 /* CertificateData.swift in Sources */,
 				3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */,
 				F2612A1D2E87275000CC463D /* ActivityBasicInfoView.swift in Sources */,
@@ -1503,6 +1521,7 @@
 				3FE3723E2ECE575100CCF0FC /* PurchaseFeatureRowView.swift in Sources */,
 				3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */,
 				3FD74F7C2F035E3A002360AB /* DeleteObjectButtonView.swift in Sources */,
+				3FCED3E82F6F740900BF407C /* PromptResponseTextEntryView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				3F4D0E7C2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
@@ -1528,7 +1547,6 @@
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
-				3FA59F2B2F6CA5C400EA1418 /* AudioReflectionRecordAndPlayViewModel.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
@@ -1537,6 +1555,7 @@
 				3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */,
 				3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */,
 				3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */,
+				3FCED3EC2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
 				3F396CA02F6320D40025F786 /* ARDocument.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
@@ -1593,11 +1612,12 @@
 				3F8DC7CE2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
-				3F71B98F2F2A973600F1AA2C /* PromptResponseView.swift in Sources */,
+				3F71B98F2F2A973600F1AA2C /* OldPromptResponseView.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
 				3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */,
 				F291AE882E5E545F00ECA8CD /* CeDesignationSelectionSheet.swift in Sources */,
 				3FA59F292F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift in Sources */,
+				3FCED3EA2F6F79EB00BF407C /* PrivacySettingsView.swift in Sources */,
 				F2C0D13B2E6A4B5000458022 /* IssuerListSheet.swift in Sources */,
 				3F5D03312EB3F35E00F5B1DC /* DataController-Preloading.swift in Sources */,
 				F2B937A12E837A8E00AF9155 /* ActiveCredentialSectionView.swift in Sources */,
@@ -1628,7 +1648,7 @@
 				3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */,
 				3FF979222F457E8A00DD8363 /* String+Extensions.swift in Sources */,
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
-				3F83A6272F2C1ABF00EDF256 /* PromptResponseEntryView.swift in Sources */,
+				3F83A6272F2C1ABF00EDF256 /* PromptResponseView.swift in Sources */,
 				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				3F396CA62F63214E0025F786 /* ARCoordinatorActor.swift in Sources */,

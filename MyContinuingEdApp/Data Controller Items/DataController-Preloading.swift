@@ -402,6 +402,7 @@ extension DataController {
             setTagBadgeCount(to: BadgeCountOption.allItems.rawValue)
             prefersCertificatesInICloud = true
             prefersAudioReflectionsInICloud = true
+            allowsAutoTranscriptionOfAudio = true
         
     }//: setDefaultSettingsKeys()
     

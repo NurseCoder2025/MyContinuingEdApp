@@ -67,7 +67,7 @@ struct ActivityReflectionView: View {
                 
                 // PromptResponseViews
                 ForEach(currentResponses) { response in
-                    PromptResponseView(response: response) {
+                    OldPromptResponseView(response: response) {
                         showPromptSelectionSheet = true
                     }
                 }//: LOOP

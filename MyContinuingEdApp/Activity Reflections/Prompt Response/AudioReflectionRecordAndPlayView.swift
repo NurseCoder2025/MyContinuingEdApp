@@ -9,50 +9,36 @@ import SwiftUI
 
 struct AudioReflectionRecordAndPlayView: View {
     // MARK: - PROPERTIES
-    var dataController: DataController
+    @EnvironmentObject var dataController: DataController
     var audioBrain: AudioReflectionBrain
     
-    private var prompt: ReflectionPrompt?
     @ObservedObject var response: ReflectionResponse
-    
-    @StateObject private var viewModel: ViewModel
-    
-    
     
     // MARK: - BODY
     var body: some View {
-        
-        
+        if response.hasAudioReflection {
+            AudioPlayerControlView(audioBrain: audioBrain, response: response)
+        } else {
+            AudioRecordingControlView()
+        }//: IF ELSE (hasAudioReflection)
     }//: BODY
-    
-    
-    
-    
     
     // MARK: - INIT
     
     init(
-        dataController: DataController,
         audioBrain: AudioReflectionBrain,
         response: ReflectionResponse
     ) {
-        self.dataController = dataController
         self.audioBrain = audioBrain
         self.response = response
         
-        if let selectedPrompt = response.question {
-            self.prompt = selectedPrompt
-        }//: IF LET
         
-        let newViewModel = ViewModel(aBrain: audioBrain, dataController: dataController)
-        _viewModel = StateObject(wrappedValue: newViewModel)
     }//: INIT
 }//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
     AudioReflectionRecordAndPlayView(
-        dataController: .preview,
         audioBrain: .preview,
         response: .example
     )

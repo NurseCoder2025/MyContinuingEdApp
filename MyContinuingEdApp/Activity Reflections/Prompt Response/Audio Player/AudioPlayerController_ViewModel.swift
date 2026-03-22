@@ -120,6 +120,8 @@ extension AudioPlayerControlView {
             self.audioBrain = aBrain
             self.response = response
             
+            // Loading the previously saved audio file for the
+            // response argument
             Task{@MainActor in
                 do {
                     audioPlayerStatus = .loading

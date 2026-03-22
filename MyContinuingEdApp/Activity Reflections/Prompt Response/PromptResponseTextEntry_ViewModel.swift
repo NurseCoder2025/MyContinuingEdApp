@@ -1,8 +1,8 @@
 //
-//  AudioReflectionRecorderViewModel.swift
+//  PromptResponse_ViewModel.swift
 //  MyContinuingEdApp
 //
-//  Created by Ilum on 3/19/26.
+//  Created by Ilum on 3/21/26.
 //
 
 import AVFoundation
@@ -10,7 +10,7 @@ import Foundation
 import Speech
 import SwiftUI
 
-extension AudioReflectionRecordAndPlayView {
+extension PromptResponseTextEntryView {
     
     final class ViewModel: ObservableObject {
         // MARK: - PROPERTIES
@@ -29,6 +29,12 @@ extension AudioReflectionRecordAndPlayView {
         // Other needed classes
         var audioBrain: AudioReflectionBrain
         var dataController: DataController
+        
+        // MARK: - COMPUTED PROPERTIES
+        
+        var isProSubscriber: Bool {
+            dataController.purchaseStatus == PurchaseStatus.proSubscription.id
+        }//: isProSubscriber
         
         // MARK: - TRANSCRIBING METHODS
         
@@ -234,5 +240,6 @@ extension AudioReflectionRecordAndPlayView {
         }//: INIT
         
     }//: VIEW MODEL
+    
     
 }//: EXTENSION

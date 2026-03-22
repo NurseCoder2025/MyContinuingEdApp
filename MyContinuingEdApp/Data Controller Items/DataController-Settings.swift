@@ -357,6 +357,18 @@ extension DataController {
         }
         
     }//: prefersAudioReflectionsInICloud
+    
+    // MARK: PRIVACY
+    
+    var allowsAutoTranscriptionOfAudio: Bool {
+        get {
+            sharedSettings.bool(forKey: "allowsAutoTranscriptionOfAudio")
+        }
+        set {
+            sharedSettings.set(newValue, forKey: "allowsAutoTranscriptionOfAudio")
+            objectWillChange.send()
+        }
+    }//: allowsAutoTranscriptionOfAudio
    
     
     // MARK: - Methods
@@ -387,7 +399,8 @@ extension DataController {
             "tagBadgeCountOf",
             "isFirstRun",
             "prefersCertificatesInICloud",
-            "prefersAudioReflectionsInICloud"
+            "prefersAudioReflectionsInICloud",
+            "allowsAutoTranscriptionOfAudio"
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

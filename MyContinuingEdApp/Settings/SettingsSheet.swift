@@ -11,6 +11,19 @@ struct SettingsSheet: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
     @Environment(\.dismiss) var dismiss
+    
+    // MARK: - COMPUTED PROPERTIES
+    
+    var purchaseStatus: PurchaseStatus {
+        let savedStatus = dataController.purchaseStatus
+        if savedStatus == PurchaseStatus.free.id {
+            return PurchaseStatus.free
+        } else if savedStatus == PurchaseStatus.basicUnlock.id {
+            return PurchaseStatus.basicUnlock
+        } else {
+            return PurchaseStatus.proSubscription
+        }//: IF ELSE
+    }//: purchaseStatus
    
     // MARK: - BODY
     var body: some View {
@@ -37,6 +50,12 @@ struct SettingsSheet: View {
                         // sharedSettings in DataController.
                         MediaStorageSettingsView(dataController: dataController)
                             .padding(.horizontal, 10)
+                        
+                        // MARK: Privacy Settings
+                        if purchaseStatus == .proSubscription {
+                            PrivacySettingsView()
+                                .padding(.horizontal, 10)
+                        }//: IF (== .proSubscription)
                         
                         // MARK: General UI Settings
                         GeneralUISettingsView()

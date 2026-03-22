@@ -10,12 +10,11 @@ import SwiftUI
 
 struct AudioRecordingControlView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var audioData: AudioDataHolder
        
     @StateObject var viewModel: ViewModel
     
     @State private var recordingElapsedTime: TimeInterval = .zero
-    
-    @Binding var audioToTranscribe: Data?
     
     // MARK: - BODY
     var body: some View {
@@ -52,7 +51,7 @@ struct AudioRecordingControlView: View {
                     if viewModel.recordingStatus == .recording || viewModel.recordingStatus == .paused {
                         Button {
                             viewModel.stopRecording()
-                            audioToTranscribe = try? Data(contentsOf: viewModel.tempRecordingURL)
+                            audioData.audioData = try? Data(contentsOf: viewModel.tempRecordingURL)
                         } label: {
                             Label("Stop Recording", image: "stop.fill")
                                 .foregroundStyle(Color.white)
@@ -86,8 +85,6 @@ struct AudioRecordingControlView: View {
     
     // MARK: - INIT
     init() {
-        _audioToTranscribe = .constant(nil)
-        
         let newViewModel = ViewModel()
         _viewModel = StateObject(wrappedValue: newViewModel)
     }//: INIT
