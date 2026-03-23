@@ -10,5 +10,6 @@ import SwiftUI
 
 
 final class AudioDataHolder: ObservableObject {
+    @Published var okToTranscribeAudio: Bool = true
     @Published var audioData: Data?
 }//: CLASS

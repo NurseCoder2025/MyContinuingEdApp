@@ -36,6 +36,10 @@ extension PromptResponseTextEntryView {
             dataController.purchaseStatus == PurchaseStatus.proSubscription.id
         }//: isProSubscriber
         
+        var showTextEntryFields: Bool {
+            transcribingStatus != .transcribing && transcribingStatus != .completed
+        }//: showTextEntryFiels
+        
         // MARK: - TRANSCRIBING METHODS
         
         func requestTranscribingPermission(data: Data, for response: ReflectionResponse) {
