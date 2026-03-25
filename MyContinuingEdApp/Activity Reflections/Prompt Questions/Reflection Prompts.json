@@ -1,86 +1,187 @@
 [
     {
         "customYN": false,
-        "question": "The three most important points from the CE I learned are..."
+        "question": "The three most important points from the CE I learned are...",
+        "category": "takeaways"
     },
     {
         "customYN": false,
-        "question": "The idea that most surprised me was..."
+        "question": "The idea that most surprised me was...",
+        "category": "takeaways"
     },
     {
         "customYN": false,
-        "question": "I really would like to investigate ______ in more depth because..."
+        "question": "I really would like to investigate ______ in more depth because...",
+        "category": "takeaways"
     },
     {
         "customYN": false,
-        "question": "If I was in charge of planning this activity, I would change..."
+        "question": "If I was in charge of planning this activity, I would change...",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "I found the following parts of the CE most applicable to my daily work...[explain why]"
+        "question": "Way too much time was spent on ______, when it should have been spent on _________, because...",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "The hardest thing for me to implement in my daily practice from this activity is...[explain why]"
+        "question": "The speaker(s) could have been more objective on the topic(s) by...",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "Here's how I would summarize the CE to my other colleagues..."
+        "question": "Technical issues such as _______ really interferred with my learning during the activity.",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "If I was asked to summarize the activity in one minute, I would say..."
+        "question": "I would have been better able to hear and understand the speaker if...",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "I liked it when the speaker said... [elaborate on why]"
+        "question": "I was most disappointed with ____________.  I would change it by...",
+        "category": "improvements"
     },
     {
         "customYN": false,
-        "question": "The speaker really confused me when they said... [elaborate on why]"
+        "question": "I found the following parts of the CE most applicable to my daily work...[explain why]",
+        "category": "application"
     },
     {
         "customYN": false,
-        "question": "Here's what I learned from other participants..."
+        "question": "The hardest thing for me to implement in my daily practice from this activity is...[explain why]",
+        "category": "application"
     },
     {
         "customYN": false,
-        "question": "Here's how this activity challenged what I previously believed or was doing..."
+        "question": "Here's how I would summarize the CE to my other colleagues...",
+        "category": "takeaways"
     },
     {
         "customYN": false,
-        "question": "What I learned from this activity can really be helpful in the following scenario..."
+        "question": "If I was asked to summarize the activity in one minute, I would say...",
+        "category": "takeaways"
     },
     {
         "customYN": false,
-        "question": "After participating in the CE, my priorities and/or goals have changed because..."
+        "question": "I liked it when the speaker said... [elaborate on why]",
+        "category": "positives"
     },
     {
         "customYN": false,
-        "question": "I still have some lingering questions that I'd like to get answers to..."
+        "question": "I was really kept engaged during the CE activity because of...",
+        "category": "positives"
     },
     {
         "customYN": false,
-        "question": "Here is one thing I can do this week to apply what I learned..."
+        "question": "The learning format of this activity really worked for me because...",
+        "category": "positives"
     },
     {
         "customYN": false,
-        "question": "Six months from now I'll be a better professional than I was before participating in this activity because..."
+        "question": "The amount of time spent on this activity seemed to be just right for me because...",
+        "category": "positives"
     },
     {
         "customYN": false,
-        "question": "This activity helped me grow professionally by..."
+        "question": "The speaker really confused me when they said... [elaborate on why]",
+        "category": "questions"
     },
     {
         "customYN": false,
-        "question": "My previous experience really helped me better understand the main ideas of this CE because..."
+        "question": "I'm not so sure the evidence supports the speaker's claim that ___________ because...",
+        "category": "questions"
     },
     {
         "customYN": false,
-        "question": "I'm not so sure about... [explain why]"
+        "question": "I heard an unfamiliar term during the activity.  What does _____________ mean?",
+        "category": "questions"
     },
     {
         "customYN": false,
-        "question": "I really wish the speaker(s) would have..."
+        "question": "Where did the speakers get support for the claim __________? I need to know because...",
+        "category": "questions"
+    },
+    {
+        "customYN": false,
+        "question": "Here's what I learned from the other participants...",
+        "category": "collaboration"
+    },
+    {
+        "customYN": false,
+        "question": "One of the other participants made this comment which really made me think...",
+        "category": "collaboration"
+    },
+    {
+        "customYN": false,
+        "question": "Someone asked a really great question, which was ___________.  The speaker(s) responded by saying...",
+        "category": "collaboration"
+    },
+    {
+        "customYN": false,
+        "question": "Here's how this activity challenged what I previously believed or was doing...",
+        "category": "takeaways"
+    },
+    {
+        "customYN": false,
+        "question": "What I learned from this activity can really be helpful in the following scenario...",
+        "category": "application"
+    },
+    {
+        "customYN": false,
+        "question": "After participating in the CE, my priorities and/or goals have changed because...",
+        "category": "application"
+    },
+    {
+        "customYN": false,
+        "question": "I still have some lingering questions that I'd like to get answers to...",
+        "category": "questions"
+    },
+    {
+        "customYN": false,
+        "question": "Here is one thing I can do this week to apply what I learned...",
+        "category": "application"
+    },
+    {
+        "customYN": false,
+        "question": "Six months from now I'll be a better professional than I was before participating in this activity because...",
+        "category": "application"
+    },
+    {
+        "customYN": false,
+        "question": "This activity helped me grow professionally by...",
+        "category": "application"
+    },
+    {
+        "customYN": false,
+        "question": "My previous experience really helped me better understand the main ideas of this CE because...",
+        "category": "background"
+    },
+    {
+        "customYN": false,
+        "question": "I would have better understood this activity if I had known more about _____________ because...",
+        "category": "background"
+    },
+    {
+        "customYN": false,
+        "question": "I picked up on some assumptions that the speakers were making during the activity, which were...",
+        "category": "background"
+    },
+    {
+        "customYN": false,
+        "question": "In order to truly benefit from this CE activity, I need to get more experience with...",
+        "category": "background"
+    },
+    {
+        "customYN": false,
+        "question": "I'm not so sure about... [explain why]",
+        "category": "questions"
+    },
+    {
+        "customYN": false,
+        "question": "I really wish the speaker(s) would have...",
+        "category": "improvements"
     }
 ]
