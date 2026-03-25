@@ -10,7 +10,7 @@ import SwiftUI
 struct AudioReflectionRecordAndPlayView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
-    var audioBrain: AudioReflectionBrain
+    let audioBrain: AudioReflectionBrain
     
     @ObservedObject var response: ReflectionResponse
     
@@ -19,7 +19,7 @@ struct AudioReflectionRecordAndPlayView: View {
         if response.hasAudioReflection {
             AudioPlayerControlView(audioBrain: audioBrain, response: response)
         } else {
-            AudioRecordingControlView()
+            AudioRecordingControlView(response: response)
         }//: IF ELSE (hasAudioReflection)
     }//: BODY
     

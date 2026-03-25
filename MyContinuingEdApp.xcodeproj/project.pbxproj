@@ -126,6 +126,8 @@
 		3FA59F312F6DF9BC00EA1418 /* AudioMetricBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */; };
 		3FA59F332F6E6DFD00EA1418 /* AudioRecordingControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */; };
 		3FA59F352F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */; };
+		3FA667502F73A37C00066FF7 /* ActivityReflection_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA6674F2F73A37C00066FF7 /* ActivityReflection_ViewModel.swift */; };
+		3FA667522F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA667512F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift */; };
 		3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
@@ -427,6 +429,8 @@
 		3FA59F302F6DF9BC00EA1418 /* AudioMetricBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMetricBar.swift; sourceTree = "<group>"; };
 		3FA59F322F6E6DFD00EA1418 /* AudioRecordingControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingControlView.swift; sourceTree = "<group>"; };
 		3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderControlViewModel.swift; sourceTree = "<group>"; };
+		3FA6674F2F73A37C00066FF7 /* ActivityReflection_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReflection_ViewModel.swift; sourceTree = "<group>"; };
+		3FA667512F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReflectionPromptResponseRowView.swift; sourceTree = "<group>"; };
 		3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStorageSettingsView.swift; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
@@ -1036,6 +1040,8 @@
 			isa = PBXGroup;
 			children = (
 				F2BC94AE2E386EDE00926B3D /* ActivityReflectionView.swift */,
+				3FA667512F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift */,
+				3FA6674F2F73A37C00066FF7 /* ActivityReflection_ViewModel.swift */,
 				3F84D1672F2D55A4001C3AB6 /* Prompt Questions */,
 				3FA59F262F6C8E5700EA1418 /* Prompt Selection */,
 				3FA59F272F6C8E6900EA1418 /* Prompt Response */,
@@ -1095,11 +1101,11 @@
 		3FA59F262F6C8E5700EA1418 /* Prompt Selection */ = {
 			isa = PBXGroup;
 			children = (
+				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
 				3F71B99E2F2B058C00F1AA2C /* FavoritePromptSelectionView.swift */,
 				3F71B99C2F2B043E00F1AA2C /* CustomPromptSelectionView.swift */,
 				3F71B9982F2AF84D00F1AA2C /* StandardPromptSelectionView.swift */,
 				3F71B99A2F2AFFF600F1AA2C /* PromptSelectionConfirmationView.swift */,
-				3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */,
 			);
 			path = "Prompt Selection";
 			sourceTree = "<group>";
@@ -1108,9 +1114,9 @@
 			isa = PBXGroup;
 			children = (
 				3F83A6262F2C1ABF00EDF256 /* PromptResponseView.swift */,
-				3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */,
 				3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */,
 				3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */,
+				3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */,
 				3FA59F282F6CA58B00EA1418 /* AudioReflectionRecordAndPlayView.swift */,
 				3F71B98E2F2A973600F1AA2C /* OldPromptResponseView.swift */,
 				3FCED3E62F6F706100BF407C /* Audio Player */,
@@ -1508,6 +1514,7 @@
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
 				3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
+				3FA667522F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift in Sources */,
 				3FBBBFAB2F33F4E200CDC7A0 /* DataController-iCloudDocs.swift in Sources */,
 				3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */,
 				3F20645D2EB03E2C0036C4B1 /* IssuerListSheetViewModel.swift in Sources */,
@@ -1648,6 +1655,7 @@
 				3FE372392ECE54E500CCF0FC /* UpgradeToPaidSheet.swift in Sources */,
 				3FF979222F457E8A00DD8363 /* String+Extensions.swift in Sources */,
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
+				3FA667502F73A37C00066FF7 /* ActivityReflection_ViewModel.swift in Sources */,
 				3F83A6272F2C1ABF00EDF256 /* PromptResponseView.swift in Sources */,
 				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,

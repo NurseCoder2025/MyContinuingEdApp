@@ -13,6 +13,8 @@ extension AudioRecordingControlView {
     
     final class ViewModel: ObservableObject {
         // MARK: - PROPERTIES
+        @ObservedObject var response: ReflectionResponse
+        
         @Published var recordingStatus: RecordingStatus = .waiting
         @Published var audioBars: [AudioMetricBar] = []
         
@@ -114,6 +116,17 @@ extension AudioRecordingControlView {
         func stopRecording() {
             audioRecorder?.stop()
             recordingStatus = .stopped
+            
+            do {
+                let tempPlayer = try AVAudioPlayer(contentsOf: tempRecordingURL)
+                response.audioLength = tempPlayer.duration
+                response.hasAudioReflection = true
+            } catch {
+                NSLog(">>> Error creating a temporary audio player to get the length of a completed recording session. Error: \(error.localizedDescription)")
+                NSLog(">>> Audio data properties for the associated reflection response object are left at their default values. Response for prompt: \(response.getAssignedPrompt())")
+                recordingErrorMessage = "Problem getting recording data from the audio file. Please try recording again."
+                showRecordingErrorAlert = true
+            }//: DO-CATCH
         }//: stopRecording()
         
         func changeRecordingAction() {
@@ -188,6 +201,9 @@ extension AudioRecordingControlView {
         }//: handleAudioInterruptions()
         
         // MARK: - INIT
+        init(response: ReflectionResponse) {
+            self.response = response
+        }//: INIT
         
         // MARK: - DEINIT
         

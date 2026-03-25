@@ -29,12 +29,12 @@ extension ReflectionResponse {
     
      // MARK: - METHODS
     
-    /// Async CoreData helper method for ReflectionResponse that determines if the user has likely entered a complete
+    /// CoreData helper method for ReflectionResponse that determines if the user has likely entered a complete
     /// answer for a given prompt and updates the corresponding property accordingly.
     ///
     /// - Note: There must be at least 15 characters in the answer String field (excluding white spaces and
-    /// new lines) or at least 10 seconds of recorded audio in order for the completeAnswerYN property to marked as true.
-    func markResponseAsComplete() async {
+    /// new lines) or at least ~ 10 seconds of recorded audio in order for the completeAnswerYN property to marked as true.
+    func markResponseAsComplete() {
         // If the user has just updated the response, re-run the
         // method logic to ensure it is still a complete response
         let calendar = Calendar.current
@@ -50,13 +50,8 @@ extension ReflectionResponse {
             } else {
                 self.completeAnswerYN = false
             }
-        } else if self.hasAudioReflection, let transcribedText = self.answer {
-            let trimmedAnswer = transcribedText.trimmingCharacters(in: .whitespacesAndNewlines)
-            if trimmedAnswer.count >= 75 {
-                self.completeAnswerYN = true
-            } else {
-                self.completeAnswerYN = false
-            }
+        } else if self.hasAudioReflection {
+            self.completeAnswerYN = (self.audioLength >= 10.0)
         } else {
             self.completeAnswerYN = false
         }//: IF ELSE

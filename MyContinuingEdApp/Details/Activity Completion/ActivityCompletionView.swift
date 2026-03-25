@@ -61,7 +61,7 @@ struct ActivityCompletionView: View {
                     } else {
                         if !activity.isDeleted, let reflection = activity.reflection {
                             NavigationLink {
-                                ActivityReflectionView(activity: activity, reflection: reflection)
+                                ActivityReflectionView(dataController: dataController, reflection: reflection)
                             } label: {
                                 Text("Reflect on the Activity")
                                     .backgroundStyle(.yellow)

@@ -16,7 +16,7 @@ extension AudioPlayerControlView {
         @Published var audioPlayerStatus: PlaybackStatus = .loading
         
         var audioPlayer: AVAudioPlayer?
-        enum PlaybackStatus { case loading, ready, playing, paused, stopped }
+        enum PlaybackStatus { case loading, ready, playing, paused, stopped, error }
        
         // Playback errors
         @Published var showPlaybackError: Bool = false
@@ -24,8 +24,8 @@ extension AudioPlayerControlView {
         var playbackErrorAlertTitle: String = "Playback Error"
         
         // Other Needed Objects
-        var audioBrain: AudioReflectionBrain
-        let response: ReflectionResponse
+        let audioBrain: AudioReflectionBrain
+        @ObservedObject var response: ReflectionResponse
         
         // MARK: - COMPUTED PROPERTIES
         
@@ -101,6 +101,8 @@ extension AudioPlayerControlView {
             Task{
                 do {
                     try await audioBrain.deleteAudioReflection(for: response)
+                    response.audioLength = 0.0
+                    response.hasAudioReflection = false
                 } catch {
                     NSLog(">>> Error attempting to delete the audio saved for a particular response.")
                     playbackErrorAlertTitle = "Deletion Error"
@@ -130,6 +132,7 @@ extension AudioPlayerControlView {
                 } catch {
                     playbackErrorAlertMessage = "Encountered an error while trying to load the saved audio data for this response."
                     showPlaybackError = true
+                    audioPlayerStatus = .error
                 }//: DO-CATCH
             }//: TASK
         }//: INIT

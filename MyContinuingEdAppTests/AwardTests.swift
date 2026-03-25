@@ -10,27 +10,19 @@ import XCTest
 @testable import MyContinuingEdApp
 
 final class AwardTests: BaseTestCase {
-    let awards = Award.allAwards
-    
-    /// This tests whether the string ID property for each award object is equal to its name in order to ensure that every award object is created
-    /// with a unique ID as it conforms to Identifiable
-    func testAwardIDEqualsName() {
-        for award in awards {
-            XCTAssertEqual(award.id, award.name, "The award ID should be equal to the award name.")
-        }
-    }
    
-    
     /// Tests whether any award objects exist for a completely new user who shouldn't have earned any awards at this point.
     func testNewUserHasZeroAwards() {
+        let awards = controller.getAllAchievements()
         for award in awards {
             XCTAssertEqual(controller.hasEarned(award: award), false, "A new user should not have earned any awards yet")
-        }
-    }
+        }//: LOOP
+    }//: testNewUserHasZeroAwards()
     
     
     /// Tests whether the user actually earns an award for earning so many CE contact hours
     func testEarningContactHoursEarnsAwards() {
+        let awards = controller.getAllAchievements()
         let hourThresholds: [Int] = [1, 15, 25, 45, 65, 85, 100, 150]
         
         for (index, hours) in hourThresholds.enumerated() {
@@ -52,7 +44,7 @@ final class AwardTests: BaseTestCase {
                 award.criterion == "CEs" && award.value == Int(earnedHours)
             }
             
-            XCTAssertEqual(Int(earnedHours), matchingAward[0].value, "The user earned \(earnedHours) contact hours and should have earned the \(awards[index].name) award.")
+            XCTAssertEqual(Int(earnedHours), Int(matchingAward[0].value), "The user earned \(earnedHours) contact hours and should have earned the \(awards[index].achievementName) award.")
             controller.deleteAll()
             
         }//: LOOP
@@ -61,6 +53,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test for determining whether the user will actually receive an award after completing so many CE activities
     func testCompletingCEsEarnsAwards() {
+        let awards = controller.getAllAchievements()
         let cesToComplete = [1, 10, 20, 30, 50, 75, 100, 150]
         
         for (_, value) in cesToComplete.enumerated() {
@@ -76,7 +69,7 @@ final class AwardTests: BaseTestCase {
                 award.criterion == "completed" && award.value == value
             }
             
-            XCTAssertEqual(activities.count, matchingAward[0].value, "The user completed \(activities.count) of the \(matchingAward[0].value) CEs required to earn \(matchingAward[0].name)")
+            XCTAssertEqual(activities.count, Int(matchingAward[0].value), "The user completed \(activities.count) of the \(matchingAward[0].value) CEs required to earn \(matchingAward[0].achievementName)")
             controller.deleteAll()
         }//: LOOP
         
@@ -85,6 +78,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test for determining whether adding a specified number of tags will earn the user the respective award
     func testAddingTagsEarnsAwards() {
+        let awards = controller.getAllAchievements()
         let tagThresholds: [Int] = [1, 10, 50]
         
         for (_, value) in tagThresholds.enumerated() {
@@ -99,7 +93,7 @@ final class AwardTests: BaseTestCase {
                 award.criterion == "tags" && award.value == value
             }
             
-            XCTAssertEqual(allTags.count, matchingAward[0].value, "The user created \(allTags.count) tags and so should have earned the \(matchingAward[0].name) award")
+            XCTAssertEqual(allTags.count, Int(matchingAward[0].value), "The user created \(allTags.count) tags and so should have earned the \(matchingAward[0].achievementName) award")
             controller.deleteAll()
             
         }//: LOOP
@@ -109,6 +103,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test for determining whether loving a specified number of CE activities (20) will earn the user the reward
     func testLovingActivitiesEarnsAward() {
+        let awards = controller.getAllAchievements()
         let lovedNumber: Int = 20
         var activities: [CeActivity] = []
         
@@ -122,7 +117,7 @@ final class AwardTests: BaseTestCase {
             award.criterion == "loved" && award.value == lovedNumber
         }
         
-        XCTAssertEqual(activities.count, Int(matchingAward[0].value), "The user has loved \(activities.count) CEs and so should have earned the \(matchingAward[0].name) award")
+        XCTAssertEqual(activities.count, Int(matchingAward[0].value), "The user has loved \(activities.count) CEs and so should have earned the \(matchingAward[0].achievementName) award")
         controller.deleteAll()
         
     }//: testLovingActivitiesEarnsAward()
@@ -130,6 +125,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test for determining if the user will earn an award after rating a specified number of CE activities as 'interesting' (int value of 3)
     func testRatingActivitiesInterestingEarnsAward() {
+        let awards = controller.getAllAchievements()
         let interestingNumber: Int = 10
         var activities: [CeActivity] = []
         
@@ -143,7 +139,7 @@ final class AwardTests: BaseTestCase {
             award.criterion == "howInteresting" && award.value == 10
         }
         
-        XCTAssertEqual(activities.count, matchingAward[0].value, "The user rated \(activities.count) as interesting, so should have earned the \(matchingAward[0].name) award")
+        XCTAssertEqual(activities.count, Int(matchingAward[0].value), "The user rated \(activities.count) as interesting, so should have earned the \(matchingAward[0].achievementName) award")
         controller.deleteAll( )
         
     }//: testRatingActivitiesInterestingEarnsAward()
@@ -151,6 +147,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test that determines whether the user will earn awards for completing a specified number of activity reflections
     func testCompletingActivityReflectionsEarnsAwards() {
+        let awards = controller.getAllAchievements()
         let reflectionThresholds: [Int] = [20, 45, 75, 100]
         
         for (_, threshold) in reflectionThresholds.enumerated() {
@@ -165,7 +162,7 @@ final class AwardTests: BaseTestCase {
                 award.criterion == "reflections" && award.value == threshold
             }
             
-            XCTAssertEqual(allReflections.count, matchingAward[0].value, "The user completed \(allReflections.count) activity reflections, so should have earned the \(matchingAward[0].name) award")
+            XCTAssertEqual(allReflections.count, Int(matchingAward[0].value), "The user completed \(allReflections.count) activity reflections, so should have earned the \(matchingAward[0].achievementName) award")
             controller.deleteAll()
             
         }//: LOOP
@@ -175,6 +172,7 @@ final class AwardTests: BaseTestCase {
     
     /// Test that determins whether the user will earn awards for documenting surprising things that they learned during a CE activity in the activity reflection.
     func testLearningSuprisingFactEarnsAwards() {
+        let awards = controller.getAllAchievements()
         let surpriseThresholds: [Int] = [1, 10, 25]
         
         for (_, value) in surpriseThresholds.enumerated() {
@@ -190,7 +188,7 @@ final class AwardTests: BaseTestCase {
                 award.criterion == "surprises" && award.value == value
             }
             
-            XCTAssertEqual(allReflections.count, matchingAward[0].value, "The user documented being surprised by something new \(allReflections.count) times, so should have earned the \(matchingAward[0].name) award")
+            XCTAssertEqual(allReflections.count, Int(matchingAward[0].value), "The user documented being surprised by something new \(allReflections.count) times, so should have earned the \(matchingAward[0].achievementName) award")
             controller.deleteAll()
            
         }//: LOOP

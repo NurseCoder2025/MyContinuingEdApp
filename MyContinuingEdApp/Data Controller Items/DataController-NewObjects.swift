@@ -240,15 +240,14 @@ extension DataController {
     
     /// Method for creating new responses to a activity reflection prompt.
     /// - Parameters:
-    ///   - prompt: ReflectionPrompt object containing the question for the user to answer
+    ///   - prompt: ReflectionPrompt object containing the question for the user to answer (optional)
     ///   - reflection: ActivityReflection object, which holds all reflections for a given CE activity
     ///
     /// - Note: This method assigns the arguments to the ReflectionResponse's question and reflection relationship properties.
-    /// It does NOT return the created object.
-    func createNewPromptResponse(
-        using prompt: ReflectionPrompt,
+    func createNewReflectionResponse(
+        using prompt: ReflectionPrompt? = nil,
         for reflection: ActivityReflection
-    ) {
+    ) -> ReflectionResponse {
         let context = container.viewContext
         
         let response = ReflectionResponse(context: context)
@@ -262,6 +261,7 @@ extension DataController {
         response.reflection = reflection
         
         save()
+        return response
     }//: createNewPromptResponse
     
     /// Method identical to createNewPromptResponse, with the difference being that this method

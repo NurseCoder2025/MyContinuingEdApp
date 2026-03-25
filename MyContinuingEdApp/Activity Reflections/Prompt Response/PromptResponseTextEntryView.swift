@@ -101,6 +101,10 @@ struct PromptResponseTextEntryView: View {
             }//: IF (.completed)
             
         }//: VSTACK
+        // MARK: - ON APPEAR
+        .onAppear {
+            audioData.okToTranscribeAudio = dataController.allowsAutoTranscriptionOfAudio
+        }//: ON APPEAR
         // MARK: - ALERTS
         .alert("Change to Audio Reflection", isPresented: $showSwitchToAudioAlert) {
             Button("OK") {
@@ -138,8 +142,6 @@ struct PromptResponseTextEntryView: View {
         
         let newViewModel = ViewModel(aBrain: audioBrain, dataController: dataController)
         _viewModel = StateObject(wrappedValue: newViewModel)
-        
-        audioData.okToTranscribeAudio = dataController.allowsAutoTranscriptionOfAudio
         
     }//: INIT
     

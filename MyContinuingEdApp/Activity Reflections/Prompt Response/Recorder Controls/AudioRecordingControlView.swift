@@ -11,8 +11,8 @@ import SwiftUI
 struct AudioRecordingControlView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var audioData: AudioDataHolder
-       
     @StateObject var viewModel: ViewModel
+    @ObservedObject var response: ReflectionResponse
     
     @State private var recordingElapsedTime: TimeInterval = .zero
     
@@ -84,13 +84,15 @@ struct AudioRecordingControlView: View {
     }//: BODY
     
     // MARK: - INIT
-    init() {
-        let newViewModel = ViewModel()
+    init(response: ReflectionResponse) {
+        self.response = response
+        
+        let newViewModel = ViewModel(response: response)
         _viewModel = StateObject(wrappedValue: newViewModel)
     }//: INIT
 }//: STRUCT
 
 // MARK: - PREVIEW
 #Preview {
-    AudioRecordingControlView()
+    AudioRecordingControlView(response: .example)
 }//: PREVIEW

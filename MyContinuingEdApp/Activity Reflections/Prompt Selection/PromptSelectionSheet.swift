@@ -8,7 +8,7 @@
 // This view is to hold UI controls for the user to select the specific
 // reflection prompt that they wish to answer
 
-// Calling view: ActivityReflectionView
+// Calling views: ActivityReflectionView OR PromptResponseView
 
 import SwiftUI
 
@@ -22,7 +22,7 @@ struct PromptSelectionSheet: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var dataController: DataController
     
-    @ObservedObject var reflection: ActivityReflection
+    @ObservedObject var response: ReflectionResponse
     
     @State private var selectedView: PromptView = .builtInPrompts
     @State private var showPromptSelectionErrorAlert: Bool = false
@@ -61,10 +61,7 @@ struct PromptSelectionSheet: View {
                 case .builtInPrompts:
                     StandardPromptSelectionView(
                         onPromptSelection: { prompt in
-                            dataController.createNewPromptResponse(
-                                using: prompt,
-                                for: reflection
-                            )//: createNewPromptResponse
+                            response.question = prompt
                         },
                         noPromptSelected: {
                             showPromptSelectionErrorAlert = true
@@ -80,11 +77,7 @@ struct PromptSelectionSheet: View {
                     } else {
                         CustomPromptSelectionView(
                             onPromptSelection: {prompt in
-                                dataController.createNewPromptResponse(
-                                    using: prompt,
-                                    for: reflection
-                                )
-                             
+                                response.question = prompt
                             },//: onPromptSelection
                             noPromptSelected: {
                                 showPromptSelectionErrorAlert = true
@@ -102,11 +95,7 @@ struct PromptSelectionSheet: View {
                     } else {
                         FavoritePromptSelectionView(
                             onPromptSelection: {prompt in
-                                dataController.createNewPromptResponse(
-                                    using: prompt,
-                                    for: reflection
-                                )
-                             
+                                response.question = prompt
                             },//: onPromptSelection
                             noPromptSelected: {
                                 showPromptSelectionErrorAlert = true
@@ -144,7 +133,7 @@ struct PromptSelectionSheet: View {
             Text("No prompt was selected. Try again by tapping once on the prompt you wish to use for your activity reflection.")
         }//: ALERT
         // MARK: - ON RECIEVE
-        .onReceive(reflection.objectWillChange) { _ in
+        .onReceive(response.objectWillChange) { _ in
             dismiss()
         }//: ON RECIEVE
         
@@ -154,5 +143,5 @@ struct PromptSelectionSheet: View {
 
 // MARK: - PREVIEW
 #Preview {
-    PromptSelectionSheet(reflection: .example)
+    PromptSelectionSheet(response: .example)
 }

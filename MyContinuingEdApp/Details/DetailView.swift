@@ -21,8 +21,7 @@ struct DetailView: View {
             if let activity = dataController.selectedActivity {
                 ActivityView(activity: activity)
                     .navigationDestination(for: ActivityReflection.self) { reflection in
-                            ActivityReflectionView(activity: activity, reflection: reflection)
-                    
+                            ActivityReflectionView(dataController: dataController, reflection: reflection)
                     }//: NAV Destination
             } else {
                 NoActivityView()

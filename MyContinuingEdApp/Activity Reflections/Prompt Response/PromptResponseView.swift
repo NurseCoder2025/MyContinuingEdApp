@@ -14,14 +14,20 @@ struct PromptResponseView: View {
     @StateObject var audioHolder: AudioDataHolder = AudioDataHolder()
     
     @State private var entryTypeSelection: ResponseEntryType = .writtenResponse
+    @State private var showPromptSelectionSheet: Bool = false
     
-    var dataController: DataController
-    var audioBrain: AudioReflectionBrain
+    let dataController: DataController
+    let audioBrain: AudioReflectionBrain
     // MARK: - COMPUTED PROPERTIES
     
     // MARK: - BODY
     var body: some View {
         VStack {
+            // Header
+            PromptHeaderView(response: response) {
+                showPromptSelectionSheet = true
+            }//: PromptHeaderView (onChangePrompt closure)
+            
             // Answer type selection picker
             Picker("Select Response Type", selection: $entryTypeSelection) {
                 ForEach(ResponseEntryType.allCases) { type in
@@ -30,10 +36,29 @@ struct PromptResponseView: View {
             }//: PICKER
             .pickerStyle(.segmented)
             
-            
+            // Response View
+            switch entryTypeSelection {
+            case .writtenResponse:
+                PromptResponseTextEntryView(
+                    response: response,
+                    audioBrain: audioBrain,
+                    dataController: dataController
+                )
+            case .audioResponse:
+                AudioReflectionRecordAndPlayView(audioBrain: audioBrain, response: response)
+            }//: SWITCH
             
         }//: VSTACK
         .environmentObject(audioHolder)
+        // MARK: - ON CHANGE
+        .sheet(isPresented: $showPromptSelectionSheet) {
+                PromptSelectionSheet(response: response)
+        }//: SHEET
+        // MARK: - ON DISAPPEAR
+        .onDisappear {
+            response.markResponseAsComplete()
+            dataController.save()
+        }//: onDisappear
     }//: BODY
     // MARK: - INIT
     

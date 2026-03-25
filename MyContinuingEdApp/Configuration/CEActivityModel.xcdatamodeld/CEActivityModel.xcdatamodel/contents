@@ -22,7 +22,7 @@
         <attribute name="surprises" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="wasSurprised" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="ceToReflectUpon" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="reflection" inverseEntity="CeActivity"/>
-        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="reflection" inverseEntity="ReflectionResponse"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ReflectionResponse" inverseName="reflection" inverseEntity="ReflectionResponse"/>
     </entity>
     <entity name="ActivityType" representedClassName="ActivityType" syncable="YES" codeGenerationType="class">
         <attribute name="typeID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -145,10 +145,11 @@
         <attribute name="favoriteYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="question" optional="YES" attributeType="String"/>
-        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="question" inverseEntity="ReflectionResponse"/>
+        <relationship name="responses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ReflectionResponse" inverseName="question" inverseEntity="ReflectionResponse"/>
     </entity>
     <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">
         <attribute name="answer" optional="YES" attributeType="String"/>
+        <attribute name="audioLength" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="completeAnswerYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="createdOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="hasAudioReflection" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>

@@ -48,10 +48,10 @@ struct PromptHeaderView: View {
     ///     - "N/A (First time to respond to question!)" if modifiedOn is null
     var formattedModDate: String {
         if let lastEdited = response.modifiedOn {
-            let localString = NSLocalizedString(lastEdited.formatted(date: .numeric, time: .shortened), comment: "Day & time when the user last edited their answer to a prompt.")
+            let localString = String(lastEdited.formatted(date: .numeric, time: .shortened))
             return localString
         } else {
-            return "N/A (First time to respond to question!)"
+            return "N/A"
         }
     }//: formattedModDate
     
@@ -61,31 +61,40 @@ struct PromptHeaderView: View {
     // MARK: - BODY
     var body: some View {
         VStack {
-            HStack(spacing: 5) {
+            HStack(spacing: 0) {
                 Text(promptText)
+                    .foregroundStyle(.white)
+                    .padding(.leading, 5)
                 Spacer()
-                Button {
-                    onSelectPrompt()
-                } label: {
-                    Label("Change Prompt", systemImage: "arrow.branch")
-                        .labelsHidden()
-                }//: BUTTON
-                .buttonStyle(.bordered)
+                VStack {
+                    Button {
+                        onSelectPrompt()
+                    } label: {
+                        Label("Change Prompt", systemImage: "arrow.branch")
+                            .foregroundStyle(.white)
+                            .labelStyle(.titleAndIcon)
+                    }//: BUTTON
+                    .buttonStyle(.bordered)
+            
+                Divider()
+                
+                // TextField for answering question
+                // Updating field updates the modifiedOn property
+                Text("Last selected: \(formattedModDate)")
+                    .foregroundStyle(.secondary)
+                    .font(.caption).bold()
+                    .padding()
+                }//: VSTACK
+                .frame(minHeight: 100)
+                .padding(10)
+                
             }//: HSTACK
-            
-            Divider()
-            
-            // TextField for answering question
-            // Updating field updates the modifiedOn property
-            Text("Last Updated: \(formattedModDate)")
-                .foregroundStyle(.secondary)
-                .font(.caption).bold()
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(.gray.opacity(0.3))
-                )
         }//: VSTACK
+        .frame(minHeight: 100)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.blue.opacity(0.6))
+        )//: BACKGROUND
         
     }//: BODY
 }//: STRUCT

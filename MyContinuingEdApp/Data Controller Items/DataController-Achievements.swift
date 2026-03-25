@@ -18,7 +18,7 @@ extension DataController {
     /// , returning an integer value representing the result of the fetch request's count method
     func count<T>(for fetchRequest: NSFetchRequest<T>) -> Int {
         (try? container.viewContext.count(for: fetchRequest)) ?? 0
-    }
+    }//: count(for)
     
     /// The addContactHours function is designed to add up all of the contact
     /// hours returned from a CeActivity fetch request and return that value
@@ -194,4 +194,13 @@ extension DataController {
         }//: LOOP
         
     }//: checkForNewAchievements
+    
+    
+    func getAllAchievements() -> [Achievement] {
+        let context = container.viewContext
+        let fetchRequest: NSFetchRequest<Achievement> = Achievement.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        return (try? context.fetch(fetchRequest)) ?? []
+    }//: getAllAchievements()
+    
 }//: DataController

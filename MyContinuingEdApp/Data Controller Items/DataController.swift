@@ -84,14 +84,7 @@ class DataController: ObservableObject {
     /// String value for displaying to the user which subscription type that they currently have.
     @Published var currentSubscriptionType: String = ""
     
-    // MARK: PreLoading Object Properties
     
-    /// Private DataController property used for creating a Task for scheduling the execution
-    /// of preloading functions.  These functions load pre-made objects for use within the app's UI for
-    /// things like CE designation, Countries, States (U.S.), activity types, achievements, & reflection
-    /// prompts.  Value is set within the DataController's init method.
-    private var preloadTasks: Task<Void, Never>?
-   
     // MARK: - SAVING & DELETING METHODS
     
     /// Save function that will save the context to disk only when changes are made and the function is called.
@@ -221,6 +214,25 @@ class DataController: ObservableObject {
         // identifying the name of the stored data to load and use
         if inMemory {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
+            
+            container.loadPersistentStores { [weak self] storeDescription, error in
+                if let error = error {
+                    print("Core Data store failed to load: \(error.localizedDescription)")
+                    fatalError("Failed to load data from local storage: \(error)")
+                } else {
+                    Task {@MainActor in
+                        await self?.preloadActivityTypes()
+                        await self?.preloadCEDesignations()
+                        await self?.preloadCountries()
+                        await self?.preloadStatesList()
+                        await self?.preloadAllAchievements()
+                        await self?.preloadPromptQuestions()
+                    }//: TASK
+                    
+                    self?.setDefaultSettingsKeys()
+                }//: IF ELSE
+            }//: loadPersistentStores
+            
         } else {
             container.viewContext.automaticallyMergesChangesFromParent = true
             container.persistentStoreDescriptions.first?.setOption(
@@ -260,8 +272,6 @@ class DataController: ObservableObject {
                 await assessUserICloudStatus()
             }//: TASK
             
-        }//: IF ELSE
-        
         // MARK: - SPOTLIGHT SETUP
         // Spotlight configuration & setup
         // Configuring persistent history tracking
@@ -274,7 +284,6 @@ class DataController: ObservableObject {
                     forStoreWith: description,
                     coordinator: coordinator
                 )
-                
         }//: IF LET description
 
         // Loading data from local storage
@@ -292,7 +301,7 @@ class DataController: ObservableObject {
         // Using a Task to help improve app performance by scheduling
         // these function calls after the persistent stores are loaded.
         
-        preloadTasks = Task {
+        Task {@MainActor in
             await preloadActivityTypes()
             await preloadCEDesignations()
             await preloadCountries()
@@ -300,7 +309,6 @@ class DataController: ObservableObject {
             await preloadAllAchievements()
             await preloadPromptQuestions()
         }//: TASK
-        
         
         // MARK: - Setting Key Values
         // First time use determination & setting the key if so
@@ -315,6 +323,7 @@ class DataController: ObservableObject {
         // MARK: Default Settings
         setDefaultSettingsKeys()
         
+        }//: IF ELSE
         
     } //: INIT
     

@@ -75,7 +75,7 @@ extension PromptResponseTextEntryView {
         ///
         /// - Important: This method does NOT update the Recording object previously saved in the ARDocument that
         /// was assigned to the ReflectionResponse object (as determined by the ARCoordinator).
-        func transcribeRecordingFrom(data: Data, for response: ReflectionResponse) async {
+        private func transcribeRecordingFrom(data: Data, for response: ReflectionResponse) async {
             guard let selectedPrompt = response.question else {
                 transcriptionErrorMessage = "The reflection this audio was recorded for does not have a specific prompt assigned to it. Please assign one and try again."
                 NSLog(">>> Error trying to transcribe recording because the ReflectionResponse argument did not have an assigned ReflectionPrompt object to it.")

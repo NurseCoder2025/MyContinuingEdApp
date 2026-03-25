@@ -32,9 +32,19 @@ final class AwardsPerformanceTests: BasePerformanceTest {
         let awards = Array(repeating: Award.allAwards, count: 25).joined()
         XCTAssertEqual(awards.count, 725, "This checks that the # of awards is constant. Update this number if you add or remove awards.")
         
-        measure {
-            _ = awards.filter { controller.hasEarned(award: $0)}
+        let context = controller.container.viewContext
+        for award in awards {
+            let newAchievement = Achievement(context: context)
+            newAchievement.name = award.name
+            newAchievement.achievementCriterion = award.criterion
+            newAchievement.achievementDescript = award.description
+            newAchievement.achievementColor = award.color
         }
+        controller.save()
+        let allAchievements = controller.getAllAchievements()
+        measure {
+            _ = allAchievements.filter { controller.hasEarned(award: $0)}
+        }//: measure
         
     }//: testAwardEarningPerformance
 
