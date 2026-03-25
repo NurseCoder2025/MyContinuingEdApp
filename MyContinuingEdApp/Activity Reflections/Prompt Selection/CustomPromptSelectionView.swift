@@ -21,38 +21,64 @@ struct CustomPromptSelectionView: View {
         sortDescriptors: [NSSortDescriptor(key: "question", ascending: true)],
         predicate: NSPredicate(format: "customYN == true")
     ) var customPrompts: FetchedResults<ReflectionPrompt>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "categoryName", ascending: true)]) var promptCategories: FetchedResults<PromptCategory>
+    
+    // MARK: - COMPUTED PROPERTIES
+    
+    var categoriesWithPrompts: [PromptCategory] {promptCategories.filter { $0.hasCustomPrompts }}//: categoriesWithPrompts
     
     // MARK: - CLOSURES
     var onPromptSelection: (ReflectionPrompt) -> Void = {_ in }
     var noPromptSelected: () -> Void = { }
+    var onCreateCustomPrompt: () -> Void = { }
     
     // MARK: - BODY
     var body: some View {
-        VStack {
-            TabView {
-                ForEach(customPrompts) {prompt in
-                    PromptCardView(prompt: prompt)
-                        .onTapGesture {
-                            selectedPrompt = prompt
-                        }//: ON TAP
-                        .onTapGesture(count: 2) {
-                            selectedPrompt = nil
-                        }//: ON DOUBLE TAP
-                    
+        if categoriesWithPrompts.isEmpty {
+            VStack {
+                NoItemView(
+                    noItemTitleText: "No Custom Prompts Yet...",
+                    noItemMessage: "You haven't created any custom prompts yet. Get started today!",
+                    noItemImage: "slash.circle"
+                )//: NoItemView
+                
+                Button {
+                    onCreateCustomPrompt()
+                } label: {
+                    Text("Create custom prompt")
+                }//: BUTTON
+            }//: VSTACK
+        } else {
+            LazyVStack {
+                ForEach(categoriesWithPrompts) { category in
+                    DisclosureGroup(category.catName) {
+                        TabView {
+                            ForEach(category.assignedCustomPrompts) {prompt in
+                                PromptCardView(prompt: prompt)
+                                    .onTapGesture {
+                                        selectedPrompt = prompt
+                                    }//: ON TAP
+                                    .onTapGesture(count: 2) {
+                                        selectedPrompt = nil
+                                    }//: ON DOUBLE TAP
+                            }//: LOOP
+                        }//: TAB
+                        .tabViewStyle(.page)
+                        .frame(height: 300)
+                    }//: DISCLOSURE GROUP
                 }//: LOOP
-            }//: TAB
-            .tabViewStyle(.page)
-            .frame(height: 300)
-            
-           PromptSelectionConfirmationView(
-            selectedPrompt: $selectedPrompt,
-            onPromptSelection: { prompt in
-                onPromptSelection(prompt)
-            },
-            noPromptSelected: {noPromptSelected()}
-           )
-            
-        }//: VSTACK
+                
+                
+                PromptSelectionConfirmationView(
+                    selectedPrompt: $selectedPrompt,
+                    onPromptSelection: { prompt in
+                        onPromptSelection(prompt)
+                    },
+                    noPromptSelected: {noPromptSelected()}
+                )
+                
+            }//:LazyVSTACK
+        }//: IF ELSE
     }//: BODY
 }//: STRUCT
 

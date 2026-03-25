@@ -43,7 +43,7 @@ extension DataController {
             convertedItem.designationAKA = designation.designationAKA
         }
         
-        save()
+        queueSave()
     }//: preloadCEDesignations()
     
     // MARK: Preload Countries
@@ -74,7 +74,7 @@ extension DataController {
             place.sortOrder = country.sortOrder
         }
         
-        save()
+       queueSave()
     
     }//: preloadCountries()
     
@@ -144,7 +144,7 @@ extension DataController {
             
         }//: IF - ELSE
         
-        save()
+        queueSave()
     }//: preloadActivityTypes()
     
     // MARK: State List
@@ -196,7 +196,7 @@ extension DataController {
                 item.abbreviation = state.abbreviation
             }
         }//: IF ELSE
-        save()
+       queueSave()
     }//: preloadStatesList()
     
     // MARK: Achievements (awards)
@@ -285,8 +285,10 @@ extension DataController {
             
         }//: IF - ELSE
         
-        save()
+        queueSave()
     }//: preloadAllAchievements
+    
+    // MARK: REFLECTIONS
     
     /// Async method for decoding all prompt questions contained in the "Reflection Prompts.json" file and
     /// creating CoreData ReflectionPrompt objects out of them.
@@ -345,8 +347,36 @@ extension DataController {
             
         }//: IF ELSE
         
-        save()
+        queueSave()
     }// preloadPromptQuestions()
+    
+    /// Async method for creating the intial set of CoreData PromptCategory objects based on
+    /// the internal JSON file "Prompt Categories.json".
+    ///
+    /// - Important: This method creates new PromptCategory objects using the capitalized
+    /// name of the category value found in the "Prompt Categories.json" file, so future fetches
+    /// for stored PromptCategory objects must ensure that the name property for each is
+    /// capitalized.
+    func preloadPromptCategories() async {
+        let context = container.viewContext
+        
+        // Check to see if preloading is needed
+        let promptCatFetch = PromptCategory.fetchRequest()
+        promptCatFetch.sortDescriptors = [NSSortDescriptor(key: "categoryName", ascending: true)]
+        
+        let categoryCount = await MainActor.run {
+             (try? context.count(for: promptCatFetch)) ?? 0
+        }//: MAIN ACTOR
+        
+        guard categoryCount == 0 else { return }
+        
+        let catsToLoad = PromptCategoryJSON.standardPrompts
+        for cat in catsToLoad {
+            createNewPromptCategory(with: cat.capitalizedName)
+        }//: LOOP
+        
+        queueSave()
+    }//: preloadPromptCategories()
     
     // MARK: - Set Settings Keys Defaults
     
@@ -455,12 +485,33 @@ extension DataController {
     /// Method for converting a PromptQuestionJSON object to a CoreData entity (ReflectionPrompt) within the
     /// preloadPromptQuestions method.
     /// - Parameter prompt: PromptQuestionJSON object loaded from the static officialPrompts property
-    private func convertPromptJSONToReflectionPrompt(prompt: PromptQuestionJSON) {
+    private func convertPromptJSONToReflectionPrompt(
+        prompt: PromptQuestionJSON
+    ) {
         let context = container.viewContext
+        
+        let promptCatFetch = PromptCategory.fetchRequest()
+        promptCatFetch.sortDescriptors = [NSSortDescriptor(key: "categoryName", ascending: true)]
+        
+        let promptCatCount = (try? context.count(for: promptCatFetch)) ?? 0
+        if promptCatCount == 0 {
+            Task {
+                await self.preloadPromptCategories()
+            }//: TASK
+        }//: IF (promptCatCount == 0)
+        
+        let loadedCategories = (try? context.fetch(promptCatFetch)) ?? []
+       
         let newPrompt = ReflectionPrompt(context: context)
         newPrompt.id = UUID()
         newPrompt.customYN = prompt.customYN
         newPrompt.promptQuestion = prompt.question
+        
+        if let matchingCategory = loadedCategories.filter({ category in
+            prompt.capitalizedCategory == category.catName
+        }).first {
+            newPrompt.promptCategory = matchingCategory
+        }//: IF LET
     }//: convertPromptJSONToReflectionPrompt
     
 }//: DataController

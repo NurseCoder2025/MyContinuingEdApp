@@ -140,11 +140,17 @@
         <relationship name="credential" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="issuer" inverseEntity="Credential"/>
         <relationship name="state" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="USState" inverseName="issuer" inverseEntity="USState"/>
     </entity>
+    <entity name="PromptCategory" representedClassName="PromptCategory" syncable="YES" codeGenerationType="class">
+        <attribute name="categoryID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="categoryName" optional="YES" attributeType="String"/>
+        <relationship name="questions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ReflectionPrompt" inverseName="promptCategory" inverseEntity="ReflectionPrompt"/>
+    </entity>
     <entity name="ReflectionPrompt" representedClassName="ReflectionPrompt" syncable="YES" codeGenerationType="class">
         <attribute name="customYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="favoriteYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="question" optional="YES" attributeType="String"/>
+        <relationship name="promptCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PromptCategory" inverseName="questions" inverseEntity="PromptCategory"/>
         <relationship name="responses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ReflectionResponse" inverseName="question" inverseEntity="ReflectionResponse"/>
     </entity>
     <entity name="ReflectionResponse" representedClassName="ReflectionResponse" syncable="YES" codeGenerationType="class">

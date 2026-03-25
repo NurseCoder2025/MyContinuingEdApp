@@ -16,7 +16,9 @@ struct CustomPromptCreationSheet: View {
     @State private var selectedCategory: PromptCategory?
     @State private var promptIsFavorite: Bool = false
     
-    // MARK: - COMPUTED PROPERTIEs
+    @State private var showNoCategoryAssignedAlert: Bool = false
+    
+    // MARK: - COMPUTED PROPERTIES
     
     var appPurchaseStatus: PurchaseStatus {
         let currentStatus = dataController.purchaseStatus
@@ -42,6 +44,8 @@ struct CustomPromptCreationSheet: View {
             Group {
                 Text("Prompt Category:")
                     .font(.headline)
+                Text("Note: A selected category is required for all custom prompts in order for it to be saved.")
+                    .font(.caption)
                 Picker("Prompt Category", selection: $selectedCategory) {
                     Text("")
                     ForEach(promptCategories) { cat in
@@ -57,12 +61,7 @@ struct CustomPromptCreationSheet: View {
             
             // MARK: - SAVE BUTTON
             Button {
-               let newPrompt = dataController.createNewCustomPrompt(with: promptText, for: selectedCategory)
-                if promptIsFavorite {
-                    newPrompt.favoriteYN = true
-                }
-                dataController.save()
-                dismiss()
+               saveCustomPrompt()
             } label: {
                 Text("Save Custom Prompt")
             }//: BUTTON
@@ -71,7 +70,40 @@ struct CustomPromptCreationSheet: View {
             
         }//: VSTACK
         .navigationTitle(Text("Create Custom Prompt"))
+        // MARK: - TOOlBAR
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Dismiss")
+                }//: BUTTON
+            }//: TOOLBAR ITEM
+            
+        }//: TOOLBAR
+        // MARK: - ALERTS
+        .alert("No Category Assigned", isPresented: $showNoCategoryAssignedAlert) {
+            Button("OK"){}
+        } message: {
+            Text("You need to select a prompt category before saving.")
+        }//: ALERT
+
+        
     }//: BODY
+    // MARK: - METHODs
+    
+    private func saveCustomPrompt() {
+        guard selectedCategory != nil else {
+            showNoCategoryAssignedAlert = true
+            return
+        }//: GUARD
+        let newPrompt = dataController.createNewCustomPrompt(with: promptText, for: selectedCategory)
+         if promptIsFavorite {
+             newPrompt.favoriteYN = true
+         }
+         dataController.save()
+         dismiss()
+    }//: saveCustomPrompt()
 }//: STRUCT
 
 // MARK: - PREVIEW

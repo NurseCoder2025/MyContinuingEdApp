@@ -19,6 +19,7 @@ struct PromptQuestionJSON: Decodable, Identifiable, Hashable, SyncIdentifiable {
     // MARK: - PROPERTIES
     let question: String
     let customYN: Bool
+    let category: String
     
     // Conforming to Identifable by using the question String as
     // a unique identifier
@@ -32,6 +33,8 @@ struct PromptQuestionJSON: Decodable, Identifiable, Hashable, SyncIdentifiable {
     ///
     /// - Important: Getter ONLY - do not try to set a value with this!
     var syncID: String {question}
+    
+    var capitalizedCategory: String { category.capitalized }
     
     // MARK: - STATIC Properites
     static let officialPrompts: [PromptQuestionJSON] = Bundle.main.decode("Reflection Prompts.json")

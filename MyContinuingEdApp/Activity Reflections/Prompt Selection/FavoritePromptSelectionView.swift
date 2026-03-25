@@ -22,6 +22,11 @@ struct FavoritePromptSelectionView: View {
         sortDescriptors: [NSSortDescriptor(key: "question", ascending: true)],
         predicate: NSPredicate(format: "favoriteYN == true")
     ) var favoritePrompts: FetchedResults<ReflectionPrompt>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "categoryName", ascending: true)]) var promptCategories: FetchedResults<PromptCategory>
+    
+    // MARK: - COMPUTED PROPERTIES
+    
+    var categoriesWithFavorites: [PromptCategory] {promptCategories.filter {$0.hasFavoritePrompts}}//: categoriesWithFavories
     
     // MARK: - CLOSURES
     var onPromptSelection: (ReflectionPrompt) -> Void = {_ in }
@@ -29,32 +34,42 @@ struct FavoritePromptSelectionView: View {
     
     // MARK: - BODY
     var body: some View {
-        VStack {
-            TabView {
-                ForEach(favoritePrompts) {prompt in
-                    PromptCardView(prompt: prompt)
-                        .onTapGesture {
-                            selectedPrompt = prompt
-                        }//: ON TAP
-                        .onTapGesture(count: 2) {
-                            selectedPrompt = nil
-                        }//: ON DOUBLE TAP
-                    
+        if categoriesWithFavorites.isEmpty {
+            NoItemView(
+                noItemTitleText: "No Favorites Yet...",
+                noItemMessage: "You haven't marked any prompts as favorites yet.  Tap the star button in the top-right corner to add some!",
+                noItemImage: "star.slash.fill"
+            )//: NoItemView
+        } else {
+            LazyVStack {
+                ForEach(categoriesWithFavorites) { category in
+                    DisclosureGroup(category.catName) {
+                        TabView {
+                            ForEach(category.assignedFavoritePrompts) {prompt in
+                                PromptCardView(prompt: prompt)
+                                    .onTapGesture {
+                                        selectedPrompt = prompt
+                                    }//: ON TAP
+                                    .onTapGesture(count: 2) {
+                                        selectedPrompt = nil
+                                    }//: ON DOUBLE TAP
+                            }//: LOOP
+                        }//: TAB
+                        .tabViewStyle(.page)
+                        .frame(height: 300)
+                    }//: DISCLOSURE GROUP
                 }//: LOOP
-            }//: TAB
-            .tabViewStyle(.page)
-            .frame(height: 300)
-            
-           PromptSelectionConfirmationView(
-            selectedPrompt: $selectedPrompt,
-            onPromptSelection: { prompt in
-                onPromptSelection(prompt)
-            },
-            noPromptSelected: {noPromptSelected()}
-           )
-            
-        }//: VSTACK
-        
+                
+                PromptSelectionConfirmationView(
+                    selectedPrompt: $selectedPrompt,
+                    onPromptSelection: { prompt in
+                        onPromptSelection(prompt)
+                    },
+                    noPromptSelected: {noPromptSelected()}
+                )
+                
+            }//: LazyVSTACK
+        }//: IF ELSE
     }//: BODY
 }//: STRUCT
 

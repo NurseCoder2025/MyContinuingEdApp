@@ -226,6 +226,7 @@ class DataController: ObservableObject {
                         await self?.preloadCountries()
                         await self?.preloadStatesList()
                         await self?.preloadAllAchievements()
+                        await self?.preloadPromptCategories()
                         await self?.preloadPromptQuestions()
                     }//: TASK
                     
@@ -307,6 +308,7 @@ class DataController: ObservableObject {
             await preloadCountries()
             await preloadStatesList()
             await preloadAllAchievements()
+            await preloadPromptCategories()
             await preloadPromptQuestions()
         }//: TASK
         

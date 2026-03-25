@@ -22,6 +22,7 @@ struct StandardPromptSelectionView: View {
         sortDescriptors: [NSSortDescriptor(key: "question", ascending: true)],
         predicate: NSPredicate(format: "customYN == false")
     ) var standardPrompts: FetchedResults<ReflectionPrompt>
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "categoryName", ascending: true)]) var promptCategories: FetchedResults<PromptCategory>
     
     // MARK: - CLOSURES
     var onPromptSelection: (ReflectionPrompt) -> Void = {_ in }
@@ -29,21 +30,24 @@ struct StandardPromptSelectionView: View {
     
     // MARK: - BODY
     var body: some View {
-        VStack {
-            TabView {
-                ForEach(standardPrompts) {prompt in
-                    PromptCardView(prompt: prompt)
-                        .onTapGesture {
-                            selectedPrompt = prompt
-                        }//: ON TAP
-                        .onTapGesture(count: 2) {
-                            selectedPrompt = nil
-                        }//: ON DOUBLE TAP
-                    
-                }//: LOOP
-            }//: TAB
-            .tabViewStyle(.page)
-            .frame(height: 300)
+        LazyVStack {
+            ForEach(promptCategories) { category in
+                DisclosureGroup(category.catName) {
+                    TabView {
+                        ForEach(category.assignedPrompts) {prompt in
+                            PromptCardView(prompt: prompt)
+                                .onTapGesture {
+                                    selectedPrompt = prompt
+                                }//: ON TAP
+                                .onTapGesture(count: 2) {
+                                    selectedPrompt = nil
+                                }//: ON DOUBLE TAP
+                        }//: LOOP
+                    }//: TAB
+                    .tabViewStyle(.page)
+                    .frame(height: 300)
+                }//: DISCLOSURE GROUP
+            }//: LOOP
             
            PromptSelectionConfirmationView(
             selectedPrompt: $selectedPrompt,
@@ -53,7 +57,7 @@ struct StandardPromptSelectionView: View {
             noPromptSelected: {noPromptSelected()}
            )
             
-        }//: VSTACK
+        }//: LAZY VSTACK
     }//: BODY
 }//: STRUCT
 

@@ -26,6 +26,7 @@ struct PromptSelectionSheet: View {
     
     @State private var selectedView: PromptView = .builtInPrompts
     @State private var showPromptSelectionErrorAlert: Bool = false
+    @State private var showCreateCustomPromptSheet: Bool = false
     
     // MARK: - COMPUTED PROPERTIES
     
@@ -81,6 +82,9 @@ struct PromptSelectionSheet: View {
                             },//: onPromptSelection
                             noPromptSelected: {
                                 showPromptSelectionErrorAlert = true
+                            },
+                            onCreateCustomPrompt: {
+                                showCreateCustomPromptSheet = true
                             }
                          )
                     }//: IF - ELSE
@@ -127,6 +131,11 @@ struct PromptSelectionSheet: View {
             }//: TOOLBAR ITEM
             
         }//: TOOLBAR
+        // MARK: - SHEETS
+        .sheet(isPresented: $showCreateCustomPromptSheet) {
+            CustomPromptCreationSheet()
+        }//: SHEET
+        
         // MARK: - ALERTS
         .alert("Selection Error", isPresented: $showPromptSelectionErrorAlert) {
         } message: {

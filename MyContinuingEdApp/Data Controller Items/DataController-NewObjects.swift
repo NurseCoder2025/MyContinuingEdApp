@@ -207,6 +207,7 @@ extension DataController {
     }
     
     // MARK: - NEW REFLECTIONS
+    
     /// Creating a new reflection for a given activity. Only two default values are made:
     /// 1. The reflection date and
     /// 2. The UUID value for the id property
@@ -226,14 +227,13 @@ extension DataController {
     ///
     /// Method automatically assigns a UUID to the id property as well as sets the customYN
     /// property to true prior to saving the new object.
-    func createNewCustomPrompt(with question: String) -> ReflectionPrompt {
+    func createNewCustomPrompt(with question: String, for category: PromptCategory? = nil) -> ReflectionPrompt {
         let context = container.viewContext
         let newCustomPrompt = ReflectionPrompt(context: context)
         newCustomPrompt.id = UUID()
         newCustomPrompt.question = question
+        newCustomPrompt.promptCategory = category
         newCustomPrompt.customYN = true
-        
-        save()
         
         return newCustomPrompt
     }//: createNewCustomPrompt
@@ -289,6 +289,16 @@ extension DataController {
         save()
         return response
     }//: createNewPromptResponseWithObject
+    
+    /// DataController method for creating, saving, and returning a PromptCategory object.
+    /// - Parameter name: String value representing the name of the category to be created
+    func createNewPromptCategory(with name: String) {
+        let context = container.viewContext
+        
+        let category = PromptCategory(context: context)
+        category.categoryID = UUID()
+        category.categoryName = name
+    }//: createNewPromptCategory(with)
     
     // MARK: - NEW CREDENTIALS
     /// Function to create a new credential object with a default name value.
