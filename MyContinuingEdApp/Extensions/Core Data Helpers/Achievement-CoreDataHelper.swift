@@ -116,4 +116,22 @@ extension Achievement {
         notifiedOn ?? Date.distantPast
     }//: achievementNotifiedOn
     
+    // MARK: - COMPUTED PROPERTIES
+    
+    /// Computed property for the Achievement CoreData entity object that returns the
+    /// AchievementCritieria enum that matches the String value assigned to the Achievement
+    /// object's criterion property.
+    ///
+    /// - Note: If, for whatever reason, a matching enum cannot be found, then the notFound enum value
+    /// will be returned.
+    var awardCriteria: AchievementCriteria {
+        let allCriteria = AchievementCriteria.allCases
+        let matchingCriterion = allCriteria.filter( { $0.rawValue == self.achievementCriterion } ).first
+        if let foundCriterion = matchingCriterion {
+            return foundCriterion
+        } else {
+            return AchievementCriteria.notFound
+        }//: IF ELSE
+    }//: awardCrieria
+    
 }//: EXTENSION

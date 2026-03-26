@@ -127,11 +127,12 @@
 		3FA59F352F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */; };
 		3FA667502F73A37C00066FF7 /* ActivityReflection_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA6674F2F73A37C00066FF7 /* ActivityReflection_ViewModel.swift */; };
 		3FA667522F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA667512F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift */; };
-		3FA667542F73ED5000066FF7 /* Reflection Prompts.json in Resources */ = {isa = PBXBuildFile; fileRef = 3FA667532F73ED5000066FF7 /* Reflection Prompts.json */; };
 		3FA667562F73ED6200066FF7 /* Prompt Categories.json in Resources */ = {isa = PBXBuildFile; fileRef = 3FA667552F73ED6200066FF7 /* Prompt Categories.json */; };
 		3FA667582F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA667572F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift */; };
 		3FA6675A2F73F40100066FF7 /* PromptCategoryJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA667592F73F40100066FF7 /* PromptCategoryJSON.swift */; };
 		3FA6675C2F7408B900066FF7 /* CustomPromptCreationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA6675B2F7408B900066FF7 /* CustomPromptCreationSheet.swift */; };
+		3FA6675E2F74C97400066FF7 /* Reflection Prompts.json in Resources */ = {isa = PBXBuildFile; fileRef = 3FA6675D2F74C97400066FF7 /* Reflection Prompts.json */; };
+		3FA667602F74D1B700066FF7 /* Awards.json in Resources */ = {isa = PBXBuildFile; fileRef = 3FA6675F2F74D1B700066FF7 /* Awards.json */; };
 		3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */; };
 		3FAE983D2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */; };
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
@@ -265,7 +266,6 @@
 		F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B937A82E83999300AF9155 /* CredentialRestrictionsSectionView.swift */; };
 		F2B937AB2E83A92300AF9155 /* DebuggingFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */; };
 		F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC949E2E32D0C100926B3D /* Bundle-Decodable.swift */; };
-		F2BC94A22E32DA1000926B3D /* Awards.json in Resources */ = {isa = PBXBuildFile; fileRef = F2BC94A02E32DA1000926B3D /* Awards.json */; };
 		F2BC94A32E32DA1000926B3D /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2BC94A12E32DA1000926B3D /* Colors.xcassets */; };
 		F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC94A42E32DA4300926B3D /* Awards.swift */; };
 		F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BC94A62E32DB4F00926B3D /* AwardsView.swift */; };
@@ -434,11 +434,12 @@
 		3FA59F342F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorderControlViewModel.swift; sourceTree = "<group>"; };
 		3FA6674F2F73A37C00066FF7 /* ActivityReflection_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReflection_ViewModel.swift; sourceTree = "<group>"; };
 		3FA667512F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityReflectionPromptResponseRowView.swift; sourceTree = "<group>"; };
-		3FA667532F73ED5000066FF7 /* Reflection Prompts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Reflection Prompts.json"; sourceTree = "<group>"; };
 		3FA667552F73ED6200066FF7 /* Prompt Categories.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Prompt Categories.json"; sourceTree = "<group>"; };
 		3FA667572F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PromptCategories-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FA667592F73F40100066FF7 /* PromptCategoryJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptCategoryJSON.swift; sourceTree = "<group>"; };
 		3FA6675B2F7408B900066FF7 /* CustomPromptCreationSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPromptCreationSheet.swift; sourceTree = "<group>"; };
+		3FA6675D2F74C97400066FF7 /* Reflection Prompts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Reflection Prompts.json"; sourceTree = "<group>"; };
+		3FA6675F2F74D1B700066FF7 /* Awards.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Awards.json; sourceTree = "<group>"; };
 		3FAA1ED62F60D759007B0067 /* MediaStorageSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStorageSettingsView.swift; sourceTree = "<group>"; };
 		3FAE983C2E958CBC00FD58BF /* EncumberedCredentialListSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncumberedCredentialListSheet.swift; sourceTree = "<group>"; };
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
@@ -575,7 +576,6 @@
 		F2B937A82E83999300AF9155 /* CredentialRestrictionsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialRestrictionsSectionView.swift; sourceTree = "<group>"; };
 		F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebuggingFunctions.swift; sourceTree = "<group>"; };
 		F2BC949E2E32D0C100926B3D /* Bundle-Decodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle-Decodable.swift"; sourceTree = "<group>"; };
-		F2BC94A02E32DA1000926B3D /* Awards.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Awards.json; sourceTree = "<group>"; };
 		F2BC94A12E32DA1000926B3D /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		F2BC94A42E32DA4300926B3D /* Awards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Awards.swift; sourceTree = "<group>"; };
 		F2BC94A62E32DB4F00926B3D /* AwardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardsView.swift; sourceTree = "<group>"; };
@@ -812,7 +812,7 @@
 		3F2A42C92EA2C77900B095CB /* Achievements */ = {
 			isa = PBXGroup;
 			children = (
-				F2BC94A02E32DA1000926B3D /* Awards.json */,
+				3FA6675F2F74D1B700066FF7 /* Awards.json */,
 				F2BC94A62E32DB4F00926B3D /* AwardsView.swift */,
 				F2BC94A42E32DA4300926B3D /* Awards.swift */,
 			);
@@ -1090,7 +1090,7 @@
 		3F84D1672F2D55A4001C3AB6 /* Prompt Questions */ = {
 			isa = PBXGroup;
 			children = (
-				3FA667532F73ED5000066FF7 /* Reflection Prompts.json */,
+				3FA6675D2F74C97400066FF7 /* Reflection Prompts.json */,
 				3FA667552F73ED6200066FF7 /* Prompt Categories.json */,
 				3FA667592F73F40100066FF7 /* PromptCategoryJSON.swift */,
 				3F71B9942F2A9EEA00F1AA2C /* PromptQuestionJSON.swift */,
@@ -1412,19 +1412,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				F202F7C62E4410AB00504F43 /* Ditched Code.md in Resources */,
+				3FA667602F74D1B700066FF7 /* Awards.json in Resources */,
 				F2772B9A2E1DDAA2006A94BD /* Preview Assets.xcassets in Resources */,
 				F266C57E2E4AFBE500D0832D /* Defunct Code.md in Resources */,
 				F2BC94A32E32DA1000926B3D /* Colors.xcassets in Resources */,
 				F243B4222E6905500072419D /* Country List.json in Resources */,
 				3FA667562F73ED6200066FF7 /* Prompt Categories.json in Resources */,
-				F2BC94A22E32DA1000926B3D /* Awards.json in Resources */,
 				F2011DC32E62527800D5DF92 /* USStatesList.json in Resources */,
 				3F1209F72ED6383100D8D93A /* PaidAppConfigurations.storekit in Resources */,
 				F2772B972E1DDAA2006A94BD /* Assets.xcassets in Resources */,
 				F2FBAAE12E5FABE900348AAA /* Activity Formats.json in Resources */,
 				F2011DBD2E62415500D5DF92 /* Inactive Reasons.json in Resources */,
+				3FA6675E2F74C97400066FF7 /* Reflection Prompts.json in Resources */,
 				F2892B042E5D20DB00DA392A /* Default CE Designations.json in Resources */,
-				3FA667542F73ED5000066FF7 /* Reflection Prompts.json in Resources */,
 				F2FBAAE32E5FD68C00348AAA /* Activity Types.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -20,6 +20,8 @@ struct ActivityReflectionView: View {
     
     @State private var showPromptSelectionSheet: Bool = false
     @State private var showResponseDeletionWarning: Bool = false
+    
+    @FocusState private var surpriseEntryFocused: Bool
 
     // MARK: - BODY
     var body: some View {
@@ -85,6 +87,7 @@ struct ActivityReflectionView: View {
                             axis: .vertical
                         )
                         .font(.title3)
+                        .focused($surpriseEntryFocused)
                     } //: IF - was surprised
                 }//: DISCLOSURE GROUP - Surprising learning
                 
@@ -122,6 +125,14 @@ struct ActivityReflectionView: View {
             Text(viewModel.fileErrorMessage)
         }//: AlERT
         
+        // MARK: - ON CHANGE
+        .onChange(of: surpriseEntryFocused) {_ in
+            // ONLY run the checkEnteredSurpriseIsValid(using) method after the user has typed
+            // something in the textfield
+            if surpriseEntryFocused == false {
+                reflection.checkEnteredSurpriseIsValid(using: 50)
+            }//: IF
+        }//: ON CHANGE
          // MARK: - AUTO SAVING FUNCTIONS
         .onReceive(reflection.objectWillChange) { _ in
             dataController.queueSave()
@@ -130,6 +141,7 @@ struct ActivityReflectionView: View {
         // MARK: - ON DISAPPEAR
         .onDisappear {
             dataController.save()
+            dataController.checkForNewAchievements()
         }//: ON DISAPPEAR
         
     } //: BODY

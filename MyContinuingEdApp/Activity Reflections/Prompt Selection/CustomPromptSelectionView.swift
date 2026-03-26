@@ -14,6 +14,7 @@ import SwiftUI
 /// "Save Selection" button, the view passes a closure to PromptSelectionSheet for handling.
 struct CustomPromptSelectionView: View {
     // MARK: - PROPERTIES
+    @EnvironmentObject var dataController: DataController
     @State private var selectedPrompt: ReflectionPrompt? = nil
     
     // MARK: - CORE DATA
@@ -44,6 +45,7 @@ struct CustomPromptSelectionView: View {
                 
                 Button {
                     onCreateCustomPrompt()
+                    dataController.checkForNewAchievements()
                 } label: {
                     Text("Create custom prompt")
                 }//: BUTTON

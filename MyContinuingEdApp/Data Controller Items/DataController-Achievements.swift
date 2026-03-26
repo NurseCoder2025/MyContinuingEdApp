@@ -78,9 +78,10 @@ extension DataController {
     /// indicating that no achievement was made. Each criterion has its own unique set of fetch requests that
     /// are run to determine if the achievement has been earned.
     func hasEarned(award: Achievement) -> Bool {
-        switch award.criterion {
+        // TODO: Determine why the default case is executing each time the award screen shows up. This also happens each time a button is pressed.
+        switch award.awardCriteria {
+        case .ces:
             // MARK: - CE HOURS
-        case "CEs":
             let fetchRequest = CeActivity.fetchRequest()
             var cePredicates: [NSPredicate] = []
             // Retrieves all CeActivities where hours were awarded
@@ -96,69 +97,105 @@ extension DataController {
             let totalHours = addAwardedCE(for: fetchRequest)
             
             return totalHours >= Double(award.value)
-            
+        case .completed:
             // MARK: - Completed CEs
-        case "completed":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "activityCompleted == true")
             
             let totalCompleted = count(for: fetchRequest)
             
             return totalCompleted >= award.value
-            
+        case .tags:
             // MARK: - Tags created
-        case "tags":
             let fetchRequest = Tag.fetchRequest()
             let totalTags = count(for: fetchRequest)
             
             return totalTags >= award.value
-            
+        case .loved:
             // MARK: - "Loved" CEs
-        case "loved":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 4)
             let totalLoved = count(for: fetchRequest)
             
             return totalLoved >= award.value
-            
+        case .howInteresting:
             // MARK: - "Interesting" CEs
-        case "howInteresting":
             let fetchRequest = CeActivity.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "evalRating == %d", 3)
             let totalUnliked = count(for: fetchRequest)
             
             return totalUnliked >= award.value
-            
+        case .reflections:
             // MARK: - Reflections
             // # of activity reflections completed
-        case "reflections":
-            let fetchRequest = ActivityReflection.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "completedYN == true")
+            let fetchRequest = ReflectionResponse.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "completeAnswerYN == true")
             let totalReflections = count(for: fetchRequest)
             
             return totalReflections >= award.value
-            
-            // # of activity reflections where something surprising was learned
-        case "surprises":
+        case .surprises:
+            // MARK: - SURPRISES
             let fetchRequest = ActivityReflection.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "surpriseEntered == true")
             let totalSurprises = count(for: fetchRequest)
             
             return totalSurprises >= award.value
-            
+        case .unlock:
             // MARK: - SUPPORTER
-            // TODO: Determine why the default case is executing each time the award screen
-            // shows up. This also happens each time a button is pressed.
-        case "unlock":
             if purchaseStatus != PurchaseStatus.free.id {
                 return true
             } else {
                 return false
             }
-        default:
-            print("Sorry, but no award to bestow...")
+        case .beatExpiration:
+            // MARK: - BEAT EXPIRATION
+            // 15 activities completed prior to expiring
+            let fetchRequest = CeActivity.fetchRequest()
+            var predicates: [NSPredicate] = []
+            let completedActivityPredicate = NSPredicate(format: "activityCompleted == true")
+            let notExpiredPredicate = NSPredicate(format: "dateCompleted < %@", "expirationDate")
+            predicates.append(completedActivityPredicate)
+            predicates.append(notExpiredPredicate)
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            
+            let totalCompleted = count(for: fetchRequest)
+            
+            return totalCompleted >= Int(award.value)
+        case .earlyRegistration:
+            // MARK: - EARLY REGISTRATION
+            let context = container.viewContext
+            let ceFetch = CeActivity.fetchRequest()
+            let uncompletedPred = NSPredicate(format: "activityCompleted == false")
+            ceFetch.predicate = uncompletedPred
+            let allUncompletedCes = (try? context.fetch(ceFetch)) ?? []
+            guard allUncompletedCes.isNotEmpty else { return false }
+            let liveCes = allUncompletedCes.filter { $0.isLiveActivity }
+            let earlyRegisteredCes = liveCes.filter {
+                let calendar = Calendar.current
+                if let registeredTime = $0.registeredOn, let ceStartsAt = $0.startTime {
+                    let pureRegTime = calendar.startOfDay(for: registeredTime)
+                    let pureStartTime = calendar.startOfDay(for: ceStartsAt)
+                    let secondsPerWeek: Double = 60 * 60 * 24 * 7
+                    let secondsBetween = pureRegTime.distance(to: pureStartTime)
+                    let weeksBetween = Int(secondsBetween / secondsPerWeek)
+                    return weeksBetween >= 4
+                } else {
+                    return false
+                }//: IF LET ELSE
+            }//: liveCes.filter
+            return earlyRegisteredCes.count >= Int(award.value)
+        case .prompt:
+            // MARK: - PROMPT
+            let promptFetch = ReflectionPrompt.fetchRequest()
+            let promptIsCustom = NSPredicate(format: "customYN == true")
+            promptFetch.predicate = promptIsCustom
+            
+            let totalMade = count(for: promptFetch)
+            return totalMade >= Int(award.value)
+        case .notFound:
+            NSLog(">>> The awardCriteria computed property for the award \(award.achievementName) was unable to match the criterion string with one of the enum cases.")
+            NSLog(">>> The awardCriteria string was: \(award.achievementCriterion)")
             return false
-        
         }//: SWITCH
     }//: hasEarned
     
@@ -187,7 +224,7 @@ extension DataController {
             if hasEarned(award: achievement) {
                 achievement.dateEarned = Date.now
                 save()
-                let _: Task<Void, Never> = Task { @MainActor in
+                Task { @MainActor in
                     await scheduleAchievementNotification(award: achievement)
                 }//: TASK
             }//: IF (hasEarned)

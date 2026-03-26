@@ -199,8 +199,8 @@
     },
     {
         "name": "Entered the Meditation Chamber",
-        "description": "Complete a relection on 20 activities",
-        "notificationText": "reflecting on 20 completed activities!",
+        "description": "Complete 20 reflection prompts",
+        "notificationText": "answering 20 reflection prompts!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 20,
@@ -208,8 +208,8 @@
     },
     {
         "name": "On a Learning Curve",
-        "description": "Complete a relection on 45 activities",
-        "notificationText": "reflecting on 45 completed activities!",
+        "description": "Complete 45 reflection prompts",
+        "notificationText": "answering an amazing 45 reflection prompts!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 45,
@@ -217,8 +217,8 @@
     },
     {
         "name": "Filled Up on Knowledge",
-        "description": "Complete a relection on 75 activities",
-        "notificationText": "reflecting on 75 completed activities!",
+        "description": "Complete 75 reflection prompts",
+        "notificationText": "answering a staggering 75 reflection prompts!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 75,
@@ -226,8 +226,8 @@
     },
     {
         "name": "Encyclopedic!",
-        "description": "Complete a relection on 100 activities",
-        "notificationText": "reflecting on 100 completed activities!",
+        "description": "Complete 100 reflection prompts",
+        "notificationText": "answering a whopping 100 reflection prompts!",
         "color": "Dark Blue",
         "criterion": "reflections",
         "value": 100,
@@ -259,5 +259,32 @@
         "criterion": "surprises",
         "value": 25,
         "image": "r.circle.fill"
+    },
+    {
+        "name": "Don't Need to Tell Me Twice",
+        "description": "Complete 15 recorded CE activities prior to their expiration date",
+        "notificationText": "completing 15 CE activities before they expired!",
+        "color": "Red",
+        "criterion": "beatExpiration",
+        "value": 15,
+        "image": "message.badge.filled.fill"
+    },
+    {
+        "name": "The Early Bird",
+        "description": "Register for a live CE activity at least 4 weeks before it starts",
+        "notificationText": "registering at least 4 weeks prior to the start of a live CE activity!",
+        "color": "Red",
+        "criterion": "earlyRegistration",
+        "value": 1,
+        "image": "bird.fill"
+    },
+    {
+        "name": "Writing My Own Script",
+        "description": "Create a custom reflection prompt",
+        "notificationText": "creating your first custom reflection prompt!",
+        "color": "Purple",
+        "criterion": "prompt",
+        "value": 1,
+        "image": "rectangle.and.pencil.and.ellipsis"
     }
 ]

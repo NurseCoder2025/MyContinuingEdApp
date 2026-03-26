@@ -39,11 +39,6 @@ extension ActivityReflection {
     
 }//: EXTENSION
 
-// MARK: - COMPUTED PROPERTIES
-extension ActivityReflection {
-
-    
-}//: EXTENSION
 
 // MARK: - RELATIONSHIPS
 extension ActivityReflection {
@@ -58,10 +53,23 @@ extension ActivityReflection {
 
 // MARK: - METHODS
 extension ActivityReflection {
-    // TODO: Add 1 method to ActivityReflection extension
-    
-    // Add method that updates the surpriseEntered property when the user
-    // has entered a valid surprise
+
+    /// ActivityReflection entity method intended to set the surpriseEntered
+    /// property for the purpose of the user earning an Achievement.
+    /// - Parameter rule: Int value representing the minimum
+    /// number of characters that need to be present in the surprises
+    /// String in order for the entry to count towards surprise-related
+    /// Achievements.
+    func checkEnteredSurpriseIsValid(using rule: Int) {
+        guard wasSurprised else { return }
+        let textCount =  reflectionSurprises.count
+        
+        if textCount >= rule {
+            surpriseEntered = true
+        } else {
+            return
+        } //: IF ELSe
+    }//: checkEnteredSurpriseIsValid()
     
 }//: EXTENSION
 
@@ -85,6 +93,5 @@ extension ActivityReflection {
         
         return sampleReflection
     }
-    
     
 }
