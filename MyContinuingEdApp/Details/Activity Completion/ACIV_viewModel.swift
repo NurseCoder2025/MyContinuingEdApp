@@ -17,6 +17,8 @@ extension ActivityCertificateImageView {
         var dataController: DataController
         var certBrain: CertificateBrain
         
+        let fileSystem = FileManager()
+        
         @ObservedObject var activity: CeActivity
         
         @Published var certificateSavedYN: Bool = false
@@ -26,6 +28,9 @@ extension ActivityCertificateImageView {
         
         // Changing certificates
         @Published var showCertificateChangeWarning: Bool = false
+        
+        // Certificate document changes (i.e. downloading, etc.)
+        @Published var certDocDownloadingProgress: String = ""
         
         // Certificate deletion properties
         @Published var showCertDeletionWarning: Bool = false
@@ -40,6 +45,7 @@ extension ActivityCertificateImageView {
         let loadCompleted = Notification.Name(.certLoadingDoneNotification)
         let certDeleted = Notification.Name(.certDeletionCompletedNotification)
         let saveCompleted = Notification.Name(.certSaveCompletedNotification)
+        let docChanged = CertificateDocument.stateChangedNotification
         
         // MARK: - METHODS
         
@@ -175,6 +181,23 @@ extension ActivityCertificateImageView {
             }//: TASK
         }//: saveLoadedCertificate()
         
+        
+        /// Private method for handling situations where different CertificateDocument versions are in conflict
+        /// - Parameter doc: CertificateDocument with the conflicting versions
+        ///
+        /// This method handles the conflict by removing alll older file versions, keeping only the current one via the
+        /// NSFileVersion static method removeOtherVersionsOfItem(at:).
+        private func resolveConflictingCertVersions(for doc: CertificateDocument) {
+            if let assignedCoordinator = certBrain.getCoordinatorFor(activity: activity) {
+                let docURL = assignedCoordinator.fileURL
+                do {
+                    try NSFileVersion.removeOtherVersionsOfItem(at: docURL)
+                } catch {
+                    NSLog(">>> Error removing older versions of \(docURL.lastPathComponent): \(error.localizedDescription)")
+                }//: DO-CATCH
+            }//: IF LET
+        }//: resolveConflictingCertDocs(_)
+        
         // MARK: - SELECTORS
         
         @objc private func handleCertLoaded(_ notification: Notification) {
@@ -201,6 +224,27 @@ extension ActivityCertificateImageView {
             }//: TASK
         }//: handleCertSaved()
         
+        @objc private func handleCertDocStateChange(_ notification: Notification) {
+            if let docToLoad = certBrain.documentToOpen {
+                let currentStatus = docToLoad.documentState
+                switch currentStatus {
+                case .progressAvailable:
+                    certDisplayStatus = .loading
+                    certDocDownloadingProgress = docToLoad.progress?.localizedDescription ?? ""
+                case .savingError:
+                    errorAlertMessage = "An error was encountered while trying to save the certificate."
+                    showSaveErrorAlert = true
+                case .inConflict:
+                    resolveConflictingCertVersions(for: docToLoad)
+                case .editingDisabled:
+                    errorAlertMessage = "Waiting on the system to finish processing the certificate before it can be loaded..."
+                    NSLog(">>> Loading is delayed due to the CertificateDocument being presently busy per the documentState property of .editingDisabled.")
+                default:
+                    certBrain.retrieveCertImage(from: docToLoad)
+                }//: SWITCH
+            }//: IF LET
+        }//: handleCertDocStateChange()
+        
         // MARK: - INIT
         init(
             dataController: DataController,
@@ -226,6 +270,13 @@ extension ActivityCertificateImageView {
                 self,
                 selector: #selector(handleCertSaved(_:)),
                 name: saveCompleted,
+                object: nil
+            )
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleCertDocStateChange(_:)),
+                name: docChanged,
                 object: nil
             )
             

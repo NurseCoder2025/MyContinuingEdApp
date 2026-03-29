@@ -56,6 +56,7 @@ final class CertificateDocument: UIDocument {
         }
         return certBinary
     }()
+
     
     // MARK: - UI Document Method Overrides
     
@@ -92,6 +93,17 @@ final class CertificateDocument: UIDocument {
         }//: GUARD
         self.fileWrapper = fileWrapper
     }//: load()
+    
+    override func save(to url: URL, for saveOperation: UIDocument.SaveOperation) async -> Bool {
+        #if DEBUG
+        let fileSystem = FileManager()
+        NSLog(">>> Attempting to save to : \(url.path())")
+        NSLog(">>> Document state before save: \(documentState)")
+        NSLog(">>> Parent directory: \(fileSystem.fileExists(atPath: url.deletingLastPathComponent().path))")
+        #endif
+        
+        return await super.save(to: url, for: saveOperation)
+    }//: save(to for)
     
     
     // MARK: - PRIVATE METHODS

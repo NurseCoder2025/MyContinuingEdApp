@@ -53,18 +53,21 @@ struct CertificateData: Codable {
         if let existingData = certData {
             var reducedImage: UIImage? = nil
             if let image = UIImage(data: existingData) {
+                NSLog(">>> Succesfully created UIImage from provided data.")
                 let thumbSize: CGSize = CGSize(width: 150, height: 100)
                 image.prepareThumbnail(of: thumbSize) { thumbImage in
-                    reducedImage = thumbImage
+                        reducedImage = thumbImage
                 }//: closure
             }//: IF LET
             
             if let obtainedThumb = reducedImage {
                 return obtainedThumb
             } else {
+                NSLog(">>> reducedImage variable was nil after trying to create a UIImage from the provided data")
                 return nil
             }
         } else  {
+            NSLog(">>> certData property in the CertificateData struct is nil")
             return nil
         }
     }//: certImageThumbnail

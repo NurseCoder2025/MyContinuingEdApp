@@ -226,8 +226,7 @@ class DataController: ObservableObject {
                         await self?.preloadCountries()
                         await self?.preloadStatesList()
                         await self?.preloadAllAchievements()
-                        await self?.preloadPromptCategories()
-                        await self?.preloadPromptQuestions()
+                        await self?.preloadReflectionPrompts()
                     }//: TASK
                     
                     self?.setDefaultSettingsKeys()
@@ -308,17 +307,18 @@ class DataController: ObservableObject {
             await preloadCountries()
             await preloadStatesList()
             await preloadAllAchievements()
-            await preloadPromptCategories()
-            await preloadPromptQuestions()
+            await preloadReflectionPrompts()
         }//: TASK
         
         // MARK: - Setting Key Values
         // First time use determination & setting the key if so
         if isAppRunForFirstTime() {
             isFirstRun = true
+            showReminderAlert = true
+            showOnboardingScreen = true
         } else {
             isFirstRun = false
-        }
+        }//: IF (isAppRunForFirstTime)
         
         // Setting default values for all Settings keys (initial
         // app launch ONLY

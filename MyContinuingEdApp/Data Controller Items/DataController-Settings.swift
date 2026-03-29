@@ -40,7 +40,6 @@ extension DataController {
         }
     }//: isFirstRun
     
-    
     /// Computed getter & setter for the @Published property sharedSettings that retrieves & sets values for
     /// a settings key that controls whether to show the onboarding screen or not.
     ///
@@ -57,6 +56,18 @@ extension DataController {
             sharedSettings.set(newValue, forKey: "showOnboardingScreen")
         }
     }//: showOnboardingScreen
+    
+    /// Computed getter and setter for the @Published property sharedSettings (DataController) that is used to
+    /// control whether to show the user an alert reminding them to enable alerts/notifications for the app.
+    var showReminderAlert: Bool {
+        get {
+            sharedSettings.bool(forKey: "showReminderAlert")
+        }
+        set {
+            sharedSettings.set(newValue, forKey: "showReminderAlert")
+            objectWillChange.send()
+        }
+    }//: showReminderAlert
     
     // MARK: Notification Timing
     /// Computed getter & setter for the @Published property sharedSettings that retrieves and sets values for
@@ -385,6 +396,7 @@ extension DataController {
     @objc func handleKeyValueStoreChanges(_ notification: Notification) {
         let settingsKeys: Set<String> = [
             "showOnboardingScreen",
+            "showReminderAlert",
             "purchaseStatus",
             "primaryNotificationDays",
             "secondaryNotificationDays",

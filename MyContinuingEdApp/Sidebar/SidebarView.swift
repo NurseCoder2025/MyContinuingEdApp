@@ -103,10 +103,9 @@ struct SidebarView: View {
         // MARK: - ON APPEAR
             .onAppear {
                 // First time running of app only
-                if dataController.isFirstRun {
-                    dataController.showOnboardingScreen = true
+                if dataController.showReminderAlert {
                     showEnableRemindersAlert = true
-                }
+                }//: If (showReminderAlert)
                 
                 // Updating notifications
                 Task { @MainActor in
@@ -149,10 +148,14 @@ struct SidebarView: View {
         // Notifications disabled alert
         .alert("Enable Notifications",isPresented: $showEnableRemindersAlert) {
             if #available(iOS 26.0, *) {
-                Button("OK", role: .confirm) {}
+                Button("OK", role: .confirm) {
+                    viewModel.dataController.showReminderAlert = false
+                }//: BUTTON
             } else {
                 // Fallback on earlier versions
-                Button("OK") {}
+                Button("OK") {
+                    viewModel.dataController.showReminderAlert = false
+                }//: BUTTON
             }
             Button("Settings", action: showAppSettings)
         } message: {
@@ -212,8 +215,9 @@ struct SidebarView: View {
     /// Method that opens the Settings app so that the user can adjust notification settings if needed
     func showAppSettings() {
         guard let settingsURL = URL(string: UIApplication.openNotificationSettingsURLString) else { return }
+        viewModel.dataController.showReminderAlert = false
         openURL(settingsURL)
-    }
+    }//: showAppSettings()
     
     
  // MARK: - INIT

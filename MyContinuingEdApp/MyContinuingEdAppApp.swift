@@ -15,13 +15,17 @@ struct MyContinuingEdAppApp: App {
     @State var certificateBrain: CertificateBrain?
     @State var audioBrain: AudioReflectionBrain?
     @State var spotlightCentral: SpotlightCentral?
+    @AppStorage(String.onBoardingKey) private var showUserOnboarding: Bool = true
     @Environment(\.scenePhase) var scenePhase
     
     var body: some Scene {
         WindowGroup {
-            if dataController.showOnboardingScreen {
+            if showUserOnboarding {
                 OnboardingView()
                     .environmentObject(dataController)
+                    .onAppear {
+                        showUserOnboarding = dataController.showOnboardingScreen
+                    }//: ON APPEAR
             } else  {
                 NavigationSplitView {
                     SidebarView(dataController: dataController)

@@ -9,6 +9,9 @@ import Foundation
 
 
 extension String {
+    // MARK: - User Default Keys
+    static let onBoardingKey: String = "showUserOnboarding"
+    
     // MARK: - File EXTENSIONS
     /// Static constant in the String struct (via extension) that sets the value for
     /// the CE certificate file package (UI Document) as "cert".
@@ -68,6 +71,7 @@ extension String {
     static let certDeletionCompletedNotification: String = "certificateDeletionCompleted"
     static let certSaveCompletedNotification: String = "certificateSaveCompleted"
     static let certGettingRawDataDone: String = "certificateRawDataLoaded"
+    static let certDocReadyForOpening: String = "certificateDocumentReadyToOpen"
     
     // MARK: Audio Reflection Notifications
     static let audioCoordinatorListSyncCompleted: String = "audioCoordinatorListSynced"
@@ -75,6 +79,9 @@ extension String {
     static let audioDeletionCompletedNotification: String = "audioReflectionDeletionCompleted"
     static let audioSaveCompletedNotification: String = "audioReflectionSaveCompleted"
     static let audioGettingRawDataDone: String = "audioReflectionRawDataLoaded"
+    
+    // MARK: Prompt Notifications
+    static let promptCatsLoaded: String = "reflectionPromptCategoriesLoaded"
     
 }//: EXTENSION
 

@@ -71,6 +71,10 @@ struct ActivityCertificateImageView: View {
                                 ProgressView("Loading certificate...")
                                     .progressViewStyle(CircularProgressViewStyle())
                                 Text("Loading certificate for this activity...")
+                                if viewModel.certDocDownloadingProgress.count > 0 {
+                                    Divider()
+                                    Text(viewModel.certDocDownloadingProgress)
+                                }//: IF
                             }//: VSTACK
                         case .loaded:
                             CertificatePreviewView(savedCert: viewModel.certificateToShow)
@@ -134,6 +138,7 @@ struct ActivityCertificateImageView: View {
         .alert("Change Certificate?", isPresented: $viewModel.showCertificateChangeWarning) {
             Button(role: .destructive) {
                 if let newData = certificateData {
+                    viewModel.deleteSavedCert()
                     do {
                         try viewModel.updateCertificate(with: newData)
                         viewModel.saveLoadedCertificate(with: newData)

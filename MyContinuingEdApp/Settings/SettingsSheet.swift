@@ -34,7 +34,7 @@ struct SettingsSheet: View {
                 .padding(.leading, 10)
                     
                 ScrollView(.vertical, showsIndicators: false) {
-                    LazyVStack(spacing: 20) {
+                    VStack(spacing: 20) {
                         // MARK: App Purchase Level
                         AppPurchaseLevelView()
                             .padding(.horizontal, 10)
@@ -69,7 +69,7 @@ struct SettingsSheet: View {
                         ContactDeveloperView()
                             .padding(.horizontal, 10)
                         
-                    }//: LazyVStack
+                    }//: VSTACK
                     
                 }//: SCROLL
             }//: VSTACK

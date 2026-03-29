@@ -153,7 +153,7 @@ extension DataController {
             let fetchRequest = CeActivity.fetchRequest()
             var predicates: [NSPredicate] = []
             let completedActivityPredicate = NSPredicate(format: "activityCompleted == true")
-            let notExpiredPredicate = NSPredicate(format: "dateCompleted < %@", "expirationDate")
+            let notExpiredPredicate = NSPredicate(format: "dateCompleted < expirationDate")
             predicates.append(completedActivityPredicate)
             predicates.append(notExpiredPredicate)
             fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
@@ -219,7 +219,8 @@ extension DataController {
         let possibleAchievements = (try? context.fetch(achievementFetch)) ?? []
         guard possibleAchievements.isNotEmpty else {return}
         
-        
+        // Assigning the current Date() value to the dateEarned
+        // property for each Achievement object that returns true
         for achievement in possibleAchievements {
             if hasEarned(award: achievement) {
                 achievement.dateEarned = Date.now

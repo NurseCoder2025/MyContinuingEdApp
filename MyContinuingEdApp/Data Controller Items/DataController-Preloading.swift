@@ -290,8 +290,25 @@ extension DataController {
     
     // MARK: REFLECTIONS
     
-    /// Async method for decoding all prompt questions contained in the "Reflection Prompts.json" file and
-    /// creating CoreData ReflectionPrompt objects out of them.
+    func preloadReflectionPrompts() async {
+        let nc = NotificationCenter.default
+        let promptCatsLoadedNotice = Notification.Name(String.promptCatsLoaded)
+        
+        await MainActor.run {
+            nc.removeObserver(promptCatsLoadedNotice)
+            nc.addObserver(
+                self,
+                selector: #selector(preloadPromptQuestions),
+                name: promptCatsLoadedNotice,
+                object: nil
+            )
+        }//: MAIN ACTOR
+        
+        await preloadPromptCategories()
+    }//: preloadReflectionPrompts()
+    
+    /// Selector method for decoding all prompt questions contained in the
+    /// "Reflection Prompts.json" file and creating CoreData ReflectionPrompt objects out of them.
     ///
     /// - Note: This method calls the getJSONObjsToAddToCoreData and getCoreDataObjsToRemove methods from
     /// the DataController-HelperFunctions file whenever there are prompts in persistent storage but the number
@@ -300,7 +317,10 @@ extension DataController {
     ///
     /// - Note: While the user can create their own custom prompts, this method ensures that all pre-created
     /// prompts stay in-sync between what's in the JSON file and what's in persistent storage.
-    func preloadPromptQuestions() async {
+    ///
+    /// - Important: This method needs to remain a synchronous method in order to prevent memory-related
+    /// crashes.
+    @objc private func preloadPromptQuestions() {
         let context = container.viewContext
         
         // Initial check to see if preloading is needed
@@ -311,18 +331,22 @@ extension DataController {
         promptFetch.predicate = NSPredicate(format: "customYN == false")
         
         // Ensuring that the fetch count is done on the main thread as that is required
-        let count = await MainActor.run {
-            (try? context.count(for: promptFetch)) ?? 0
-        }//: MainActor.run closure
+        let count = (try? context.count(for: promptFetch)) ?? 0
         
         let promptsToLoad = PromptQuestionJSON.officialPrompts
         let loadCount = promptsToLoad.count
-        guard count == 0 || count != loadCount else { return }
+        guard count == 0 || count != loadCount else {
+            let observerToRemove = Notification.Name(String.promptCatsLoaded)
+            let nc = NotificationCenter.default
+                nc.removeObserver(observerToRemove)
+            return
+        }//: GUARD
         
         if count == 0 {
             for prompt in promptsToLoad {
                 convertPromptJSONToReflectionPrompt(prompt: prompt)
             }//: LOOP
+            queueSave()
         } else if count < loadCount {
             // Adding prompts that have been added to the json file OR weren't originally
             // loaded due to process interruption or other error
@@ -334,6 +358,7 @@ extension DataController {
             for question in jsonQuestionsToAdd {
                 convertPromptJSONToReflectionPrompt(prompt: question)
             }//: LOOP
+            queueSave()
         } else if count > loadCount {
             // Removing prompts that have been taken out of the json file
             let existingPrompts: [ReflectionPrompt] = (try? context.fetch(promptFetch)) ?? []
@@ -344,10 +369,14 @@ extension DataController {
             for question in questionsToDelete {
                 delete(question)
             }//: LOOP
-            
-        }//: IF ELSE
+       
+            queueSave()
+            }//: IF ELSE
+       
         
-        queueSave()
+        let observerToRemove = Notification.Name(String.promptCatsLoaded)
+        let nc = NotificationCenter.default
+            nc.removeObserver(observerToRemove)
     }// preloadPromptQuestions()
     
     /// Async method for creating the intial set of CoreData PromptCategory objects based on
@@ -357,8 +386,9 @@ extension DataController {
     /// name of the category value found in the "Prompt Categories.json" file, so future fetches
     /// for stored PromptCategory objects must ensure that the name property for each is
     /// capitalized.
-    func preloadPromptCategories() async {
+    private func preloadPromptCategories() async {
         let context = container.viewContext
+        let loadedNotification = Notification.Name(String.promptCatsLoaded)
         
         // Check to see if preloading is needed
         let promptCatFetch = PromptCategory.fetchRequest()
@@ -367,16 +397,87 @@ extension DataController {
         let categoryCount = await MainActor.run {
              (try? context.count(for: promptCatFetch)) ?? 0
         }//: MAIN ACTOR
-        
-        guard categoryCount == 0 else { return }
-        
         let catsToLoad = PromptCategoryJSON.standardPrompts
-        for cat in catsToLoad {
-            createNewPromptCategory(with: cat.capitalizedName)
-        }//: LOOP
+        guard categoryCount == 0 || categoryCount != catsToLoad.count else {
+            await MainActor.run {
+                NotificationCenter.default.removeObserver(self, name: loadedNotification, object: nil)
+            }//: MAIN ACTOR
+            // Calling the preloadPromptQuestions method here in-case
+            // the number of developer-created prompts changes in the
+            // internal JSON file between app updates/versions.
+            preloadPromptQuestions()
+            return
+        }//: GUARD
+        
+        Task{@MainActor in
+            let existingCats = (try? context.fetch(promptCatFetch)) ?? []
+            
+            if categoryCount == 0 {
+                for cat in catsToLoad {
+                    createNewPromptCategory(with: cat.capitalizedName)
+                }//: LOOP
+            } else if categoryCount < catsToLoad.count {
+                for cat in catsToLoad {
+                    if existingCats.first(where: {
+                        $0.categoryName == cat.capitalizedName
+                    }) != nil {
+                         continue
+                     } else {
+                         createNewPromptCategory(with: cat.capitalizedName)
+                     }//: IF LET ELSE
+                }//: LOOP
+            } else if categoryCount > catsToLoad.count {
+                for cat in existingCats {
+                    if catsToLoad.first(where: {
+                        $0.capitalizedName == cat.categoryName
+                    }) != nil {
+                         continue
+                     } else {
+                         delete(cat)
+                     }//: IF LET ELSE
+                }//: LOOP
+            }//: IF ELSE
+        }//: TASK
         
         queueSave()
+        // NOTE: using await MainActor.run will cause a memory access
+        // fatal error, so MUST use Task!
+        Task {@MainActor in
+            NotificationCenter.default.post(name: loadedNotification, object: nil)
+        } //: TASK
     }//: preloadPromptCategories()
+    
+    /// Method for converting a PromptQuestionJSON object to a CoreData entity (ReflectionPrompt) within the
+    /// preloadPromptQuestions method.
+    /// - Parameter prompt: PromptQuestionJSON object loaded from the static officialPrompts property
+    private func convertPromptJSONToReflectionPrompt(
+        prompt: PromptQuestionJSON
+    ) {
+        let context = container.viewContext
+        
+        let promptCatFetch = PromptCategory.fetchRequest()
+        promptCatFetch.sortDescriptors = [NSSortDescriptor(key: "categoryName", ascending: true)]
+        
+        let allPromptCats = (try? context.count(for: promptCatFetch)) ?? 0
+        if allPromptCats == 0 {
+            Task {
+                await self.preloadPromptCategories()
+            }//: TASK
+        }//: IF (promptCatCount == 0)
+        
+        let loadedCategories = (try? context.fetch(promptCatFetch)) ?? []
+       
+        let newPrompt = ReflectionPrompt(context: context)
+        newPrompt.id = UUID()
+        newPrompt.customYN = prompt.customYN
+        newPrompt.promptQuestion = prompt.question
+        
+        if let matchingCategory = loadedCategories.filter({ category in
+            prompt.capitalizedCategory == category.catName
+        }).first {
+            newPrompt.promptCategory = matchingCategory
+        }//: IF LET
+    }//: convertPromptJSONToReflectionPrompt
     
     // MARK: - Set Settings Keys Defaults
     
@@ -482,36 +583,6 @@ extension DataController {
     
     // MARK: - SUPPORTING METHODS
     
-    /// Method for converting a PromptQuestionJSON object to a CoreData entity (ReflectionPrompt) within the
-    /// preloadPromptQuestions method.
-    /// - Parameter prompt: PromptQuestionJSON object loaded from the static officialPrompts property
-    private func convertPromptJSONToReflectionPrompt(
-        prompt: PromptQuestionJSON
-    ) {
-        let context = container.viewContext
-        
-        let promptCatFetch = PromptCategory.fetchRequest()
-        promptCatFetch.sortDescriptors = [NSSortDescriptor(key: "categoryName", ascending: true)]
-        
-        let promptCatCount = (try? context.count(for: promptCatFetch)) ?? 0
-        if promptCatCount == 0 {
-            Task {
-                await self.preloadPromptCategories()
-            }//: TASK
-        }//: IF (promptCatCount == 0)
-        
-        let loadedCategories = (try? context.fetch(promptCatFetch)) ?? []
-       
-        let newPrompt = ReflectionPrompt(context: context)
-        newPrompt.id = UUID()
-        newPrompt.customYN = prompt.customYN
-        newPrompt.promptQuestion = prompt.question
-        
-        if let matchingCategory = loadedCategories.filter({ category in
-            prompt.capitalizedCategory == category.catName
-        }).first {
-            newPrompt.promptCategory = matchingCategory
-        }//: IF LET
-    }//: convertPromptJSONToReflectionPrompt
+   
     
 }//: DataController

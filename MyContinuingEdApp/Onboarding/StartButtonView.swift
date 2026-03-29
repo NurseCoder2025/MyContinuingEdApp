@@ -10,10 +10,12 @@ import SwiftUI
 struct StartButtonView: View {
     // MARK: - PROPERTIES
     @EnvironmentObject var dataController: DataController
+    @AppStorage(String.onBoardingKey) private var showOnboarding: Bool = true
     
     // MARK: - BODY
     var body: some View {
         Button {
+            showOnboarding = false
             dataController.showOnboardingScreen = false
         } label: {
             HStack {

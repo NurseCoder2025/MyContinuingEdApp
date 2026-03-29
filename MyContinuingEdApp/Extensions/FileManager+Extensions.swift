@@ -13,15 +13,15 @@ extension FileManager {
     /// FileManager method for determining whether a directory exists at a specified path (URL) and if not, attempts to create one
     /// - Parameter url: URL for the directory
     /// - Returns: True if either the url is a directory or if one could be created at the specified url; False otherwise
-    func doesFolderExistAt(path url: URL) throws -> Bool {
+    func doesFolderExistAt(path url: URL) -> Bool {
         guard url.hasDirectoryPath else {
             NSLog(">>>Error: The url argument passed into the ensureFolderExists(withPath) method is not a directory url.")
             NSLog(">>> The url passed in was: \(url.absoluteString)")
-            throw FileIOError.invalidArgument
+            return false
         }//: GUARD
         var doesExist: Bool = false
         
-        if self.fileExists(atPath: url.path(percentEncoded: true)) {
+        if self.fileExists(atPath: url.path) {
             doesExist = true
         } else {
             do {
@@ -30,7 +30,7 @@ extension FileManager {
             } catch {
                 NSLog(">>>Error creating directory for the specified url: \(url.absoluteString)")
                 NSLog(">>>Error: \(error.localizedDescription)")
-                throw FileIOError.writeFailed
+                doesExist = false
             }//: DO-CATCH
         }//: IF ELSE
         return doesExist
@@ -129,6 +129,13 @@ extension FileManager {
             return activityFolderName
         }//: IF ELSE
     }//: createActivitySubFolder
+    
+    func sanitizeFileName(_ name: String) -> String {
+        let invalidCharacters = CharacterSet(charactersIn: "/\\:*#?~`'[]()^%;\"<>|")
+        let nameWithGoodChars = name.components(separatedBy: invalidCharacters).joined(separator: "_")
+        let sanitizedName = nameWithGoodChars.replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: "__", with: "_").replacingOccurrences(of: "___", with: "_")
+        return sanitizedName
+    }//: sanitizeFileName
     
 }//: EXTENSION
 

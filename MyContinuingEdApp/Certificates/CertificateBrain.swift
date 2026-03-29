@@ -28,6 +28,8 @@ final class CertificateBrain: ObservableObject {
     /// CeActivity as obtained by the loadSavedCertificate(for) method.
     var selectedCertificate: Certificate?
     
+    var documentToOpen: CertificateDocument?
+    
     var dataController: DataController
     private let fileSystem = FileManager()
     
@@ -58,11 +60,7 @@ final class CertificateBrain: ObservableObject {
     var cloudCertsFolderURL: URL? {
         if let existingURL = dataController.userCloudDriveURL, dataController.prefersCertificatesInICloud,
             storageAvailability == .cloud {
-            let customCloudURL = URL(
-                filePath: "Documents/Certificates",
-                directoryHint: .isDirectory,
-                relativeTo: existingURL
-            )
+            let customCloudURL = existingURL.appending(path: "Documents", directoryHint: .isDirectory).appending(path: "Certificates", directoryHint: .isDirectory)
             return customCloudURL
         } else {
             return nil
@@ -91,11 +89,7 @@ final class CertificateBrain: ObservableObject {
                 if dataController.prefersCertificatesInICloud,
                     storageAvailability == .cloud,
                     let cloudDrive = cloudCertsFolderURL {
-                    let coordinatorURL = URL(
-                        filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
-                        directoryHint: .notDirectory,
-                        relativeTo: cloudDrive
-                     )
+                    let coordinatorURL = cloudDrive.appending(path: "ApplicationSupport", directoryHint: .isDirectory).appending(path: String.certCoordinatorListFile)
                     return coordinatorURL
                 } else {
                     return URL.localCertCoordinatorsListFile
@@ -109,16 +103,35 @@ final class CertificateBrain: ObservableObject {
             /// whatever ubiquity container is associated with the current Apple Account.
             private var coordinatorCloudStoredListURL: URL? {
                 if let cloudDrive = dataController.userCloudDriveURL {
-                    let coordinatorURL = URL(
-                        filePath: "ApplicationSupport/\(String.certCoordinatorListFile)",
-                        directoryHint: .notDirectory,
-                        relativeTo: cloudDrive
-                     )
+                    let coordinatorURL = cloudDrive.appending(path: "ApplicationSupport", directoryHint: .isDirectory).appending(path: String.certCoordinatorListFile, directoryHint: .notDirectory)
                     return coordinatorURL
                 } else {
                     return nil
                 }
             }//: coordinatorCloudStoredListURL
+    
+        // MARK: Coordinator for CE
+        func getCoordinatorFor(activity: CeActivity) -> CertificateCoordinator? {
+            #if DEBUG
+            if let ceID = activity.activityID {
+                print("UUID for CeActivity: \(ceID.uuidString)")
+            }
+            #endif
+            guard activity.activityID != nil else { return nil }
+            var identifiedCoordinator: CertificateCoordinator? = nil
+            Task{@MainActor in
+                if await coordinatorAccess.isAllCoordinatorsEmpty() {
+                    await decodeCoordinatorList()
+                }//: IF
+                
+                let coordinators = await coordinatorAccess.allCoordinators
+                let matchingCoordinator = coordinators.first(where: {
+                    $0.assignedObjectID == activity.activityID
+                })
+                identifiedCoordinator = matchingCoordinator
+            }//: TASK
+            return identifiedCoordinator
+        }//: getCoordinatorFor(activity)
     
         // MARK: SYNC LIST
     
@@ -418,7 +431,7 @@ final class CertificateBrain: ObservableObject {
         let localURL = createDocURL(with: certMetaData, for: .local)
         #if DEBUG
             print(">>> Full URL created for certificate: \(localURL.absoluteString)")
-            print(">>> Local URL: \(localURL.lastPathComponent)")
+            print(">>> Filename: \(localURL.lastPathComponent)")
         #endif
         
         // 3. Create the coordinator object with url and metadata
@@ -447,6 +460,18 @@ final class CertificateBrain: ObservableObject {
         
         // 5. Save CertificateDocument to disk locally
         if await newCertDoc.save(to: localURL, for: .forCreating) {
+            // Adding a small delay before updating the CeActivity
+            // CoreData property to ensure that the document is saved
+            Task{@MainActor in
+                let sleepTime = 0.01
+                try await Task.sleep(for: .seconds(sleepTime))
+            }//: TASK
+            
+            guard fileSystem.fileExists(atPath: localURL.path) else {
+                NSLog(">>> Newly created certificate document doesn't exist affter save.")
+                throw FileIOError.writeFailed
+            }//: GUARD
+            
                 activity.hasCompletionCertificate = true
             } else {
                 NSLog(">>>Error saving CertificateDocument to the local url: \(localURL)")
@@ -573,7 +598,7 @@ final class CertificateBrain: ObservableObject {
                     topFolderURL = URL.localCertificatesFolder
                 }//: SWITCH
                 
-                let topFolderExists = (try? fileSystem.doesFolderExistAt(path: topFolderURL)) ?? false
+                let topFolderExists =  fileSystem.doesFolderExistAt(path: topFolderURL)
                 if topFolderExists {
                     if let assignedActivity = matchCertificateWithActivity(using: metaData) {
                         let certFileName = createCertificateFileName(for: assignedActivity)
@@ -587,7 +612,7 @@ final class CertificateBrain: ObservableObject {
                         // Creating a folder with the activity's name IF a matching one was found
                         let activityFolderName = createActivitySubFolderName(for: assignedActivity)
                         let activityFolderURL = topFolderURL.appending(path: activityFolderName, directoryHint: .isDirectory)
-                        let activityFolderExists = (try? fileSystem.doesFolderExistAt(path: activityFolderURL)) ?? false
+                        let activityFolderExists =  fileSystem.doesFolderExistAt(path: activityFolderURL)
                         
                         if activityFolderExists {
                             return activityFolderURL.appending(path: certFileName, directoryHint: .notDirectory)
@@ -616,7 +641,7 @@ final class CertificateBrain: ObservableObject {
                                 directoryHint: .isDirectory,
                                 relativeTo: cloudURL
                             )//: cloudDocsFolder
-                            let cloudDocsExists = (try? fileSystem.doesFolderExistAt(path: cloudDocsFolder)) ?? false
+                            let cloudDocsExists =  fileSystem.doesFolderExistAt(path: cloudDocsFolder)
                             if cloudDocsExists {
                                 return cloudDocsFolder.appending(path: certFileName, directoryHint: .notDirectory)
                             } else {
@@ -650,9 +675,7 @@ final class CertificateBrain: ObservableObject {
             /// for that activity. To keep the folder names to a reasonable length, the method limits the returned string to a max of
             /// 25 characters (after trimming the activity's title property to remove any white spaces and lines).
             private func createActivitySubFolderName(for ce: CeActivity) -> String {
-                let activityFolderName = ce.ceTitle.trimmingCharacters(
-                    in: .whitespacesAndNewlines
-                ).replacingOccurrences(of: " ", with: "_")
+                let activityFolderName = fileSystem.sanitizeFileName(ce.ceTitle).trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
                 
                 let maxNameLength: Int = 25
                 
@@ -680,19 +703,16 @@ final class CertificateBrain: ObservableObject {
                     let monthComponent: Int = calendar.component(.month, from: completionDate)
                     let dayComponent: Int = calendar.component(.day, from: completionDate)
                     
-                    baseFileName = "CE Certificate_\(dayComponent)-\(monthComponent)-\(yearComponent)"
-                    let finalURLPart = "\(baseFileName).\(fileExtension)"
-                    return finalURLPart
+                    baseFileName = "Certificate_\(dayComponent)-\(monthComponent)-\(yearComponent)"
                 } else {
                     let saveTime: Date = Date.now
                     let yearComponent: Int = calendar.component(.year, from: saveTime)
                     let monthComponent: Int = calendar.component(.month, from: saveTime)
                     let dayComponent: Int = calendar.component(.day, from: saveTime)
                     
-                    let baseFileName = "CE Certificate_saved at_\(dayComponent)-\(monthComponent)-\(yearComponent)"
-                    let finalURLPart = "\(baseFileName).\(fileExtension)"
-                    return finalURLPart
+                    baseFileName = "Certificate_saved at_\(dayComponent)-\(monthComponent)-\(yearComponent)"
                 }//: IF ELSE
+                return fileSystem.sanitizeFileName(baseFileName) + ".\(fileExtension)"
             }//: createCertificateFileName
             
             /// Method for creating CertificateMetadata objects based on the CeActivity object for which the certificate was earned.
@@ -820,76 +840,28 @@ final class CertificateBrain: ObservableObject {
     /// call: fullCertificate (for the PDF) or certImageThumbnail (for images). The result of either computed property is what is
     /// assigned to the selectedCertificate property in the CertificateBrain class.
     func loadSavedCertificate(for activity: CeActivity) async throws {
-        let loadCompletedNotification = Notification.Name(.certLoadingDoneNotification)
-        if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
-        let coordinators = await coordinatorAccess.allCoordinators
-        guard let certCoordinator = coordinators.first(where: { coordinator in
-            coordinator.assignedObjectID == activity.activityID
-        }) else {
+        if let assignedCoordinator = getCoordinatorFor(activity: activity) {
+            let savedCert = await CertificateDocument(certURL: assignedCoordinator.fileURL)
+            documentToOpen = savedCert
+            if await savedCert.documentState.contains([.closed,.normal]) {
+                retrieveCertImage(from: savedCert)
+            } else {
+                NSLog(">>> The CertificateDocument could not be opened at this time due to a status other than closed or normal.")
+                handlingError = .loadingError
+                errorMessage = "Attempted to load the certificate while it was in a state that could not be read by the system. Another attempt to load it will be made automatically."
+                throw FileIOError.loadingError
+            }//: IF ELSE (documentState.contains)
+            
+            await savedCert.close()
+        } else {
             await MainActor.run {
                 handlingError = .loadingError
                 errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
             }//: MAIN ACTOR
             NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
             throw handlingError
-        }//: GUARD
-        
-        let savedCert = await CertificateDocument(certURL: certCoordinator.fileURL)
-        if await savedCert.open() {
-            if let certMeta = certCoordinator.mediaMetadata as? CertificateMetadata {
-                let certData = await savedCert.certBinaryData
-                switch certMeta.mediaAs {
-                case .image:
-                    if let thumbImage = certData.certImageThumbnail {
-                        await MainActor.run {
-                            selectedCertificate = thumbImage
-                            NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
-                        }//: MAIN ACTOR
-                    } else {
-                        await MainActor.run {
-                            handlingError = .loadingError
-                            errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
-                        }//: MAIN ACTOR
-                        NSLog(">>>Error creating thumbnail image for the certificate saved at \(certCoordinator.fileURL)")
-                        throw handlingError
-                    }//: IF ELSE
-                case .pdf:
-                    if let pdfData = certData.fullCertificate {
-                        await MainActor.run {
-                            selectedCertificate = pdfData
-                             NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
-                        }//: MAIN ACTOR
-                    } else {
-                        await MainActor.run {
-                            handlingError = .loadingError
-                            errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
-                        }//: MAIN ACTOR
-                        NSLog(">>>Error loading PDF data for the certificate saved at \(certCoordinator.fileURL)")
-                        throw handlingError
-                    }//: IF ELSE
-                case .audio:
-                    return
-                }//: SWITCH
-            } else {
-                await MainActor.run {
-                    handlingError = .loadingError
-                    errorMessage = "Unable to read the metadata for the certificate file which is needed to display the image or PDF."
-                }//: MAIN ACTOR
-                NSLog(">>>Error reading CertificateMetadata for the certificate saved at \(certCoordinator.fileURL)")
-                throw handlingError
-            }//: IF - ELSE
-        } else {
-            await MainActor.run {
-                handlingError = .loadingError
-                errorMessage = "Unable to load the certificate data from the saved file location."
-            }//: MAIN ACTOR
-            NSLog(">>>Error opening CertificateDocument at \(certCoordinator.fileURL)")
-            throw handlingError
-        }//: IF - ELSE (open)
-        
-        await savedCert.close()
+        }//: IF ELSE
     }//: loadSavedCertificate
-    
     
     /// CertificateBrain method for retrieving the raw binary data for a saved CE certificate that is associated
     /// with a specific CE activity.
@@ -936,6 +908,48 @@ final class CertificateBrain: ObservableObject {
         await savedCert.close()
         return dataToReturn
     }//: loadSavedCertData(for)
+    
+    func retrieveCertImage(from doc: CertificateDocument) {
+        Task{@MainActor in
+            let loadCompletedNotification = Notification.Name(.certLoadingDoneNotification)
+            if await doc.open() {
+                let certSavedAs = doc.certMetaData.mediaAs
+                switch certSavedAs {
+                case .image:
+                    if let thumbImage = doc.certBinaryData.certImageThumbnail {
+                        selectedCertificate = thumbImage
+                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                    } else {
+                        handlingError = .loadingError
+                        errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
+                        NSLog(">>>Error creating thumbnail image for the certificate saved at \(doc.certMetaData.fileVersion.fileLocation)")
+                    }//: IF ELSE
+                case .pdf:
+                    if HelperFunctions.isPDF(doc.certBinaryData.certData) {
+                        selectedCertificate = doc.certBinaryData.fullCertificate
+                        NotificationCenter.default.post(name: loadCompletedNotification, object: nil)
+                    } else {
+                        handlingError = .loadingError
+                        errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
+                        NSLog(">>>Error loading PDF data for the certificate saved at \(doc.certMetaData.fileVersion.fileLocation)")
+                        NSLog(">>> It's possible that the data actually represents an image and not a PDF.")
+                    }//: IF ELSE
+                case .audio:
+                    return
+                }//: SWITCH
+            } else {
+                // If opening the CertificateDocument fails...
+                handlingError = .loadingError
+                errorMessage = "Unable to load the certificate data from the saved file location."
+                let docLocation = doc.certMetaData.fileVersion.fileLocation
+                NSLog(">>>Error opening CertificateDocument at \(docLocation)")
+                NSLog(">>>Final URL part: \(docLocation.lastPathComponent)")
+                NSLog(">>>The CertificateDocument (UI Document subclass) open() method returned a false value.")
+            }//: IF ELSE ( open() )
+            
+        }//: TASK
+    }//: retrieveCertImage()
+    
    
     // MARK: - MOVING FILES
     
