@@ -111,7 +111,7 @@ final class CertificateBrain: ObservableObject {
             }//: coordinatorCloudStoredListURL
     
         // MARK: Coordinator for CE
-        func getCoordinatorFor(activity: CeActivity) -> CertificateCoordinator? {
+        func getCoordinatorFor(activity: CeActivity) async -> CertificateCoordinator? {
             #if DEBUG
             if let ceID = activity.activityID {
                 print("UUID for CeActivity: \(ceID.uuidString)")
@@ -119,17 +119,21 @@ final class CertificateBrain: ObservableObject {
             #endif
             guard activity.activityID != nil else { return nil }
             var identifiedCoordinator: CertificateCoordinator? = nil
-            Task{@MainActor in
-                if await coordinatorAccess.isAllCoordinatorsEmpty() {
-                    await decodeCoordinatorList()
-                }//: IF
-                
-                let coordinators = await coordinatorAccess.allCoordinators
-                let matchingCoordinator = coordinators.first(where: {
-                    $0.assignedObjectID == activity.activityID
-                })
-                identifiedCoordinator = matchingCoordinator
-            }//: TASK
+           
+            if await coordinatorAccess.isAllCoordinatorsEmpty() {
+                await decodeCoordinatorList()
+            }//: IF
+            
+            let coordinators = await coordinatorAccess.allCoordinators
+            #if DEBUG
+            print("Coordinators count: \(coordinators.count)")
+            coordinators.forEach { print("\($0.assignedObjectID.uuidString)") }
+            #endif
+            let matchingCoordinator = coordinators.first(where: {
+                $0.assignedObjectID == activity.activityID
+            })
+            identifiedCoordinator = matchingCoordinator
+            
             return identifiedCoordinator
         }//: getCoordinatorFor(activity)
     
@@ -361,6 +365,7 @@ final class CertificateBrain: ObservableObject {
                         let certMeta = await certDoc.certMetaData
                         let newCoord = CertificateCoordinator(file: file, whereSaved: .local, metaData: certMeta)
                         createdCoordinators.insert(newCoord)
+                        await certDoc.close()
                     } else {
                         NSLog(">>>Error trying to open a CertificateDocument while iterating through all locally saved certificate files. The specific doc that failed to open is at this url: \(file.absoluteString)")
                         problemFiles.append(file)
@@ -423,7 +428,6 @@ final class CertificateBrain: ObservableObject {
     ///   be obtained, then the method updates the CertificateBrain's handlingError and errorMessage published properties so the user
     ///   can be alerted.
     func addNewCeCertificate(for activity: CeActivity, with data: Data, dataType: MediaType) async throws {
-        let saveCompletedNotification = Notification.Name(.certSaveCompletedNotification)
         // 1. Create metadata using activity
         let certMetaData = createCertificateMetadata(forCE: activity, fileType: dataType)
         
@@ -436,7 +440,12 @@ final class CertificateBrain: ObservableObject {
         
         // 3. Create the coordinator object with url and metadata
         if await coordinatorAccess.isAllCoordinatorsEmpty() { await decodeCoordinatorList() }
-        var newCoordinator = createCertificateCoordinator(with: certMetaData, fileAt: localURL)
+        let newCoordinator = createCertificateCoordinator(with: certMetaData, fileAt: localURL)
+        
+        #if DEBUG
+        print("New Coordinator assigned to \(newCoordinator.assignedObjectID.uuidString)")
+        print("Coordintator url: \(newCoordinator.fileURL.absoluteString)")
+        #endif
         
         // 4. Create a new CertificateDocument instance with the url, meta data, and data
         let newCertDoc = await CertificateDocument(
@@ -444,19 +453,6 @@ final class CertificateBrain: ObservableObject {
             metaData: certMetaData,
             withData: data
         )
-        
-        #if DEBUG
-        NSLog(">>> Data size: \(data.count) bytes")
-        NSLog(">>> Saving to URL: \(localURL.lastPathComponent)")
-        
-        let testData = "Test data".data(using: .utf8)!
-        do {
-            try testData.write(to: URL.localCertificatesFolder.appending(path: "test.txt", directoryHint: .notDirectory))
-            NSLog(">>> Test save successful")
-        } catch {
-            NSLog(">>> Test save failed: \(error.localizedDescription)")
-        }
-        #endif
         
         // 5. Save CertificateDocument to disk locally
         if await newCertDoc.save(to: localURL, for: .forCreating) {
@@ -484,61 +480,12 @@ final class CertificateBrain: ObservableObject {
         
         // 6. If the user wishes to save media files to iCloud and iCloud is available, move
         // file to iCloud/UserUbqiquityURL/Documents/Certificates
-        guard dataController.prefersCertificatesInICloud,
-              storageAvailability == .cloud,
-              let _ = cloudCertsFolderURL else {
-            if dataController.prefersCertificatesInICloud {
-                await MainActor.run {
-                    // In this situation, the user wants to save certificates
-                    // to iCloud but can't do so for one of several possible
-                    // reasons, including a completely full drive, iCloud
-                    // Drive turned off, etc.
-                    handlingError = .saveLocationUnavailable
-                    errorMessage = "The app is currently set to save CE certificates to iCloud, but, unfortunately, iCloud cannot be used at this time. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
-                }//: MAIN ACTOR
-                await coordinatorAccess.insertCoordinator(newCoordinator)
-                await encodeCoordinatorList()
-                throw handlingError
-            } else {
-                // In this situation, the user has indicated that CE certificates are to be saved to
-                // the local device only via the control in Settings
-                await coordinatorAccess.insertCoordinator(newCoordinator)
-                await encodeCoordinatorList()
-            }//: IF - ELSE
-                return
-            }//: GUARD
-        
-            let iCloudURL = createDocURL(with: certMetaData, for: .cloud)
-                // Moving the file to iCloud, and if successful, updating the coordinator object
-                // before inserting it into the list and writing the updated list to disk.
-                do {
-                   try self.fileSystem.setUbiquitous(true, itemAt: localURL, destinationURL: iCloudURL)
-                    newCoordinator.fileURL = iCloudURL
-                    await coordinatorAccess.insertCoordinator(newCoordinator)
-                    await encodeCoordinatorList()
-                } catch {
-                    // Updating published properties on the MainActor
-                    await MainActor.run {
-                        handlingError = .saveLocationUnavailable
-                        errorMessage = "Attempted to save the certificate to iCloud but was unable to do so. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
-                    }//: MAIN ACTOR
-                    await coordinatorAccess.insertCoordinator(newCoordinator)
-                    await encodeCoordinatorList()
-                    throw handlingError
-                }//: DO-CATCH
-                
-                // If the file was moved successfully and no errors were thrown, then update the
-                // metadata for the file, then post the notification that the move is complete.
-                do {
-                    try await updateCertDocMetaUponMove(to: .cloud, at: iCloudURL)
-                    
-                    await MainActor.run {
-                        NotificationCenter.default.post(name: saveCompletedNotification, object: nil)
-                    }//: MAIN ACTOR
-                } catch {
-                    NSLog(">>>Error trying to update the metadata for a CertificateDocument that was successfully moved to iCloud. The whereSaved property is still set to .local")
-                    NSLog(">>> The url for the moved certificate is: \(iCloudURL.absoluteString)")
-                }//: DO-CATCH
+        await transferNewlyCreatedCertToICloud(
+            certificate: newCertDoc,
+            meta: certMetaData,
+            coordinator: newCoordinator,
+            from: localURL
+        )//: transferNewlyCreatedCertToICloud
         
     }//: addNewCeCertificate()
     
@@ -549,9 +496,11 @@ final class CertificateBrain: ObservableObject {
                 at newLocURL: URL
             ) async throws {
                 let movedCertDoc = await CertificateDocument(certURL: newLocURL)
-                if await movedCertDoc.open() {
-                    var metaFile = await movedCertDoc.certMetaData
-                    metaFile.fileVersion.fileLocation = newLocURL
+                if await movedCertDoc.docOkToOpen(), await movedCertDoc.open() {
+                    await MainActor.run {
+                        movedCertDoc.certMetaData.fileVersion.fileLocation = newLocURL
+                    }//: MAIN ACTOR
+                    await movedCertDoc.close()
                 } else {
                     NSLog(">>>Error opening the CertificateDocument at the new URL: \(newLocURL.absoluteString)")
                     await MainActor.run {
@@ -559,8 +508,6 @@ final class CertificateBrain: ObservableObject {
                     }//: MAIN ACTOR
                     throw handlingError
                 }//: IF ELSE (open)
-                
-               await movedCertDoc.close()
             }//: updateCertDocMetaUponMove(to, at)
     
             /// Private function that creates the URL for a given CertificateDocument object to be saved to.
@@ -753,7 +700,7 @@ final class CertificateBrain: ObservableObject {
             /// to local disk prior to saving to iCloud.  Once the file is moved, the coordinator's file url property can be updated.
             private func createCertificateCoordinator(with metaData: CertificateMetadata, fileAt location: URL) -> CertificateCoordinator {
                 let versionInfo = MediaFileVersion(fileAt: location, version: 1.0)
-                let savedAt = (try? fileSystem.identifyFileURLLocation(for: location)) ?? SaveLocation.local
+                let savedAt = (try? fileSystem.identifyFileURLLocation(for: location)) ?? SaveLocation.unknown
                 
                 // Replacing the initial CertificateMetadata object which has a MediaFileVersion with a temporary
                 // URL assigned to the fileURL property with the actual URL that is being used to save the
@@ -785,6 +732,133 @@ final class CertificateBrain: ObservableObject {
                     return nil
                 }
             }//: matchCertificatewithActivity
+    
+            /// Private CertificateBrain method used for moving a newly created CertificateDocument object to iCloud if
+            /// available and the user elects iCloud storage for saving CE certificates.
+            /// - Parameters:
+            ///   - metadata: CertificateMetadata object containing the local file URL within the fileVersion property
+            ///   - originalCoordinator: CertificateCoordinator object first created for the local URL
+            ///   - localUrl: URL where the object was saved to on the local device
+            ///   - iCloudUrl: URL to move the object to (in iCloud)
+            ///
+            ///  - Note: This method is only for use with the addNewCeCertificate method as there are two additional methods
+            ///  for moving  previously created certificates (moveCertToCloud and moveSavedCertificate).  Use one of those if handling
+            ///  an existing certificate.
+            ///
+            ///  This method only throws an error if the setUbiquitous FiileManager method throws an error.  If not, then the method will
+            ///  create a new metadata object using the copying argument and then create a new coordinator object with the new
+            ///  metadata.  Then the coordinator will be officially added to the list.  The final part of this method calls the
+            ///  updateCertDocMetaUponMove where the CertificateDocument (now saved in iCloud) is opened and the file URL property
+            ///  within the metadata's fileVersion property is updated.
+            private func moveNewlyCreatedCertToICloud(
+                copying metadata: CertificateMetadata,
+                originalCoordinator: CertificateCoordinator,
+                localUrl: URL,
+                iCloudUrl: URL
+            ) async throws {
+                var copiedMeta = metadata
+                do {
+                    try self.fileSystem.setUbiquitous(true, itemAt: localUrl, destinationURL: iCloudUrl)
+                } catch {
+                    NSLog(">>> moveNewlyCreatedCertToICloud threw an error when calling the setUbiquitous method for the local and iCloud URLs.")
+                    NSLog(">>> Local url: \(localUrl.absoluteString)")
+                    NSLog(">>> iCloud url: \(iCloudUrl.absoluteString)")
+                    // Updating published properties on the MainActor
+                    await MainActor.run {
+                        handlingError = .saveLocationUnavailable
+                        errorMessage = "Attempted to save the certificate to iCloud but was unable to do so. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
+                    }//: MAIN ACTOR
+                    await coordinatorAccess.insertCoordinator(originalCoordinator)
+                    await encodeCoordinatorList()
+                    throw handlingError
+                }//: DO-CATCH
+                
+                // Updating the url saved in the metadata and using it to create a new coordinator
+                // that will be assigned to the coordinator list
+                copiedMeta.fileVersion.fileLocation = iCloudUrl
+                let newCoordinator = createCertificateCoordinator(with: copiedMeta, fileAt: iCloudUrl)
+                
+                await coordinatorAccess.insertCoordinator(newCoordinator)
+                await encodeCoordinatorList()
+                
+                // If the file was moved successfully and no errors were thrown, then update the
+                // metadata for the file, then post the notification that the move is complete.
+                do {
+                    try await updateCertDocMetaUponMove(to: .cloud, at: iCloudUrl)
+                } catch {
+                    NSLog(">>>Error trying to update the metadata for a CertificateDocument that was successfully moved to iCloud. The whereSaved property is still set to .local")
+                    NSLog(">>> The url for the moved certificate is: \(iCloudUrl.absoluteString)")
+                }//: DO-CATCH
+            }//: moveNewlyCreatedCertToICloud()
+    
+            private func transferNewlyCreatedCertToICloud(
+                certificate: CertificateDocument,
+                meta metadata: CertificateMetadata,
+                coordinator: CertificateCoordinator,
+                from localUrl: URL
+            ) async {
+                guard dataController.prefersCertificatesInICloud,
+                      storageAvailability == .cloud,
+                      let _ = cloudCertsFolderURL else {
+                        if dataController.prefersCertificatesInICloud {
+                            await MainActor.run {
+                                // In this situation, the user wants to save certificates
+                                // to iCloud but can't do so for one of several possible
+                                // reasons, including a completely full drive, iCloud
+                                // Drive turned off, etc.
+                                handlingError = .saveLocationUnavailable
+                                errorMessage = "The app is currently set to save CE certificates to iCloud, but, unfortunately, iCloud cannot be used at this time. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
+                            }//: MAIN ACTOR
+                            await coordinatorAccess.insertCoordinator(coordinator)
+                            await encodeCoordinatorList()
+                        } else {
+                            // In this situation, the user has indicated that CE certificates are to be saved to
+                            // the local device only via the control in Settings
+                            await coordinatorAccess.insertCoordinator(coordinator)
+                            await encodeCoordinatorList()
+                        }//: IF - ELSE
+                        return
+                    }//: GUARD
+                
+                    let iCloudURL = createDocURL(with: metadata, for: .cloud)
+                        // Moving the file to iCloud, and if successful, updating the coordinator object
+                        // before inserting it into the list and writing the updated list to disk.
+                    if await certificate.documentState == .closed {
+                        do {
+                            try await moveNewlyCreatedCertToICloud(
+                                copying: metadata,
+                                originalCoordinator: coordinator,
+                                localUrl: localUrl,
+                                iCloudUrl: iCloudURL
+                            )
+                        } catch {
+                            await MainActor.run {
+                                errorMessage = "Unable to save the certificate to iCloud due to a file system error while moving the file from the local device to iCloud. The certificate remains saved on the local device."
+                            }//: MAIN ACTOR
+                        }//: DO-CATCH
+                    } else {
+                        // Make a second attempt to close the certificate document and move it to iCloud.
+                        if await certificate.close() {
+                            do {
+                                try await moveNewlyCreatedCertToICloud(
+                                    copying: metadata,
+                                    originalCoordinator: coordinator,
+                                    localUrl: localUrl,
+                                    iCloudUrl: iCloudURL
+                                )
+                            } catch {
+                                await MainActor.run {
+                                    errorMessage = "Unable to save the certificate to iCloud due to a file system error while moving the file from the local device to iCloud. The certificate remains saved on the local device."
+                                }//: MAIN ACTOR
+                            }//: DO-CATCH
+                        } else {
+                            let currentDocState = await certificate.documentState
+                            NSLog(">>> Made a second attempt to move a certificate to iCloud but could not close the CertificateDocument file in order to do so.")
+                            NSLog(">>> Document status: \(currentDocState.rawValue)")
+                            errorMessage = "Unable to save certificate to iCloud due to technical issue with the file the certificate is saved in. It will remain saved on the local device."
+                        }//: IF ELSE ( .close() )
+                    }//: IF ELSE (documentState == .closed)
+            }//: transferNewlyCreatedCertToICloud
 
             
     // MARK: - Deleting Certificates
@@ -840,10 +914,10 @@ final class CertificateBrain: ObservableObject {
     /// call: fullCertificate (for the PDF) or certImageThumbnail (for images). The result of either computed property is what is
     /// assigned to the selectedCertificate property in the CertificateBrain class.
     func loadSavedCertificate(for activity: CeActivity) async throws {
-        if let assignedCoordinator = getCoordinatorFor(activity: activity) {
+        if let assignedCoordinator = await getCoordinatorFor(activity: activity) {
             let savedCert = await CertificateDocument(certURL: assignedCoordinator.fileURL)
             documentToOpen = savedCert
-            if await savedCert.documentState.contains([.closed,.normal]) {
+            if await savedCert.docOkToOpen() {
                 retrieveCertImage(from: savedCert)
             } else {
                 NSLog(">>> The CertificateDocument could not be opened at this time due to a status other than closed or normal.")
@@ -851,8 +925,6 @@ final class CertificateBrain: ObservableObject {
                 errorMessage = "Attempted to load the certificate while it was in a state that could not be read by the system. Another attempt to load it will be made automatically."
                 throw FileIOError.loadingError
             }//: IF ELSE (documentState.contains)
-            
-            await savedCert.close()
         } else {
             await MainActor.run {
                 handlingError = .loadingError
@@ -912,7 +984,7 @@ final class CertificateBrain: ObservableObject {
     func retrieveCertImage(from doc: CertificateDocument) {
         Task{@MainActor in
             let loadCompletedNotification = Notification.Name(.certLoadingDoneNotification)
-            if await doc.open() {
+            if doc.docOkToOpen(), await doc.open() {
                 let certSavedAs = doc.certMetaData.mediaAs
                 switch certSavedAs {
                 case .image:

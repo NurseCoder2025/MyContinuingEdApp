@@ -26,4 +26,20 @@ extension UIDocument {
         }
     }//: encodeToJSONForWrapper()
     
+    /// UIDocument method for quickly determining whether any UIDocument subclass object
+    /// can be safely opened or not.
+    /// - Returns: True if the UIDocument object is currently closed; otherwise false
+    ///
+    /// This method utilizes the documentState getter property within UIDocument to determine
+    /// what the current document state is.
+    func docOkToOpen() -> Bool {
+        let currentStatus = self.documentState
+        if currentStatus == .closed {
+            return true
+        } else {
+            NSLog(">>> Current CertificateDocument status: \(currentStatus.rawValue)")
+            return false
+        }//: IF ELSE
+    }//: docOkToOpen
+    
 }//: EXTENSION
