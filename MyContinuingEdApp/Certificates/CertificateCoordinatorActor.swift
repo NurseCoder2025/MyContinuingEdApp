@@ -66,7 +66,7 @@ actor CertificateCoordinatorActor {
         
     }//: getCoordinatorsForLocation()
     
-    func isAllCoordinatorsEmpty() -> Bool {
+    func noCoordinators() -> Bool {
         allCoordinators.isEmpty
     }//: isAllCoordinatorsEmpty()
     

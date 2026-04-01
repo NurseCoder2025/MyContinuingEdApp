@@ -102,7 +102,7 @@ struct ActivityCertificateImageView: View {
                             if viewModel.certBrain.storageAvailability == .cloud {
                                 Button {
                                     Task {@MainActor in
-                                        await viewModel.certBrain.moveCertToCloud(for: activity)
+                                        await viewModel.certBrain.mover.moveCertToCloud(for: activity)
                                     }//: TASK
                                 } label: {
                                     Label("Move to iCloud", systemImage: "icloud.and.arrow.up")

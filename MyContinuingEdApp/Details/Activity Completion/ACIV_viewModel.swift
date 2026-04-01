@@ -14,8 +14,8 @@ extension ActivityCertificateImageView {
     // MARK: - VIEW MODEL
     final class ViewModel: ObservableObject {
         // MARK: - PROPERTIES
-        var dataController: DataController
-        var certBrain: CertificateBrain
+        let dataController: DataController
+        let certBrain: CertificateBrain
         
         let fileSystem = FileManager()
         
@@ -82,7 +82,7 @@ extension ActivityCertificateImageView {
                 do {
                     if let specificCe = self?.activity,
                         let cBrain = self?.certBrain {
-                        try await cBrain.loadSavedCertificate(for: specificCe)
+                        try await cBrain.loader.loadSavedCertificate(for: specificCe)
                     }
                 } catch {
                     self?.errorAlertTitle = "Certificate Loading Error"
@@ -100,7 +100,7 @@ extension ActivityCertificateImageView {
                 do {
                     if let cBrain = self?.certBrain,
                     let selectedCE = self?.activity {
-                        try await cBrain.deleteCertificate(for: selectedCE)
+                        try await cBrain.writer.deleteCertificate(for: selectedCE)
                     }//: IF LET
                 } catch {
                     self?.errorAlertTitle = "Certificate Deletion Error"
@@ -165,7 +165,7 @@ extension ActivityCertificateImageView {
                 if let cBrain = self?.certBrain,
                     let someCE = self?.activity {
                     do {
-                        try await cBrain.addNewCeCertificate(for: someCE, with: data, dataType: fileType)
+                        try await cBrain.writer.addNewCeCertificate(for: someCE, with: data, dataType: fileType)
                         self?.certDisplayStatus = .loaded
                     } catch {
                         self?.errorAlertTitle = "Certificate Save Error"
@@ -189,7 +189,7 @@ extension ActivityCertificateImageView {
         /// NSFileVersion static method removeOtherVersionsOfItem(at:).
         private func resolveConflictingCertVersions(for doc: CertificateDocument) {
             Task{@MainActor in
-                if let assignedCoordinator = await certBrain.getCoordinatorFor(activity: activity) {
+                if let assignedCoordinator = await certBrain.coordManager.getCoordinatorFor(activity: activity) {
                     let docURL = assignedCoordinator.fileURL
                     do {
                         try NSFileVersion.removeOtherVersionsOfItem(at: docURL)
@@ -204,7 +204,7 @@ extension ActivityCertificateImageView {
         
         @objc private func handleCertLoaded(_ notification: Notification) {
             Task{@MainActor [weak self] in
-                self?.certificateToShow = self?.certBrain.selectedCertificate
+                self?.certificateToShow = self?.certBrain.loader.selectedCertificate
                 self?.certDisplayStatus = .loaded
             }//: TASK
         }//: handleCertLoaded
@@ -227,7 +227,7 @@ extension ActivityCertificateImageView {
         }//: handleCertSaved()
         
         @objc private func handleCertDocStateChange(_ notification: Notification) {
-            if let docToLoad = certBrain.documentToOpen {
+            if let docToLoad = certBrain.loader.documentToOpen {
                 let currentStatus = docToLoad.documentState
                 switch currentStatus {
                 case .progressAvailable:
@@ -243,7 +243,7 @@ extension ActivityCertificateImageView {
                     NSLog(">>> Loading is delayed due to the CertificateDocument being presently busy per the documentState property of .editingDisabled.")
                 default:
                     if certificateToShow == nil {
-                        certBrain.retrieveCertImage(from: docToLoad)
+                        certBrain.loader.retrieveCertImage(from: docToLoad)
                     }
                 }//: SWITCH
             }//: IF LET

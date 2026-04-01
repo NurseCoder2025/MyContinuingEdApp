@@ -46,7 +46,7 @@ extension CertificateShareView {
             Task {@MainActor [weak self] in
                 if let cBrain = self?.certBrain, let someCE = self?.activity {
                     do {
-                        self?.certData = try await cBrain.getSavedCertData(for: someCE)
+                        self?.certData = try await cBrain.loader.getSavedCertData(for: someCE)
                     } catch {
                         self?.sharingLinkStatus = .error
                         self?.errorAlertTitle = "Sharing Link Error"

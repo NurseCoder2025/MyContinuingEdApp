@@ -157,6 +157,12 @@
 		3FCED3EA2F6F79EB00BF407C /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */; };
 		3FCED3EC2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */; };
 		3FCED3EE2F6F84AE00BF407C /* AudioReflection+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3ED2F6F84AE00BF407C /* AudioReflection+Helper.swift */; };
+		3FD4E8682F7CA087000D06F4 /* CertificateWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E8672F7CA087000D06F4 /* CertificateWriter.swift */; };
+		3FD4E86A2F7CA252000D06F4 /* CertCoordinatorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E8692F7CA252000D06F4 /* CertCoordinatorManager.swift */; };
+		3FD4E86C2F7CAA05000D06F4 /* CertificateLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E86B2F7CAA05000D06F4 /* CertificateLoader.swift */; };
+		3FD4E86E2F7CAC27000D06F4 /* CertificateMover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E86D2F7CAC27000D06F4 /* CertificateMover.swift */; };
+		3FD4E8702F7CAE03000D06F4 /* CertCloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E86F2F7CAE03000D06F4 /* CertCloudManager.swift */; };
+		3FD4E8722F7CB237000D06F4 /* CertUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD4E8712F7CB237000D06F4 /* CertUtility.swift */; };
 		3FD56A372F17101200D74515 /* ActivityRegistrationSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */; };
 		3FD56A602F1713CC00D74515 /* DataController-HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */; };
 		3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */; };
@@ -464,6 +470,12 @@
 		3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
 		3FCED3EB2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseTextEntry_ViewModel.swift; sourceTree = "<group>"; };
 		3FCED3ED2F6F84AE00BF407C /* AudioReflection+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioReflection+Helper.swift"; sourceTree = "<group>"; };
+		3FD4E8672F7CA087000D06F4 /* CertificateWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateWriter.swift; sourceTree = "<group>"; };
+		3FD4E8692F7CA252000D06F4 /* CertCoordinatorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertCoordinatorManager.swift; sourceTree = "<group>"; };
+		3FD4E86B2F7CAA05000D06F4 /* CertificateLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateLoader.swift; sourceTree = "<group>"; };
+		3FD4E86D2F7CAC27000D06F4 /* CertificateMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateMover.swift; sourceTree = "<group>"; };
+		3FD4E86F2F7CAE03000D06F4 /* CertCloudManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertCloudManager.swift; sourceTree = "<group>"; };
+		3FD4E8712F7CB237000D06F4 /* CertUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertUtility.swift; sourceTree = "<group>"; };
 		3FD56A362F17101200D74515 /* ActivityRegistrationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityRegistrationSectionView.swift; sourceTree = "<group>"; };
 		3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-HelperFunctions.swift"; sourceTree = "<group>"; };
 		3FD56A612F171EB100D74515 /* WebSiteEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSiteEntryView.swift; sourceTree = "<group>"; };
@@ -657,11 +669,11 @@
 		3F0C7AA72F4FD6CB001B6034 /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				3FD4E8732F7CBAEE000D06F4 /* CertBrainFiles */,
 				3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */,
 				3F4D0E7B2F50F5F8005E26F3 /* CertificateBrain-Helpers.swift */,
 				3F0C7AA82F4FD7DF001B6034 /* CertificateCoordinatorActor.swift */,
 				3FBBBFA82F33F27A00CDC7A0 /* CertificateMetadata.swift */,
-				3FE3567A2F3BF4B800F88F60 /* CertificateBrain.swift */,
 				3F3B454F2F403A08002792D7 /* CertificateDocument.swift */,
 				3F4607F52F57B41600CCD094 /* PDF_EnvironmentKey.swift */,
 				3F47D9A32F468D8E00B02580 /* CertificateData.swift */,
@@ -1185,6 +1197,20 @@
 			path = "Audio Player";
 			sourceTree = "<group>";
 		};
+		3FD4E8732F7CBAEE000D06F4 /* CertBrainFiles */ = {
+			isa = PBXGroup;
+			children = (
+				3FE3567A2F3BF4B800F88F60 /* CertificateBrain.swift */,
+				3FD4E86F2F7CAE03000D06F4 /* CertCloudManager.swift */,
+				3FD4E8692F7CA252000D06F4 /* CertCoordinatorManager.swift */,
+				3FD4E86B2F7CAA05000D06F4 /* CertificateLoader.swift */,
+				3FD4E8672F7CA087000D06F4 /* CertificateWriter.swift */,
+				3FD4E86D2F7CAC27000D06F4 /* CertificateMover.swift */,
+				3FD4E8712F7CB237000D06F4 /* CertUtility.swift */,
+			);
+			path = CertBrainFiles;
+			sourceTree = "<group>";
+		};
 		3FD74F782F033771002360AB /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -1478,15 +1504,18 @@
 				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
 				3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
+				3FD4E86C2F7CAA05000D06F4 /* CertificateLoader.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */,
+				3FD4E8722F7CB237000D06F4 /* CertUtility.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */,
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
+				3FD4E8682F7CA087000D06F4 /* CertificateWriter.swift in Sources */,
 				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
 				3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
@@ -1606,6 +1635,7 @@
 				3FBBBFA92F33F27A00CDC7A0 /* CertificateMetadata.swift in Sources */,
 				F2CC22CA2E28483C00F1F70D /* CEActivity-CoreDateHelper.swift in Sources */,
 				3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */,
+				3FD4E86E2F7CAC27000D06F4 /* CertificateMover.swift in Sources */,
 				F243B41E2E68F9670072419D /* Country-CoreDataHelper.swift in Sources */,
 				3F3B45522F403CA7002792D7 /* FileTypes.swift in Sources */,
 				3F396CA22F6321090025F786 /* ARMetadata.swift in Sources */,
@@ -1634,6 +1664,7 @@
 				3F8DC7CE2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
+				3FD4E86A2F7CA252000D06F4 /* CertCoordinatorManager.swift in Sources */,
 				3F71B98F2F2A973600F1AA2C /* OldPromptResponseView.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
 				3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */,
@@ -1688,6 +1719,7 @@
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
 				3F8DC7CC2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift in Sources */,
 				F272591D2E78D0B800210F11 /* Extensions-Styles.swift in Sources */,
+				3FD4E8702F7CAE03000D06F4 /* CertCloudManager.swift in Sources */,
 				F28E6BB82E7A12A7003F4C95 /* NoDAIsView.swift in Sources */,
 				F2772B952E1DDA9F006A94BD /* ContentView.swift in Sources */,
 				3FD56A602F1713CC00D74515 /* DataController-HelperFunctions.swift in Sources */,

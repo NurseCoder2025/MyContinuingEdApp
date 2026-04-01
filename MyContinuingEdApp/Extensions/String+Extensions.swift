@@ -69,6 +69,7 @@ extension String {
     static let certCoordinatorListSyncCompleted: String = "certCoordinatorListSynced"
     static let certLoadingDoneNotification: String = "certificateFinishedLoading"
     static let certDeletionCompletedNotification: String = "certificateDeletionCompleted"
+    static let certLocalSaveCompleted: String = "certificateLocalSaveCompleted"
     static let certSaveCompletedNotification: String = "certificateSaveCompleted"
     static let certGettingRawDataDone: String = "certificateRawDataLoaded"
     static let certDocReadyForOpening: String = "certificateDocumentReadyToOpen"
