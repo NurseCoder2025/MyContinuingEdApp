@@ -18,6 +18,11 @@
 		3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */; };
 		3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */; };
 		3F09F7662EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F09F7642EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift */; };
+		3F0B138B2F7E006E00CC4A49 /* CertificateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B138A2F7E006E00CC4A49 /* CertificateModel.swift */; };
+		3F0B138D2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */; };
+		3F0B138F2F7E0BDE00CC4A49 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B138E2F7E0BDE00CC4A49 /* Date+Extensions.swift */; };
+		3F0B13912F7E166700CC4A49 /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B13902F7E166700CC4A49 /* CKRecord+Extensions.swift */; };
+		3F0B13932F7E354700CC4A49 /* CloudMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B13922F7E354700CC4A49 /* CloudMediaManager.swift */; };
 		3F0C7AA92F4FD7DF001B6034 /* CertificateCoordinatorActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0C7AA82F4FD7DF001B6034 /* CertificateCoordinatorActor.swift */; };
 		3F1209F72ED6383100D8D93A /* PaidAppConfigurations.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3F1209F62ED6383100D8D93A /* PaidAppConfigurations.storekit */; };
 		3F1209F92ED67FBF00D8D93A /* DataController-StoreKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */; };
@@ -328,6 +333,11 @@
 		3F09F7602EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionViewModel.swift; sourceTree = "<group>"; };
 		3F09F7622EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialsSectionHeaderViewModel.swift; sourceTree = "<group>"; };
 		3F09F7642EAAB9E400FE5277 /* SidebarCredentialsSectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialsSectionViewModel.swift; sourceTree = "<group>"; };
+		3F0B138A2F7E006E00CC4A49 /* CertificateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateModel.swift; sourceTree = "<group>"; };
+		3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CertificateInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3F0B138E2F7E0BDE00CC4A49 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
+		3F0B13902F7E166700CC4A49 /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
+		3F0B13922F7E354700CC4A49 /* CloudMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CloudMediaManager.swift; path = MyContinuingEdApp/Utility/CloudMediaManager.swift; sourceTree = SOURCE_ROOT; };
 		3F0C7AA82F4FD7DF001B6034 /* CertificateCoordinatorActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateCoordinatorActor.swift; sourceTree = "<group>"; };
 		3F1209F62ED6383100D8D93A /* PaidAppConfigurations.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaidAppConfigurations.storekit; sourceTree = "<group>"; };
 		3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-StoreKit.swift"; sourceTree = "<group>"; };
@@ -752,6 +762,7 @@
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
 				3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */,
+				3F0B138E2F7E0BDE00CC4A49 /* Date+Extensions.swift */,
 				3F2A42D72EA2E67000B095CB /* Core Data Helpers */,
 				3F2A42D82EA2E68100B095CB /* Custom Classes */,
 				F2BC949E2E32D0C100926B3D /* Bundle-Decodable.swift */,
@@ -1004,6 +1015,7 @@
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
 				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
 				3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */,
+				3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */,
 			);
 			path = "Core Data Helpers";
 			sourceTree = "<group>";
@@ -1207,6 +1219,8 @@
 				3FD4E8672F7CA087000D06F4 /* CertificateWriter.swift */,
 				3FD4E86D2F7CAC27000D06F4 /* CertificateMover.swift */,
 				3FD4E8712F7CB237000D06F4 /* CertUtility.swift */,
+				3F0B138A2F7E006E00CC4A49 /* CertificateModel.swift */,
+				3F0B13922F7E354700CC4A49 /* CloudMediaManager.swift */,
 			);
 			path = CertBrainFiles;
 			sourceTree = "<group>";
@@ -1247,6 +1261,7 @@
 		F2772B862E1DDA9F006A94BD = {
 			isa = PBXGroup;
 			children = (
+				3F0B13902F7E166700CC4A49 /* CKRecord+Extensions.swift */,
 				3F9386CB2F1B31B90034B841 /* General Notes.rtf */,
 				3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */,
 				F2772B912E1DDA9F006A94BD /* MyContinuingEdApp */,
@@ -1594,6 +1609,7 @@
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
 				3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
+				3F0B138B2F7E006E00CC4A49 /* CertificateModel.swift in Sources */,
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				3FA6675A2F73F40100066FF7 /* PromptCategoryJSON.swift in Sources */,
 				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
@@ -1619,6 +1635,7 @@
 				3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */,
 				3FE372442ECE718B00CCF0FC /* ProFeaturesGridView.swift in Sources */,
 				3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */,
+				3F0B138F2F7E0BDE00CC4A49 /* Date+Extensions.swift in Sources */,
 				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
 				3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */,
 				3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */,
@@ -1630,6 +1647,7 @@
 				3F39AFCF2EA18A15003F5E78 /* RenewalSheetData.swift in Sources */,
 				F254BB9B2E74E9D50020DB28 /* StatePickerRowView.swift in Sources */,
 				F2612A232E874FB900CC463D /* ActivityHoursAndCostView.swift in Sources */,
+				3F0B138D2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift in Sources */,
 				3F7B67FE2EF0D0BE00069528 /* AppPurchaseLevelView.swift in Sources */,
 				3F396C9E2F6320AF0025F786 /* AudioReflectionData.swift in Sources */,
 				3FBBBFA92F33F27A00CDC7A0 /* CertificateMetadata.swift in Sources */,
@@ -1718,6 +1736,7 @@
 				3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */,
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
 				3F8DC7CC2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift in Sources */,
+				3F0B13912F7E166700CC4A49 /* CKRecord+Extensions.swift in Sources */,
 				F272591D2E78D0B800210F11 /* Extensions-Styles.swift in Sources */,
 				3FD4E8702F7CAE03000D06F4 /* CertCloudManager.swift in Sources */,
 				F28E6BB82E7A12A7003F4C95 /* NoDAIsView.swift in Sources */,
@@ -1734,6 +1753,7 @@
 				F2B580182E7B84510073BCA7 /* NoSpecialCatsView.swift in Sources */,
 				3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */,
 				3FE372422ECE6D9F00CCF0FC /* UpgradeFeature.swift in Sources */,
+				3F0B13932F7E354700CC4A49 /* CloudMediaManager.swift in Sources */,
 				3FBD7FDE2EF5419400A039C4 /* LeftAlignedTextView.swift in Sources */,
 				3F1209F92ED67FBF00D8D93A /* DataController-StoreKit.swift in Sources */,
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,

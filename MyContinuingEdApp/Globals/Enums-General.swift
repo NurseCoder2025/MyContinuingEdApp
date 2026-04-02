@@ -5,6 +5,7 @@
 //  Created by Kamino on 9/23/25.
 //
 
+import CloudKit
 import Foundation
 
 // MARK: - ACHIEVEMENTs
@@ -162,9 +163,9 @@ enum CredentialType: String, CaseIterable {
 }
 
 // MARK: - MEDIA File Types
-enum CertType: Codable {case image, pdf}
-enum MediaType: Codable {case image, pdf, audio}
-enum SaveLocation: Codable {case local, cloud, unknown}
+enum CertType: String, CaseIterable, Codable {case image, pdf}
+enum MediaType: String, CaseIterable, Codable {case image, pdf, audio}
+enum SaveLocation: String, Codable {case local, cloud, unknown}
 
 // MARK: - Notification ENUMs
 

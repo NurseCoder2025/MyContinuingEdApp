@@ -18,9 +18,9 @@ final class CertificateLoader: ObservableObject {
     /// CeActivity as obtained by the loadSavedCertificate(for) method.
     @Published var selectedCertificate: Certificate?
     
-   private let dataController: DataController
-   private let certBrain: CertificateBrain
-   private let coordManager: CertCoordinatorManager
+    private let dataController: DataController
+    private let certBrain: CertificateBrain
+    private let coordManager: CertCoordinatorManager
     
     // MARK: - METHODS
     
@@ -33,12 +33,17 @@ final class CertificateLoader: ObservableObject {
     /// call: fullCertificate (for the PDF) or certImageThumbnail (for images). The result of either computed property is what is
     /// assigned to the selectedCertificate property in the CertificateBrain class.
     func loadSavedCertificate(for activity: CeActivity) async throws {
+        if !certBrain.isReady {
+            try await waitForSync()
+        }//: IF
+        
         if let assignedCoordinator = await coordManager.getCoordinatorFor(activity: activity) {
             let savedCert = await CertificateDocument(certURL: assignedCoordinator.fileURL)
             documentToOpen = savedCert
             if await savedCert.docOkToOpen() {
                 retrieveCertImage(from: savedCert)
             } else {
+                NSLog(">>> CertificateLoader error: loadSavedCertificate()")
                 NSLog(">>> The CertificateDocument could not be opened at this time due to a status other than closed or normal.")
                 certBrain.handlingError = .loadingError
                 certBrain.errorMessage = "Attempted to load the certificate while it was in a state that could not be read by the system. Another attempt to load it will be made automatically."
@@ -49,6 +54,7 @@ final class CertificateLoader: ObservableObject {
                 certBrain.handlingError = .loadingError
                 certBrain.errorMessage = "Unable to load the certificate data because the app was unable to locate where the data was saved to."
             }//: MAIN ACTOR
+            NSLog(">>> CertificateLoader error: loadSavedCertificate()")
             NSLog(">>>Certificate Coordinator error: Unable to find the coordinator for the CE activity \(activity.ceTitle)")
             throw certBrain.handlingError
         }//: IF ELSE
@@ -98,7 +104,7 @@ final class CertificateLoader: ObservableObject {
             }//: MAIN ACTOR
             throw certBrain.handlingError
         }//: IF ELSE
-       
+        
         await savedCert.close()
         return dataToReturn
     }//: loadSavedCertData(for)
@@ -116,6 +122,7 @@ final class CertificateLoader: ObservableObject {
                     } else {
                         certBrain.handlingError = .loadingError
                         certBrain.errorMessage = "Unable to create the thumbnail image for the certificate assigned to this activity."
+                        NSLog(">>> CertificateLoader error: retrieveCertImage(from)")
                         NSLog(">>>Error creating thumbnail image for the certificate saved at \(doc.certMetaData.fileVersion.fileLocation)")
                     }//: IF ELSE
                 case .pdf:
@@ -125,6 +132,7 @@ final class CertificateLoader: ObservableObject {
                     } else {
                         certBrain.handlingError = .loadingError
                         certBrain.errorMessage = "Unable to load the PDF data for the certificate assigned to this activity."
+                        NSLog(">>> CertificateLoader error: retrieveCertImage(from)")
                         NSLog(">>>Error loading PDF data for the certificate saved at \(doc.certMetaData.fileVersion.fileLocation)")
                         NSLog(">>> It's possible that the data actually represents an image and not a PDF.")
                     }//: IF ELSE
@@ -136,6 +144,7 @@ final class CertificateLoader: ObservableObject {
                 certBrain.handlingError = .loadingError
                 certBrain.errorMessage = "Unable to load the certificate data from the saved file location."
                 let docLocation = doc.certMetaData.fileVersion.fileLocation
+                NSLog(">>> CertificateLoader error: retrieveCertImage(from)")
                 NSLog(">>>Error opening CertificateDocument at \(docLocation)")
                 NSLog(">>>Final URL part: \(docLocation.lastPathComponent)")
                 NSLog(">>>The CertificateDocument (UI Document subclass) open() method returned a false value.")
@@ -143,6 +152,25 @@ final class CertificateLoader: ObservableObject {
             
         }//: TASK
     }//: retrieveCertImage()
+    
+    private func waitForSync() async throws {
+        let coordListUpdated = Notification.Name(String.certCoordinatorListSyncCompleted)
+        nonisolated(unsafe) var observer: NSObjectProtocol?
+        
+        try await withCheckedThrowingContinuation { continuation in
+            // Guaranting concurrency safety by using the main queue
+            observer = NotificationCenter.default.addObserver(
+                forName: coordListUpdated,
+                object: nil,
+                queue: .main,
+            ) {_ in
+                if let obs = observer {
+                    NotificationCenter.default.removeObserver(obs)
+                }//: IF LET
+                continuation.resume()
+            }//: _ in (closure)
+        }//: withCheckedThrowingContiunuation
+    }//: waitForSync()
     
     // MARK: - INIT
     

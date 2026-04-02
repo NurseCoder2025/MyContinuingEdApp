@@ -5,6 +5,7 @@
 //  Created by Ilum on 2/13/26.
 //
 
+import CloudKit
 import Foundation
 
 
@@ -89,3 +90,52 @@ extension MediaCoordinator {
 protocol Certificate {
     var certificateType: CertType {get}
 }//: PROTOCOL
+
+
+// MARK: - CloudKit Media Models
+
+/// Protocol for defining the minimum requirements for the data models of any media files used in this
+/// app such as images, PDFs, and audio.
+///
+/// There is a single required method for this protocol, resolveURL(basePath), which has a defined default
+/// implementation within the MedialModel extension. It serves to convert a relative path for any stored
+/// media file into an absolute URL that can be used by the app to locate the file.
+protocol MediaModel: Identifiable, Equatable, Hashable {
+    var id: UUID { get }
+    var relativePath: String { get set }
+    var mediaType: MediaType { get set }
+    var saveLocation: String { get set }
+    var appVersion: Double { get }
+    var assignedObjectId: UUID { get }
+    var cloudRecord: CKRecord { get set }
+
+    
+    func resolveURL(basePath: URL) -> URL
+    mutating func setSaveLocationTypeString(for location: SaveLocation)
+}//: MedialModel
+
+
+extension MediaModel {
+    /// Method required as part of the MediaModel protocol that converts a relative path into an
+    /// absolute URL for locating a saved media (image, PDF, audio) file.
+    /// - Parameter basePath: the top-level URL for where a media file is stored
+    /// - Returns: An absolute URL using the base path along with a URL with the relative path
+    /// added to it
+    ///
+    /// An example of a base path would be the documentsDirectory or iCloud ubiquity container URL  for
+    /// the app.
+    func resolveURL(basePath: URL) -> URL {
+        basePath.appending(path: relativePath, directoryHint: .notDirectory)
+    }//: resolveURL(basePath)
+    
+    mutating func setSaveLocationTypeString(for location: SaveLocation) {
+        saveLocation = location.rawValue
+    }//: setSaveLocationTypeString
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(assignedObjectId)
+        hasher.combine(appVersion)
+        hasher.combine(relativePath)
+        hasher.combine(mediaType)
+    }//: hash
+}//: EXTENSION (MediaModel)

@@ -54,6 +54,7 @@ struct MyContinuingEdAppApp: App {
                     
                     if certificateBrain == nil {
                         certificateBrain = CertificateBrain(dataController: dataController)
+                        certificateBrain?.cloudManager.startICloudCertSearch()
                     }//: IF (certificateBrain)
                     
                     if audioBrain == nil {

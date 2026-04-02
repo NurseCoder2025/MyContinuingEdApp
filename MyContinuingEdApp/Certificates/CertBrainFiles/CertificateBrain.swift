@@ -5,8 +5,6 @@
 //  Created by Ilum on 2/10/26.
 //
 
-import CloudKit
-import CoreData
 import Foundation
 import UIKit
 
@@ -47,7 +45,7 @@ final class CertificateBrain: ObservableObject {
     }()//: cloudManager
     
     lazy var mover: CertificateMover = {
-        CertificateMover(certBrain: self, coordManager: coordManager, utility: utility)
+        CertificateMover(dataController: dataController, certBrain: self, coordManager: coordManager, utility: utility)
     }()//: mover
     
     lazy var loader: CertificateLoader = {
@@ -84,6 +82,14 @@ final class CertificateBrain: ObservableObject {
             return nil
         }
     }//: cloudCertsURL
+    
+    // MARK: - METHODS
+    
+    /// Method for updating the CertificateBrain isReady @Published property to true when
+    /// the CertificateCoordinator list has been fully updated.
+    func informCertBrainCoordinatorListIsUpdated() {
+        isReady = true
+    }//: informCertBrainCoordinatorListIsUpdated()
     
     
     // MARK: - PREVIEW

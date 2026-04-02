@@ -9,6 +9,9 @@ import Foundation
 
 
 extension String {
+    // MARK: - iCLOUD
+    static let appContainerName: String = "iCloud.com.pixelcraftlabsltd.CeCache"
+    
     // MARK: - User Default Keys
     static let onBoardingKey: String = "showUserOnboarding"
     

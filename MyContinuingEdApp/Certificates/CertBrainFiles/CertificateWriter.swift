@@ -18,6 +18,7 @@ final class CertificateWriter {
     private var newCertDocument: CertificateDocument?
     
     let fileExtension: String = .certFileExtension
+    private let initialSaveDoneNotification = Notification.Name(String.certLocalSaveCompleted)
     
     private let dataController: DataController
     private let certBrain: CertificateBrain
@@ -48,7 +49,7 @@ final class CertificateWriter {
            newCertLocalUrl = utility.createDocURL(with: certMeta, for: .local)
     
        // 3. Create the coordinator object with url and metadata
-           if coordManager.currentCoordinators.isEmpty { await coordManager.decodeCoordinatorList() }
+           if coordManager.currentCoordinators.isEmpty {  coordManager.decodeCoordinatorList() }
            let localFile = newCertLocalUrl ?? URL.locallySavedCertificateFile
            newCertCoordinator = coordManager.createCertificateCoordinator(with: certMeta, fileAt: localFile)
    
@@ -59,16 +60,6 @@ final class CertificateWriter {
            withData: data
        )//: newCertDocument
      
-       // Initial save observers
-       let initialSaveDoneNotification = Notification.Name(String.certLocalSaveCompleted)
-       NotificationCenter.default.removeObserver(initialSaveDoneNotification)
-       NotificationCenter.default.addObserver(
-           self,
-           selector: #selector(handleInitialLocalSaveCompleted(_:)),
-           name: initialSaveDoneNotification,
-           object: nil
-       )//: addObserver
-       
        // 5. Save CertificateDocument to disk locally
        if let newCertDoc = newCertDocument, await newCertDoc.save(to: localFile, for: .forCreating) {
                // Adding a small delay before updating the CeActivity
@@ -79,6 +70,7 @@ final class CertificateWriter {
                }//: TASK
                
                guard fileSystem.fileExists(atPath: localFile.path) else {
+                   NSLog(">>> CertificateWriter: addNewCeCertificate() error")
                    NSLog(">>> Newly created certificate document doesn't exist affter save.")
                    throw FileIOError.writeFailed
                }//: GUARD
@@ -89,16 +81,14 @@ final class CertificateWriter {
                // if the user elects for iCloud storage for CE certificates
                NotificationCenter.default.post(name: initialSaveDoneNotification, object: nil)
            } else {
+               NSLog(">>> CertificateWriter: addNewCeCertificate() error")
                NSLog(">>>Error saving CertificateDocument to the local url: \(localFile)")
                NSLog(">>>Exiting the addNewCeCertificate(for) method early without attempting to save to iCloud.")
                certBrain.handlingError = .writeFailed
                certBrain.errorMessage = "Failed to save the CE certificate to your device. Choose another file type and try again."
                throw certBrain.handlingError
            }//: IF ELSE
-  
        }//: IF LET (certMeta)
-      
-       
    }//: addNewCeCertificate()
    
     // MARK: - Finalizing Save
@@ -136,13 +126,13 @@ final class CertificateWriter {
                        certBrain.handlingError = .saveLocationUnavailable
                        certBrain.errorMessage = "The app is currently set to save CE certificates to iCloud, but, unfortunately, iCloud cannot be used at this time. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
                    }//: MAIN ACTOR
-                   await coordManager.coordinatorAccess.insertCoordinator(coordinator)
-                   await coordManager.encodeCoordinatorList()
+                   coordManager.currentCoordinators.insert(coordinator)
+                    coordManager.encodeCoordinatorList()
                } else {
                    // In this situation, the user has indicated that CE certificates are to be saved to
                    // the local device only via the control in Settings
-                   await coordManager.coordinatorAccess.insertCoordinator(coordinator)
-                   await coordManager.encodeCoordinatorList()
+                    coordManager.currentCoordinators.insert(coordinator)
+                   coordManager.encodeCoordinatorList()
                }//: IF - ELSE
                return
            }//: GUARD
@@ -222,8 +212,8 @@ final class CertificateWriter {
                certBrain.handlingError = .saveLocationUnavailable
                certBrain.errorMessage = "Attempted to save the certificate to iCloud but was unable to do so. Please check your iCloud/iCloud drive settings as well as how much available free space is on the drive for your account. The certificate was saved locally to the device."
            }//: MAIN ACTOR
-           await coordManager.coordinatorAccess.insertCoordinator(originalCoordinator)
-           await coordManager.encodeCoordinatorList()
+            coordManager.currentCoordinators.insert(originalCoordinator)
+            coordManager.encodeCoordinatorList()
            throw certBrain.handlingError
        }//: DO-CATCH
        
@@ -232,8 +222,8 @@ final class CertificateWriter {
        copiedMeta.fileVersion.fileLocation = iCloudUrl
        let newCoordinator = coordManager.createCertificateCoordinator(with: copiedMeta, fileAt: iCloudUrl)
        
-       await coordManager.coordinatorAccess.insertCoordinator(newCoordinator)
-       await coordManager.encodeCoordinatorList()
+        coordManager.currentCoordinators.insert(newCoordinator)
+        coordManager.encodeCoordinatorList()
        
        // If the file was moved successfully and no errors were thrown, then update the
        // metadata for the file, then post the notification that the move is complete.
@@ -310,7 +300,7 @@ final class CertificateWriter {
         let deleteNotification = Notification.Name(.certDeletionCompletedNotification)
         
         if coordManager.currentCoordinators.isEmpty {
-            await coordManager.decodeCoordinatorList()
+             coordManager.decodeCoordinatorList()
         }//: IF (isEmpty)
         
         let coordinators = coordManager.currentCoordinators
@@ -327,8 +317,8 @@ final class CertificateWriter {
         
         do {
             try fileSystem.removeItem(at: certCoordinator.fileURL)
-            await coordManager.coordinatorAccess.removeCoordinator(certCoordinator)
-            await coordManager.encodeCoordinatorList()
+             coordManager.currentCoordinators.remove(certCoordinator)
+             coordManager.encodeCoordinatorList()
             NotificationCenter.default.post(name: deleteNotification, object: nil)
         } catch {
             await MainActor.run {
@@ -354,5 +344,19 @@ final class CertificateWriter {
         self.certBrain = certBrain
         self.coordManager = coordManager
         self.utility = utility
+        
+        // MARK: - OBSERVERS
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleInitialLocalSaveCompleted(_:)),
+            name: initialSaveDoneNotification,
+            object: nil
+        )//: addObserver
+        
     }//: INIT
+    // MARK: - DEINIT
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }//: DEINIT
 }//: CLASS

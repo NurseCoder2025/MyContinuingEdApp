@@ -76,7 +76,7 @@ extension ActivityCertificateImageView {
                 selector: #selector(handleCertLoaded(_:)),
                 name: loadCompleted,
                 object: nil
-            )
+            )//: addObserver
             
             Task {@MainActor [weak self] in
                 do {

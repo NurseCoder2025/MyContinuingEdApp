@@ -10,11 +10,13 @@ import CoreData
 import Foundation
 import UIKit
 
+
 final class CertCoordinatorManager: ObservableObject {
     // MARK: - PROPERTIES
-    @Published var coordinatorAccess = CertificateCoordinatorActor()
+    @Published var currentCoordinators: Set<CertificateCoordinator> = []
+    var cloudCoordinators: Set<CertificateCoordinator> = []
     
-    let fileExtension: String = .certFileExtension
+    private let fileExtension: String = .certFileExtension
     private let fileSystem = FileManager()
     
     private let dataController: DataController
@@ -47,12 +49,12 @@ final class CertCoordinatorManager: ObservableObject {
         }
     }//: allCoordinatorsListURL
     
-    /// Private computed property in Certificate Brain that returns the iCloud-based URL for the
+    /// Computed property in Certificate Brain that returns the iCloud-based URL for the
     /// coordinator JSON file IF it can be obtained.  Nil if not.
     ///
     /// The path for the file is: .\ApplicationSupport\[String.cloudCertCoordinatorFile] for
     /// whatever ubiquity container is associated with the current Apple Account.
-    private var coordinatorCloudStoredListURL: URL? {
+    var coordinatorCloudStoredListURL: URL? {
         if let cloudDrive = dataController.userCloudDriveURL {
             let coordinatorURL = cloudDrive.appending(path: "ApplicationSupport", directoryHint: .isDirectory).appending(path: String.certCoordinatorListFile, directoryHint: .notDirectory)
             return coordinatorURL
@@ -61,19 +63,12 @@ final class CertCoordinatorManager: ObservableObject {
         }
     }//: coordinatorCloudStoredListURL
     
-    var currentCoordinators: Set<CertificateCoordinator> {
-        var coordinators: Set<CertificateCoordinator> = []
-        Task{
-            coordinators = await coordinatorAccess.allCoordinators
-        }//: TASK
-        return coordinators
-    }//: currentCoordinators
     
     // MARK: - METHODS
     
     // MARK: Coordinator Creation (individual)
     
-    /// Private method that creates and returns a CertificateCoordinator object as part of the new CE certificate document creation and saving.
+    /// Method that creates and returns a CertificateCoordinator object as part of the new CE certificate document creation and saving.
     /// - Parameter metaData: CertificateMetadata object for the certificate
     /// - Returns: CertificateCoordinator with the local URL that the data is saved to first along with the meta data
     ///
@@ -93,15 +88,15 @@ final class CertCoordinatorManager: ObservableObject {
     }//: createCertificateCoordinator()
     
     // MARK: Coordinator for CE
-    func getCoordinatorFor(activity: CeActivity) async -> CertificateCoordinator? {
+    func getCoordinatorFor(activity: CeActivity) -> CertificateCoordinator? {
         guard activity.activityID != nil else { return nil }
         var identifiedCoordinator: CertificateCoordinator? = nil
        
-        if await coordinatorAccess.noCoordinators() {
-            await decodeCoordinatorList()
+        if currentCoordinators.isEmpty {
+            decodeCoordinatorList()
         }//: IF
         
-        let coordinators = await coordinatorAccess.allCoordinators
+        let coordinators = currentCoordinators
        
         let matchingCoordinator = coordinators.first(where: {
             $0.assignedObjectID == activity.activityID
@@ -113,73 +108,76 @@ final class CertCoordinatorManager: ObservableObject {
 
     // MARK: SYNC LIST
 
-        /// Private method that ensures the JSON file containing all CertificateCoordinator objects is in sync with all files saved both locally and on
-        /// iCloud.
-        ///
-        /// The method first looks for the JSON file on iCloud, and if it exists then those values are decoded to the allCoordinators property.  It then
-        /// checks the user's cloud sync preference for certificates and if it is for local storage only, then the JSON file is moved to the local device.
-        /// If the file is not on iCloud or it does not contain any data, then the local directory for the JSON file will be checked and, again, if the user's
-        /// certificate storage preference is set to iCloud then the file will be moved to iCloud if possible.
-        ///
-        /// If there are values in the allCoordinators property after the initial file check and decoding, then the method will update it by comparing the
-        /// existing set in allCoordinators with the coordinators set returned by the private method getCoordinatorsForAllFiles().  Any new coordinators
-        /// will be added to the allCoordinators set.
-        ///
-        /// If no values are in allCoordinators, then the getCoordinatorsForAllFliles method is called to create coordinator objects for any CE certificates
-        /// saved both on iCloud (if available) and on the local device.  Thoe objects are then used to set the value of allCoordinators and it is then
-        /// encoded to disk, using the URL returned from the allCoordinatorsListURL computed property.
-        ///
-        /// Upon completion, this method also creates a custom notification using the String constant certCoordinatorListSyncCompleted and posts it
-        /// to the NotificationCenter so that registered observers can take follow-up actions.
-        func syncCoordinatorList() async {
-            // Find & retrieve previously saved list, if available
-            if let cloudList = coordinatorCloudStoredListURL, let _ = try? Data(contentsOf: cloudList) {
-                await decodeCoordinatorList(from: cloudList)
-                if dataController.prefersCertificatesInICloud == false {
-                    moveCertCoordListTo(location: .local)
-                }//: IF (!prefersCertificatesInICloud)
-            } else {
-                let localList = URL.localCertCoordinatorsListFile
-                if let _ = try? Data(contentsOf: localList) {
-                    await decodeCoordinatorList(from: localList)
-                    if dataController.prefersCertificatesInICloud {
-                        moveCertCoordListTo(location: .cloud)
-                    } //: IF LET
-                }//: IF LET
-            }//: IF ELSE
+    /// Method that ensures the JSON file containing all CertificateCoordinator objects is in sync with all files saved both locally and on
+    /// iCloud.
+    ///
+    /// The method first looks for the JSON file on iCloud, and if it exists then those values are decoded to the allCoordinators property.  It then
+    /// checks the user's cloud sync preference for certificates and if it is for local storage only, then the JSON file is moved to the local device.
+    /// If the file is not on iCloud or it does not contain any data, then the local directory for the JSON file will be checked and, again, if the user's
+    /// certificate storage preference is set to iCloud then the file will be moved to iCloud if possible.
+    ///
+    /// If there are values in the allCoordinators property after the initial file check and decoding, then the method will update it by comparing the
+    /// existing set in allCoordinators with the coordinators set returned by the private method getCoordinatorsForAllFiles().  Any new coordinators
+    /// will be added to the allCoordinators set.
+    ///
+    /// If no values are in allCoordinators, then the getCoordinatorsForAllFliles method is called to create coordinator objects for any CE certificates
+    /// saved both on iCloud (if available) and on the local device.  Thoe objects are then used to set the value of allCoordinators and it is then
+    /// encoded to disk, using the URL returned from the allCoordinatorsListURL computed property.
+    ///
+    /// Upon completion, this method also creates a custom notification using the String constant certCoordinatorListSyncCompleted and posts it
+    /// to the NotificationCenter so that registered observers can take follow-up actions.
+    func syncCoordinatorList() async {
+        // Find & retrieve previously saved list, if available
+        if let cloudList = coordinatorCloudStoredListURL, let _ = try? Data(contentsOf: cloudList) {
+             decodeCoordinatorList(from: cloudList)
+            if dataController.prefersCertificatesInICloud == false {
+                moveCertCoordListTo(location: .local)
+            }//: IF (!prefersCertificatesInICloud)
+        } else {
+            let localList = URL.localCertCoordinatorsListFile
+            if let _ = try? Data(contentsOf: localList) {
+                 decodeCoordinatorList(from: localList)
+                if dataController.prefersCertificatesInICloud {
+                    moveCertCoordListTo(location: .cloud)
+                } //: IF LET
+            }//: IF LET
+        }//: IF ELSE
+        
+        let coordinators = currentCoordinators
+        if coordinators.count > 0 {
+            let existingCertCoordinators =  createCoordinatorsForAllCertFiles()
+            let coordinatorsToRemove = coordinators.subtracting(existingCertCoordinators)
+            let coordinatorsToAdd = existingCertCoordinators.subtracting(coordinators)
+                // Adding coordinators for new certificates not previously in list
+                coordinatorsToRemove.forEach { coordinator in
+                    currentCoordinators.remove(coordinator)
+                }//: LOOP (forEach)
             
-            let coordinators = await coordinatorAccess.allCoordinators
-            if await coordinatorAccess.doesAllCoordinatorsHaveValues() {
-                let currentCoordinators = await createCoordinatorsForAllCertFiles()
-                let coordinatorsToRemove = coordinators.subtracting(currentCoordinators)
-                let coordinatorsToAdd = currentCoordinators.subtracting(coordinators)
-                if coordinatorsToAdd.isNotEmpty {
-                    let updatedList = coordinators.union(coordinatorsToAdd)
-                    await coordinatorAccess.setAllCoordinatorsValues(with: updatedList)
-                }
-                if coordinatorsToRemove.isNotEmpty {
-                    let updatedList = coordinators.subtracting(coordinatorsToRemove)
-                    await coordinatorAccess.setAllCoordinatorsValues(with: updatedList)
-                }
-                await encodeCoordinatorList()
-            } else {
-                // If no previously saved list, get new coordinator objects,
-                // assign them to the allCoordinators list and then write that
-                // list to file in the appropriate location.
-                let newCoordinators = await createCoordinatorsForAllCertFiles()
-                // TODO: Perform on MainActor??
-                await coordinatorAccess.setAllCoordinatorsValues(with: newCoordinators)
-                await encodeCoordinatorList()
-            }//: IF - ELSE
+                 // Removing coordinators for certificates previously deleted
+                coordinatorsToAdd.forEach { coordinator in
+                    currentCoordinators.insert(coordinator)
+                }//: LOOP (forEach)
+             encodeCoordinatorList()
+        } else {
+            // If no previously saved list, get new coordinator objects,
+            // assign them to the allCoordinators list and then write that
+            // list to file in the appropriate location.
+            currentCoordinators =  createCoordinatorsForAllCertFiles()
+            // TODO: Perform on MainActor??
             
-            // Removing all values from the allCloudCoordinators property in
-            // coordinatorAccess since they are no longer needed now that all
-            // coordinators have been created
-            await coordinatorAccess.removeAllCloudCoordinators()
-            
-            let completedNotice = Notification.Name(.certCoordinatorListSyncCompleted)
-            NotificationCenter.default.post(name: completedNotice, object: nil)
-        }//: syncCoordinatorList()
+             encodeCoordinatorList()
+        }//: IF - ELSE
+        
+        
+        // To prevent data races with other objects needing to access an up
+        // to date coordinator list, updating a certBrain property
+        await MainActor.run {
+            certBrain.informCertBrainCoordinatorListIsUpdated()
+        }//: MAIN ACTOR
+        
+        let completedNotice = Notification.Name(.certCoordinatorListSyncCompleted)
+        NotificationCenter.default.post(name: completedNotice, object: nil)
+    }//: syncCoordinatorList()
 
     // MARK: LIST HELPERS
 
@@ -191,20 +189,18 @@ final class CertCoordinatorManager: ObservableObject {
         ///
         /// - Important: This method uses the CertificateCoordinatorActor in order to prevent data races.
         /// The method must be async for this reason, but runs the error handling block on the main actor.
-        func encodeCoordinatorList(to location: URL? = nil) async {
-            let certCoordinators = await coordinatorAccess.allCoordinators
+        func encodeCoordinatorList(to location: URL? = nil) {
+            let certCoordinators = currentCoordinators
             let encoder = JSONEncoder()
             let encodedList = try? encoder.encode(certCoordinators)
             if let data = encodedList {
                 do {
                     try data.write(to: location ?? allCoordinatorsListURL)
                 } catch {
-                    await MainActor.run {
-                        certBrain.handlingError = .writeFailed
-                        certBrain.errorMessage = "Encountered an error writing the file that keeps track of where ce certficicates are saved to."
-                        NSLog(">>> CertificateCoordinator encoding error:")
-                        NSLog(certBrain.errorMessage)
-                    }//: MainActor.run
+                    certBrain.handlingError = .writeFailed
+                    certBrain.errorMessage = "Encountered an error writing the file that keeps track of where ce certficicates are saved to."
+                    NSLog(">>> CertificateCoordinator encoding error:")
+                    NSLog(certBrain.errorMessage)
                 }//: DO CATCH
             }//: IF LET
         }//: encodeCoorsinatorList()
@@ -222,7 +218,7 @@ final class CertCoordinatorManager: ObservableObject {
         /// computed property allCoordinatorsListURL to set the URL from which to decode the JSON file.  Depending on the
         /// method this function is being called in, a specific location URL may need to be passed in, so this method can handle
         /// any situation.
-        func decodeCoordinatorList(from location: URL? = nil) async {
+        func decodeCoordinatorList(from location: URL? = nil)  {
             var certCoordinators: Set<CertificateCoordinator> = []
             let decoder = JSONDecoder()
             if let specifiedLocation = location, let data = try? Data(contentsOf: specifiedLocation) {
@@ -233,8 +229,7 @@ final class CertCoordinatorManager: ObservableObject {
                 }//: IF LET
             }//: IF - ELSE
             
-            await coordinatorAccess.setAllCoordinatorsValues(with: certCoordinators)
-          
+            currentCoordinators = certCoordinators
         }//: decodeCoordinatorList()
         
         /// Private method which moves the certificate coordinator JSON file from local storage to the app's
@@ -316,7 +311,7 @@ final class CertCoordinatorManager: ObservableObject {
         /// - Important: The allCloudCoordinators property must be set before this method is called; otherwise, only
         /// coordinator objects for locally saved certificates will be returned.  The handling of allCloudCoordinators is handled by
         /// the private startICloudCertSearch method.
-        func createCoordinatorsForAllCertFiles() async -> Set<CertificateCoordinator>{
+        func createCoordinatorsForAllCertFiles() -> Set<CertificateCoordinator>{
             var createdCoordinators: Set<CertificateCoordinator> = []
             let localURL = URL.documentsDirectory
             var localFiles: [URL] = []
@@ -330,32 +325,41 @@ final class CertCoordinatorManager: ObservableObject {
           
             // Iterating through all locally saved certificates to create new coordinators
             // for each
-            for file in localFiles {
-                let certDoc = await CertificateDocument(certURL: file)
-                if await certDoc.open() {
-                    let certMeta = await certDoc.certMetaData
-                    let newCoord = CertificateCoordinator(file: file, whereSaved: .local, metaData: certMeta)
-                    createdCoordinators.insert(newCoord)
-                    await certDoc.close()
-                } else {
-                    NSLog(">>>Error trying to open a CertificateDocument while iterating through all locally saved certificate files. The specific doc that failed to open is at this url: \(file.absoluteString)")
-                    problemFiles.append(file)
-                }//: IF await (open)
-            }//: LOOP
-            
+            var completedFiles: Int = 0
+            while completedFiles + problemFiles.count < localFiles.count {
+                for file in localFiles {
+                    guard file.lastPathComponent.hasSuffix(fileExtension) else {
+                        problemFiles.append(file)
+                        NSLog(">>>Not creating a certificate coordinator for a file because it doesn't have the correct file extension: \(file.absoluteString)")
+                        continue
+                    }//: GUARD
+                    guard problemFiles.contains(where: { $0 == file }) == false else {
+                        continue
+                    }//: GUARD
+                    Task{
+                        let certDoc = await CertificateDocument(certURL: file)
+                        if await certDoc.docOkToOpen(), await certDoc.open() {
+                            let certMeta = await certDoc.certMetaData
+                            let newCoord = CertificateCoordinator(file: file, whereSaved: .local, metaData: certMeta)
+                            createdCoordinators.insert(newCoord)
+                            if await certDoc.close() {
+                                completedFiles += 1
+                            }
+                        } else {
+                            NSLog(">>> CertCoordinatorManager error: createCoordinatorsForAllCertFiles()")
+                            NSLog(">>>Error trying to open a CertificateDocument while iterating through all locally saved certificate files. The specific doc that failed to open is at this url: \(file.absoluteString)")
+                            problemFiles.append(file)
+                        }//: IF await (open)
+                    }//: TASK
+                }//: LOOP
+            }//: WHILE
+           
             if problemFiles.isNotEmpty {
-                await MainActor.run {
-                    certBrain.handlingError = .syncError
-                    certBrain.errorMessage = "It appears that not all of the files contained with the Certificates folder were actual certificate files (.cert). Please use the Files app or Finder to check and move any non-certificate files out of the folder."
-                    }//: MAIN ACTOR
+                certBrain.handlingError = .syncError
+                certBrain.errorMessage = "It appears that not all of the files contained with the Certificates folder were actual certificate files (.cert). Please use the Files app or Finder to check and move any non-certificate files out of the folder."
                 NSLog(">>>Error encountered with pulling meta data from local files.  Out of the total number of files, \(localFiles.count), \(problemFiles.count) were not valid certificates.")
             }//: IF (isNotEmpty)
             
-            
-            let cloudFileCoordinators = await coordinatorAccess.allCloudCoordinators
-            cloudFileCoordinators.forEach { coordinator in
-                createdCoordinators.insert(coordinator)
-            }//: closure
             
             return createdCoordinators
         }//: getCoordinatorsForAllFiles()
@@ -367,16 +371,16 @@ final class CertCoordinatorManager: ObservableObject {
         ///
         /// This method essentially filters the allCoordinators property using the mediaMetaData property of each coordinator object to retrieve
         /// the whereSaved property from the CertificateMetaData object contained within it.
-        func getCoordinatorsForFiles(savedAt: SaveLocation) async -> Set<CertificateCoordinator> {
-            if await coordinatorAccess.noCoordinators() { await decodeCoordinatorList() }
+        func getCoordinatorsForFiles(savedAt: SaveLocation) -> Set<CertificateCoordinator> {
+            if currentCoordinators.isEmpty { decodeCoordinatorList() }
         
                 var fileCoordinators: Set<CertificateCoordinator> = []
                 
                 switch savedAt {
                 case .local:
-                   fileCoordinators = await coordinatorAccess.getCoordinatorsForLocation(.local)
+                   fileCoordinators = currentCoordinators
                 case .cloud:
-                    fileCoordinators = await coordinatorAccess.getCoordinatorsForLocation(.cloud)
+                    fileCoordinators = cloudCoordinators
                 case .unknown:
                     NSLog(">>> Error getting coordinators for saved certificates because the 'unknown' SaveLocation enum type was passed into the getCoordiantorsForFailes(savedAt) method as an argument.")
                     return fileCoordinators
