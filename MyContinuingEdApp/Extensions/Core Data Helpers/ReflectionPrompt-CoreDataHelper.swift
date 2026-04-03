@@ -50,6 +50,23 @@ extension ReflectionPrompt {
         return samplePrompt
     }//: longExample
     
+    // MARK: - METHODS
+    
+    func trimQuestionLength(to length: Int) -> String {
+        let currentQuestionLength = promptQuestion.count
+        if currentQuestionLength <= length {
+            return String(promptQuestion.replacingOccurrences(of: " ", with: "_").dropLast())
+        } else {
+            let promptWords: [Substring] = promptQuestion.split(separator: " ")
+            let capitalizedWords: [String] = promptWords.map { word in
+                word.capitalized
+            }//: map(closure)
+            let joinedWords: String = capitalizedWords.joined()
+            let trimmedPrompt = joinedWords.trimWordsTo(length: length)
+            return trimmedPrompt
+        }//: IF ELSE
+    }//: trimQuestionLength(to)
+    
     
 }//: EXTENSION
 

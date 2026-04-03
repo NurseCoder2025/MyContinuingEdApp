@@ -170,16 +170,16 @@ struct ContentView: View {
     func fullyDeleteCeActivity(_ activity: CeActivity) {
         if let certBrain = certificateBrain, activity.hasCompletionCertificate {
             Task { @MainActor in
-                let confirmedCert = await certBrain.utility.ceActivityHasCertificateSaved(activity)
-                guard confirmedCert else {
-                    NSLog(">>> Invalid hasCompletionCertificate value for \(activity.ceTitle).")
-                    NSLog(">>> Unable to find a certificate or coordinator object for the activity when there should be one.")
-                    deletionErrorMessage = "The app's internal information on this activity shows that there should be a certificate saved, but none was found (or could be found). Reach out to the developer for assistance."
-                    return
-                }//: GUARD
+                // TODO: Add code
+//                guard confirmedCert else {
+//                    NSLog(">>> Invalid hasCompletionCertificate value for \(activity.ceTitle).")
+//                    NSLog(">>> Unable to find a certificate or coordinator object for the activity when there should be one.")
+//                    deletionErrorMessage = "The app's internal information on this activity shows that there should be a certificate saved, but none was found (or could be found). Reach out to the developer for assistance."
+//                    return
+//                }//: GUARD
                 
                 do {
-                    try await certBrain.writer.deleteCertificate(for: activity)
+                    // TODO: Add code
                 } catch {
                     NSLog(">>> Error deleting the CE activity \(activity.ceTitle) due to an error when trying to delete the associated certificate file.")
                     NSLog(">>> Neither the activity nor certificate were deleted.")

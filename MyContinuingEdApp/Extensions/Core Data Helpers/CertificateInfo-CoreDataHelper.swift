@@ -37,6 +37,21 @@ extension CertificateInfo {
         }
     }//: certInfoCertType
     
+    /// CoreData computed helper property for CertificateInfo that sets the String value for the
+    /// certCKRecordName property.
+    ///
+    /// - Important: ONLY use this property within methods that create and load CKRecord
+    /// objects storing the CKAsset object for certificate data (image or PDF binary data) associated
+    /// with a specific CeActivity.
+    var certInfoCKRecordName: String {
+        get {
+            certCKRecordName ?? ""
+        }
+        set {
+            certCKRecordName = newValue
+        }
+    }//: certInfoCKRecordName
+    
     // MARK: - Computed Properties
     
     /// CoreData computed helper property for CertificateInfo that returns either the ceTtile helper value

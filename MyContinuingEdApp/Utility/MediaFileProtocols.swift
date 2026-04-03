@@ -97,17 +97,22 @@ protocol Certificate {
 /// Protocol for defining the minimum requirements for the data models of any media files used in this
 /// app such as images, PDFs, and audio.
 ///
-/// There is a single required method for this protocol, resolveURL(basePath), which has a defined default
+/// One of the required methods for this protocol, resolveURL(basePath),  has a defined default
 /// implementation within the MedialModel extension. It serves to convert a relative path for any stored
 /// media file into an absolute URL that can be used by the app to locate the file.
+///
+///  This protocol also defines a required objectIdString property, but has a defined default implmentation
+///  where a computed property of the same name returns the uuidString from the assignedObjectId value
+///  that was passed in during initialization.
 protocol MediaModel: Identifiable, Equatable, Hashable {
     var id: UUID { get }
     var relativePath: String { get set }
-    var mediaType: MediaType { get set }
+    var mediaType: String { get set }
     var saveLocation: String { get set }
     var appVersion: Double { get }
     var assignedObjectId: UUID { get }
-    var cloudRecord: CKRecord { get set }
+    var cloudRecord: CKRecord? { get set }
+    var objectIdString: String { get }
 
     
     func resolveURL(basePath: URL) -> URL
@@ -116,6 +121,16 @@ protocol MediaModel: Identifiable, Equatable, Hashable {
 
 
 extension MediaModel {
+    
+    /// Computed property for any object conforming to MediaModel protocol. It returns
+    /// a String version of the UUID argument passed in during initialization.
+    ///
+    /// This property is necessary for using CKQuery to lookup individual media items
+    /// as it only supports a limited number of data types for the NSPredicate it takes.
+    var objectIdString: String {
+        assignedObjectId.uuidString
+    }//: objectIdString
+    
     /// Method required as part of the MediaModel protocol that converts a relative path into an
     /// absolute URL for locating a saved media (image, PDF, audio) file.
     /// - Parameter basePath: the top-level URL for where a media file is stored

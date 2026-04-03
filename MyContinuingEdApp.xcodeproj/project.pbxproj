@@ -200,6 +200,8 @@
 		3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */; };
 		3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */; };
 		3FF979222F457E8A00DD8363 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF979212F457E8A00DD8363 /* String+Extensions.swift */; };
+		3FFD5FE92F7F017D001C4390 /* CertMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFD5FE82F7F017D001C4390 /* CertMediaManager.swift */; };
+		3FFD5FEB2F7F2B29001C4390 /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -518,6 +520,8 @@
 		3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionPrompt-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		3FF979212F457E8A00DD8363 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		3FFD5FE82F7F017D001C4390 /* CertMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertMediaManager.swift; sourceTree = "<group>"; };
+		3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -758,6 +762,7 @@
 			isa = PBXGroup;
 			children = (
 				3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */,
+				3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */,
 				3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
@@ -1221,6 +1226,7 @@
 				3FD4E8712F7CB237000D06F4 /* CertUtility.swift */,
 				3F0B138A2F7E006E00CC4A49 /* CertificateModel.swift */,
 				3F0B13922F7E354700CC4A49 /* CloudMediaManager.swift */,
+				3FFD5FE82F7F017D001C4390 /* CertMediaManager.swift */,
 			);
 			path = CertBrainFiles;
 			sourceTree = "<group>";
@@ -1734,6 +1740,7 @@
 				3FE3724C2ECECE3500CCF0FC /* FeaturesDetailsRowView.swift in Sources */,
 				3FB486A92EB9A4D300C58ED5 /* DataController-Computations.swift in Sources */,
 				3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */,
+				3FFD5FE92F7F017D001C4390 /* CertMediaManager.swift in Sources */,
 				F2B521C22E1F5E63000AB6E6 /* SidebarView.swift in Sources */,
 				3F8DC7CC2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift in Sources */,
 				3F0B13912F7E166700CC4A49 /* CKRecord+Extensions.swift in Sources */,
@@ -1764,6 +1771,7 @@
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,
 				3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
+				3FFD5FEB2F7F2B29001C4390 /* CKRecord+Extensions.swift in Sources */,
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,
 				3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */,

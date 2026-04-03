@@ -21,36 +21,11 @@ final class CertificateBrain: ObservableObject {
     // Coordinator loading
     @Published private(set) var isReady: Bool = false
     
-    // Loaded certificate properties
-    var loadedCertificates: [Certificate] = []
     
     let dataController: DataController
     
-    // MARK: - Sub objects (as regular classes)
     
-    lazy var coordManager: CertCoordinatorManager = {
-        CertCoordinatorManager(dataController: dataController, certBrain: self)
-    }()//: coordManager
-    
-    lazy var utility: CertUtility = {
-        CertUtility(dataController: dataController, certBrain: self, coordManager: coordManager)
-    }()//: utility
-    
-    lazy var writer: CertificateWriter = {
-        CertificateWriter(dataController: dataController, certBrain: self, coordManager: coordManager, utility: utility)
-    }()//: writer
-    
-    lazy var cloudManager: CertCloudManager = {
-        CertCloudManager(certBrain: self, dataController: dataController, coordManager: coordManager, mover: mover, utility: utility)
-    }()//: cloudManager
-    
-    lazy var mover: CertificateMover = {
-        CertificateMover(dataController: dataController, certBrain: self, coordManager: coordManager, utility: utility)
-    }()//: mover
-    
-    lazy var loader: CertificateLoader = {
-        CertificateLoader(dataController: dataController, certBrain: self, coordManager: coordManager)
-    }()//: loader
+   
    
     // MARK: - FILE STORAGE
     

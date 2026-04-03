@@ -71,10 +71,10 @@ struct ActivityCertificateImageView: View {
                                 ProgressView("Loading certificate...")
                                     .progressViewStyle(CircularProgressViewStyle())
                                 Text("Loading certificate for this activity...")
-                                if viewModel.certDocDownloadingProgress.count > 0 {
-                                    Divider()
-                                    Text(viewModel.certDocDownloadingProgress)
-                                }//: IF
+//                                if viewModel.certDocDownloadingProgress.count > 0 {
+//                                    Divider()
+//                                    Text(viewModel.certDocDownloadingProgress)
+//                                }//: IF
                             }//: VSTACK
                         case .loaded:
                             CertificatePreviewView(savedCert: viewModel.certificateToShow)
@@ -102,7 +102,7 @@ struct ActivityCertificateImageView: View {
                             if viewModel.certBrain.storageAvailability == .cloud {
                                 Button {
                                     Task {@MainActor in
-                                        await viewModel.certBrain.mover.moveCertToCloud(for: activity)
+                                        // TODO: Add moving code
                                     }//: TASK
                                 } label: {
                                     Label("Move to iCloud", systemImage: "icloud.and.arrow.up")

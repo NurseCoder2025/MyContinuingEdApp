@@ -82,7 +82,7 @@ extension ActivityCertificateImageView {
                 do {
                     if let specificCe = self?.activity,
                         let cBrain = self?.certBrain {
-                        try await cBrain.loader.loadSavedCertificate(for: specificCe)
+                        // TODO: Add loading method
                     }
                 } catch {
                     self?.errorAlertTitle = "Certificate Loading Error"
@@ -100,7 +100,7 @@ extension ActivityCertificateImageView {
                 do {
                     if let cBrain = self?.certBrain,
                     let selectedCE = self?.activity {
-                        try await cBrain.writer.deleteCertificate(for: selectedCE)
+                        // TODO: Add deletion code
                     }//: IF LET
                 } catch {
                     self?.errorAlertTitle = "Certificate Deletion Error"
@@ -165,7 +165,7 @@ extension ActivityCertificateImageView {
                 if let cBrain = self?.certBrain,
                     let someCE = self?.activity {
                     do {
-                        try await cBrain.writer.addNewCeCertificate(for: someCE, with: data, dataType: fileType)
+                        // TODO: Add loading code
                         self?.certDisplayStatus = .loaded
                     } catch {
                         self?.errorAlertTitle = "Certificate Save Error"
@@ -189,14 +189,14 @@ extension ActivityCertificateImageView {
         /// NSFileVersion static method removeOtherVersionsOfItem(at:).
         private func resolveConflictingCertVersions(for doc: CertificateDocument) {
             Task{@MainActor in
-                if let assignedCoordinator = await certBrain.coordManager.getCoordinatorFor(activity: activity) {
-                    let docURL = assignedCoordinator.fileURL
-                    do {
-                        try NSFileVersion.removeOtherVersionsOfItem(at: docURL)
-                    } catch {
-                        NSLog(">>> Error removing older versions of \(docURL.lastPathComponent): \(error.localizedDescription)")
-                    }//: DO-CATCH
-                }//: IF LET
+//                if let assignedCoordinator = await certBrain.coordManager.getCoordinatorFor(activity: activity) {
+//                    let docURL = assignedCoordinator.fileURL
+//                    do {
+//                        try NSFileVersion.removeOtherVersionsOfItem(at: docURL)
+//                    } catch {
+//                        NSLog(">>> Error removing older versions of \(docURL.lastPathComponent): \(error.localizedDescription)")
+//                    }//: DO-CATCH
+//                }//: IF LET
             }//: TASK
         }//: resolveConflictingCertDocs(_)
         
@@ -204,7 +204,7 @@ extension ActivityCertificateImageView {
         
         @objc private func handleCertLoaded(_ notification: Notification) {
             Task{@MainActor [weak self] in
-                self?.certificateToShow = self?.certBrain.loader.selectedCertificate
+                // TODO: Add code
                 self?.certDisplayStatus = .loaded
             }//: TASK
         }//: handleCertLoaded
@@ -227,26 +227,26 @@ extension ActivityCertificateImageView {
         }//: handleCertSaved()
         
         @objc private func handleCertDocStateChange(_ notification: Notification) {
-            if let docToLoad = certBrain.loader.documentToOpen {
-                let currentStatus = docToLoad.documentState
-                switch currentStatus {
-                case .progressAvailable:
-                    certDisplayStatus = .loading
-                    certDocDownloadingProgress = docToLoad.progress?.localizedDescription ?? ""
-                case .savingError:
-                    errorAlertMessage = "An error was encountered while trying to save the certificate."
-                    showSaveErrorAlert = true
-                case .inConflict:
-                    resolveConflictingCertVersions(for: docToLoad)
-                case .editingDisabled:
-                    errorAlertMessage = "Waiting on the system to finish processing the certificate before it can be loaded..."
-                    NSLog(">>> Loading is delayed due to the CertificateDocument being presently busy per the documentState property of .editingDisabled.")
-                default:
-                    if certificateToShow == nil {
-                        certBrain.loader.retrieveCertImage(from: docToLoad)
-                    }
-                }//: SWITCH
-            }//: IF LET
+//            if let docToLoad = certBrain.loader.documentToOpen {
+//                let currentStatus = docToLoad.documentState
+//                switch currentStatus {
+//                case .progressAvailable:
+//                    certDisplayStatus = .loading
+//                    certDocDownloadingProgress = docToLoad.progress?.localizedDescription ?? ""
+//                case .savingError:
+//                    errorAlertMessage = "An error was encountered while trying to save the certificate."
+//                    showSaveErrorAlert = true
+//                case .inConflict:
+//                    resolveConflictingCertVersions(for: docToLoad)
+//                case .editingDisabled:
+//                    errorAlertMessage = "Waiting on the system to finish processing the certificate before it can be loaded..."
+//                    NSLog(">>> Loading is delayed due to the CertificateDocument being presently busy per the documentState property of .editingDisabled.")
+//                default:
+//                    if certificateToShow == nil {
+//                        certBrain.loader.retrieveCertImage(from: docToLoad)
+//                    }
+//                }//: SWITCH
+//            }//: IF LET
         }//: handleCertDocStateChange()
         
         // MARK: - INIT

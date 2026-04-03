@@ -12,6 +12,29 @@ extension String {
     // MARK: - iCLOUD
     static let appContainerName: String = "iCloud.com.pixelcraftlabsltd.CeCache"
     
+    // MARK: - CLOUD KIT
+    
+    /// Constant for use in CloudKit methods. Value is "relativePath".
+    static let relPathKey: String = "relativePath"
+    
+    /// Constant for use in CloudKit methods. Value is "mediaType".
+    static let mediaKey: String = "mediaType"
+    
+    /// Constant for use in CloudKit methods. Value is "saveLocation".
+    static let locationKey: String = "saveLocation"
+    
+    /// Constant for use in CloudKit methods. Value is "appVersion".
+    static let versionKey: String = "appVersion"
+    
+    /// Constant for use in CloudKit methods. Value is "assignedObjectId".
+    static let assignedObjectKey: String = "assignedObjectId"
+    
+    /// Constant for use in CloudKit methods. Value is "assignedObjectUUIDString".
+    static let objectIdStringKey: String = "assignedObjectUUIDString"
+    
+    /// Constant for use in CloudKit methods. Value is "mediaData".
+    static let mediaDataKey: String = "mediaData"
+    
     // MARK: - User Default Keys
     static let onBoardingKey: String = "showUserOnboarding"
     
@@ -24,7 +47,9 @@ extension String {
     /// the audio reflection file package (UI Document) as "audio"
     static let audioReflectionExtension: String = "refl"
     
-    static let audioFormatExtension: String = ".m4a"
+    static let audioFormatExtension: String = "m4a"
+    
+    static let certImageFormatExtension: String = "png"
     
     // MARK: - DATA KEYS
     /// Static constant in the String struct (via extension) that represents a String dictionary key

@@ -8,7 +8,7 @@
 import CloudKit
 import Foundation
 
-// MARK: - ACHIEVEMENTs
+// MARK: - ACHIEVEMENTS
 
 enum AchievementCriteria: String, CaseIterable {
     case ces = "CEs"
@@ -64,7 +64,7 @@ enum SortType: String {
 // MARK: - Enum for sheet types
 enum SheetType {
     case renewal, issuer, specialCat
-}
+}//: SheetType
 
 // MARK: - Enum for credential types
 /// Enum for handling the different types of credentials that can be added to the app.  Within this enum are several computed properties
@@ -162,10 +162,19 @@ enum CredentialType: String, CaseIterable {
     }
 }
 
-// MARK: - MEDIA File Types
+// MARK: - MEDIA FILES
 enum CertType: String, CaseIterable, Codable {case image, pdf}
 enum MediaType: String, CaseIterable, Codable {case image, pdf, audio}
 enum SaveLocation: String, Codable {case local, cloud, unknown}
+
+/// Global enum for providing the string identifier for CKRecord types. Values are either certificate or
+/// audioReflection.
+///
+/// This enum was created in order to help prevent coding mistakes that would render invalid CKRecord
+/// instances.
+enum CkRecordType: String, CaseIterable {
+    case certificate, audioReflection
+}//: RecordTypes
 
 // MARK: - Notification ENUMs
 
@@ -249,13 +258,13 @@ enum UpgradeNeeded: Error {
     case maxTagsReached
     case maxRenewalsReached
     case maxCeActivitiesReached
-}
+}//: UpgradeNeeded
 
 /// Enum for controlling what is shown to the user in the UpgradeToPaid sheet, depending on
 /// whether the products from that AppStore have been loaded or if an erro has been thrown.
 enum LoadState {
     case loading, loaded, error
-}
+}//: LoadState
 
 // MARK: - SETTINGS
 /// Enum used in DetailView for determining which view to show the user, depending on whether
@@ -264,7 +273,7 @@ enum LoadState {
 enum PageDestination: Hashable {
     case settings
     case reflection(ActivityReflection)
-}
+}//: PageDestination
 
 /// Enum used for setting the value of Setting keys pertaining to the numerical value shown
 /// in badges, such as the one for each Tag and RenewalPeriod in SidebarView.

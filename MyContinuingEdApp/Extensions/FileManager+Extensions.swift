@@ -5,6 +5,7 @@
 //  Created by Ilum on 3/4/26.
 //
 
+import CoreData
 import Foundation
 
 
@@ -90,31 +91,65 @@ extension FileManager {
         return foundURLs
     }//: getAllSavedMediaFileURLs(from, with)
     
-    /// FileManager method that creates the name for the sub-folder holding media objects for a specific activity.
-    /// - Parameter ce: CeActivity that the media object is being saved for
+    // MARK: - FOLDER/URL CREATION
+    
+    /// FileManager method for creating relative path strings for media files that are to be associated with any given
+    /// CeActivity or ReflectionPrompt, or other CoreData entity in this app.
+    /// - Parameters:
+    ///   - activity: CeActivity that is associated with the media file (either directly or indirectly)
+    ///   - media: MediaType enum indicating if the media being stored is an image, pdf, or audio file
+    ///   - forPrompt: [Optional] ReflectionPrompt object for which audio reflections are being saved
+    /// - Returns: String representing the relative path for the newly selected/created media file
+    func createMediaRelativePath(for activity: CeActivity, toSave media: MediaType, forPrompt: ReflectionPrompt?) -> String {
+        var pathString: String = ""
+        var topDirectoryName: String = ""
+        var subFolderName: String = ""
+        var fileName: String = ""
+        
+        topDirectoryName = createTopSubDirectoryName(for: media)
+        subFolderName = createActivitySubFolderName(for: activity)
+        
+        if let prompt = forPrompt {
+            fileName = createMediaFileName(forCE: activity, forPrompt: prompt, type: media)
+        } else {
+            fileName = createMediaFileName(forCE: activity, forPrompt: nil, type: media)
+        }//: IF LET
+        
+        pathString.append("\(topDirectoryName)/\(subFolderName)/\(fileName)")
+        
+        return pathString
+    }//: createMediaRelativePath(for)
+    
+    func createTopSubDirectoryName(for mediaType: MediaType) -> String {
+        switch mediaType {
+        case .image:
+            return "Certificates"
+        case .pdf:
+            return "Certificates"
+        case .audio:
+            return "Reflections"
+        }//: SWITCH
+    }//: createTopSubDirectoryName(for)
+    
+    /// Method that creates the name for the sub-folder holding CE media objects for a specific activity.
+    /// - Parameter ce: CeActivity that the certificate is being saved to
     /// - Returns: String value for the folder name
     ///
-    /// Output:
-    ///     - CeActivity.ceTitle (trimmed to 25 characters)
-    ///     - IF ceTitle is nil and the activityID has a value, then "UnnamedCe_(trimmed uuid string)"_
-    ///     - IF no activityID or ceTitle, then "UnnamedCe_(random Int between 1 and 500)"_
-    ///
-    /// The folder convention for media files in this app is that all media objects are to be stored within a top-level
-    /// folder within the local or iCloud Documents folder that has the name of the type of media being stored (
-    /// i.e. Certficates, Reflections).  Then, inside of the  folder additional sub-folders will be created for each
-    /// CeActivity, using the name of the activity as its name to hold all media objects
-    /// for that activity.  If the ce argument happens to have no title, then the id property will be returned as a string.
-    /// To keep the folder names to a reasonable length, the method limits the returned string to a max of
+    /// The folder convention for media files in this app is that all CE-related objects are to be stored within a top-level
+    /// folder within the local or iCloud Documents folder that is named for the type of media being stored (certificates/audio reflections)..  Then, inside of that folder additional
+    /// sub-folders will be created for each CeActivity, using the name of the activity as its name to hold all certificate objects
+    /// for that activity. To keep the folder names to a reasonable length, the method limits the returned string to a max of
     /// 25 characters (after trimming the activity's title property to remove any white spaces and lines).
-    ///
-    /// - Note: This method limits the length of the sub folder name to 25 characters
     func createActivitySubFolderName(for ce: CeActivity) -> String {
-        let maxNameLength: Int = 25
-        let trimmedTitle = ce.ceTitle.trimWordsTo(length: maxNameLength)
-        let activityFolderName = trimmedTitle.replacingOccurrences(of: " ", with: "_")
+        let activityFolderName = self.sanitizeFileName(ce.ceTitle).trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_")
         
-        if activityFolderName.isEmpty, let assignedID = ce.activityID {
-            return "UnnamedCe_\(assignedID.uuidString.trimWordsTo(length: 10))"
+        let maxNameLength: Int = 25
+        
+        if activityFolderName.count > maxNameLength {
+            let shortenedName = activityFolderName.prefix(maxNameLength)
+            return String(shortenedName)
+        } else if activityFolderName.isEmpty, let assignedId = ce.activityID {
+            return "UnnamedCe_\(assignedId.uuidString.trimWordsTo(length: 10))"
         } else if activityFolderName.isEmpty {
             // Logging details as this particular scenario should not happen as every CeActivity should
             // be assigned an activityID value upon creation.
@@ -122,13 +157,55 @@ extension FileManager {
             NSLog(">>>The specific activity was created on \(ce.ceActivityAddedDate)")
             NSLog(">>>The specific activity's description: \(ce.ceDescription)")
             
-            let nameToReturn = "UnnamedCe_\(Int.random(in: 1...500))"
+            let nameToReturn = "UnnamedCe_\(Int.random(in: 1...5000))"
             NSLog(">>>The new folder name for the unnamed CE is :\(nameToReturn)")
             return nameToReturn
-        } else {
+        } else  {
             return activityFolderName
         }//: IF ELSE
     }//: createActivitySubFolder
+    
+    /// Method that creates the filename string to be used for the last URL path component for a CE media-related object.
+    /// - Parameter activity: CeActivity that the certificate is to be associated with (optional)
+    /// - Returns: String value using the completion date for the activity or, if the activity argument is nil, a name using the
+    /// current date and time value.
+    ///
+    /// - Note: The reason for making the activity parameter optional is because of the possibility a CeActivity may not be,
+    /// and is not required to be, assigned to a mediat object.  Both situations are handled by the method.
+    func createMediaFileName(forCE activity: CeActivity?, forPrompt prompt: ReflectionPrompt?, type: MediaType) -> String {
+        var namePrefix: String = ""
+        var baseFileName: String = ""
+        var fileExtension: String = ""
+        let calendar = Calendar.current
+        
+        switch type {
+        case .image:
+            namePrefix = "Certificate"
+            fileExtension = String.certImageFormatExtension
+        case .pdf:
+            namePrefix = "Certificate"
+            fileExtension = String.certImageFormatExtension
+        case .audio:
+            namePrefix = "Reflection"
+            fileExtension = String.audioFormatExtension
+        }//: SWITCH
+        
+        // This block assigns either the completion date (for CE
+        // certificates) or the current date (for audio reflections or
+        // CE activities without a completion date (unlikely but possible).
+        if let assignedCe = activity {
+            let completionDate = assignedCe.ceActivityCompletedDate.formatDateIntoHyphenedString()
+            baseFileName = "\(namePrefix)_\(completionDate)"
+        } else if let assignedPrompt = prompt {
+            let nameSuffix: String = assignedPrompt.trimQuestionLength(to: 25)
+            baseFileName = "\(namePrefix)_on_\(nameSuffix)"
+        } else {
+            let saveTime: Date = Date.now
+            let dateToUse: String = saveTime.formatDateIntoHyphenedString()
+            baseFileName = "\(namePrefix)_saved at_\(dateToUse)"
+        }//: IF ELSE
+        return self.sanitizeFileName(baseFileName) + ".\(fileExtension)"
+    }//: createMediaFileName
     
     func sanitizeFileName(_ name: String) -> String {
         let invalidCharacters = CharacterSet(charactersIn: "/\\:*#?~`'[]()^%;\"<>|")

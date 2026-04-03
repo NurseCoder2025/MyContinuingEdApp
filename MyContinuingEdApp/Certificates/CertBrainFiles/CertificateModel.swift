@@ -13,12 +13,21 @@ struct CertificateModel: MediaModel {
     // MARK: - PROPERTIES
     let id: UUID
     var relativePath: String
-    var mediaType: MediaType
+    var mediaType: String
     var saveLocation: String
     var appVersion: Double
     var assignedObjectId: UUID
     
-    var cloudRecord: CKRecord
+    var cloudRecord: CKRecord?
+    
+    // ** Important **
+    // Per the MediaModel protocol, there is a computed property
+    // called 'objectIdString' that will return the string value of
+    // the assignedObjectId property.
+    //
+    // Also, there is a resolveURL(basePath) method that creates a
+    // complete URL when needed, using the relativePath string and
+    // URL for the basePath parameter.
     
     // MARK: - PROTOCOL CONFROMANCE
     
@@ -34,16 +43,16 @@ struct CertificateModel: MediaModel {
     init(
         id: UUID = UUID(),
         relativePath: String,
-        mediaType: MediaType = .image,
-        savedAt location: String,
+        mediaType: String = MediaType.image.rawValue,
+        savedAt location: String = SaveLocation.local.rawValue,
         appVersion: Double = 1.0,
         assignedObjectId: UUID,
-        cloudRecord: CKRecord,
+        cloudRecord: CKRecord? = nil,
     ) {
         self.id = id
         self.relativePath = relativePath
         self.mediaType = mediaType
-        self.saveLocation = ""
+        self.saveLocation = location
         self.appVersion = appVersion
         self.assignedObjectId = assignedObjectId
         self.cloudRecord = cloudRecord
