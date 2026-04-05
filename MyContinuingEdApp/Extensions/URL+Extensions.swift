@@ -31,4 +31,36 @@ extension URL {
     
 }//: EXTENSION
 
+// MARK: - METHODS
 
+extension URL {
+    
+    /// URL method for determining if a given media file is located within one of the
+    /// media sub-folders.
+    /// - Parameter category: MediaClass enum to indicate which subfolder the file
+    /// should be saved in
+    /// - Returns: True if the URL begins with the local folder URL for whatever MediaClass
+    /// argument was passed in; false otherwise.
+    ///
+    /// - Important: The logic of this method assumes that there are at least four parts to the
+    /// URL: the top-level directory (Documents), the media type sub-folder (Certificates or Reflections)
+    /// , the name for the CeActivity the media file is associated with, and the filename. The method
+    /// removes the last two parts of the URL and then compares what's left to the local media
+    /// subfolder URL.
+    func isMediaLocallySavedUrlFor(category: MediaClass) -> Bool {
+        var directoryPath: URL
+        
+        switch category {
+        case .certificate:
+            directoryPath = URL.localCertificatesFolder
+        case .audioReflection:
+            directoryPath = URL.localAudioReflectionsFolder
+        }//: SWITCH
+        
+        let fileNameRemoved = self.deletingLastPathComponent()
+        let activityFolderRemoved = fileNameRemoved.deletingLastPathComponent()
+        
+        return activityFolderRemoved == directoryPath
+    }//: isURLInMediaSubFolderFor()
+    
+}//: EXTENSION

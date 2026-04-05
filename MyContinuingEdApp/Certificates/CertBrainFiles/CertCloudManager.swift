@@ -194,7 +194,7 @@ final class CertCloudManager: ObservableObject {
     /// - Parameter notification: Notification with the name of the String constant .certCoordinatorListSyncCompleted
     @objc private func handleMovingCertFilesUpon(_ notification: Notification) {
         Task.detached { [weak self] in
-            await self?.mover.moveAllCertFiles()
+//            await self?.mover.moveAllCertFiles()
         }//: TASK
     }//: handleMovingCertFilesUpon(notification)
     

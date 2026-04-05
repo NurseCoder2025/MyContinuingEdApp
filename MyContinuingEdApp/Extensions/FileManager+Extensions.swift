@@ -100,7 +100,7 @@ extension FileManager {
     ///   - media: MediaType enum indicating if the media being stored is an image, pdf, or audio file
     ///   - forPrompt: [Optional] ReflectionPrompt object for which audio reflections are being saved
     /// - Returns: String representing the relative path for the newly selected/created media file
-    func createMediaRelativePath(for activity: CeActivity, toSave media: MediaType, forPrompt: ReflectionPrompt?) -> String {
+    func createMediaRelativePath(for activity: CeActivity, toSave media: MediaClass, forPrompt: ReflectionPrompt?) -> String {
         var pathString: String = ""
         var topDirectoryName: String = ""
         var subFolderName: String = ""
@@ -110,9 +110,9 @@ extension FileManager {
         subFolderName = createActivitySubFolderName(for: activity)
         
         if let prompt = forPrompt {
-            fileName = createMediaFileName(forCE: activity, forPrompt: prompt, type: media)
+            fileName = createMediaFileName(forCE: activity, forPrompt: prompt, as: media)
         } else {
-            fileName = createMediaFileName(forCE: activity, forPrompt: nil, type: media)
+            fileName = createMediaFileName(forCE: activity, forPrompt: nil, as: media)
         }//: IF LET
         
         pathString.append("\(topDirectoryName)/\(subFolderName)/\(fileName)")
@@ -120,13 +120,11 @@ extension FileManager {
         return pathString
     }//: createMediaRelativePath(for)
     
-    func createTopSubDirectoryName(for mediaType: MediaType) -> String {
-        switch mediaType {
-        case .image:
+    func createTopSubDirectoryName(for category: MediaClass) -> String {
+        switch category {
+        case .certificate:
             return "Certificates"
-        case .pdf:
-            return "Certificates"
-        case .audio:
+        case .audioReflection:
             return "Reflections"
         }//: SWITCH
     }//: createTopSubDirectoryName(for)
@@ -172,20 +170,16 @@ extension FileManager {
     ///
     /// - Note: The reason for making the activity parameter optional is because of the possibility a CeActivity may not be,
     /// and is not required to be, assigned to a mediat object.  Both situations are handled by the method.
-    func createMediaFileName(forCE activity: CeActivity?, forPrompt prompt: ReflectionPrompt?, type: MediaType) -> String {
+    func createMediaFileName(forCE activity: CeActivity?, forPrompt prompt: ReflectionPrompt?, as category: MediaClass) -> String {
         var namePrefix: String = ""
         var baseFileName: String = ""
         var fileExtension: String = ""
-        let calendar = Calendar.current
         
-        switch type {
-        case .image:
+        switch category {
+        case .certificate:
             namePrefix = "Certificate"
             fileExtension = String.certImageFormatExtension
-        case .pdf:
-            namePrefix = "Certificate"
-            fileExtension = String.certImageFormatExtension
-        case .audio:
+        case .audioReflection:
             namePrefix = "Reflection"
             fileExtension = String.audioFormatExtension
         }//: SWITCH

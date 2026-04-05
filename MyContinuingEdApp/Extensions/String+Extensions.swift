@@ -35,6 +35,12 @@ extension String {
     /// Constant for use in CloudKit methods. Value is "mediaData".
     static let mediaDataKey: String = "mediaData"
     
+    static let certificateZoneId: String = "userCertificates"
+    
+    static let audioReflectionZoneId: String = "userAudioReflections"
+    
+    static let mediaDeletionSubscription: String = "mediaFileDeletionSubscription"
+    
     // MARK: - User Default Keys
     static let onBoardingKey: String = "showUserOnboarding"
     

@@ -52,6 +52,7 @@
 		3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */; };
 		3F3B45502F403A08002792D7 /* CertificateDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3B454F2F403A08002792D7 /* CertificateDocument.swift */; };
 		3F3B45522F403CA7002792D7 /* FileTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3B45512F403CA7002792D7 /* FileTypes.swift */; };
+		3F3E6E682F82225B00047620 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF979212F457E8A00DD8363 /* String+Extensions.swift */; };
 		3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3A2EF9FEAF00BBE427 /* OnboardingView.swift */; };
 		3F3EAC3F2EF9FF4000BBE427 /* OnboardingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC3D2EF9FF4000BBE427 /* OnboardingCardView.swift */; };
 		3F3EAC412EFA001300BBE427 /* TutorialStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3EAC402EFA001300BBE427 /* TutorialStep.swift */; };
@@ -114,6 +115,8 @@
 		3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */; };
 		3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */; };
 		3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */; };
+		3F8796882F821D3B00A6E91D /* Enums-General.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B9379C2E836F5600AF9155 /* Enums-General.swift */; };
+		3F8796892F821E9800A6E91D /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
 		3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */; };
 		3F8DC7CC2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8DC7CB2F6B9CB4002A72E2 /* AudioReflectionHelpers.swift */; };
@@ -201,7 +204,6 @@
 		3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */; };
 		3FF979222F457E8A00DD8363 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF979212F457E8A00DD8363 /* String+Extensions.swift */; };
 		3FFD5FE92F7F017D001C4390 /* CertMediaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFD5FE82F7F017D001C4390 /* CertMediaManager.swift */; };
-		3FFD5FEB2F7F2B29001C4390 /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */; };
 		3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */; };
 		3FFE836F2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */; };
 		3FFE83712EA086C300C7E815 /* SidebarCredentialsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */; };
@@ -521,7 +523,6 @@
 		3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		3FF979212F457E8A00DD8363 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		3FFD5FE82F7F017D001C4390 /* CertMediaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertMediaManager.swift; sourceTree = "<group>"; };
-		3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		3FFE836C2EA07D9400C7E815 /* SidebarViewTopToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarViewTopToolbar.swift; sourceTree = "<group>"; };
 		3FFE836E2EA0800300C7E815 /* SidebarCredentialSectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarCredentialSectionHeader.swift; sourceTree = "<group>"; };
 		3FFE83702EA086C300C7E815 /* SidebarCredentialsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SidebarCredentialsSectionView.swift; path = "MyContinuingEdApp/Sidebar/Credential Section/SidebarCredentialsSectionView.swift"; sourceTree = SOURCE_ROOT; };
@@ -762,7 +763,6 @@
 			isa = PBXGroup;
 			children = (
 				3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */,
-				3FFD5FEA2F7F2B29001C4390 /* CKRecord+Extensions.swift */,
 				3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
@@ -1490,6 +1490,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F8796882F821D3B00A6E91D /* Enums-General.swift in Sources */,
+				3F3E6E682F82225B00047620 /* String+Extensions.swift in Sources */,
+				3F8796892F821E9800A6E91D /* URL+Extensions.swift in Sources */,
 				3F7B68012EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1771,7 +1774,6 @@
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,
 				3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */,
 				F291AE8C2E5E823D00ECA8CD /* DesignationEditView.swift in Sources */,
-				3FFD5FEB2F7F2B29001C4390 /* CKRecord+Extensions.swift in Sources */,
 				3FFE836D2EA07D9400C7E815 /* SidebarViewTopToolbar.swift in Sources */,
 				F2B937A32E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift in Sources */,
 				3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */,

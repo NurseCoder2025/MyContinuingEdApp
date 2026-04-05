@@ -166,6 +166,7 @@ enum CredentialType: String, CaseIterable {
 enum CertType: String, CaseIterable, Codable {case image, pdf}
 enum MediaType: String, CaseIterable, Codable {case image, pdf, audio}
 enum SaveLocation: String, Codable {case local, cloud, unknown}
+enum MediaClass: String, CaseIterable, Codable { case certificate, audioReflection }
 
 /// Global enum for providing the string identifier for CKRecord types. Values are either certificate or
 /// audioReflection.
@@ -267,13 +268,6 @@ enum LoadState {
 }//: LoadState
 
 // MARK: - SETTINGS
-/// Enum used in DetailView for determining which view to show the user, depending on whether
-/// they are editing a CeActivity and are navigating to the AcitivityReflectionView or if they are
-/// accessing the app's settings page.
-enum PageDestination: Hashable {
-    case settings
-    case reflection(ActivityReflection)
-}//: PageDestination
 
 /// Enum used for setting the value of Setting keys pertaining to the numerical value shown
 /// in badges, such as the one for each Tag and RenewalPeriod in SidebarView.

@@ -22,15 +22,27 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
         - recordResultCount: Int
         - loadingError: Bool
         - loadingErrorMessage: String
+     
+        - nc = NotificationCenter.default
      */
     
     var problemCertRecordFiles: [CKRecord.ID] = []
+  
     
     // MARK: - LOADING
     
     func loadAllCertificates() async {
         isLoading = true
         errorMessage = ""
+        
+        let loadingCompleted = Notification.Name(String.certLoadingDoneNotification)
+        nc.removeObserver(self, name: loadingCompleted, object: nil)
+        nc.addObserver(
+            self,
+            selector: #selector(handleCertsLoadingCompleted(_:)),
+            name: loadingCompleted,
+            object: nil
+        )//: addObserver
         
         let typeToLoad: String = CkRecordType.certificate.rawValue
         // Configuring search query (CKQuery)
@@ -48,13 +60,6 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
             self.errorMessage = "iCloud currently unavailable: \(error.localizedDescription)"
         }//: DO-CATCH
         
-        if problemCertRecordFiles.isNotEmpty {
-            loadingError = true
-            loadingErrorMessage = "Not all certificates could be loaded. Out of \(recordResultCount) files, \(problemCertRecordFiles.count) could not be loaded.) "
-            NSLog(">>> \(loadingErrorMessage)")
-        }//: IF (isNotEmpty)
-        
-        isLoading = false
     }//: loadAllCertificates
     
     /// CertMediaManager method for finding the CKRecord that has the assignedObjectId value which matches the
@@ -68,7 +73,7 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     /// to locate the record more directly via the private helper method findMatchingRecordFor(activity).
     func loadCertificateFor(activity: CeActivity) {
         guard let assignedCert = activity.certificate,
-        let ceId = activity.activityID else {
+        let _ = activity.activityID else {
             return
         }//: GUARD
         isLoading = true
@@ -116,7 +121,7 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     // MARK: - SAVING
     
     func saveCertificateToCloudFor(activity: CeActivity, inFormat: MediaType, localSaveUrl: URL) async {
-        var newModel = createCertModelFor(activity: activity, certFormat: inFormat)
+        var newModel = createCertModelFor(activity: activity, inFormat: inFormat)
         let newRecord = createNewCKRecord(recordType: CkRecordType.certificate, forModel: newModel, dataAt: localSaveUrl)
         
         do {
@@ -132,12 +137,12 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     
     // MARK: - DELETION
     
-    func deleteSavedCertificateFor(activity: CeActivity, asType: MediaType) async {
+    func deleteSavedCertificateFor(activity: CeActivity, asType: MediaClass) async {
         guard let assignedCertificate = activity.certificate,
         let assignedId = activity.activityID else { return } //: GUARD
         
         do {
-            try await deleteMediaItem(type: asType, for: assignedId)
+            try await deleteMediaItem(cat: asType, for: assignedId)
             dataController.delete(assignedCertificate)
             dataController.save()
         } catch {
@@ -148,11 +153,22 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
         
     }//: deleteSavedCertificateFor(activity)
     
+    // MARK: - SELECTORS
+    
+    @objc private func handleCertsLoadingCompleted(_ notification: Notification) {
+        Task{
+            await saveNewlyDownloadedCerts()
+        }//: TASK
+    }//: handleCertsLoadingCompleted()
+    
+    
+    
     // MARK: - HELPER METHODS
     private func processCertRecordQueryResults(
         results: [(CKRecord.ID, Result<CKRecord, any Error>)]
     ) {
         var fetchedCerts: [CertificateModel] = []
+        let loadedCompleted = Notification.Name(String.certLoadingDoneNotification)
         
         for (item, recordResult) in results {
             switch recordResult {
@@ -177,6 +193,17 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
         fetchedCerts.forEach {
             self.mediaFiles.insert($0)
         }//: FOR EACH
+        
+        if problemCertRecordFiles.isNotEmpty {
+            loadingError = true
+            loadingErrorMessage = "Not all certificates could be loaded. Out of \(recordResultCount) files, \(problemCertRecordFiles.count) could not be loaded.) "
+            NSLog(">>> \(loadingErrorMessage)")
+        }//: IF (isNotEmpty)
+        
+        isLoading = false
+        Task{@MainActor in
+            nc.post(name: loadedCompleted, object: nil)
+        }//: MAIN ACTOR
     }//: processCertRecordQueryResults
     
     private func createCertModelFromCkRecord(_ record: CKRecord) -> CertificateModel? {
@@ -185,7 +212,7 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
             let locName = record[.locationKey] as? String,
             let version = record[.versionKey] as? Double,
             let assocObj = record[.assignedObjectKey] as? UUID,
-            let objectStringId = record[.objectIdStringKey] as? String {
+            let _ = record[.objectIdStringKey] as? String {
             // Create the new CertificateModel record using CKRecord
             // Key-Values
             let savedCert = CertificateModel(
@@ -204,7 +231,7 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     }//: createCertModelFromCkRecord(record)
     
     private func findMatchingRecordFor(activity: CeActivity) async -> CKRecord? {
-        guard let assignedCert = activity.certificate,
+        guard let _ = activity.certificate,
         let ceId = activity.activityID else { return nil }//: GUARD
         
         let activityIdString: String = ceId.uuidString
@@ -264,9 +291,14 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     ///   - certFormat: MediaType enum indicating whether the certificate is an image or pdf
     /// - Returns: CertificateModel initialized with a newly computed relative path for the file, the media format, and the
     /// activityID property for the CeActivity.  All other values are left at default values per the CertificateModel init() method.
-    private func createCertModelFor(activity: CeActivity, certFormat: MediaType) -> CertificateModel {
+    private func createCertModelFor(
+        activity: CeActivity,
+        asType: MediaClass = .certificate,
+        inFormat certFormat: MediaType
+    ) -> CertificateModel
+    {
         if let assignedId = activity.activityID {
-            let certRelPath = fileSystem.createMediaRelativePath(for: activity, toSave: certFormat, forPrompt: nil)
+            let certRelPath = fileSystem.createMediaRelativePath(for: activity, toSave: asType, forPrompt: nil)
             let newCertModel = CertificateModel(
                 relativePath: certRelPath,
                 mediaType: certFormat.rawValue,
@@ -278,7 +310,7 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
             activity.activityID = newActivityId
             dataController.save()
             
-            let certRelPath = fileSystem.createMediaRelativePath(for: activity, toSave: certFormat, forPrompt: nil)
+            let certRelPath = fileSystem.createMediaRelativePath(for: activity, toSave: asType, forPrompt: nil)
             let newCertModel = CertificateModel(
                 relativePath: certRelPath,
                 mediaType: certFormat.rawValue,
@@ -289,7 +321,80 @@ final class CertMediaManager: CloudMediaManager<CertificateModel> {
     }//: createCertModelFor(activity)
     
     
+    private func saveNewlyDownloadedCerts() async {
+        guard mediaFiles.isNotEmpty else { return }
+        
+        var filesToMove: [CertificateModel: URL] = [:]
+        for file in self.mediaFiles {
+            if let savedRecord = file.cloudRecord, let certFileAsset = savedRecord[.mediaDataKey] as? CKAsset {
+                if let assetUrl = certFileAsset.fileURL {
+                    if assetUrl.isMediaLocallySavedUrlFor(category: .certificate) {
+                        continue
+                    } else {
+                        filesToMove[file] = assetUrl
+                    }//: IF ELSE (.isMediaLocallySavedUrlFor(category)
+                }//: IF LET
+            }//: IF LET (savedRecord, certFileAsset)
+        }//: LOOP
+        
+        var problemFiles: [CertificateModel] = []
+        for (modelKey, urlValue) in filesToMove {
+            if let matchedActivity = findMatchingActivityWith(model: modelKey) {
+                let basePath: URL = URL.localCertificatesFolder
+                var pathToUse: String
+                var saveURL: URL
+                if modelKey.relativePath.count < 25 {
+                    pathToUse = fileSystem.createMediaRelativePath(for: matchedActivity, toSave: .certificate, forPrompt: nil)
+                    saveURL = basePath.appending(path: pathToUse, directoryHint: .notDirectory)
+                } else {
+                    saveURL = modelKey.resolveURL(basePath: basePath)
+                }//: IF ELSE
+                
+                do {
+                    try fileSystem.moveItem(at: urlValue, to: saveURL)
+                } catch {
+                    NSLog(">>> CertMediaManager error: saveNewlyDownloadedCerts()")
+                    NSLog(">>> Failed to move the downloaded certificate file: \(urlValue.path) to the local media folder: \(saveURL.path)")
+                    NSLog("Error: \(error.localizedDescription)")
+                    problemFiles.append(modelKey)
+                }//: DO-CATCH
+            }//: IF LET (findMatchingActivityWith)
+            
+            if problemFiles.count > 0 {
+                loadingError = true
+                loadingErrorMessage = "Unable to save all of the certificates that were previously saved on your other devices. Out of \(filesToMove.count) new certificates to save on this device, \(problemFiles.count) were not saved."
+            }//: IF (count > 0)
+        }//: LOOP
+    }//: saveNewlyDownloadedCerts()
+    
+    private func findMatchingActivityWith(model: CertificateModel) -> CeActivity? {
+        let context = dataController.container.viewContext
+        let activityFetch = CeActivity.fetchRequest()
+        let searchPredicate: NSPredicate = NSPredicate(format: "%K == %@", #keyPath(CeActivity.activityID), model.assignedObjectId as CVarArg)
+        let fetchResults = (try? context.fetch(activityFetch)) ?? []
+        guard fetchResults.count == 1, let matchingActivity = fetchResults.first else { return nil }
+        
+        return matchingActivity
+    }//: findMatchingActivityWith(model)
+    
+    private func deleteCertDataFileUponNotification() {
+        guard !dataController.subscribedToMediaDeleteNotifications else { return }//: GUARD
+        
+        let deletionSubId: String = .mediaDeletionSubscription
+        let deletionSubscription = CKDatabaseSubscription(subscriptionID: deletionSubId)
+        if let noticeInfo = deletionSubscription.notificationInfo {
+            noticeInfo.shouldSendMutableContent = true
+        }//: IF LET
+        
+        
+        
+        
+        
+    }//: deleteCertDataFileUponNotification
+    
     
     // MARK: - INIT
+    
+   
     
 }//: CLASS

@@ -56,34 +56,6 @@
                   startingLineNumber = "40"
                   endingLineNumber = "40">
                </Location>
-               <Location
-                  uuid = "F3F688D0-C20C-4F5B-A969-3F24D02E0F8C - b25a491448b53ad4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) await resume partial function for MyContinuingEdApp.CertificateLoader.loadSavedCertificate(for: MyContinuingEdApp.CeActivity) async throws -&gt; ()"
-                  moduleName = "MyContinuingEdApp.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ilum/Documents/App%20Development/iOS%20Projects/Portfolio%20Apps/MyContinuingEdApp/MyContinuingEdApp/Certificates/CertBrainFiles/CertificateLoader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40">
-               </Location>
-               <Location
-                  uuid = "F3F688D0-C20C-4F5B-A969-3F24D02E0F8C - de84206debb0e921"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for MyContinuingEdApp.CertificateLoader.loadSavedCertificate(for: MyContinuingEdApp.CeActivity) async throws -&gt; ()"
-                  moduleName = "MyContinuingEdApp.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ilum/Documents/App%20Development/iOS%20Projects/Portfolio%20Apps/MyContinuingEdApp/MyContinuingEdApp/Certificates/CertBrainFiles/CertificateLoader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "40"
-                  endingLineNumber = "40">
-               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>

@@ -369,6 +369,17 @@ extension DataController {
         
     }//: prefersAudioReflectionsInICloud
     
+    // MARK: CloudKit Subscriptions
+    
+    var subscribedToMediaDeleteNotifications: Bool {
+        get {
+            sharedSettings.bool(forKey: "onDeleteQuerySubscribed")
+        }
+        set {
+            sharedSettings.set(newValue, forKey: "onDeleteQuerySubscribed")
+        }
+    }//: subscribedToOnDeleteNotifications
+    
     // MARK: PRIVACY
     
     var allowsAutoTranscriptionOfAudio: Bool {
@@ -412,7 +423,8 @@ extension DataController {
             "isFirstRun",
             "prefersCertificatesInICloud",
             "prefersAudioReflectionsInICloud",
-            "allowsAutoTranscriptionOfAudio"
+            "allowsAutoTranscriptionOfAudio",
+            "onDeleteQuerySubscribed"
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

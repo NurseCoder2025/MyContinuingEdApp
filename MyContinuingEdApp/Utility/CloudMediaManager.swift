@@ -17,6 +17,7 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
     
     @Published var mediaFiles: Set<forMedia> = []
     @Published var mediaFileToLoad: (any MediaModel)? = nil
+    
     @Published var isLoading: Bool = false
     @Published var loadingError: Bool = false
     @Published var errorMessage: String = ""
@@ -27,7 +28,11 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
     
     // TODO: Make sure the database property points to the right container!!
     let database = CKContainer(identifier: String.appContainerName).privateCloudDatabase
+    
+    
+    
     let fileSystem = FileManager()
+    let nc = NotificationCenter.default
     
     // MARK: - UNIVERSAL METHODS
     
@@ -37,7 +42,17 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
         dataAt: URL
     ) -> CKRecord {
         let recordTypeText = recordType.rawValue
-        let newRecord: CKRecord = CKRecord(recordType: recordTypeText)
+        let recordIdentifier: String = UUID().uuidString
+        var recordZone: CKRecordZone
+        switch recordType {
+        case .certificate:
+            recordZone = CKRecordZone(zoneName: String.certificateZoneId)
+        case .audioReflection:
+            recordZone = CKRecordZone(zoneName: String.audioReflectionZoneId)
+        }//: SWITCH
+        let newRecordId = CKRecord.ID(recordName: recordIdentifier, zoneID: recordZone.zoneID)
+        
+        let newRecord = CKRecord(recordType: recordTypeText, recordID: newRecordId)
         newRecord[.relPathKey] = forModel.relativePath
         newRecord[.mediaKey] = forModel.mediaType
         newRecord[.locationKey] = forModel.saveLocation
@@ -49,10 +64,12 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
         let savedAsset = CKAsset(fileURL: dataAt)
         newRecord[.mediaDataKey] = savedAsset
         
+        
+        
         return newRecord
     }//: createNewCKRecord()
     
-    func deleteMediaItem(type: MediaType, for objectId: UUID) async throws {
+    func deleteMediaItem(cat: MediaClass, for objectId: UUID) async throws {
         let matchingItem = mediaFiles.first(where: {$0.assignedObjectId == objectId})//: matchingItem(first)
         guard let itemToDelete = matchingItem,
               let savedRecord = itemToDelete.cloudRecord else {
@@ -63,13 +80,23 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
             throw fileHandlingError
         }//: GUARD
         
+        var basePathToUse: URL
+        switch cat {
+        case .certificate:
+            basePathToUse = URL.localCertificatesFolder
+        case .audioReflection:
+            basePathToUse = URL.localAudioReflectionsFolder
+        }//: SWITCH
+        
         do {
             try await database.deleteRecord(withID: savedRecord.recordID)
+            let assetLocation = itemToDelete.resolveURL(basePath: basePathToUse)
+            try fileSystem.removeItem(at: assetLocation)
             mediaFiles.remove(itemToDelete)
         } catch {
             var mediaBeingDeleted: String = ""
-            switch type {
-            case .audio:
+            switch cat {
+            case .audioReflection:
                 mediaBeingDeleted = "audio reflection"
             default:
                 mediaBeingDeleted = "certificate"
@@ -78,6 +105,18 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
             NSLog(">>> Error deleting the CKRecord for the selected \(mediaBeingDeleted). Error: \(error.localizedDescription)")
         }//: DO-CATCH
     }//: deleteMediaItem()
+    
+    /// Helper method for obtaining the fileURL property from a CKAsset object in order to move,
+    /// delete, or perform some other file writing operation on it.
+    /// - Parameter record: CKRecord object containing the CKAsset object
+    /// - Returns: URL if value is present and CKAsset key has a corresponding value
+    func getCurrentURLForMediaFile(from record: CKRecord) -> URL? {
+        if let assetRecord: CKAsset = record[.mediaDataKey] as? CKAsset, let localFile: URL = assetRecord.fileURL {
+           return localFile
+        } else {
+            return nil
+        }//: IF ELSE
+    }//: getCurrentURLForMediaFile()
     
     
     // MARK: - ERROR METHODS
@@ -116,6 +155,20 @@ class CloudMediaManager<forMedia>: ObservableObject where forMedia: MediaModel {
     
     // MARK: - INIT
     
-
+    init() {
+        let certZone = CKRecordZone(zoneName: String.certificateZoneId)
+        let reflectionZone = CKRecordZone(zoneName: String.audioReflectionZoneId)
+        
+        let zoneInit = CKModifyRecordZonesOperation(recordZonesToSave: [certZone, reflectionZone], recordZoneIDsToDelete: nil)
+        
+        zoneInit.qualityOfService = .default
+        zoneInit.perRecordZoneSaveBlock = { _, _ in }
+        zoneInit.perRecordZoneDeleteBlock = { _, _ in }
+        zoneInit.completionBlock = {
+            NSLog("Successfully initialized CKRecordZones.")
+        }//: completionBlock
+        
+        database.add(zoneInit)
+    }//: INIT
     
 }//: CLASS
