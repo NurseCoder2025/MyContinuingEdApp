@@ -31,12 +31,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var isFirstRun: Bool {
         get {
-            sharedSettings.bool(forKey: "isFirstRun")
+            sharedSettings.bool(forKey: String.firstRunKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "isFirstRun")
+            sharedSettings.set(newValue, forKey: String.firstRunKey)
         }
     }//: isFirstRun
     
@@ -48,12 +48,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var showOnboardingScreen: Bool {
         get {
-            sharedSettings.bool(forKey: "showOnboardingScreen")
+            sharedSettings.bool(forKey: String.onBoardingKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showOnboardingScreen")
+            sharedSettings.set(newValue, forKey: String.onBoardingKey)
         }
     }//: showOnboardingScreen
     
@@ -61,10 +61,10 @@ extension DataController {
     /// control whether to show the user an alert reminding them to enable alerts/notifications for the app.
     var showReminderAlert: Bool {
         get {
-            sharedSettings.bool(forKey: "showReminderAlert")
+            sharedSettings.bool(forKey: String.reminderAlertKey)
         }
         set {
-            sharedSettings.set(newValue, forKey: "showReminderAlert")
+            sharedSettings.set(newValue, forKey: String.reminderAlertKey)
             objectWillChange.send()
         }
     }//: showReminderAlert
@@ -80,12 +80,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var primaryNotificationDays: Double {
         get {
-            sharedSettings.double(forKey: "primaryNotificationDays")
+            sharedSettings.double(forKey: String.primaryNotificationDaysKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "primaryNotificationDays")
+            sharedSettings.set(newValue, forKey: String.primaryNotificationDaysKey)
         }
     } //: primaryNotificationDays
     
@@ -99,12 +99,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var secondaryNotificationDays: Double {
         get {
-            sharedSettings.double(forKey: "secondaryNotificationDays")
+            sharedSettings.double(forKey: String.secondaryNotificationDaysKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "secondaryNotificationDays")
+            sharedSettings.set(newValue, forKey: String.secondaryNotificationDaysKey)
         }
     }//: secondaryNotificationDays
     
@@ -119,12 +119,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var firstLiveEventAlert: Double {
         get {
-            sharedSettings.double(forKey: "firstLiveEventAlert")
+            sharedSettings.double(forKey: String.firstLiveAlertKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "firstLiveEventAlert")
+            sharedSettings.set(newValue, forKey: String.firstLiveAlertKey)
         }
         
     }//: firstLiveEventAlert
@@ -140,11 +140,11 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var secondLiveEventAlert: Double {
         get {
-            sharedSettings.double(forKey: "secondLiveEventAlert")
+            sharedSettings.double(forKey: String.secondLiveAlertKey)
         }
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "secondLiveEventAlert")
+            sharedSettings.set(newValue, forKey: String.secondLiveAlertKey)
         }
     }//: secondLiveEventAlert
     
@@ -167,11 +167,11 @@ extension DataController {
     /// credential reinstatement process (see ReinstatementInfo object for relevant properties).
     var showAllLiveEventAlerts: Bool {
         get {
-            sharedSettings.bool(forKey: "showAllLiveEventAlerts")
+            sharedSettings.bool(forKey: String.liveEventAlertsKey)
         }
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showAllLiveEventAlerts")
+            sharedSettings.set(newValue, forKey: String.liveEventAlertsKey)
         }
     }//: showActivityStartNotifications
     
@@ -193,12 +193,12 @@ extension DataController {
     /// changes (especially in fields like healthcare and law).
     var showExpiringCesNotifications: Bool {
         get {
-            sharedSettings.bool(forKey: "showExpiringCesNotifications")
+            sharedSettings.bool(forKey: String.expiringCeNotificationKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showExpiringCesNotifications")
+            sharedSettings.set(newValue, forKey: String.expiringCeNotificationKey)
         }
     }//: showExpiringCesNotification
     
@@ -212,12 +212,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var showRenewalEndingNotifications: Bool {
         get {
-            sharedSettings.bool(forKey: "showRenewalEndingNotifications")
+            sharedSettings.bool(forKey: String.renewalEndingNotificationKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showRenewalEndingNotifications")
+            sharedSettings.set(newValue, forKey: String.renewalEndingNotificationKey)
         }
     }//: showRenewalEndingNotification
     
@@ -231,12 +231,12 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var showRenewalLateFeeNotifications: Bool {
         get {
-            sharedSettings.bool(forKey: "showRenewalLateFeeNotifications")
+            sharedSettings.bool(forKey: String.renewalLateFeeNotificationKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showRenewalLateFeeNotifications")
+            sharedSettings.set(newValue, forKey: String.renewalLateFeeNotificationKey)
         }
     }//: showRenewalLateFeeNotification
     
@@ -256,12 +256,12 @@ extension DataController {
     /// this setting to false prevents any notifications from being created.
     var showDAINotifications: Bool {
         get {
-            sharedSettings.bool(forKey: "showDAINotifications")
+            sharedSettings.bool(forKey: String.daiNotificationKey)
         }
         
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "showDAINotifications")
+            sharedSettings.set(newValue, forKey: String.daiNotificationKey)
         }
     }//: showDAINotifications
     
@@ -276,11 +276,11 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var showReinstatementAlerts: Bool {
         get {
-            sharedSettings.bool(forKey: "showCredentialReinstatementAlerts")
+            sharedSettings.bool(forKey: String.credentialReinstateAlertKey)
         }
         set {
             objectWillChange.send( )
-            sharedSettings.set(newValue, forKey: "showCredentialReinstatementAlerts")
+            sharedSettings.set(newValue, forKey: String.credentialReinstateAlertKey)
         }
     }//: showReinstatementAlerts
     
@@ -297,7 +297,7 @@ extension DataController {
     /// Otherwise, proper syncing of changes in this setting will not occur between devices.
     var tagBadgeCountFor: String {
         get async {
-            sharedSettings.string(forKey: "tagBadgeCountOf") ?? "allItems"
+            sharedSettings.string(forKey: String.tagBadgeIndicatorKey) ?? "allItems"
         }
     }//: tagBadgeIndicator
     
@@ -313,7 +313,7 @@ extension DataController {
     func setTagBadgeCount(to: String) {
         guard BadgeCountOption.allCases.contains(where: { $0.id == to }) else { return }
         objectWillChange.send( )
-        sharedSettings.set(to, forKey: "tagBadgeCountOf")
+        sharedSettings.set(to, forKey: String.tagBadgeIndicatorKey)
     }//: set TagBadgeCount
     
     
@@ -326,26 +326,27 @@ extension DataController {
     /// - Key: "requestReviewCount" (Int64)
     var requestReviewCount: Int64 {
         get {
-            sharedSettings.longLong(forKey: "requestReviewCount")
+            sharedSettings.longLong(forKey: String.askForReviewKey)
         }
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "requestReviewCount")
+            sharedSettings.set(newValue, forKey: String.askForReviewKey)
         }
     }//: requestReviewCount
     #endif
-    
     
     
     // MARK: iCLOUD STORAGE
     
     var prefersCertificatesInICloud: Bool {
         get {
-            sharedSettings.bool(forKey: "prefersCertificatesInICloud")
+            sharedSettings.bool(forKey: String.storeCertsInCloudKey)
         }
         set {
             objectWillChange.send()
-            sharedSettings.set(newValue, forKey: "prefersCertificatesInICloud")
+            sharedSettings.set(newValue, forKey: String.storeCertsInCloudKey)
+            cloudState.userCloudPrefs[.certsInCloud] = newValue
+            cloudState.encodeCurrentState()
             let updateNotification = Notification.Name(.cloudStoragePreferenceChanged)
             // Need to be explicit about posting on the main thread due to
             // an observer method (moveCertFiles) that needs to be run on
@@ -360,34 +361,47 @@ extension DataController {
     
     var prefersAudioReflectionsInICloud: Bool {
         get {
-            sharedSettings.bool(forKey: "prefersAudioReflectionsInICloud")
+            sharedSettings.bool(forKey: String.storeAudioInCloudKey)
         }
         set {
-            sharedSettings.set(newValue, forKey: "prefersAudioReflectionsInICloud")
+            sharedSettings.set(newValue, forKey: String.storeAudioInCloudKey)
+            cloudState.userCloudPrefs[.audioInCloud] = newValue
+            cloudState.encodeCurrentState()
             objectWillChange.send( )
         }
         
     }//: prefersAudioReflectionsInICloud
     
-    // MARK: CloudKit Subscriptions
-    
-    var subscribedToMediaDeleteNotifications: Bool {
+    var prefersAutoDownloadForCerts: Bool {
         get {
-            sharedSettings.bool(forKey: "onDeleteQuerySubscribed")
+            sharedSettings.bool(forKey: String.autoDownloadCertsKey)
         }
         set {
-            sharedSettings.set(newValue, forKey: "onDeleteQuerySubscribed")
+            sharedSettings.set(newValue, forKey: String.autoDownloadCertsKey)
+            cloudState.userCloudPrefs[.autoDownloadCerts] = newValue
+            cloudState.encodeCurrentState()
         }
-    }//: subscribedToOnDeleteNotifications
+    }//: prefersAutoDownloadForCerts
+    
+    var prefersAutoDownalodForAudio: Bool {
+        get {
+            sharedSettings.bool(forKey: String.autoDownloadAudioKey)
+        }
+        set {
+            sharedSettings.set(newValue, forKey: String.autoDownloadAudioKey)
+            cloudState.userCloudPrefs[.autoDownloadAudio] = newValue
+            cloudState.encodeCurrentState()
+        }
+    }//: prefersAutoDownloadForAudio
     
     // MARK: PRIVACY
     
     var allowsAutoTranscriptionOfAudio: Bool {
         get {
-            sharedSettings.bool(forKey: "allowsAutoTranscriptionOfAudio")
+            sharedSettings.bool(forKey: String.autoAudioTranscriptionKey)
         }
         set {
-            sharedSettings.set(newValue, forKey: "allowsAutoTranscriptionOfAudio")
+            sharedSettings.set(newValue, forKey: String.autoAudioTranscriptionKey)
             objectWillChange.send()
         }
     }//: allowsAutoTranscriptionOfAudio
@@ -406,25 +420,26 @@ extension DataController {
     /// between devices.
     @objc func handleKeyValueStoreChanges(_ notification: Notification) {
         let settingsKeys: Set<String> = [
-            "showOnboardingScreen",
-            "showReminderAlert",
-            "purchaseStatus",
-            "primaryNotificationDays",
-            "secondaryNotificationDays",
-            "showExpiringCesNotifications",
-            "showRenewalEndingNotifications",
-            "showRenewalLateFeeNotifications",
-            "showDAINotifications",
-            "showAllLiveEventAlerts",
-            "showCredentialReinstatementAlerts",
-            "firstLiveEventAlert",
-            "secondLiveEventAlert",
-            "tagBadgeCountOf",
-            "isFirstRun",
-            "prefersCertificatesInICloud",
-            "prefersAudioReflectionsInICloud",
-            "allowsAutoTranscriptionOfAudio",
-            "onDeleteQuerySubscribed"
+            String.onBoardingKey,
+            String.reminderAlertKey,
+            String.purchaseStatusKey,
+            String.primaryNotificationDaysKey,
+            String.secondaryNotificationDaysKey,
+            String.expiringCeNotificationKey,
+            String.renewalEndingNotificationKey,
+            String.renewalLateFeeNotificationKey,
+            String.daiNotificationKey,
+            String.liveEventAlertsKey,
+            String.credentialReinstateAlertKey,
+            String.firstLiveAlertKey,
+            String.secondLiveAlertKey,
+            String.tagBadgeIndicatorKey,
+            String.firstRunKey,
+            String.storeCertsInCloudKey,
+            String.storeAudioInCloudKey,
+            String.autoAudioTranscriptionKey,
+            String.autoDownloadCertsKey,
+            String.autoDownloadAudioKey
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

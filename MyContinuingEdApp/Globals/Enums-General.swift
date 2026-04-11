@@ -348,7 +348,7 @@ enum MediaLoadingState: String, CaseIterable {
 ///
 ///  This enum also has a userMessage property which shows a different message for the user
 ///  for whichever status case applies.  This can be used in alerts and other UI elements.
-enum iCloudStatus: String, CaseIterable, Identifiable, Hashable {
+enum iCloudStatus: String, CaseIterable, Identifiable, Hashable, Codable {
     case loggedInDisabled = "iCloud Disabled"
     case loggedInUnavailable = "iCloud Unavailable"
     case loggedINDifferentAppleID = "Different Apple ID"
@@ -436,6 +436,10 @@ enum StorageToUse: Identifiable {
     var id: Self { self }
     
 }//: storageToUse
+
+enum UserCloudPrefKey: String, CaseIterable, Codable {
+    case certsInCloud, audioInCloud, autoDownloadCerts, autoDownloadAudio
+}//: userCloudPrefKeys
 
 
 // MARK: - FILE I/O

@@ -5,6 +5,7 @@
 //  Created by Ilum on 4/1/26.
 //
 
+import CloudKit
 import CoreData
 import Foundation
 
@@ -19,7 +20,7 @@ extension CertificateInfo {
     
     var certInfoRelativePath: String {
         get {
-            relativePath ?? ""
+            relativePath ?? "noCertificate.pdf"
         }
         set {
             relativePath = newValue
@@ -37,20 +38,27 @@ extension CertificateInfo {
         }
     }//: certInfoCertType
     
-    /// CoreData computed helper property for CertificateInfo that sets the String value for the
-    /// certCKRecordName property.
+    /// Computed CoreDate helper property for CertificateInfo that gets and sets the certCKRecordName
+    /// property for any given CKRecord.ID object.
     ///
-    /// - Important: ONLY use this property within methods that create and load CKRecord
-    /// objects storing the CKAsset object for certificate data (image or PDF binary data) associated
-    /// with a specific CeActivity.
-    var certInfoCKRecordName: String {
+    /// - Note: If the certCKRecordName property is currently nil, then the getter will return a new
+    /// CKRecord.ID object with the name contained in the String extension mediaIdPlaceholder constant.
+    ///
+    /// This computed property sets all new values as NSObjects as that is the underlying data type behind
+    /// Transformable types.  However, since CKRecord.ID inherits from NSObject then it can be
+    /// downcast to that type and saved in the database.
+    var certCloudRecordName: CKRecord.ID {
         get {
-            certCKRecordName ?? ""
+            guard let record = certCKRecordID as? CKRecord.ID else {
+                return CKRecord.ID(recordName: String.mediaIdPlaceholder)
+            }//: GUARD
+            return record
         }
+        
         set {
-            certCKRecordName = newValue
+            certCKRecordID = newValue as NSObject
         }
-    }//: certInfoCKRecordName
+    }//: certCloudRecordName
     
     // MARK: - Computed Properties
     
@@ -71,7 +79,6 @@ extension CertificateInfo {
     }//: formattedActivityCompletionDate
     
     
-    
     // MARK: - METHODS
     
     /// CoreData helper method for CertificateInfo that sets the String value for the certType property
@@ -81,5 +88,10 @@ extension CertificateInfo {
     func setCertificateMediaType(as type: CertType) {
         certType = type.rawValue
     }//: setCertificateMediaType(as)
+    
+    func resolveURL(basePath: URL) -> URL? {
+        guard let pathSaved = relativePath else {return nil}
+        return basePath.appending(path: pathSaved, directoryHint: .notDirectory)
+    }//: resolveURL(basePath)
     
 }//: EXTENSION

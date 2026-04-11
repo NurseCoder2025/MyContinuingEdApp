@@ -23,9 +23,6 @@ extension String {
     /// Constant for use in CloudKit methods. Value is "saveLocation".
     static let locationKey: String = "saveLocation"
     
-    /// Constant for use in CloudKit methods. Value is "appVersion".
-    static let versionKey: String = "appVersion"
-    
     /// Constant for use in CloudKit methods. Value is "assignedObjectId".
     static let assignedObjectKey: String = "assignedObjectId"
     
@@ -36,13 +33,13 @@ extension String {
     static let mediaDataKey: String = "mediaData"
     
     static let certificateZoneId: String = "userCertificates"
-    
     static let audioReflectionZoneId: String = "userAudioReflections"
     
     static let mediaDeletionSubscription: String = "mediaFileDeletionSubscription"
     
-    // MARK: - User Default Keys
-    static let onBoardingKey: String = "showUserOnboarding"
+    // MARK: - CORE DATA
+    
+    static let mediaIdPlaceholder: String = "Placeholder ID"
     
     // MARK: - File EXTENSIONS
     /// Static constant in the String struct (via extension) that sets the value for

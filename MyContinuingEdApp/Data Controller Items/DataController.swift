@@ -41,7 +41,24 @@ class DataController: ObservableObject {
     /// - Important: This should ONLY be used if the user either does not have iCloud or
     /// wishes to use it for the app.
     let localStorage = URL.documentsDirectory
-   
+    
+    /// DataController constant that holds an instance of the ICloudStateManager
+    /// class object for use within iCloud-related methods.
+    ///
+    /// The reason for having this class and creating an instance of it in DataController is
+    /// so that various iCloud related methods can save changes to the user's iCloud
+    /// status to the local device.  This file can then be read by other objects that need to
+    /// verify if iCloud is currently available or not without needing the DataController instance
+    /// passed into them as an argument or similar.
+    let cloudState = ICloudStateManager()
+    
+    /// DataController constant for a DispatchQueue when needed to perform basic file I/O operations, like small
+    /// JSON file writes.
+    ///
+    /// - Note: The label for the queue is "com.CeCache.basicCodingQueue"
+    /// This queue is specifically intended for the encoding and decoding of the userICloudID property as that is saved to
+    /// the local device via the encode/decodeICloudUserIdFile methods.
+    let basicCodingQueue = DispatchQueue(label: "com.CeCache.basicCodingQueue", qos: .utility)
     
     // Property for showing the activity reflection view
     @Published var showActivityReflectionView: Bool = false
