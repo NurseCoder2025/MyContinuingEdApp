@@ -78,10 +78,12 @@
     </entity>
     <entity name="CertificateInfo" representedClassName="CertificateInfo" syncable="YES" codeGenerationType="class">
         <attribute name="certCKRecordID" optional="YES" attributeType="Transformable"/>
+        <attribute name="certFileSize" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="certType" optional="YES" attributeType="String"/>
         <attribute name="infoID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="relativePath" optional="YES" attributeType="String"/>
         <attribute name="removeLocalFile" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="uploadedToICloud" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="completedCe" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="certificate" inverseEntity="CeActivity"/>
     </entity>
     <entity name="Country" representedClassName="Country" syncable="YES" codeGenerationType="class">

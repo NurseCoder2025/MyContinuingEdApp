@@ -23,4 +23,6 @@ struct MediaModel {
     
     func getRecTypeName() -> String { ckRecType.rawValue }//: getRecTypeName()
     
+    func createAssignedObjIdString() -> String { assignedObjectId.uuidString }
+    
 }//: MediaModel

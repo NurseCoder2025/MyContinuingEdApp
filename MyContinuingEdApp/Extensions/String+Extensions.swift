@@ -20,8 +20,6 @@ extension String {
     /// Constant for use in CloudKit methods. Value is "mediaType".
     static let mediaKey: String = "mediaType"
     
-    /// Constant for use in CloudKit methods. Value is "saveLocation".
-    static let locationKey: String = "saveLocation"
     
     /// Constant for use in CloudKit methods. Value is "assignedObjectId".
     static let assignedObjectKey: String = "assignedObjectId"

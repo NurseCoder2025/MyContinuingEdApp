@@ -29,8 +29,6 @@ class DataController: ObservableObject {
     /// Published DataController property that holds the URL for the default iCloud ubiqituity container that is set for the
     /// user for this app.  This value is set by the assessUserICloudStatus method.
     @Published var userCloudDriveURL: URL?
-    @Published var iCloudAvailability: iCloudStatus = .initialStatus
-    @Published var certificateAudioStorage: StorageToUse = .local
     private var iCloudTasks: Task<Void, Never>?
     
     /// Constant DataController property that sets a URL for a directory within the app's
@@ -42,15 +40,15 @@ class DataController: ObservableObject {
     /// wishes to use it for the app.
     let localStorage = URL.documentsDirectory
     
-    /// DataController constant that holds an instance of the ICloudStateManager
-    /// class object for use within iCloud-related methods.
+    /// DataController constant that holds the AppSettingsCache singleton
+    /// or use within iCloud and StoreKit methods.
     ///
     /// The reason for having this class and creating an instance of it in DataController is
     /// so that various iCloud related methods can save changes to the user's iCloud
     /// status to the local device.  This file can then be read by other objects that need to
     /// verify if iCloud is currently available or not without needing the DataController instance
     /// passed into them as an argument or similar.
-    let cloudState = ICloudStateManager()
+    let settingsCache = AppSettingsCache.shared
     
     /// DataController constant for a DispatchQueue when needed to perform basic file I/O operations, like small
     /// JSON file writes.

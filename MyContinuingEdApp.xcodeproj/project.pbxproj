@@ -50,8 +50,10 @@
 		3F483E352F58EA7000C21940 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */; };
 		3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */; };
 		3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */; };
+		3F4EAA262F8F2CF600884BCC /* CoreDataRecordHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */; };
 		3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */; };
 		3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */; };
+		3F5982BF2F8EEB9400FA30F5 /* AppSettingsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */; };
 		3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */; };
 		3F5D03292EB3F15800F5B1DC /* DataController-NewObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */; };
 		3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */; };
@@ -146,7 +148,7 @@
 		3FC450822F89CAF4005DFD4D /* Collection+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC450812F89CAF4005DFD4D /* Collection+Extensions.swift */; };
 		3FC450842F89D04F005DFD4D /* CloudMediaBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC450832F89D04F005DFD4D /* CloudMediaBrain.swift */; };
 		3FC450882F89D180005DFD4D /* MediaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC450872F89D180005DFD4D /* MediaModel.swift */; };
-		3FC4508A2F89D8F4005DFD4D /* CurrentICloudState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC450892F89D8F4005DFD4D /* CurrentICloudState.swift */; };
+		3FC4508A2F89D8F4005DFD4D /* CurrentSettingsState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */; };
 		3FCAA3962ECC380900597B72 /* RenewalStatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */; };
 		3FCED3E82F6F740900BF407C /* PromptResponseTextEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */; };
 		3FCED3EA2F6F79EB00BF407C /* PrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */; };
@@ -348,8 +350,10 @@
 		3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateDataWrapper.swift; sourceTree = "<group>"; };
 		3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACIV_viewModel.swift; sourceTree = "<group>"; };
+		3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecordHelpers.swift; sourceTree = "<group>"; };
 		3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDAISectionView.swift; sourceTree = "<group>"; };
 		3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatViewModel.swift; sourceTree = "<group>"; };
+		3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsCache.swift; sourceTree = "<group>"; };
 		3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Credentials.swift"; sourceTree = "<group>"; };
 		3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-NewObjects.swift"; sourceTree = "<group>"; };
 		3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-SampleData.swift"; sourceTree = "<group>"; };
@@ -444,7 +448,7 @@
 		3FC450812F89CAF4005DFD4D /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		3FC450832F89D04F005DFD4D /* CloudMediaBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudMediaBrain.swift; sourceTree = "<group>"; };
 		3FC450872F89D180005DFD4D /* MediaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaModel.swift; sourceTree = "<group>"; };
-		3FC450892F89D8F4005DFD4D /* CurrentICloudState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentICloudState.swift; sourceTree = "<group>"; };
+		3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSettingsState.swift; sourceTree = "<group>"; };
 		3FCAA3952ECC380900597B72 /* RenewalStatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenewalStatBoxView.swift; sourceTree = "<group>"; };
 		3FCED3E72F6F740900BF407C /* PromptResponseTextEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptResponseTextEntryView.swift; sourceTree = "<group>"; };
 		3FCED3E92F6F79EB00BF407C /* PrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacySettingsView.swift; sourceTree = "<group>"; };
@@ -892,7 +896,9 @@
 				3FC450852F89D107005DFD4D /* Protocols */,
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
 				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
-				3FC450892F89D8F4005DFD4D /* CurrentICloudState.swift */,
+				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
+				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
+				3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -1546,6 +1552,7 @@
 				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
 				3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */,
 				F2BC94AB2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift in Sources */,
+				3F5982BF2F8EEB9400FA30F5 /* AppSettingsCache.swift in Sources */,
 				F2B389F52E4C557300518868 /* HelperFunctions.swift in Sources */,
 				3F71B9972F2AB50600F1AA2C /* GeneralProtocols.swift in Sources */,
 				3F71B9952F2A9EEA00F1AA2C /* PromptQuestionJSON.swift in Sources */,
@@ -1573,6 +1580,7 @@
 				3FA296222EE22DEF000F5D12 /* PurchaseButtonLabelView.swift in Sources */,
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
 				3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */,
+				3F4EAA262F8F2CF600884BCC /* CoreDataRecordHelpers.swift in Sources */,
 				3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
@@ -1679,7 +1687,7 @@
 				3F5D03352EB3F42600F5B1DC /* DataController-Tags.swift in Sources */,
 				3F817DD92EC687A200791223 /* RenewalProgressView.swift in Sources */,
 				F272591B2E78CBD500210F11 /* HeaderNoteView.swift in Sources */,
-				3FC4508A2F89D8F4005DFD4D /* CurrentICloudState.swift in Sources */,
+				3FC4508A2F89D8F4005DFD4D /* CurrentSettingsState.swift in Sources */,
 				3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */,
 				3F8DC7CE2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,

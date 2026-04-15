@@ -15,6 +15,7 @@ extension DataController {
     static let basicUnlocKID = "com.TheEmpire.basicFeatureUnlock"
     static let proAnnualID = "com.TheEmpire.annualPro"
     static let proMonthlyID = "com.TheEmpire.monthlyPro"
+    static let proLifetimeID = "com.TheEmpire.proLifetime"
     
     // MARK: - Store related settings
     /// Computed property which controls the current paid status for the app by accessing
@@ -35,17 +36,17 @@ extension DataController {
         set {
             objectWillChange.send()
             sharedSettings.set(newValue, forKey: "purchaseStatus")
+            settingsCache.appPurchaseLevel = newValue
+            settingsCache.encodeCurrentState()
         }
     }//: purchaseStatus
     
     // MARK: - Loading Products
     @MainActor
     func loadProducts() async throws {
-        guard products.isEmpty else { return }
-        
         try await Task.sleep(for: .seconds(0.2))
         
-        let prodIds = [Self.basicUnlocKID, Self.proAnnualID, Self.proMonthlyID]
+        let prodIds = [Self.basicUnlocKID, Self.proAnnualID, Self.proMonthlyID, Self.proAnnualID]
         let allProducts: Set<Product> = Set(try await Product.products(for: prodIds))
         var userPurchasedProds: Set<Product> = []
         for await result in Transaction.currentEntitlements {
@@ -63,8 +64,9 @@ extension DataController {
         let firstProd = availableProds.first(where: {$0.id == Self.proAnnualID})
         let secondProd = availableProds.first(where: {$0.id == Self.proMonthlyID})
         let thirdProd = availableProds.first(where: {$0.id == Self.basicUnlocKID})
+        let fourthProd = availableProds.first(where: {$0.id == Self.proLifetimeID})
         
-        products = [firstProd, secondProd, thirdProd].compactMap(\.self)
+        products = [firstProd, secondProd, thirdProd, fourthProd].compactMap(\.self)
         
         #if DEBUG
         print("Loaded Products: \(products.count)")
@@ -85,15 +87,11 @@ extension DataController {
                 // In the rare event that a user purchases a basic unlock
                 // while having an active subscription, keeping the
                 // purchaseStatus as the subscription
-                for await entitlement in Transaction.currentEntitlements {
-                    if case let .verified(transaction) = entitlement,
-                       (transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID)
-                    {
-                        purchaseStatus = PurchaseStatus.proSubscription.id
-                        return
-                    }
-                }//: LOOP (for await)
-                purchaseStatus = PurchaseStatus.basicUnlock.id
+                if await revertPurchaseToSubscriptionStatus() {
+                    return
+                } else {
+                    purchaseStatus = PurchaseStatus.basicUnlock.id
+                }//: IF AWAIT (revertPurchaseToSubscriptionStatus())
             } else if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
                purchaseStatus = PurchaseStatus.proSubscription.id
                 if transaction.productID == Self.proAnnualID {
@@ -101,50 +99,107 @@ extension DataController {
                 } else if transaction.productID == Self.proMonthlyID {
                     currentSubscriptionType = "monthly"
                 }
-            }//: ELSE IF
+            } else if transaction.productID == Self.proLifetimeID {
+                purchaseStatus = PurchaseStatus.proLifetime.id
+            }//: IF ELSE
             await transaction.finish()
         } else {
             // Handling refunds/cancellations/subscription expiring
             // Note: in the case of subscriptions, the grace period
             // option will be used so an expired subscription won't be
             // broadcasted until after that point in time
-            if transaction.productID ==  Self.basicUnlocKID {
-                // check current entitlements to see if the user has
-                // an active subscription (not likely), and if so,
-                // set the purchase status to that; otherwise set
-                // the purchaseStatus property to free
-                for await entitlement in Transaction.currentEntitlements {
-                    if case let .verified(transaction) = entitlement {
-                        if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
-                            purchaseStatus = PurchaseStatus.proSubscription.id
-                            if transaction.productID == Self.proAnnualID {
-                                currentSubscriptionType = "annual"
-                            } else if transaction.productID == Self.proMonthlyID {
-                                currentSubscriptionType = "monthly"
-                            }
-                        } else {
-                            purchaseStatus = PurchaseStatus.free.id
-                            currentSubscriptionType = ""
-                        }
-                    }//: IF LET
-                }//: LOOP (for await)
-            } else {
+            await downgradeFromProduct(having: transaction.productID)
+            await transaction.finish()
+        }//: IF ELSE
+    }//: finalizeTransaction
+    
+    
+    private func downgradeFromProduct(having prodID: Product.ID) async {
+        if prodID ==  Self.proLifetimeID {
+            // check current entitlements to see if the user has
+            // an active subscription or basic unlock (not likely), and if so,
+            // set the purchase status to that; otherwise set
+            // the purchaseStatus property to free
+            if await revertPurchaseToSubscriptionStatus() {
+                return
                 // Check current entitlements to see if the user ever
                 // purchased the basic lock in the past, and if so,
                 // enable basic unlock features; otherwise, set app to
                 // free mode
-                for await entitlement in Transaction.currentEntitlements {
-                    if case let .verified(transaction) = entitlement, transaction.productID == Self.basicUnlocKID {
-                        purchaseStatus = PurchaseStatus.basicUnlock.id
-                    } else {
-                        purchaseStatus = PurchaseStatus.free.id
-                    }
-                }//: LOOP (for await)
+            } else if await revertPurchaseToBasicUnlockStatus() {
+                return
+            } else {
+                revertPurchaseToFreeStatus()
+            }//: IF AWAIT
+        } else if prodID == Self.proAnnualID || prodID == Self.proMonthlyID {
+            // calling this method in-case the user has a different subscription plan
+            // in-effect (ex. cancelled annual but has monthly)
+            if await revertPurchaseToSubscriptionStatus() {
+                return
+            } else if await revertPurchaseToLifetimeStatus() {
+                return
+                // Check current entitlements to see if the user ever
+                // purchased the basic lock in the past, and if so,
+                // enable basic unlock features; otherwise, set app to
+                // free mode
+            } else if await revertPurchaseToBasicUnlockStatus() {
+                return
+            } else {
+                revertPurchaseToFreeStatus()
             }//: IF ELSE
-            currentSubscriptionType = ""
-            await transaction.finish()
-        }//: IF ELSE
-    }//: finalizeTransaction
+        } else if prodID == Self.basicUnlocKID {
+            if await revertPurchaseToLifetimeStatus() {
+                return
+            } else if await revertPurchaseToSubscriptionStatus() {
+                return
+            } else {
+                revertPurchaseToFreeStatus()
+            }//: IF ELSE
+        }//: IF ELSE (prodID == )
+    }//: downgradeFromBasicUnlock
+    
+    private func revertPurchaseToSubscriptionStatus() async -> Bool {
+        for await entitlement in Transaction.currentEntitlements {
+            if case let .verified(transaction) = entitlement {
+                if transaction.productID == Self.proAnnualID || transaction.productID == Self.proMonthlyID {
+                    purchaseStatus = PurchaseStatus.proSubscription.id
+                    if transaction.productID == Self.proAnnualID {
+                        currentSubscriptionType = "annual"
+                        return true
+                    } else if transaction.productID == Self.proMonthlyID {
+                        currentSubscriptionType = "monthly"
+                        return true
+                    }//: IF ELSE
+                }//: IF (productID == proAnnualID OR proMonthlyID)
+            }//: IF LET
+        }//: LOOP
+        return false
+    }//: revertPurchaseToSubscriptionStatus
+    
+    private func revertPurchaseToBasicUnlockStatus() async -> Bool {
+        for await entitlement in Transaction.currentEntitlements {
+            if case let .verified(transaction) = entitlement, transaction.productID == Self.basicUnlocKID {
+                purchaseStatus = PurchaseStatus.basicUnlock.id
+                return true
+            }//: IF LET
+        }//: LOOP (for await)
+        return false
+    }//: revertPurchaseToBasicUnlockStatus()
+    
+    private func revertPurchaseToLifetimeStatus() async -> Bool {
+        for await entitlement in Transaction.currentEntitlements {
+            if case let .verified(transaction) = entitlement, transaction.productID == Self.proLifetimeID {
+                purchaseStatus = PurchaseStatus.proLifetime.id
+                return true
+            }//: IF LET
+        }//: LOOP (for await)
+        return false
+    }//: revertPurchaseToLifetimeStatus()
+    
+    private func revertPurchaseToFreeStatus() {
+        purchaseStatus = PurchaseStatus.free.id
+        currentSubscriptionType = ""
+    }//:
     
     
     func monitorTransactions() async {

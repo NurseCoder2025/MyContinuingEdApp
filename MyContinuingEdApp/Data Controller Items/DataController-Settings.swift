@@ -345,8 +345,8 @@ extension DataController {
         set {
             objectWillChange.send()
             sharedSettings.set(newValue, forKey: String.storeCertsInCloudKey)
-            cloudState.userCloudPrefs[.certsInCloud] = newValue
-            cloudState.encodeCurrentState()
+            settingsCache.userCloudBooleanPrefs[.certsInCloud] = newValue
+            settingsCache.encodeCurrentState()
             let updateNotification = Notification.Name(.cloudStoragePreferenceChanged)
             // Need to be explicit about posting on the main thread due to
             // an observer method (moveCertFiles) that needs to be run on
@@ -365,8 +365,8 @@ extension DataController {
         }
         set {
             sharedSettings.set(newValue, forKey: String.storeAudioInCloudKey)
-            cloudState.userCloudPrefs[.audioInCloud] = newValue
-            cloudState.encodeCurrentState()
+            settingsCache.userCloudBooleanPrefs[.audioInCloud] = newValue
+            settingsCache.encodeCurrentState()
             objectWillChange.send( )
         }
         
@@ -378,8 +378,8 @@ extension DataController {
         }
         set {
             sharedSettings.set(newValue, forKey: String.autoDownloadCertsKey)
-            cloudState.userCloudPrefs[.autoDownloadCerts] = newValue
-            cloudState.encodeCurrentState()
+            settingsCache.userCloudBooleanPrefs[.autoDownloadCerts] = newValue
+            settingsCache.encodeCurrentState()
         }
     }//: prefersAutoDownloadForCerts
     
@@ -389,10 +389,22 @@ extension DataController {
         }
         set {
             sharedSettings.set(newValue, forKey: String.autoDownloadAudioKey)
-            cloudState.userCloudPrefs[.autoDownloadAudio] = newValue
-            cloudState.encodeCurrentState()
+            settingsCache.userCloudBooleanPrefs[.autoDownloadAudio] = newValue
+            settingsCache.encodeCurrentState()
         }
     }//: prefersAutoDownloadForAudio
+    
+    var smartSyncCertificateWindow: Double {
+        get {
+            sharedSettings.double(forKey: String.smartSyncCertDownloadWindowKey)
+        }
+        set {
+            sharedSettings.set(newValue, forKey: String.smartSyncCertDownloadWindowKey)
+            settingsCache.smartSyncCertWindow = newValue
+            settingsCache.encodeCurrentState()
+            objectWillChange.send()
+        }
+    }//: smartSyncCertificateWindow
     
     // MARK: PRIVACY
     
@@ -402,6 +414,8 @@ extension DataController {
         }
         set {
             sharedSettings.set(newValue, forKey: String.autoAudioTranscriptionKey)
+            settingsCache.userCloudBooleanPrefs[.autoTranscription] = newValue
+            settingsCache.encodeCurrentState()
             objectWillChange.send()
         }
     }//: allowsAutoTranscriptionOfAudio
@@ -439,7 +453,8 @@ extension DataController {
             String.storeAudioInCloudKey,
             String.autoAudioTranscriptionKey,
             String.autoDownloadCertsKey,
-            String.autoDownloadAudioKey
+            String.autoDownloadAudioKey,
+            String.smartSyncCertDownloadWindowKey
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

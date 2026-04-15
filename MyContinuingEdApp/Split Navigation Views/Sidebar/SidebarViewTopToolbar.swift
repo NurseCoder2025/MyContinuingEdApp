@@ -32,9 +32,11 @@ struct SidebarViewTopToolbar: View {
             return .proSubscription
         case PurchaseStatus.basicUnlock.id:
             return .basicUnlock
+        case PurchaseStatus.proLifetime.id:
+            return .proLifetime
         default:
             return .free
-        }
+        }//: SWITCH
     }//: paidStatus
     
     var appStatusText: String {
@@ -45,6 +47,8 @@ struct SidebarViewTopToolbar: View {
             return "Basic"
         case .proSubscription:
             return "Pro"
+        case .proLifetime:
+            return "Pro Lifetime"
         }
     }//: appStatusText
     
@@ -75,7 +79,7 @@ struct SidebarViewTopToolbar: View {
                     Label("CE Achievements", systemImage: "rosette")
                 }//: BUTTON
                 
-                if paidStatus == .proSubscription {
+                if paidStatus == .proSubscription || paidStatus == .proLifetime {
                     // MARK: - Credential Management Sheet
                     Button {
                         // Action

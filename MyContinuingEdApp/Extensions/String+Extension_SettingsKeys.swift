@@ -44,6 +44,8 @@ extension String {
     static let autoDownloadCertsKey: String = "autoDownloadCertificates"
     static let autoDownloadAudioKey: String = "autoDownloadAudioReflections"
     
+    static let smartSyncCertDownloadWindowKey: String = "smartSyncCertDownloadWindow"
+    
 }//: EXTENSION
 
 

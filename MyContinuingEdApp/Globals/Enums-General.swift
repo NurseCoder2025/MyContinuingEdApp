@@ -166,7 +166,20 @@ enum CredentialType: String, CaseIterable {
 enum CertType: String, CaseIterable, Codable {case image, pdf}
 enum MediaType: String, CaseIterable, Codable {case image, pdf, audio}
 enum SaveLocation: String, Codable {case local, cloud, unknown}
-enum MediaClass: String, CaseIterable, Codable { case certificate, audioReflection }
+
+enum MediaClass: String, CaseIterable, Codable {
+    case certificate = "Certificate"
+    case audioReflection = "Audio reflection"
+    
+    var pluralString: String {
+        switch self {
+        case .certificate:
+            return "certificates"
+        case .audioReflection:
+            return "audio reflections"
+        }
+    }//: pluralString
+}//: MediaClass
 
 /// Global enum for providing the string identifier for CKRecord types. Values are either certificate or
 /// audioReflection.
@@ -238,7 +251,7 @@ enum TimePreference {
 ///
 ///  - Note: Protocol conformance for this enum includes Codable & Identifiable.
 enum PurchaseStatus: Codable, Identifiable {
-    case free, basicUnlock, proSubscription
+    case free, basicUnlock, proSubscription, proLifetime
     
     // Identifiable conformance
     // Needed so that this enum can be used for presenting sheets
@@ -248,7 +261,8 @@ enum PurchaseStatus: Codable, Identifiable {
         case .free: return "free"
         case .basicUnlock: return "basicUnlock"
         case .proSubscription: return "proSubscription"
-        }
+        case .proLifetime: return "proLifetime"
+        }//: SWITCH
     }//: id
 }//: PURHCASE STATUS
 
@@ -396,35 +410,15 @@ enum iCloudStatus: String, CaseIterable, Identifiable, Hashable, Codable {
         }
     }//: UserMessage
     
-    var useLocalStorage: Bool {
+    var iCloudIsAvailable: Bool {
         switch self {
-        case .loggedInDisabled:
-            return true
-        case .loggedInUnavailable:
-            return false
         case .loggedINDifferentAppleID:
-            return false
-        case .loggedOut:
-            return true
-        case .noAccount:
-            return true
-        case .iCloudRestricted:
             return true
         case .loggedIn:
+            return true
+        default:
             return false
-        case .unableToCheck:
-            return true
-        case .needSyncingAccount:
-            return true
-        case .cantLogin:
-            return true
-        case .incompatibleAppVersion:
-            return true
-        case .icloudDriveFull:
-            return true
-        case .initialStatus:
-            return true
-        }
+        }//: SWITCH
     }//: useLocalStorage
 }//: iCloudStatus
 
@@ -438,8 +432,44 @@ enum StorageToUse: Identifiable {
 }//: storageToUse
 
 enum UserCloudPrefKey: String, CaseIterable, Codable {
-    case certsInCloud, audioInCloud, autoDownloadCerts, autoDownloadAudio
+    case certsInCloud
+    case audioInCloud
+    case autoDownloadCerts
+    case autoDownloadAudio
+    case autoTranscription
+    case smartSyncCertWindow
+    
 }//: userCloudPrefKeys
+
+enum CloudSyncError: Error {
+    case paidUpgradeNeeded
+    case audioSyncProhibited
+    case prefersLocalStorage(MediaClass)
+    case cloudUnavailable
+    case basicCertLimitReached(Int)
+    case noRenewalPeriodsSaved
+    case noCurrentRenewalFound
+    
+    var localizedDescription: String {
+        switch self {
+        case .paidUpgradeNeeded:
+            return "In order to enjoy iCloud syncing of certificate and/or audio reflection files, please support the developer by making an in-app purchase."
+        case .audioSyncProhibited:
+            return "You need to either have a Pro Subscription or the Pro Lifetime upgrade in order to enjoy unlimited iCloud syncing for audio reflections. Updgrade today!"
+        case .prefersLocalStorage(let mediaType):
+            return "You currently prefer to store all of your \(mediaType.pluralString) files locally. Change this by going into the Settings menu (in this app) and toggle the control to sync files with iCloud."
+        case .cloudUnavailable:
+            return "Unfortunately, access to your iCloud account isn't available due to one of many potential reasons. Please check your network connection, iCloud settings, and current iCloud drive storage capacity."
+        case .basicCertLimitReached(let limit):
+            return "You have reached the \(limit)MB limit for syncing certificates in iCloud. Upgrade to a Pro Subscription or the Pro Lifetime purchase in order to enjoy unlimited syncing for certificates + audio too!"
+        case .noRenewalPeriodsSaved:
+            return "Unable to find and load the current renewal period for your credential. Please add one in the CeCache home screen."
+        case .noCurrentRenewalFound:
+            return "Currently there is not a saved Renewal Period that includes today's date. Please add the starting and ending dates for whatever the current renewal period for your credential is in the CeCache home screen."
+        }//: SWITCH
+    }//: localizedDescription
+    
+}//: CloudSyncError
 
 
 // MARK: - FILE I/O

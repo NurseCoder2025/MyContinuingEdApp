@@ -40,30 +40,22 @@ extension DataController {
                     self.compareAppleAccountIDs(oldID: savedID, newID: newID)
             } else if let newID = recordID, error == nil {
                 self.userICloudID = newID
-                self.iCloudAvailability = .loggedIn
-                self.cloudState.iCloudState = .loggedIn
-                self.cloudState.encodeCurrentState()
-                self.certificateAudioStorage = .cloud
+                self.settingsCache.iCloudState = .loggedIn
                 self.userCloudDriveURL = self.fileSystem.url(forUbiquityContainerIdentifier: nil)
                 self.encodeICloudUserIDFile()
             } else if recordID == nil, error == nil {
-                self.iCloudAvailability = .needSyncingAccount
-                self.cloudState.iCloudState = .needSyncingAccount
-                self.cloudState.encodeCurrentState()
-                self.certificateAudioStorage = .local
+                self.settingsCache.iCloudState = .needSyncingAccount
+                self.settingsCache.encodeCurrentState()
             } else if let someError = error {
                 switch someError {
                 case CKError.notAuthenticated:
-                    self.iCloudAvailability = .cantLogin
-                    self.cloudState.iCloudState = .cantLogin
-                    self.cloudState.encodeCurrentState()
+                    self.settingsCache.iCloudState = .cantLogin
+                    self.settingsCache.encodeCurrentState()
                 default:
-                    self.iCloudAvailability = .unableToCheck
-                    self.cloudState.iCloudState = .unableToCheck
-                    self.cloudState.encodeCurrentState()
+                    self.settingsCache.iCloudState = .unableToCheck
+                    self.settingsCache.encodeCurrentState()
                 }//: SWITCH
-                self.certificateAudioStorage = .local
-            }
+            }//: IF LET
         }//: FetchUserRecordID
         
         objectWillChange.send()
@@ -98,6 +90,10 @@ extension DataController {
                     // being used to sign-in for iCloud has changed from
                     // what was previously saved.
                    let obtainedID = try await defaultICloudContainer.userRecordID()
+                    
+                    // Loading the saved user iCloud ID, if one existed
+                    // before, from settingsCache to the
+                    // userICloudID @Published property
                    decodeICloudUserIDFile()
                     
                     if let savedID = userICloudID {
@@ -105,9 +101,7 @@ extension DataController {
                     } else {
                         await MainActor.run {
                             userICloudID = obtainedID
-                            iCloudAvailability = .loggedIn
-                            cloudState.iCloudState = .loggedIn
-                            cloudState.encodeCurrentState()
+                            settingsCache.iCloudState = .loggedIn
                             encodeICloudUserIDFile()
                         }//: MAIN ACTOR
                     }//: IF LET ELSE
@@ -121,46 +115,26 @@ extension DataController {
                     // presence or absence of an iCloud account as well as
                     // for any restrictions, so if an error is thrown here
                     // it is most likely due to the user disabling the sync.
-                    await MainActor.run {
-                        iCloudAvailability = .loggedInDisabled
-                        cloudState.iCloudState = .loggedInDisabled
-                        cloudState.encodeCurrentState()
-                    }//: MAIN ACTOR
+                    settingsCache.iCloudState = .loggedInDisabled
+                    settingsCache.encodeCurrentState()
                 }//: DO-CATCH
                 await MainActor.run {
-                    certificateAudioStorage = .cloud
                     userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
                 }//: MAIN ACTOR
             case .noAccount:
-                await MainActor.run {
-                    iCloudAvailability = .noAccount
-                    cloudState.iCloudState = .noAccount
-                    cloudState.encodeCurrentState()
-                    certificateAudioStorage = .local
-                }//: MAIN ACTOR
+                settingsCache.iCloudState = .noAccount
+                settingsCache.encodeCurrentState()
             case .restricted:
-                await MainActor.run {
-                    iCloudAvailability = .iCloudRestricted
-                    cloudState.iCloudState = .iCloudRestricted
-                    cloudState.encodeCurrentState()
-                    certificateAudioStorage = .local
-                }//: MAIN ACTOR
+                settingsCache.iCloudState = .iCloudRestricted
+                settingsCache.encodeCurrentState()
             default:
-                await MainActor.run {
-                    iCloudAvailability = .unableToCheck
-                    cloudState.iCloudState = .unableToCheck
-                    cloudState.encodeCurrentState()
-                    certificateAudioStorage = .local
-                }//: MAIN ACTOR
+                settingsCache.iCloudState = .unableToCheck
+                settingsCache.encodeCurrentState()
             }//: SWITCH
         } catch {
-            await MainActor.run {
-                iCloudAvailability = .unableToCheck
-                cloudState.iCloudState = .unableToCheck
-                cloudState.encodeCurrentState()
-                certificateAudioStorage = .local
-                print("Could not determine the user's iCloud status.  Error: \(error.localizedDescription)")
-            }//: MAIN ACTOR
+            settingsCache.iCloudState = .unableToCheck
+            settingsCache.encodeCurrentState()
+            print("Could not determine the user's iCloud status.  Error: \(error.localizedDescription)")
         }// DO-CATCH
         
         await MainActor.run {
@@ -185,7 +159,8 @@ extension DataController {
                 coder.finishEncoding()
                 
                 let data = coder.encodedData
-                try? data.write(to: URL.localICloudUserFile)
+                self?.settingsCache.userICloudIdData = data
+                self?.settingsCache.encodeCurrentState()
             }//: IF LET
         }//: queue(async)
     }//: encodeICloudUserIDFile()
@@ -199,7 +174,7 @@ extension DataController {
     /// userICloudID property.
     private func decodeICloudUserIDFile() {
         basicCodingQueue.sync {
-            if let savedUserInfo = try? Data(contentsOf: URL.localICloudUserFile) {
+            if let savedUserInfo = settingsCache.userICloudIdData {
                 do {
                     let loader = try NSKeyedUnarchiver(forReadingFrom: savedUserInfo)
                     loader.requiresSecureCoding = false
@@ -222,16 +197,12 @@ extension DataController {
     ///   - secondID: New iCloud Container user ID
     private func compareAppleAccountIDs(oldID: CKRecord.ID, newID: CKRecord.ID) {
         if oldID.isEqual(newID) {
-            iCloudAvailability = .loggedIn
-            cloudState.iCloudState = .loggedIn
-            cloudState.encodeCurrentState()
-            certificateAudioStorage = .cloud
+            settingsCache.iCloudState = .loggedIn
+            settingsCache.encodeCurrentState()
         } else {
             userCloudDriveURL = fileSystem.url(forUbiquityContainerIdentifier: nil)
             userICloudID = newID
-            iCloudAvailability = .loggedINDifferentAppleID
-            cloudState.iCloudState = .loggedINDifferentAppleID
-            cloudState.encodeCurrentState()
+            settingsCache.iCloudState = .loggedINDifferentAppleID
             encodeICloudUserIDFile()
         }
     }//: compareAppleAccountIDs()

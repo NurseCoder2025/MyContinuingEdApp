@@ -123,6 +123,26 @@ extension RenewalPeriod {
         }
     }//: completedActivitiesWithSpecialCats
     
+    var renewalActivitiesWithSavedCerts: [CeActivity] {
+        var cesToReturn: [CeActivity] = []
+        let completedCes = completedRenewalActivities
+        
+        for activity in completedCes {
+            if let _ = activity.certificate {
+                cesToReturn.append(activity)
+            }//: IF LET
+        }//: LOOP
+        return cesToReturn
+    }//: renewalActivitiesWithSavedCerts
+    
+    func getAllUploadedCertificates() -> [CertificateInfo] {
+        var uploadedCerts: [CertificateInfo] = []
+        let activities = renewalActivitiesWithSavedCerts
+        let savedCerts = activities.compactMap((\.certificate))
+        uploadedCerts = savedCerts.filter {$0.uploadedToICloud}
+        return uploadedCerts
+    }//: getAllUploadedCertificates()
+    
 }//: EXTENSION
 
 

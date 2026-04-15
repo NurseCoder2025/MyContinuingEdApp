@@ -78,6 +78,10 @@ extension CertificateInfo {
         completedActivityDate.formatDateIntoHyphenedString()
     }//: formattedActivityCompletionDate
     
+    var fileSizeInMegabytes: Double {
+        certFileSize / 1_024_000.0
+    }//: fileSizeInMegabytes
+    
     
     // MARK: - METHODS
     
