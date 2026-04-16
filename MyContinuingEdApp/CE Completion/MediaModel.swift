@@ -13,7 +13,22 @@ struct MediaModel {
     let assignedObjectId: UUID
     let ckRecType: CkRecordType
     let mediaType: MediaType
-    let savedAt: URL
+    let mediaDataSavedAt: URL
+    
+    // Audio reflections ONLY
+    var transcription: String = ""
+    let transcriptionSavedAt: URL = URL.tempTranscriptionFile
+    
+    // MARK: - COMPUTED PROPERTIES
+    
+    var designatedClass: MediaClass {
+        switch ckRecType {
+        case .certificate:
+            return MediaClass.certificate
+        case .audioReflection:
+            return MediaClass.audioReflection
+        }//: SWITCH
+    }//: designatedClass
     
     // MARK: - METHODS
     // The following methods are needed for passing in a String value into a

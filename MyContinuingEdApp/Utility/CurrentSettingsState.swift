@@ -18,7 +18,7 @@ struct CurrentSettingsState: Codable {
         .autoTranscription: true
     ]
     
-    var smartSyncWindowForCerts: Double = 3.0
+    var smartSyncWindowForCerts: Double = 6.0
     var appPurchaseStateString: String = ""
     
     // CKRecordZone related

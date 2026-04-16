@@ -29,6 +29,11 @@ final class CloudMediaBrain: ObservableObject {
         return settings.iCloudState.iCloudIsAvailable
     }//: okToRunOnlineMethods
     
+    var userIsAProUser: Bool {
+        let purchased = settings.getCurrentPurchaseLevel()
+        return purchased == .proSubscription || purchased == .proLifetime
+    }//: userIsAProUser
+    
     var userIsAPaidSupporter: Bool {
         let subLevel = settings.getCurrentPurchaseLevel()
         return subLevel == .proSubscription || subLevel == .basicUnlock || subLevel == .proLifetime
@@ -125,7 +130,8 @@ final class CloudMediaBrain: ObservableObject {
         let mediaName = model.getMediaTypeName()
         let assignedObjString = model.createAssignedObjIdString()
         
-        let recAsset = CKAsset(fileURL: model.savedAt)
+        let recAsset = CKAsset(fileURL: model.mediaDataSavedAt)
+        var originalTranscription: CKAsset? = nil
         var zoneToUse: CKRecordZone.ID
         
         switch objType {
@@ -133,6 +139,7 @@ final class CloudMediaBrain: ObservableObject {
             zoneToUse = certZone.zoneID
         case .audioReflection:
             zoneToUse = audioZone.zoneID
+            originalTranscription = CKAsset(fileURL: model.transcriptionSavedAt)
         }//: SWITCH
         
         let recID = CKRecord.ID(zoneID: zoneToUse)
@@ -142,10 +149,21 @@ final class CloudMediaBrain: ObservableObject {
         record[String.assignedObjectKey] = assignedObjString as CKRecordValue
         record[String.mediaDataKey] = recAsset
         
+        // For audio reflections, store the original transcription as a CKAsset
+        if let savedTranscription = originalTranscription {
+            record[String.originalAudioTranscriptionKey] = savedTranscription
+        }//: IF LET (savedTranscription)
+        
         return record
     }//: createCKRecord(for)
     
     private func saveRecToICloud(record: CKRecord) async -> Bool {
+        guard settings.zonesCreated else {
+            NSLog(">>> CloudMediaBrain error: saveRecToICloud(record) - Zones not yet created")
+            await setupAndVerifyZones()
+            return false
+        }//: GUARD
+        
         do {
             _ = try await cloudDB.save(record)
             return true
@@ -159,15 +177,237 @@ final class CloudMediaBrain: ObservableObject {
         }//: DO-CATCH
     }//: saveRecToICloud(record)
     
+    func smartSyncCECertificate(
+        using certInfo: CertificateInfo,
+        with model: MediaModel
+    ) async -> Result<CKRecord.ID, Error> {
+       let syncWinSetting: Double = settings.smartSyncCertWindow
+       let firstCheck = canUserUtilizeCloudSyncFor(mediaType: .certificate)
+        
+       switch firstCheck {
+       case .success(_):
+               let smartSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: syncWinSetting)
+               
+               switch smartSyncEligibility {
+               case .success(let success):
+                   let certRec = createCKRecord(for: .certificate, with: model)
+                   if await saveRecToICloud(record: certRec) {
+                       return Result.success(certRec.recordID)
+                   } else {
+                       userErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                       return Result.failure(CloudSyncError.cloudSaveError(.certificate))
+                   }//: IF AWAIT
+               case .failure(let error):
+                   userErrorMessage = error.localizedDescription
+                   return Result.failure(error)
+               }//: SWITCH (smartSyncEligibility)
+               
+       case .failure(let error):
+           userErrorMessage = error.localizedDescription
+           return Result.failure(error)
+       }//: SWITCH (firstCheck)
+    }//: smartSyncCECertificate
     
+    func manualCertUpload(
+        for certInfo: CertificateInfo,
+        with model: MediaModel
+    ) async -> Result<CKRecord.ID, Error> {
+        guard userIsAPaidSupporter else { return Result.failure(CloudSyncError.paidUpgradeNeeded)}
+        
+        if settings.getCurrentPurchaseLevel() == .basicUnlock {
+            let certSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: 0)
+            switch certSyncEligibility {
+            case .success(_):
+            case .failure(let error):
+                return Result.failure(error)
+            }//: SWITCH
+        }//: IF (basicUnlock)
+        
+        let firstCheck = canUserUtilizeCloudSyncFor(mediaType: .certificate)
+        switch firstCheck {
+        case .success(_):
+            let newRec = createCKRecord(for: .certificate, with: model)
+            if await saveRecToICloud(record: newRec) {
+                return Result.success(newRec.recordID)
+            } else {
+                userErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                return Result.failure(CloudSyncError.cloudSaveError(.certificate))
+            }//: IF AWAIT
+        case .failure(let error):
+            userErrorMessage = error.localizedDescription
+            return Result.failure(error)
+        }//: SWITCH
+    }//: manualCertUpload(with)
+    
+    func syncAudioReflection(using model: MediaModel) async -> Result<CKRecord.ID, Error> {
+        guard userIsAProUser else { return Result.failure(CloudSyncError.proLevelPurchaseNeeded) }
+        
+        let preliminaryCheck = canUserUtilizeCloudSyncFor(mediaType: .audioReflection)
+        switch preliminaryCheck {
+        case .success(_):
+            let newRec = createCKRecord(for: .audioReflection, with: model)
+            if await saveRecToICloud(record: newRec) {
+                return Result.success(newRec.recordID)
+            } else {
+                userErrorMessage = CloudSyncError.cloudSaveError(.audioReflection).localizedDescription
+                return Result.failure(CloudSyncError.cloudSaveError(.audioReflection))
+            }//: IF AWAIT
+        case .failure(let error):
+            userErrorMessage = error.localizedDescription
+            return Result.failure(error)
+        }//: SWITCH
+    }//: syncAudioReflection()
     
     // MARK: - CHANGING
     
     // MARK: - DELETING
     
+    func deleteUploadedMedia(
+        for record: CKRecord.ID,
+        with model: MediaModel
+    ) async -> Result<Bool, CloudSyncError> {
+        let mediaType = model.ckRecType
+        var recToUpdate: CKRecord
+        do {
+           recToUpdate = try await cloudDB.record(for: record)
+           removeAssetValuesFromRecord(recToUpdate, for: mediaType)
+           return Result.success(true)
+        } catch {
+            if let searchedRec = await searchZoneForRecordMatching(using: model) {
+                removeAssetValuesFromRecord(searchedRec, for: mediaType)
+                return Result.success(true)
+            } else {
+                return Result.failure(
+                    CloudSyncError.mediaDeletionError("After two search attempts, the iCloud record for the \(mediaType.rawValue) you are trying to delete could not be found due to: \(error.localizedDescription).")
+                )//: failure
+            }//: IF LET
+        }//: DO-CATCH
+    }//: deleteUploadedMedia(with)
+    
+    func deleteEntireRecord(
+        for object: CKRecord.ID,
+        using model: MediaModel
+    ) async -> Result<Bool, CloudSyncError> {
+        var recToDelete: CKRecord
+        
+        // Make sure the record can be found
+        do {
+            recToDelete = try await cloudDB.record(for: object)
+        } catch {
+            if let searchedRec = await searchZoneForRecordMatching(using: model) {
+                recToDelete = searchedRec
+            } else {
+                return Result.failure(
+                    CloudSyncError.mediaDeletionError("Unable to locate the iCloud record for the \(model.ckRecType.rawValue) you are trying to delete.")
+                    )//: failure
+            }//: IF LET (searchedRec)
+        }//: DO-CATCH
+        
+        // Delete the entire record
+        let recID = recToDelete.recordID
+        do {
+            _ = try await cloudDB.deleteRecord(withID: recID)
+            return Result.success(true)
+        } catch {
+            return Result.failure(
+                CloudSyncError.mediaDeletionError("Error deleting the iCloud file: \(error.localizedDescription)")
+            )//: failure
+        }//: DO-CATCH
+    }//: deleteEntireRecord(for)
+    
+    
+    private func removeAssetValuesFromRecord(_ record: CKRecord, for objType: CkRecordType) {
+        switch objType {
+        case .certificate:
+            record[String.mediaDataKey] = nil
+            record[String.mediaKey] = "" as CKRecordValue
+        case .audioReflection:
+            record[String.mediaDataKey] = nil
+            record[String.originalAudioTranscriptionKey] = "" as CKRecordValue
+        }//: SWITCH
+    }//: removeAssetValuesFromRecord
+    
+    // MARK: - DOWNLOADING
+    
+    func downloadOnlineMediaFile(
+        for object: CKRecord.ID,
+        using model: MediaModel
+    ) async -> Result<URL, Error> {
+        var mediaRecord: CKRecord
+        do {
+            mediaRecord = try await cloudDB.record(for: object)
+        } catch {
+            if let searchedRec = await searchZoneForRecordMatching(using: model) {
+                mediaRecord = searchedRec
+            } else {
+                return Result.failure(CloudSyncError.cloudRecordNotFound(model.designatedClass))
+            }//: IF LET (searchedRec)
+        }//: DO-CATCH
+        
+        if let mediaAsset = mediaRecord[String.mediaDataKey] as? CKAsset, let tempURL = mediaAsset.fileURL {
+            do {
+                _ = try FileManager().moveItem(at: tempURL, to: model.mediaDataSavedAt)
+                return Result.success(model.mediaDataSavedAt)
+            } catch {
+                NSLog(">>> CloudMediaBrain error: downloadOnlineMediaFile")
+                NSLog(">>> The FileManger moveItem method threw an error while trying to move the CKAsset binary from \(tempURL.absoluteString) to \(model.mediaDataSavedAt.absoluteString).")
+                return Result.failure(CloudSyncError.mediaDownloadFailed)
+            }//: DO-CATCH
+        } else {
+            NSLog(">>> CloudMediaBrain error: downloadOnlineMediaFile")
+            NSLog(">>> Either there was no binary data assigned to the mediaDataKey or the fileURL getter for the CKAsset returned a nil value.")
+            return Result.failure(CloudSyncError.mediaDownloadFailed)
+        }//: IF LET (mediaAsset as? CKAsset)
+    }//: downloadOnlineMediaFile(using)
+    
+    func restoreOriginalAudioTranscription(using model: MediaModel) async -> (Bool, String?) {
+        guard model.designatedClass == .audioReflection else { return (false, nil) }
+        
+        let matchingString = model.createAssignedObjIdString()
+        let predicate: NSPredicate = NSPredicate(format: "\(String.assignedObjectKey) == %@", matchingString)
+        let query: CKQuery = CKQuery(recordType: model.getRecTypeName(), predicate: predicate)
+        
+        let searchZone: CKRecordZone.ID = ((model.ckRecType == .certificate) ? certZone : audioZone).zoneID
+        
+        let operation = CKQueryOperation(query: query)
+        operation.resultsLimit = 1
+        operation.desiredKeys = [String.originalAudioTranscriptionKey]
+        operation.zoneID = searchZone
+        
+        var recordIsFound: (result: Bool, transcript: String?)
+        
+        operation.recordMatchedBlock = { recID, result in
+            switch result {
+            case .success(let record):
+                if let retrievedTranscript = record[String.originalAudioTranscriptionKey] as? String {
+                    recordIsFound = (true, retrievedTranscript)
+                } else {
+                    recordIsFound = (false, nil)
+                }//: IF LET
+            case .failure:
+                recordIsFound = (result: false, transcript: nil)
+            }//: SWITCH
+        }//: recordMatchedBlock
+        
+        
+        operation.queryResultBlock = { result in
+            Task{@MainActor in
+                switch result {
+                case .success(_):
+                    return recordIsFound
+                case .failure(let error):
+                    self.userErrorMessage = "Error encountered while trying to find the iCloud record containing the original audio transcription: \(error.localizedDescription)"
+                    return recordIsFound
+                }//: SWITCH
+            }//:TASK
+        }//: queryResultBlock
+        
+        cloudDB.add(operation)
+    }//: restoreOriginalAudioTranscription(for, using)
+    
     // MARK: - HELPERS
     
-    func canUserUtilizeCloudSyncFor(mediaType: MediaClass) -> Result<Bool, Error> {
+    private func canUserUtilizeCloudSyncFor(mediaType: MediaClass) -> Result<Bool, Error> {
         var userWantsToStoreInCloud: Bool = true
         switch mediaType {
         case .certificate:
@@ -189,32 +429,40 @@ final class CloudMediaBrain: ObservableObject {
         }//: IF ELSE
     }//: canUserUtilizeCloudSync()
     
+    // MARK: - QUERY
     
-    // MARK: - CERTIFICATE SPECIFIC
+    private func searchZoneForRecordMatching(using model: MediaModel) async -> CKRecord? {
+        let matchingString = model.createAssignedObjIdString()
+        let predicate: NSPredicate = NSPredicate(format: "\(String.assignedObjectKey) == %@", matchingString)
+        let query: CKQuery = CKQuery(recordType: model.getRecTypeName(), predicate: predicate)
+        
+        let searchZone: CKRecordZone.ID = ((model.ckRecType == .certificate) ? certZone : audioZone).zoneID
+        
+        do {
+            let searchResult = (try await cloudDB.records(matching: query, inZoneWith: searchZone, desiredKeys: nil, resultsLimit: 1)).matchResults
+            
+            if let foundRecord = searchResult.first {
+                let searchRecordResult = foundRecord.1
+                switch searchRecordResult {
+                case .success(let record):
+                    return record
+                case .failure(let error):
+                    NSLog(">>> CloudMediaBrain error: searchZoneForRecordMathing(using)")
+                    NSLog(">>> The Cloud Kit query was able to find the matching CKRecord but could not read it  becuase: \(error.localizedDescription)")
+                    return nil
+                }//: SWITCH
+            } else {
+                NSLog(">>> CloudMediaBrain error: searchZoneForRecordMathing(using)")
+                NSLog(">>> The Cloud Kit query was unable to retrieve any matching records after the search.")
+                return nil
+            }//: IF ELSE
+        } catch {
+            NSLog(">>> CloudMediaBrain error: searchZoneForRecordMathing(using)")
+            NSLog(">>> The Cloud Kit query was unable to find the matching CKRecord due to: \(error.localizedDescription)")
+            return nil
+        }//: DO - CATCH
+    }//: searchZoneForRecordMatching(objID)
     
-    func hasUserExceededMaxCertAllowance(allowance: Double = 500.0) throws -> Bool {
-        guard settings.getCurrentPurchaseLevel() == .basicUnlock else  { return false }
-        let currentRenewals = dataController.getCurrentRenewalPeriods()
-        // There should only be one renewal period in currentRenewals
-        // because the Basic Unlock only allows for one
-        guard let renewal = currentRenewals.first else { throw CloudSyncError.noCurrentRenewalFound }
-            var amountUploaded: Double = 0.0
-            let uploadedCerts = renewal.getAllUploadedCertificates()
-            for cert in uploadedCerts {
-                amountUploaded += cert.fileSizeInMegabytes
-            }//: LOOP
-            return amountUploaded >= allowance
-    }//: hasUserExceededMaxCertAllowance
-    
-    func isCEinCurrentRenewalPeriod(activity: CeActivity) throws -> Bool {
-        guard settings.getCurrentPurchaseLevel() == .basicUnlock else  { return true }
-        if let renewal = dataController.getCurrentRenewalPeriods().first {
-            let allPeriodCes = renewal.completedRenewalActivities
-            return allPeriodCes.contains(activity)
-        } else {
-            throw CloudSyncError.noCurrentRenewalFound
-        }//: IF LET
-    }//: isCEinCurrentRenewalPeriod()
     
     // MARK: - INIT
     

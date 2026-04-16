@@ -20,7 +20,6 @@ extension String {
     /// Constant for use in CloudKit methods. Value is "mediaType".
     static let mediaKey: String = "mediaType"
     
-    
     /// Constant for use in CloudKit methods. Value is "assignedObjectId".
     static let assignedObjectKey: String = "assignedObjectId"
     
@@ -29,6 +28,8 @@ extension String {
     
     /// Constant for use in CloudKit methods. Value is "mediaData".
     static let mediaDataKey: String = "mediaData"
+    
+    static let originalAudioTranscriptionKey: String = "audioTranscription"
     
     static let certificateZoneId: String = "userCertificates"
     static let audioReflectionZoneId: String = "userAudioReflections"
@@ -134,5 +135,29 @@ extension String {
             return self
         }
     }//: trimWordTo(length:)
+    
+}//: EXTENSION
+
+
+// MARK: - COMPUTED PROPERTIES
+extension String {
+    
+    /// Computed String property that returns the number of bytes that a
+    /// given String takes up, based on UTF8 encoding.
+    var sizeInBytes: Int {
+        return lengthOfBytes(using: .utf8)
+    }//: sizeInBytes
+    
+    /// Computed String property that returns the number of kilobytes that a
+    /// given String takes up, based on UTF8 encoding.
+    var sizeInKB: Double {
+        return Double(sizeInBytes) / 1024.0
+    }//: sizeInKB
+    
+    /// Computed String property that returns the number of megabytes that a
+    /// given String takes up, based on UTF8 encoding.
+    var sizeInMB: Double {
+        return Double(sizeInBytes) / (1024 * 1024)
+    }//: sizeInMB
     
 }//: EXTENSION

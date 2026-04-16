@@ -30,6 +30,8 @@
 		3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */; };
 		3F207EAE2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */; };
 		3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */; };
+		3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28020C2F9048A50025884E /* DataController-CloudKit.swift */; };
+		3F28020F2F904DD50025884E /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28020E2F904DD50025884E /* Double+Extensions.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
 		3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */; };
 		3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F33A35A2F6A206E00C24210 /* Recording.swift */; };
@@ -330,6 +332,8 @@
 		3F20645E2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisciplinaryActionListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F207EAD2F6E93B1004693AE /* AudioPlayerController_ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerController_ViewModel.swift; sourceTree = "<group>"; };
 		3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerProgressBar.swift; sourceTree = "<group>"; };
+		3F28020C2F9048A50025884E /* DataController-CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CloudKit.swift"; sourceTree = "<group>"; };
+		3F28020E2F904DD50025884E /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
 		3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Reinstatement.swift"; sourceTree = "<group>"; };
 		3F33A35A2F6A206E00C24210 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
@@ -722,6 +726,7 @@
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
 				3FC4507F2F89C588005DFD4D /* String+Extension_SettingsKeys.swift */,
+				3F28020E2F904DD50025884E /* Double+Extensions.swift */,
 				3FC450812F89CAF4005DFD4D /* Collection+Extensions.swift */,
 				3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */,
 				3F0B138E2F7E0BDE00CC4A49 /* Date+Extensions.swift */,
@@ -941,25 +946,25 @@
 		3F2A42D72EA2E67000B095CB /* Core Data Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */,
+				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
+				F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */,
+				F2BC94A82E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift */,
+				3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */,
 				3FA667572F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift */,
 				3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */,
-				3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */,
 				3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */,
 				3F83C7BF2F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift */,
 				F2BC94AA2E38322600926B3D /* ActivityReflection-CoreDataHelper.swift */,
 				F2FBAAE42E5FDCDB00348AAA /* ActivityType-CoreDataHelper.swift */,
-				F2CC22C92E28483C00F1F70D /* CEActivity-CoreDateHelper.swift */,
 				F26075FF2E591E7B00C15C54 /* CeDesignation-CoreDataHelper.swift */,
 				F243B41D2E68F9670072419D /* Country-CoreDataHelper.swift */,
-				F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */,
 				F22940A02E764DDC00BFE78A /* DisciplinaryActionItem-CoreDataHelper.swift */,
 				F2011DC02E624B5400D5DF92 /* Issuer-CoreDataHelper.swift */,
-				F2BC94A82E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift */,
 				F22940A42E76563100BFE78A /* SpecialCategories-CoreDataHelper.swift */,
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
 				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
 				3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */,
-				3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */,
 			);
 			path = "Core Data Helpers";
 			sourceTree = "<group>";
@@ -1061,6 +1066,7 @@
 			children = (
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloud.swift */,
+				3F28020C2F9048A50025884E /* DataController-CloudKit.swift */,
 				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3FDF714B2F1850380036D490 /* DataController-Templates.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
@@ -1585,6 +1591,7 @@
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
 				3F09F7612EAAB18E00FE5277 /* SidebarTagsSectionViewModel.swift in Sources */,
+				3F28020F2F904DD50025884E /* Double+Extensions.swift in Sources */,
 				3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
@@ -1613,6 +1620,7 @@
 				3FA59F332F6E6DFD00EA1418 /* AudioRecordingControlView.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
+				3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */,
 				3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,

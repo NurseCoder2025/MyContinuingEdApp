@@ -24,6 +24,8 @@ extension URL {
     /// application's documents directory folder called "Reflections".
     static let localAudioReflectionsFolder = URL.documentsDirectory.appending(path: "Reflections", directoryHint: .isDirectory)
     
+    static let tempTranscriptionFile = URL.temporaryDirectory.appending(path: "transcrptionText.txt", directoryHint: .notDirectory)
+    
     
 }//: EXTENSION
 

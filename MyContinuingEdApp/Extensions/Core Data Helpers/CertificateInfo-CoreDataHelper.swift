@@ -98,4 +98,95 @@ extension CertificateInfo {
         return basePath.appending(path: pathSaved, directoryHint: .notDirectory)
     }//: resolveURL(basePath)
     
+    /// CertificateInfo method for determining whether the binary data for a saved CE certificate
+    /// meets the "SmartSync" criteria for uploading into iCloud or not.
+    /// - Parameter syncWindow: Double value indicating the number of years the user
+    /// needs to maintain CE certificates for licensure purposes
+    /// - Returns: Boolean indicating if the dateCompleted value for the assigned CeActivity
+    /// object is within the number of years indicated by the syncWindow argument.
+    ///
+    /// The "SmartSync" feature is two-fold:  for users who only purchase the Basic Unlock
+    /// in-app purchase, their SmartSync only uploads certificates for the current renewal
+    /// period, up to a specified data maxiumum.  Pro users (subscription or lifetime) can
+    /// specifiy a particular window of time they need to maintain certificates in terms of years,
+    /// like 6 years or whatever their licensing board requires.
+    ///
+    /// - Note: This method should be called whenever uploading certificates after
+    /// verifying that the user is a Pro level user.
+    ///
+    /// In addition to returning false for certificates earned outside of the specified window, this
+    /// method will also return false if:  1) There is either no assigned CeActivity or the
+    /// dateCompleted property is nil  2) The syncWindow argument is less than 1.0  3) The
+    /// date(byAdding: , value:, to:) method returns a nil
+    func isCertEligibleForSmartSync(syncWindow: Double) -> Result<Bool, CloudSyncError> {
+        let savedSettings = AppSettingsCache.shared
+        let purchaseMade = savedSettings.getCurrentPurchaseLevel()
+        guard purchaseMade != .free else {
+            return Result.failure(CloudSyncError.paidUpgradeNeeded)
+        }//: GUARD
+        
+        if purchaseMade == .proSubscription || purchaseMade == .proLifetime {
+            return proUserSmartSyncCheck(with: syncWindow)
+        } else {
+            return basicUserSmartSyncCheck()
+        }//: IF ELSE
+    }//: isCertEligibleForSmartSync(syncWindow)
+    
+    
+    private func proUserSmartSyncCheck(with window: Double) -> Result<Bool, CloudSyncError> {
+        guard let ceCompltedOn = completedCe?.dateCompleted,
+                window >= 1.0 else {
+            NSLog(">>> CertificateInfo helper method error: proUserSmartSyncCheck")
+            NSLog(">>> One of the pre-condition checks failed:")
+            NSLog(">>> ceCompletedOn nil: \(completedCe?.dateCompleted == nil)")
+            NSLog(">>> window argument: \(window)")
+            return Result.failure(CloudSyncError.smartSyncDateWindowError)
+        }//: GUARD
+        
+        guard window <= Double.maxCertAllowance else {
+            let windowInt: Int = Int(window)
+            return Result.failure(CloudSyncError.smartSyncMaxWindowExceeded(windowInt))
+        }//: GUARD
+        
+        let convertedWindow = Int(window)
+        let calendar = Calendar.current
+        let now = Date()
+        
+        guard let dateBeforeWindow = calendar.date(
+            byAdding: .year,
+            value: -convertedWindow,
+            to: now
+        ) else {
+            NSLog(">>> CertificateInfo helper method error: proUserSmartSyncCheck")
+            NSLog(">>> The calendar.date(byAdding: .year, value: -convertedWindow, to: now method returned a nil value instead of a valid date.")
+            NSLog(">>> window argument: \(window) | current date: \(now.formatted())")
+            return Result.failure(CloudSyncError.smartSyncWindowCalcError)
+        }//: GUARD
+        
+        let syncCheck = ceCompltedOn >= dateBeforeWindow && ceCompltedOn <= now
+        if syncCheck {
+            return Result.success(true)
+        } else {
+            return Result.failure(CloudSyncError.smartSyncCertOutOfWindow)
+        }//: IF (syncCheck)
+    }//: proUserSmartSyncCheck(with)
+    
+    private func basicUserSmartSyncCheck() -> Result<Bool, CloudSyncError> {
+        guard let ceRenewals: [RenewalPeriod] = completedCe?.renewals as? [RenewalPeriod] else {
+            return Result.failure(CloudSyncError.noRenewalPeriodsSaved)
+        }//: GUARD
+        
+        if let currentRenewal = ceRenewals.filter({ $0.isRenewalCurrent }).first {
+            let basicLimit: Int = Int(Double.maxCertAllowance)
+            let limitExceeded: Bool = currentRenewal.hasUserExceededMaxCertAllowance()
+            if limitExceeded {
+                return Result.failure(CloudSyncError.basicCertLimitReached(basicLimit))
+            } else {
+                return Result.success(true)
+            }//:IF ELSE
+        } else {
+            return Result.failure(CloudSyncError.noCurrentRenewalFound)
+        }//: IF ELSE
+    }//: basicUserSmartSyncCheck()
+    
 }//: EXTENSION

@@ -145,6 +145,50 @@ extension RenewalPeriod {
     
 }//: EXTENSION
 
+// MARK: - SMART SYNC
+
+extension RenewalPeriod {
+    
+    /// RenewalPeriod helper method that determines if a user who purchased the Basic Unlock has exceeded
+    /// their certificate upload limit (Double.maxCertAllowance value by default) or not.
+    /// - Parameter allowance: Double with the max amount of megabytes the user is allowed for storing
+    /// certificates in iCloud with CloudKit for device syncing
+    /// - Returns: Boolean indicating if that max allowance has been met or exceeded yet
+    func hasUserExceededMaxCertAllowance(
+        allowance: Double = Double.maxCertAllowance
+    ) -> Bool {
+        let savedSettings = AppSettingsCache.shared
+        switch savedSettings.getCurrentPurchaseLevel() {
+        case .free:
+            return true
+        case .basicUnlock:
+            var amountUploaded: Double = 0.0
+            let uploadedCerts = getAllUploadedCertificates()
+            for cert in uploadedCerts {
+                amountUploaded += cert.fileSizeInMegabytes
+            }//: LOOP
+            return amountUploaded >= allowance
+        case .proSubscription:
+            return false
+        case .proLifetime:
+            return false
+        }//: SWITCH
+    }//: hasUserExceededMaxCertAllowance
+    
+    var isRenewalCurrent: Bool {
+        guard let startDate = periodStart,
+              let endDate = periodEnd else {
+            return false
+        } //: GUARD
+        
+        let calendar = Calendar.current
+        let currentDate = calendar.startOfDay(for: Date())
+        return currentDate >= startDate && currentDate <= endDate
+    }//: isRenewalCurrent
+    
+    
+}//: EXTENSION
+
 
 // MARK: - Renewal Period EXAMPLE
 extension RenewalPeriod {
@@ -159,7 +203,7 @@ extension RenewalPeriod {
         newPeriod.periodEnd = Date.renewalEndDate
         
         return newPeriod
-    }
-}
+    }//: example
+}//: EXTENSION
 
 
