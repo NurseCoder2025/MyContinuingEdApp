@@ -11,6 +11,8 @@ import CoreSpotlight
 
 @main
 struct MyContinuingEdAppApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     @StateObject var dataController: DataController = DataController()
     @State var spotlightCentral: SpotlightCentral?
     @AppStorage(String.onBoardingKey) private var showUserOnboarding: Bool = true

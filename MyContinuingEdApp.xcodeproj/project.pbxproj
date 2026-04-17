@@ -103,6 +103,8 @@
 		3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */; };
 		3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */; };
 		3F84D16B2F2D629D001C3AB6 /* AudioPlayerControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */; };
+		3F84D7E22F91D8DE006A287D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D7E12F91D8DE006A287D /* AppDelegate.swift */; };
+		3F84D7E42F91DCB8006A287D /* Notification+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F84D7E32F91DCB8006A287D /* Notification+Extensions.swift */; };
 		3F8796882F821D3B00A6E91D /* Enums-General.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B9379C2E836F5600AF9155 /* Enums-General.swift */; };
 		3F8796892F821E9800A6E91D /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF9791F2F4574B900DD8363 /* URL+Extensions.swift */; };
 		3F8D93E72EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */; };
@@ -406,6 +408,8 @@
 		3F83F1212F2223A700FCF350 /* TagBadgeExamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagBadgeExamples.swift; sourceTree = "<group>"; };
 		3F84D1682F2D5B07001C3AB6 /* PromptHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptHeaderView.swift; sourceTree = "<group>"; };
 		3F84D16A2F2D629D001C3AB6 /* AudioPlayerControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerControlView.swift; sourceTree = "<group>"; };
+		3F84D7E12F91D8DE006A287D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3F84D7E32F91DCB8006A287D /* Notification+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification+Extensions.swift"; sourceTree = "<group>"; };
 		3F8D93E62EBBFF1A0070DEA1 /* NoSpecialCatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsViewModel.swift; sourceTree = "<group>"; };
 		3F8D93E82EBC1C6D0070DEA1 /* SpecialCatRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatRowView.swift; sourceTree = "<group>"; };
 		3F8DC7CD2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReflectionViewModel.swift; sourceTree = "<group>"; };
@@ -724,6 +728,7 @@
 				3F396CA72F6332980025F786 /* UIDocument+Extensions.swift */,
 				3F483E342F58EA7000C21940 /* FileManager+Extensions.swift */,
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
+				3F84D7E32F91DCB8006A287D /* Notification+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
 				3FC4507F2F89C588005DFD4D /* String+Extension_SettingsKeys.swift */,
 				3F28020E2F904DD50025884E /* Double+Extensions.swift */,
@@ -1319,6 +1324,7 @@
 			isa = PBXGroup;
 			children = (
 				F2772B922E1DDA9F006A94BD /* MyContinuingEdAppApp.swift */,
+				3F84D7E12F91D8DE006A287D /* AppDelegate.swift */,
 				3F2A42C52EA2C73C00B095CB /* Configuration */,
 				3F2A42CD2EA2DF0E00B095CB /* Globals */,
 				3F2A42C32EA2C72B00B095CB /* Extensions */,
@@ -1519,6 +1525,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F84D7E22F91D8DE006A287D /* AppDelegate.swift in Sources */,
 				3F71B9992F2AF84D00F1AA2C /* StandardPromptSelectionView.swift in Sources */,
 				3F83C7C32F0F3C7D00FB4CF2 /* ReinstatementInfoSheet.swift in Sources */,
 				3FC450822F89CAF4005DFD4D /* Collection+Extensions.swift in Sources */,
@@ -1724,6 +1731,7 @@
 				3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */,
 				F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */,
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
+				3F84D7E42F91DCB8006A287D /* Notification+Extensions.swift in Sources */,
 				3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */,
 				3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */,
 				F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */,

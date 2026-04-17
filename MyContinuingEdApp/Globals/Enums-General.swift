@@ -459,6 +459,7 @@ enum CloudSyncError: Error {
     case smartSyncWindowCalcError
     case smartSyncCertOutOfWindow
     case smartSyncMaxWindowExceeded(Int)
+    case querySubscriptionNotCreated
     
     var localizedDescription: String {
         switch self {
@@ -496,6 +497,8 @@ enum CloudSyncError: Error {
             return "According to the window value you set, the selected certificate is too old to be synced to iCloud automatically. However, you can either adjust the window value in the app settings or manually upload it."
         case .smartSyncMaxWindowExceeded(let max):
             return "A value greater than the maximum number of years for SmartSync (\(max)) was used and so the certificate was not uploaded to iCloud automatically. However, you can do so manually if you'd like."
+        case .querySubscriptionNotCreated:
+            return "Unable to automatically delete or update media files on other files due to an iCloud sync setup error. The app will retry the setup process again."
         }//: SWITCH
     }//: localizedDescription
     

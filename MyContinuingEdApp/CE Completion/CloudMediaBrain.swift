@@ -15,12 +15,13 @@ final class CloudMediaBrain: ObservableObject {
     
     let settings = AppSettingsCache.shared
     let dataController: DataController
+    let fileSystem = FileManager.default
     
     let cloudDB: CKDatabase = CKContainer.default().privateCloudDatabase
     let certZone = CKRecordZone(zoneName: String.certificateZoneId)
     let audioZone = CKRecordZone(zoneName: String.audioReflectionZoneId)
     
-    @Published var zonesCreated: Bool = false
+    var zonesCreated: Bool = false
     @Published var userErrorMessage: String = ""
     
     // MARK: - COMPUTED PROPERTIES
@@ -41,7 +42,7 @@ final class CloudMediaBrain: ObservableObject {
     
     // MARK: - RECORD ZONE HANDLING
     
-    private func doAllZonesExistInDB() async -> Result<(Bool, [CKRecordZone]), Error> {
+    private func doAllZonesExistInDB(retryCount: Int = 0) async -> Result<(Bool, [CKRecordZone]), Error> {
         var allZones: [CKRecordZone] = []
         do {
             allZones = try await cloudDB.allRecordZones()
@@ -52,12 +53,25 @@ final class CloudMediaBrain: ObservableObject {
                 NSLog(">>> Instead of finding both the cert and audio zones, only found: \(allZones.map(\.zoneID.zoneName))")
                 return Result.success((false, allZones))
             }//: IF (contains)
+        } catch let webError as CKError {
+            if shouldRetry(error: webError, currentRetry: retryCount) {
+                let delay = calculateRetryBackoff(retryCount: retryCount, error: webError)
+                NSLog(">>> CloudMediaBrain: doAllZonesExistInDB retrying...")
+                NSLog(">>> Retrying in \(delay) seconds...(attempt \(retryCount + 1)/3)")
+                try? await Task.sleep(for: .seconds(0.01))
+                return await doAllZonesExistInDB(retryCount: retryCount + 1)
+            } else {
+                NSLog(">>> CloudMediaBrain error: doZonesExistInDB")
+                NSLog(">>> the allRecordZones() method threw an error while trying to fetch all zones within the user's private iCloud database, even after 3 additional attempts.")
+                NSLog(">>> Error: \(webError.localizedDescription)")
+                return Result.failure(webError)
+            }//: IF ELSE
         } catch {
             NSLog(">>> CloudMediaBrain error: doZonesExistInDB")
             NSLog(">>> the allRecordZones() method threw an error while trying to fetch all zones within the user's private iCloud database.")
             NSLog(">>> Error: \(error.localizedDescription)")
             return Result.failure(error)
-        }//: DO-CATCH
+        }//: DO - CATCH
     }//: doAllZonesExistInDB()
     
     private func createZone(_ zoneToSave: CKRecordZone) async -> Bool {
@@ -82,7 +96,7 @@ final class CloudMediaBrain: ObservableObject {
                 zonesCreated = true
                 return
             } else {
-                let missingZones = zonesToCreate.filter {savedZones.contains($0) == false}
+                let missingZones = zonesToCreate.filter {savedZones.doesNOTContain($0)}
                 let zonesToAdd: Int = missingZones.count
                 var zonesAddedOk: Int = 0
                 for zone in missingZones {
@@ -97,9 +111,15 @@ final class CloudMediaBrain: ObservableObject {
                         }//: MAIN ACTOR
                     }//: IF ELSE (creationSuccess)
                 }//: LOOP
+                
                 if zonesAddedOk == zonesToAdd {
                     zonesCreated = true
-                }
+                } else {
+                    NSLog(">>> CloudMediaBrain: initialZoneSetup() - Failed to create all of the new zones. Zones that were not created: \(missingZones)")
+                    await MainActor.run {
+                        userErrorMessage = "Failed to properly configure your iCloud drive for this app to save and sync media files due to a technical, iCloud side error. Open this app later to see if issue gets resolved."
+                    }//: MAIN ACTOR
+                }//: IF ELSE (zonesAddedOk == zonesToAdd)
             }//: IF ELSE (zonesExist)
         case .failure(let error):
             NSLog(">>> CloudMediaBrain: initialZoneSetup() - Encountered an error while checking the zones in the database: \(error.localizedDescription)")
@@ -157,7 +177,7 @@ final class CloudMediaBrain: ObservableObject {
         return record
     }//: createCKRecord(for)
     
-    private func saveRecToICloud(record: CKRecord) async -> Bool {
+    private func saveRecToICloud(record: CKRecord, retryCount: Int = 0) async -> Bool {
         guard settings.zonesCreated else {
             NSLog(">>> CloudMediaBrain error: saveRecToICloud(record) - Zones not yet created")
             await setupAndVerifyZones()
@@ -167,6 +187,22 @@ final class CloudMediaBrain: ObservableObject {
         do {
             _ = try await cloudDB.save(record)
             return true
+        } catch let error as CKError {
+            if shouldRetry(error: error, currentRetry: retryCount) {
+                let delay = calculateRetryBackoff(retryCount: retryCount, error: error)
+                NSLog(">>> CloudMediaBrain: saveRecToICloud")
+                NSLog(">>> Retrying save after \(delay) seconds (attempt \(retryCount + 1)/3")
+                
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                return await saveRecToICloud(record: record, retryCount: retryCount + 1)
+            }//: IF (shouldRetry)
+            
+            NSLog(">>> CloudMediaBrain error: saveRecToICloud(record) error")
+            NSLog(">>> Error: \(error.localizedDescription)")
+            await MainActor.run {
+                userErrorMessage = "Encountered a problem while trying to upload the file to iCloud. Check your network connection, iCloud settings, & iCloud storage, and try uploading again later. Contact the developer if this issue persists."
+            }//: MAIN ACTOR
+            return false
         } catch {
             NSLog(">>> CloudMediaBrain error: saveRecToICloud(record) error")
             NSLog(">>> Error: \(error.localizedDescription)")
@@ -174,7 +210,7 @@ final class CloudMediaBrain: ObservableObject {
                 userErrorMessage = "Encountered a problem while trying to upload the file to iCloud. Check your network connection, iCloud settings, & iCloud storage, and try uploading again later. Contact the developer if this issue persists."
             }//: MAIN ACTOR
             return false
-        }//: DO-CATCH
+        }//: DO - CATCH
     }//: saveRecToICloud(record)
     
     func smartSyncCECertificate(
@@ -212,7 +248,14 @@ final class CloudMediaBrain: ObservableObject {
         for certInfo: CertificateInfo,
         with model: MediaModel
     ) async -> Result<CKRecord.ID, Error> {
-        guard userIsAPaidSupporter else { return Result.failure(CloudSyncError.paidUpgradeNeeded)}
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return Result.failure(CloudSyncError.cloudUnavailable)
+        }//: GUARD
+        guard userIsAPaidSupporter else { return Result.failure(CloudSyncError.paidUpgradeNeeded)
+        }//: GUARD
         
         if settings.getCurrentPurchaseLevel() == .basicUnlock {
             let certSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: 0)
@@ -260,34 +303,106 @@ final class CloudMediaBrain: ObservableObject {
     
     // MARK: - CHANGING
     
+    func updateMediaFileWithNewData(
+        for record: CKRecord.ID,
+        using model: MediaModel
+    ) async -> Bool {
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return false
+        }//: GUARD
+        
+        let oldMediaRemovalResult = await deleteUploadedMedia(for: record, with: model)
+        switch oldMediaRemovalResult {
+        case .success(let origRec):
+            let updateResult = await updateRecordWithNewData(origRec, using: model)
+            if updateResult {
+                return true
+            } else {
+                return false
+            }//: IF ELSE
+        case .failure(let error):
+            await MainActor.run {
+                userErrorMessage = "Unable to change the \(model.designatedClass.rawValue) file because the original file could not be deleted in iCloud. Reason: (\(error.localizedDescription))"
+            }//: MAIN ACTOR
+            return false
+        }//: SWITCH
+    }//: updateMediaFileWithNewData(using)
+    
+    
+    private func updateRecordWithNewData(
+        _ record: CKRecord,
+        using model: MediaModel
+    ) async -> Bool {
+        let newMediaType = model.getMediaTypeName()
+        let newAsset = CKAsset(fileURL: model.mediaDataSavedAt)
+        record[String.mediaDataKey] = newAsset
+        record[String.mediaKey] = newMediaType
+        if model.designatedClass == .audioReflection {
+            let transcriptAsset: CKAsset = CKAsset(fileURL: model.transcriptionSavedAt)
+            record[String.originalAudioTranscriptionKey] = transcriptAsset
+        }//: IF
+        
+        let saveUpdatedRecResult = await saveRecToICloud(record: record)
+        if saveUpdatedRecResult {
+            return true
+        } else {
+            await MainActor.run {
+                userErrorMessage = "Unable to save the \(model.designatedClass.rawValue) file after deleting the original file from iCloud. Please check your network connection and try again."
+            }//: MAIN ACTOR
+            return false
+        }//: IF ELSE
+    }//: updateRecordWithNewData(_ record)
+    
     // MARK: - DELETING
     
     func deleteUploadedMedia(
         for record: CKRecord.ID,
         with model: MediaModel
-    ) async -> Result<Bool, CloudSyncError> {
+    ) async -> Result<CKRecord, CloudSyncError> {
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return Result.failure(CloudSyncError.cloudUnavailable)
+        }//: GUARD
         let mediaType = model.ckRecType
         var recToUpdate: CKRecord
         do {
            recToUpdate = try await cloudDB.record(for: record)
            removeAssetValuesFromRecord(recToUpdate, for: mediaType)
-           return Result.success(true)
         } catch {
             if let searchedRec = await searchZoneForRecordMatching(using: model) {
                 removeAssetValuesFromRecord(searchedRec, for: mediaType)
-                return Result.success(true)
+                recToUpdate = searchedRec
             } else {
                 return Result.failure(
                     CloudSyncError.mediaDeletionError("After two search attempts, the iCloud record for the \(mediaType.rawValue) you are trying to delete could not be found due to: \(error.localizedDescription).")
                 )//: failure
             }//: IF LET
         }//: DO-CATCH
+        
+        let saveUpdatedRecResult = await saveRecToICloud(record: recToUpdate)
+        if saveUpdatedRecResult {
+            return Result.success(recToUpdate)
+        } else {
+            return Result.failure(CloudSyncError.cloudSaveError(model.designatedClass))
+        }//: IF ELSE
     }//: deleteUploadedMedia(with)
     
     func deleteEntireRecord(
         for object: CKRecord.ID,
         using model: MediaModel
     ) async -> Result<Bool, CloudSyncError> {
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return Result.failure(CloudSyncError.cloudUnavailable)
+        }//: GUARD
+        
         var recToDelete: CKRecord
         
         // Make sure the record can be found
@@ -315,15 +430,14 @@ final class CloudMediaBrain: ObservableObject {
         }//: DO-CATCH
     }//: deleteEntireRecord(for)
     
-    
     private func removeAssetValuesFromRecord(_ record: CKRecord, for objType: CkRecordType) {
         switch objType {
         case .certificate:
             record[String.mediaDataKey] = nil
-            record[String.mediaKey] = "" as CKRecordValue
+            record[String.mediaKey] = nil
         case .audioReflection:
             record[String.mediaDataKey] = nil
-            record[String.originalAudioTranscriptionKey] = "" as CKRecordValue
+            record[String.originalAudioTranscriptionKey] = nil
         }//: SWITCH
     }//: removeAssetValuesFromRecord
     
@@ -333,20 +447,46 @@ final class CloudMediaBrain: ObservableObject {
         for object: CKRecord.ID,
         using model: MediaModel
     ) async -> Result<URL, Error> {
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return Result.failure(CloudSyncError.cloudUnavailable)
+        }//: GUARD
+        
         var mediaRecord: CKRecord
+        
         do {
             mediaRecord = try await cloudDB.record(for: object)
+        } catch let webError as CKError {
+                if let foundRec = await repeatRecordSearchAfterError(
+                    error: webError,
+                    for: object
+                ) {
+                    mediaRecord = foundRec
+                } else {
+                    if let searchedRec = await searchZoneForRecordMatching(using: model) {
+                        mediaRecord = searchedRec
+                    } else {
+                        return Result.failure(CloudSyncError.cloudRecordNotFound(model.designatedClass))
+                    }//: IF LET (searchedRec)
+                }//: IF LET ELSE
         } catch {
             if let searchedRec = await searchZoneForRecordMatching(using: model) {
                 mediaRecord = searchedRec
             } else {
                 return Result.failure(CloudSyncError.cloudRecordNotFound(model.designatedClass))
             }//: IF LET (searchedRec)
-        }//: DO-CATCH
+        }//: DO - CATCH
         
-        if let mediaAsset = mediaRecord[String.mediaDataKey] as? CKAsset, let tempURL = mediaAsset.fileURL {
+        if let mediaAsset = mediaRecord[String.mediaDataKey] as? CKAsset,
+            let tempURL = mediaAsset.fileURL {
             do {
-                _ = try FileManager().moveItem(at: tempURL, to: model.mediaDataSavedAt)
+                if fileSystem.fileExists(atPath: model.mediaDataSavedAt.path) {
+                    try fileSystem.removeItem(at: model.mediaDataSavedAt)
+                }//: IF (fileExists)
+                
+                try fileSystem.moveItem(at: tempURL, to: model.mediaDataSavedAt)
                 return Result.success(model.mediaDataSavedAt)
             } catch {
                 NSLog(">>> CloudMediaBrain error: downloadOnlineMediaFile")
@@ -361,6 +501,12 @@ final class CloudMediaBrain: ObservableObject {
     }//: downloadOnlineMediaFile(using)
     
     func restoreOriginalAudioTranscription(using model: MediaModel) async -> (Bool, String?) {
+        guard iCloudIsAccessible else {
+            await MainActor.run {
+                userErrorMessage = settings.iCloudState.userMessage
+            }//: MAIN ACTOR
+            return (false, nil)
+        }//: GUARD
         guard model.designatedClass == .audioReflection else { return (false, nil) }
         
         let matchingString = model.createAssignedObjIdString()
@@ -369,40 +515,38 @@ final class CloudMediaBrain: ObservableObject {
         
         let searchZone: CKRecordZone.ID = ((model.ckRecType == .certificate) ? certZone : audioZone).zoneID
         
-        let operation = CKQueryOperation(query: query)
-        operation.resultsLimit = 1
-        operation.desiredKeys = [String.originalAudioTranscriptionKey]
-        operation.zoneID = searchZone
-        
-        var recordIsFound: (result: Bool, transcript: String?)
-        
-        operation.recordMatchedBlock = { recID, result in
-            switch result {
-            case .success(let record):
-                if let retrievedTranscript = record[String.originalAudioTranscriptionKey] as? String {
-                    recordIsFound = (true, retrievedTranscript)
-                } else {
-                    recordIsFound = (false, nil)
-                }//: IF LET
-            case .failure:
-                recordIsFound = (result: false, transcript: nil)
-            }//: SWITCH
-        }//: recordMatchedBlock
-        
-        
-        operation.queryResultBlock = { result in
-            Task{@MainActor in
-                switch result {
-                case .success(_):
-                    return recordIsFound
+        do {
+            let searchResults = try await cloudDB.records(
+                matching: query,
+                inZoneWith: searchZone,
+                desiredKeys: [String.originalAudioTranscriptionKey],
+                resultsLimit: 1
+            )//: searchResults
+            
+            if let matchedRec = searchResults.matchResults.first {
+                switch matchedRec.1 {
+                case .success(let recFound):
+                    if let transcriptAsset = recFound[String.originalAudioTranscriptionKey] as? CKAsset, let tempURL = transcriptAsset.fileURL,
+                        let transcript = try? String(contentsOf: tempURL, encoding: .utf8) {
+                        return (true, transcript)
+                    } else {
+                        return (false, nil)
+                    }//: IF ELSE
                 case .failure(let error):
-                    self.userErrorMessage = "Error encountered while trying to find the iCloud record containing the original audio transcription: \(error.localizedDescription)"
-                    return recordIsFound
+                    await MainActor.run {
+                        userErrorMessage = "Failed to retrieve the original transcription from iCloud: \(error.localizedDescription)"
+                    }//: MAIN ACTOR
+                    return (false, nil)
                 }//: SWITCH
-            }//:TASK
-        }//: queryResultBlock
-        
-        cloudDB.add(operation)
+            } else {
+                return (false, nil)
+            }//: IF LET (searchResults.matchResults.first)
+        } catch {
+            await MainActor.run {
+                userErrorMessage = "Error searching for the original transcription: \(error.localizedDescription)"
+            }//: MAIN ACTOR
+            return (false, nil)
+        }//: DO-CATCH
     }//: restoreOriginalAudioTranscription(for, using)
     
     // MARK: - HELPERS
@@ -431,7 +575,10 @@ final class CloudMediaBrain: ObservableObject {
     
     // MARK: - QUERY
     
-    private func searchZoneForRecordMatching(using model: MediaModel) async -> CKRecord? {
+    private func searchZoneForRecordMatching(
+        using model: MediaModel,
+        retryCount: Int = 0
+    ) async -> CKRecord? {
         let matchingString = model.createAssignedObjIdString()
         let predicate: NSPredicate = NSPredicate(format: "\(String.assignedObjectKey) == %@", matchingString)
         let query: CKQuery = CKQuery(recordType: model.getRecTypeName(), predicate: predicate)
@@ -456,6 +603,18 @@ final class CloudMediaBrain: ObservableObject {
                 NSLog(">>> The Cloud Kit query was unable to retrieve any matching records after the search.")
                 return nil
             }//: IF ELSE
+        } catch let webError as CKError {
+            if shouldRetry(error: webError, currentRetry: retryCount) {
+                let delay = calculateRetryBackoff(retryCount: retryCount, error: webError)
+                NSLog(">>> CloudMediaBrain: searchZoneForRecordMatching")
+                NSLog(">>> Retrying record search after \(delay) seconds (\(retryCount + 1)/3")
+                try? await Task.sleep(for: .seconds(0.01))
+                return await searchZoneForRecordMatching(using: model, retryCount: retryCount + 1)
+            } else {
+                NSLog(">>> CloudMediaBrain error: searchZoneForRecordMathing(using)")
+                NSLog(">>> The Cloud Kit query was unable to find the matching CKRecord due to: \(webError.localizedDescription)")
+                return nil
+            }//: IF (shouldRetry)
         } catch {
             NSLog(">>> CloudMediaBrain error: searchZoneForRecordMathing(using)")
             NSLog(">>> The Cloud Kit query was unable to find the matching CKRecord due to: \(error.localizedDescription)")
@@ -463,6 +622,233 @@ final class CloudMediaBrain: ObservableObject {
         }//: DO - CATCH
     }//: searchZoneForRecordMatching(objID)
     
+    // MARK: - QUERY SUBSCRIPTIONS
+    
+    private func createMediaFileChangeQuerySubscription(
+        for mediaClass: MediaClass,
+        retryCount: Int = 0
+    ) async -> (Bool, CKQuerySubscription?) {
+        let subscription = createQuerySubscriptionConfig(for: mediaClass)
+        
+        do {
+            _ = try await cloudDB.save(subscription)
+            NSLog(">>> CloudMediaBrain: successfully saved new subscription: \(subscription.subscriptionID)")
+            return (true, subscription)
+         } catch let webError as CKError {
+            if shouldRetry(error: webError, currentRetry: retryCount) {
+                let delay = calculateRetryBackoff(retryCount: retryCount, error: webError)
+                NSLog(">>> CloudMediaBrain: retrying createmediaFileChangeQuerySubscription in \(delay) seconds...(attempt #\(retryCount + 1)/3")
+                return await createMediaFileChangeQuerySubscription(
+                    for: mediaClass,
+                    retryCount: retryCount + 1
+                )//: createMediaFileChangeQuerySubscription
+            } else {
+                NSLog(">>> CloudMediaBrain error: createMediaFileChangeSubscription")
+                NSLog(">>> Failed to save the newly created subscription, \(subscription.subscriptionID) to iCloud after making 3 attempts.")
+                NSLog(">>> Error: \(webError.localizedDescription)")
+            }//: IF (shouldRetry)
+        } catch {
+            NSLog(">>> CloudMediaBrain error: createMediaFileChangeSubscription")
+            NSLog(">>> Failed to save the newly created subscription, \(subscription.subscriptionID) to iCloud, and unable to make any additional attempts.")
+            NSLog(">>> Error: \(error.localizedDescription)")
+        }//: DO - CATCH
+    }//: createMediaFileChangeQuerySubscription()
+    
+    private func setupMediaFileSubscriptions() async -> Result<(Bool, [CKQuerySubscription]), Error> {
+        
+        let certChangedSubCreated = await createMediaFileChangeQuerySubscription(
+            for: MediaClass.certificate
+        )//: certChangedSubCreated
+        
+        let audioChangedSubCreated = await createMediaFileChangeQuerySubscription(
+            for: MediaClass.audioReflection
+        )//: audioChangedSubCreated
+        
+        if certChangedSubCreated.0 && audioChangedSubCreated.0 {
+            if let certSub = certChangedSubCreated.1, let audioSub = audioChangedSubCreated.1 {
+                return Result.success((true, [certSub, audioSub]))
+            } else if let certSub = certChangedSubCreated.1 {
+                return Result.success((false, [certSub]))
+            } else if let audioSub = audioChangedSubCreated.1 {
+                return Result.success((false, [audioSub]))
+            } else {
+                return Result.failure(CloudSyncError.querySubscriptionNotCreated)
+            }//: IF LET ELSE
+        } else if certChangedSubCreated.0 {
+            if let certSub = certChangedSubCreated.1 {
+                return Result.success((false, [certSub]))
+            } else {
+                return Result.failure(CloudSyncError.querySubscriptionNotCreated)
+            }//: IF LET
+        } else if audioChangedSubCreated.0 {
+            if let audioSub = audioChangedSubCreated.1 {
+                return Result.success((false, [audioSub]))
+            } else {
+                return Result.failure(CloudSyncError.querySubscriptionNotCreated)
+            }//: IF LET
+        } else {
+            NSLog(">>> CloudMediaBrain error: setupMediaFileSubscriptions()")
+            NSLog(">>> Method was unable to create and save either query subscription for certificate and audio reflection changes/deletion.")
+            return Result.failure(CloudSyncError.querySubscriptionNotCreated)
+        }//: ELSE
+        
+    }//: setupMediaFileSubscriptions()
+    
+    private func retrySettingUpMissingSubscriptions(
+        excluding existingSubs: [CKQuerySubscription],
+        retryCount: Int = 0
+    ) async -> Bool {
+        guard existingSubs.isNotEmpty else { return false }
+        
+        let firstNeededSub = createQuerySubscriptionConfig(for: .certificate)
+        let secondNeededSub = createQuerySubscriptionConfig(for: .audioReflection)
+        let allNeededSubs = [firstNeededSub, secondNeededSub]
+        
+        let subsToAdd = (allNeededSubs.count - existingSubs.count)
+        var subsAdded: Int = 0
+        
+        let missingSubs = allNeededSubs.filter {!existingSubs.contains($0)}
+        
+        for subscription in missingSubs {
+            do {
+                _ = try await cloudDB.save(subscription)
+                NSLog(">>> CloudMediaBrain: successfully saved new subscription: \(subscription.subscriptionID)")
+                subsAdded += 1
+            } catch let webError as CKError {
+                if shouldRetry(error: webError, currentRetry: retryCount) {
+                    let delay = calculateRetryBackoff(retryCount: retryCount, error: webError)
+                    NSLog(">>> CloudMediaBrain: retrying setupMediaFileSubscriptions() in \(delay) seconds...(attempt #\(retryCount + 1)/3")
+                    return await retrySettingUpMissingSubscriptions(excluding: existingSubs, retryCount: retryCount + 1)
+                } else {
+                    NSLog(">>> CloudMediaBrain error: retrySettingUpMissingSubscriptions")
+                    NSLog(">>> Failed to save the newly created subscription, \(subscription.subscriptionID) to iCloud after making 3 attempts.")
+                    NSLog(">>> Error: \(webError.localizedDescription)")
+                }//: IF (shouldRetry)
+            } catch {
+                NSLog(">>> CloudMediaBrain error: retrySettingUpMissingSubscriptions")
+                NSLog(">>> Failed to save the newly created subscription, \(subscription.subscriptionID) to iCloud, and unable to make any additional attempts.")
+                NSLog(">>> Error: \(error.localizedDescription)")
+            }//: DO - CATCH
+        }//: LOOP
+        return subsAdded == subsToAdd
+    }//: retrySettingUpMissingSubscriptions
+    
+    
+    private func handleMediaFileSubscriptionSetup() async {
+        guard !settings.appHasQuerySubscriptions else { return }
+        guard iCloudIsAccessible && userIsAPaidSupporter else { return }
+        
+        let setupResults = await setupMediaFileSubscriptions()
+        switch setupResults {
+        case .success(let outcome):
+            if outcome.0 {
+                settings.appHasQuerySubscriptions = true
+                settings.encodeCurrentState()
+            } else {
+                let retryResult = await retrySettingUpMissingSubscriptions(excluding: outcome.1)
+                if retryResult {
+                    settings.appHasQuerySubscriptions = true
+                    settings.encodeCurrentState()
+                } else {
+                    NSLog(">>> CloudMediaBrain error: handleMediaFileSubscriptionSetup")
+                    NSLog(">>> Error: Failed to set up all necessary subscriptions.")
+                    NSLog(">>> Subscriptions not saved: \(outcome.1.count)")
+                    await MainActor.run {
+                        userErrorMessage = "Encountered an error setting up iCloud sync for this device. While  you can still add and delete media files like certificates and audio reflections, be aware that such changes may not sync across to your other devices until the app can get iCloud sync setup correctly. Future attempts at fixing this will be made."
+                    }//: MAIN ACTOR
+                }//: IF (retryResult)
+            }//: IF
+        case .failure(let error):
+            NSLog(">>> CloudMediaBrain error: handleMediaFileSubscriptionSetup")
+            NSLog(">>> Error: Failed to set up all necessary subscriptions.")
+            NSLog("Error: \(error.localizedDescription)")
+            await MainActor.run {
+                userErrorMessage = "Encountered an error setting up iCloud sync for this device. While  you can still add and delete media files like certificates and audio reflections, be aware that such changes may not sync across to your other devices until the app can get iCloud sync setup correctly. Future attempts at fixing this will be made."
+            }//: MAIN ACTOR
+        }//: SWITCH
+    }//: handleMediaFileSubscriptionSetup()
+    
+    private func createQuerySubscriptionConfig(for mediaType: MediaClass) -> CKQuerySubscription {
+        let predicate = NSPredicate(value: true)
+        var queryZoneID: CKRecordZone.ID
+        var subID: String = ""
+        var subRecType: String = ""
+        
+        switch mediaType {
+        case .certificate:
+            queryZoneID = certZone.zoneID
+            subID = "cert-changes"
+            subRecType = CkRecordType.certificate.rawValue
+        case .audioReflection:
+            queryZoneID = audioZone.zoneID
+            subID = "audio-changes"
+            subRecType = CkRecordType.audioReflection.rawValue
+        }//: SWITCH
+        
+        let subscription = CKQuerySubscription(
+            recordType: subRecType,
+            predicate: predicate,
+            subscriptionID: subID,
+            options: [.firesOnRecordUpdate, .firesOnRecordDeletion]
+        )//: subscription
+        
+        let notificationInfo = CKSubscription.NotificationInfo()
+        notificationInfo.shouldSendContentAvailable = true
+        
+        subscription.notificationInfo = notificationInfo
+        subscription.zoneID = queryZoneID
+        
+        return subscription
+    }//: createQuerySubscriptionConfig(for)
+    
+    // MARK: - RETRY LOGIC
+    
+    private func shouldRetry(error: CKError, currentRetry: Int) -> Bool {
+        guard currentRetry < 3 else { return false }
+        
+        switch error.code {
+        case .networkFailure, .networkUnavailable, .serviceUnavailable, .requestRateLimited:
+            return true
+        case .zoneBusy, .serverResponseLost:
+            return true
+        default:
+            return false
+        }//: SWITCH
+    }//: shouldRetry(error, currentRetry)
+    
+    private func calculateRetryBackoff(retryCount: Int, error: CKError) -> TimeInterval {
+        // Returning the recommended retry time value if the specific CKError
+        // provides for that
+        if let retryAfter = error.retryAfterSeconds {
+            return retryAfter
+        }//: IF LET (retryAfter)
+        
+        // Return an exponential backoff every 2 seconds
+        return pow(2.0, Double(retryCount))
+    }//: calculateRetryBackoff
+    
+    
+    private func repeatRecordSearchAfterError(
+        error: CKError,
+        for objectID: CKRecord.ID,
+        with secDelay: Double = 0.01
+    ) async -> CKRecord? {
+        var mediaRecord: CKRecord? = nil
+        for attempt in 0...2 {
+            if shouldRetry(error: error, currentRetry: attempt) {
+                let delay = calculateRetryBackoff(retryCount: attempt, error: error)
+                NSLog(">>> CloudMediaBrain: downloadOnlineMediaFile")
+                NSLog(">>> Retrying download after \(delay) seconds (attempt \(attempt + 1)/3")
+                try? await Task.sleep(for: .seconds(secDelay))
+                do {
+                    mediaRecord = try await cloudDB.record(for: objectID)
+                } catch {
+                    NSLog(">>> Failed record(for) method | attempt #\(attempt)")
+                }//: DO-CATCH
+            }//: IF (shouldRetry)
+        }//: LOOP
+        return mediaRecord
+    }//: repeatRecordSearchAfterError(error, for, with)
     
     // MARK: - INIT
     
@@ -474,6 +860,7 @@ final class CloudMediaBrain: ObservableObject {
                 if !settings.zonesCreated || needsZoneVerification() {
                     await setupAndVerifyZones()
                 }//: IF (zonesCreated OR needsZoneVerification)
+                await handleMediaFileSubscriptionSetup()
             }//: TASK
         } else {
             if iCloudIsAccessible == false {

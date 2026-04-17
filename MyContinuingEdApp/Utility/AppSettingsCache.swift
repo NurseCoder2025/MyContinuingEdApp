@@ -96,6 +96,15 @@ final class AppSettingsCache: @unchecked Sendable {
         }
     }//: userICloudIdData
     
+    var appHasQuerySubscriptions: Bool {
+        get {
+            queue.sync { _currentState.subscriptionsCreated }
+        }
+        set {
+            queue.async { self._currentState.subscriptionsCreated = newValue}
+        }
+    }//:appHasQuerySubscriptions
+    
     // MARK: - METHODS
     
     func encodeCurrentState() {
