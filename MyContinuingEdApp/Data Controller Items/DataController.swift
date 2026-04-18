@@ -282,6 +282,8 @@ class DataController: ObservableObject {
                 object: sharedSettings
             )//: OBSERVER
             
+            
+            
             // MARK: ICLOUD TASK
             iCloudTasks = Task {
                 await assessUserICloudStatus()

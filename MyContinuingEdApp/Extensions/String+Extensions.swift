@@ -14,6 +14,7 @@ extension String {
     
     // MARK: - CLOUD KIT
     
+    // MARK: CKRecord KEYS
     /// Constant for use in CloudKit methods. Value is "relativePath".
     static let relPathKey: String = "relativePath"
     
@@ -30,11 +31,24 @@ extension String {
     static let mediaDataKey: String = "mediaData"
     
     static let originalAudioTranscriptionKey: String = "audioTranscription"
+    static let recordTimeStampKey: String = "recordTimeStamp"
     
+    
+    // MARK: CKRecordZone IDs
     static let certificateZoneId: String = "userCertificates"
     static let audioReflectionZoneId: String = "userAudioReflections"
     
-    static let mediaDeletionSubscription: String = "mediaFileDeletionSubscription"
+    
+    // MARK: CKQuerySubscription-related constants
+    // *** DO NOT DELETE ***
+    static let certAddedQuerySubID: String = "new-cert-added"
+    static let audioAddedQuerySubID: String = "new-audio-added"
+    
+    static let certChangedQuerySubID: String = "cert-changed"
+    static let audioChangedQuerySubID: String = "audio-changed"
+    
+    static let certDeletedQuerySubID: String = "cert-deleted"
+    static let audioDeletedQuerySubID: String = "audio-deleted"
     
     // MARK: - CORE DATA
     
@@ -54,34 +68,14 @@ extension String {
     static let certImageFormatExtension: String = "png"
     
     // MARK: - DATA KEYS
-    /// Static constant in the String struct (via extension) that represents a String dictionary key
-    /// for the FileWrapper directory objects created for the CertificateDocument (UIDocument) that
-    /// correspond to the CertificateMetadata object.
-    static let certMetaDataKey: String = "certificate.meta"
-    
-    /// Static constant in the String struct (via extension) that represents a String dictionary key
-    /// for the FileWrapper directory objects created for the CertificateDocument (UIDocument) that
-    /// correspond to the CertificateData object.
-    static let certBinaryDataKey: String = "certificate.data"
     
     static let userIDKey: String = "iCloud.user"
-    
-    static let audioReflectionMetaKey: String = "audioReflection.meta"
-    static let audioReflectionDataKey: String = "audioReflection.data"
-    static let audioReflectionRecordingKey: String = "audioReflection.recordingInfo"
     
     // MARK: - NSQueryMetadata Keys
     
     static let resultURL: String = "NSMetadataItemURLKey"
     
     // MARK: - URL values
-    
-    /// String constant property that is used for the filename and extension for the JSON file that will contain all
-    /// CertificateCoordinator objects.  Value: "CertificateCoordinatorList.json".
-    static let certCoordinatorListFile: String = "CertificateCoordinatorList.json"
-    
-    static let audioCoordinatorListFile: String = "AudioReflectionsCoordinatorList.json"
-    
     
     /// String constant property that is used for the filename and extension for saving the user's
     /// iCloud user id info (CKRecord.ID object) on the local device for long-term storage and
@@ -92,27 +86,20 @@ extension String {
     static let iCloudUserID: String = "iCloudUserID.json"
     
     // MARK: - OBSERVER NAMES
+    // TODO: Replace String constant with static Notification.Name value
     static let cloudStoragePreferenceChanged: String = "certificateMediaStoragePreferenceChanged"
+    
+    // TODO: Replace String constant with static Notification.Name value
     static let cloudAudioMediaPreferenceChanged: String = "audioMediaStoragePrefChanged"
     
-    // MARK: Certificate Notifications
-    static let certCoordinatorListSyncCompleted: String = "certCoordinatorListSynced"
-    static let certLoadingDoneNotification: String = "certificateFinishedLoading"
-    static let certDeletionCompletedNotification: String = "certificateDeletionCompleted"
-    static let certLocalSaveCompleted: String = "certificateLocalSaveCompleted"
-    static let certSaveCompletedNotification: String = "certificateSaveCompleted"
-    static let certGettingRawDataDone: String = "certificateRawDataLoaded"
-    static let certDocReadyForOpening: String = "certificateDocumentReadyToOpen"
-    
-    // MARK: Audio Reflection Notifications
-    static let audioCoordinatorListSyncCompleted: String = "audioCoordinatorListSynced"
-    static let audioLoadingDoneNotification: String = "audioReflectionFinishedLoading"
-    static let audioDeletionCompletedNotification: String = "audioReflectionDeletionCompleted"
-    static let audioSaveCompletedNotification: String = "audioReflectionSaveCompleted"
-    static let audioGettingRawDataDone: String = "audioReflectionRawDataLoaded"
     
     // MARK: Prompt Notifications
+    // TODO: Replace String constant with static Notification.Name value
     static let promptCatsLoaded: String = "reflectionPromptCategoriesLoaded"
+    
+    // MARK: - NOTIFICATION RELATED
+    
+    static let userInfoNotificationKey: String = "notification"
     
 }//: EXTENSION
 

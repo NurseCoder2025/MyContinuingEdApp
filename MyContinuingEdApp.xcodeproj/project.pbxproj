@@ -72,6 +72,22 @@
 		3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */; };
 		3F67DB762F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
+		3F6B4C6C2F92E5B3006C8352 /* iCloudEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */; };
+		3F6B4C6D2F92E5B3006C8352 /* iCloudEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */; };
+		3F6B4C6F2F92E677006C8352 /* InAppPurchaseEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6E2F92E677006C8352 /* InAppPurchaseEnums.swift */; };
+		3F6B4C702F92E677006C8352 /* InAppPurchaseEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6E2F92E677006C8352 /* InAppPurchaseEnums.swift */; };
+		3F6B4C722F92E69D006C8352 /* UIViewEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C712F92E69D006C8352 /* UIViewEnums.swift */; };
+		3F6B4C732F92E69D006C8352 /* UIViewEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C712F92E69D006C8352 /* UIViewEnums.swift */; };
+		3F6B4C752F92E6E5006C8352 /* NotificationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C742F92E6E5006C8352 /* NotificationEnums.swift */; };
+		3F6B4C762F92E6E5006C8352 /* NotificationEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C742F92E6E5006C8352 /* NotificationEnums.swift */; };
+		3F6B4C782F92E736006C8352 /* MediaFileRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C772F92E736006C8352 /* MediaFileRelatedEnums.swift */; };
+		3F6B4C792F92E736006C8352 /* MediaFileRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C772F92E736006C8352 /* MediaFileRelatedEnums.swift */; };
+		3F6B4C7B2F92E758006C8352 /* AchievementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7A2F92E758006C8352 /* AchievementEnums.swift */; };
+		3F6B4C7C2F92E758006C8352 /* AchievementEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7A2F92E758006C8352 /* AchievementEnums.swift */; };
+		3F6B4C7E2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */; };
+		3F6B4C7F2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */; };
+		3F6B4C822F9343F8006C8352 /* CoreDataCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */; };
+		3F6B4C842F93479D006C8352 /* CertificateSyncDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */; };
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
 		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
@@ -378,6 +394,15 @@
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
+		3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iCloudEnums.swift; sourceTree = "<group>"; };
+		3F6B4C6E2F92E677006C8352 /* InAppPurchaseEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppPurchaseEnums.swift; sourceTree = "<group>"; };
+		3F6B4C712F92E69D006C8352 /* UIViewEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewEnums.swift; sourceTree = "<group>"; };
+		3F6B4C742F92E6E5006C8352 /* NotificationEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationEnums.swift; sourceTree = "<group>"; };
+		3F6B4C772F92E736006C8352 /* MediaFileRelatedEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaFileRelatedEnums.swift; sourceTree = "<group>"; };
+		3F6B4C7A2F92E758006C8352 /* AchievementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementEnums.swift; sourceTree = "<group>"; };
+		3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsRelatedEnums.swift; sourceTree = "<group>"; };
+		3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCoordination.swift; sourceTree = "<group>"; };
+		3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateSyncDelegate.swift; sourceTree = "<group>"; };
 		3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-InAppPurchases.swift"; sourceTree = "<group>"; };
 		3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaidFeaturePromoView.swift; sourceTree = "<group>"; };
 		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
@@ -565,7 +590,7 @@
 		F2B580152E7B82220073BCA7 /* SpecialCECatsManagementSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCECatsManagementSheet.swift; sourceTree = "<group>"; };
 		F2B580172E7B84510073BCA7 /* NoSpecialCatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsView.swift; sourceTree = "<group>"; };
 		F2B9379A2E836CD400AF9155 /* BasicCredentialInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicCredentialInfoView.swift; sourceTree = "<group>"; };
-		F2B9379C2E836F5600AF9155 /* Enums-General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Enums-General.swift"; path = "MyContinuingEdApp/Globals/Enums-General.swift"; sourceTree = SOURCE_ROOT; };
+		F2B9379C2E836F5600AF9155 /* Enums-General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Enums-General.swift"; sourceTree = "<group>"; };
 		F2B937A02E837A8E00AF9155 /* ActiveCredentialSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveCredentialSectionView.swift; sourceTree = "<group>"; };
 		F2B937A22E837BB100AF9155 /* CredentialIssueAndRenewalSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialIssueAndRenewalSectionView.swift; sourceTree = "<group>"; };
 		F2B937A42E8393B300AF9155 /* CredentialNextExpirationSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialNextExpirationSectionView.swift; sourceTree = "<group>"; };
@@ -851,8 +876,8 @@
 		3F2A42CD2EA2DF0E00B095CB /* Globals */ = {
 			isa = PBXGroup;
 			children = (
-				F2B9379C2E836F5600AF9155 /* Enums-General.swift */,
 				F2B937A62E83961E00AF9155 /* GlobalVariables.swift */,
+				3F6B4C802F92E7C5006C8352 /* Global Enums */,
 			);
 			path = Globals;
 			sourceTree = "<group>";
@@ -909,6 +934,8 @@
 				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
 				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
 				3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */,
+				3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */,
+				3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -1094,6 +1121,21 @@
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
 			);
 			path = "Data Controller Items";
+			sourceTree = "<group>";
+		};
+		3F6B4C802F92E7C5006C8352 /* Global Enums */ = {
+			isa = PBXGroup;
+			children = (
+				F2B9379C2E836F5600AF9155 /* Enums-General.swift */,
+				3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */,
+				3F6B4C6E2F92E677006C8352 /* InAppPurchaseEnums.swift */,
+				3F6B4C712F92E69D006C8352 /* UIViewEnums.swift */,
+				3F6B4C742F92E6E5006C8352 /* NotificationEnums.swift */,
+				3F6B4C772F92E736006C8352 /* MediaFileRelatedEnums.swift */,
+				3F6B4C7A2F92E758006C8352 /* AchievementEnums.swift */,
+				3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */,
+			);
+			path = "Global Enums";
 			sourceTree = "<group>";
 		};
 		3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */ = {
@@ -1515,6 +1557,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3F8796882F821D3B00A6E91D /* Enums-General.swift in Sources */,
+				3F6B4C732F92E69D006C8352 /* UIViewEnums.swift in Sources */,
+				3F6B4C792F92E736006C8352 /* MediaFileRelatedEnums.swift in Sources */,
+				3F6B4C6C2F92E5B3006C8352 /* iCloudEnums.swift in Sources */,
+				3F6B4C7E2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */,
+				3F6B4C702F92E677006C8352 /* InAppPurchaseEnums.swift in Sources */,
+				3F6B4C7B2F92E758006C8352 /* AchievementEnums.swift in Sources */,
+				3F6B4C752F92E6E5006C8352 /* NotificationEnums.swift in Sources */,
 				3F3E6E682F82225B00047620 /* String+Extensions.swift in Sources */,
 				3F8796892F821E9800A6E91D /* URL+Extensions.swift in Sources */,
 				3F7B68012EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
@@ -1539,6 +1588,8 @@
 				3FA2961E2EE22993000F5D12 /* StoreExtensions.swift in Sources */,
 				3FD56A622F171EB100D74515 /* WebSiteEntryView.swift in Sources */,
 				F2506F5F2E60F13D00D25D33 /* Credential-CoreDataHelper.swift in Sources */,
+				3F6B4C6F2F92E677006C8352 /* InAppPurchaseEnums.swift in Sources */,
+				3F6B4C822F9343F8006C8352 /* CoreDataCoordination.swift in Sources */,
 				3F0095DD2E9450ED00101310 /* CredentialCatBoxView.swift in Sources */,
 				F2BC94AF2E386EDE00926B3D /* ActivityReflectionView.swift in Sources */,
 				3FA6675C2F7408B900066FF7 /* CustomPromptCreationSheet.swift in Sources */,
@@ -1553,10 +1604,12 @@
 				3F5D84F92F0E02D600B179C4 /* DataController-SpecialCats.swift in Sources */,
 				3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */,
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
+				3F6B4C722F92E69D006C8352 /* UIViewEnums.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
 				3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */,
+				3F6B4C7F2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */,
 				F2B9379B2E836CD400AF9155 /* BasicCredentialInfoView.swift in Sources */,
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */,
@@ -1625,6 +1678,7 @@
 				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
 				3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */,
 				3FA59F332F6E6DFD00EA1418 /* AudioRecordingControlView.swift in Sources */,
+				3F6B4C6D2F92E5B3006C8352 /* iCloudEnums.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
 				3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */,
@@ -1645,6 +1699,7 @@
 				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
+				3F6B4C782F92E736006C8352 /* MediaFileRelatedEnums.swift in Sources */,
 				F2B521C42E1F5E7A000AB6E6 /* DetailView.swift in Sources */,
 				3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */,
 				3F7B68032EF0DBF100069528 /* PurchaseInfoView.swift in Sources */,
@@ -1666,6 +1721,7 @@
 				3F0B138F2F7E0BDE00CC4A49 /* Date+Extensions.swift in Sources */,
 				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
 				3FC450802F89C588005DFD4D /* String+Extension_SettingsKeys.swift in Sources */,
+				3F6B4C842F93479D006C8352 /* CertificateSyncDelegate.swift in Sources */,
 				3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */,
 				3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */,
 				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
@@ -1725,6 +1781,7 @@
 				F243B4202E68FC4D0072419D /* CountryListSheet.swift in Sources */,
 				3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */,
 				F2BC94A92E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift in Sources */,
+				3F6B4C762F92E6E5006C8352 /* NotificationEnums.swift in Sources */,
 				3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */,
 				3FA667582F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift in Sources */,
 				3F71B9912F2A977800F1AA2C /* PromptSelectionSheet.swift in Sources */,
@@ -1764,6 +1821,7 @@
 				3FE90A202EC7D1DB0010FB12 /* MasterChartsSheet.swift in Sources */,
 				F2772B932E1DDA9F006A94BD /* MyContinuingEdAppApp.swift in Sources */,
 				F2B9379D2E836F5600AF9155 /* Enums-General.swift in Sources */,
+				3F6B4C7C2F92E758006C8352 /* AchievementEnums.swift in Sources */,
 				3F2064542EB028AB0036C4B1 /* CredentialSubCatListSheetViewModel.swift in Sources */,
 				F2AA2AB02E8AFFC300321667 /* ActivityCompletionView.swift in Sources */,
 				F2B389EF2E4C37C200518868 /* CertificatePickerView.swift in Sources */,

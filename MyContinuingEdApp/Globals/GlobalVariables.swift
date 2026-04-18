@@ -82,3 +82,26 @@ let basicGradient = LinearGradient(
     startPoint: .leading,
     endPoint: .trailing
 )
+
+
+// MARK: - SETTINGS RELATED
+
+/// Global variable for providing views and objects what the highest
+/// purchase made by the user is currently.
+///
+/// Currently, the app model centers around 4 different modes:
+/// Free (default upon first download), Basic Unlock, Pro Subscription,
+/// and Pro Lifetime.  Different features are available at each level, with
+/// the two different Pro levels offering the same features but with differing
+/// time constraints (the Lifetime one being permanent).
+///
+/// Purchase levels, in ascending order of value, are thus:
+///  Free > Basic Unlock > Pro Subscription > Pro Lifetime.
+///
+/// - Note: This variable accesses the AppSettingsCache singleton object
+/// (AppSettingsCache.shared) in order to obtain and return the highest
+/// purchase made by the user for this app.
+var userPaidSupportLevel: PurchaseStatus {
+    let settings = AppSettingsCache.shared
+    return settings.getCurrentPurchaseLevel()
+}//: userPaidSupportLevel

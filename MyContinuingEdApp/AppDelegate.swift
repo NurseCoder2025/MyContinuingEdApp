@@ -54,11 +54,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     private func handleCloudKitNotification(_ notification: CKQueryNotification) async {
         guard let recordID = notification.recordID else { return }
         
-        NotificationCenter.default.post(
-            name: .cloudKitRecordChanged,
-            object: nil,
-            userInfo: ["notification" : notification]
-        )//: post
+        switch notification.queryNotificationReason {
+        case .recordCreated:
+            NotificationCenter.default.post(
+                name: .cloudKitRecordAdded,
+                object: nil,
+                userInfo: [String.userInfoNotificationKey : notification]
+            )//: post
+        case .recordUpdated:
+            NotificationCenter.default.post(
+                name: .cloudKitRecordChanged,
+                object: nil,
+                userInfo: [String.userInfoNotificationKey : notification]
+            )//: post
+        case .recordDeleted:
+            NotificationCenter.default.post(
+                name: .cloudKitRecordDeleted,
+                object: nil,
+                userInfo: [String.userInfoNotificationKey : notification]
+            )//: post
+        @unknown default:
+            NotificationCenter.default.post(
+                name: .cloudKitUknownRecChange,
+                object: nil,
+                userInfo: [String.userInfoNotificationKey : notification]
+            )//: post
+        }//: SWITCH
+        
     }//: handleCloudKitNotification
     
     

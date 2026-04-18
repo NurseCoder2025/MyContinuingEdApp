@@ -93,7 +93,17 @@ extension CertificateInfo {
         certType = type.rawValue
     }//: setCertificateMediaType(as)
     
+    /// CertificateInfo CoreData helper method that returns a URL value for where the actual
+    /// certificate binary file was stored at on the local device.
+    /// - Parameter basePath: URL representing the top-level folder that holds all CE
+    /// Certificates on the device (use the URL constant)
+    /// - Returns: Optional URL if a URL can be constructed from the relativePath CertificateInfo
+    /// property and the basePath argument
+    ///
+    /// The relativePath in the CertificateInfo CoreData entity object should be in the following format:
+    /// \(computed activity file folder name)\(computed file name.extension)
     func resolveURL(basePath: URL) -> URL? {
+        guard basePath.hasDirectoryPath else {return nil}
         guard let pathSaved = relativePath else {return nil}
         return basePath.appending(path: pathSaved, directoryHint: .notDirectory)
     }//: resolveURL(basePath)
@@ -188,5 +198,10 @@ extension CertificateInfo {
             return Result.failure(CloudSyncError.noCurrentRenewalFound)
         }//: IF ELSE
     }//: basicUserSmartSyncCheck()
+    
+}//: EXTENSION
+
+// MARK: - PROTOCOL CONFORMANCE
+extension CertificateInfo: LocalFileDeletable {
     
 }//: EXTENSION

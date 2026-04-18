@@ -22,3 +22,11 @@ protocol Certificate {
 }//: PROTOCOL
 
 
+// MARK: - MEDIA iCLOUD SYNC
+
+protocol LocalFileDeletable {
+    var removeLocalFile: Bool { get set }
+    func resolveURL(basePath: URL) -> URL?
+}//: LocalFileDeletable
+
+
