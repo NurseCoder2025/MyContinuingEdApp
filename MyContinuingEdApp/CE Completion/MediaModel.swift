@@ -5,6 +5,7 @@
 //  Created by Ilum on 4/10/26.
 //
 
+import CoreData
 import Foundation
 
 
@@ -14,6 +15,7 @@ struct MediaModel {
     let ckRecType: CkRecordType
     let mediaType: MediaType
     let mediaDataSavedAt: URL
+    let relPathForCKRecordID: String
     
     // Audio reflections ONLY
     var transcription: String = ""
@@ -29,6 +31,7 @@ struct MediaModel {
             return MediaClass.audioReflection
         }//: SWITCH
     }//: designatedClass
+    
     
     // MARK: - METHODS
     // The following methods are needed for passing in a String value into a

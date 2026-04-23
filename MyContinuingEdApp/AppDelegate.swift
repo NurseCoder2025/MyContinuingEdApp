@@ -52,8 +52,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     // MARK: - HELPERS
     
     private func handleCloudKitNotification(_ notification: CKQueryNotification) async {
-        guard let recordID = notification.recordID else { return }
+        guard let _ = notification.recordID else { return }
         
+        // TODO: Simplify as single function can handle all cases
         switch notification.queryNotificationReason {
         case .recordCreated:
             NotificationCenter.default.post(

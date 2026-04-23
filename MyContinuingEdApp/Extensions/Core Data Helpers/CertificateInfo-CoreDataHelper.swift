@@ -60,6 +60,15 @@ extension CertificateInfo {
         }
     }//: certCloudRecordName
     
+    var certDeletionTimeStamp: Date {
+        get {
+            deletionTimeStamp ?? Date.now
+        }
+        set {
+            deletionTimeStamp = newValue
+        }
+    }//: certIsMarkedForDeletion
+    
     // MARK: - Computed Properties
     
     /// CoreData computed helper property for CertificateInfo that returns either the ceTtile helper value
@@ -81,6 +90,10 @@ extension CertificateInfo {
     var fileSizeInMegabytes: Double {
         certFileSize / 1_024_000.0
     }//: fileSizeInMegabytes
+    
+    // MARK: - RELATIONSHIPS
+    
+    func getAssignedCeActivity() -> CeActivity? { return completedCe }//: getAssignedCeActivity()
     
     
     // MARK: - METHODS
@@ -199,9 +212,44 @@ extension CertificateInfo {
         }//: IF ELSE
     }//: basicUserSmartSyncCheck()
     
+    func createMediaModelForCertInfo() -> MediaModel? {
+        if let certInfoId = infoID,
+        let certMediaType = certType,
+        let certPath = resolveURL(basePath: URL.localCertificatesFolder),
+        let filePath = relativePath {
+            let recType: CkRecordType = .certificate
+            var certMediaTypeEnum: MediaType
+            
+            if certMediaType == MediaType.image.rawValue {
+                certMediaTypeEnum = .image
+            } else if certMediaType == MediaType.pdf.rawValue {
+                certMediaTypeEnum = .pdf
+            } else {
+                certMediaTypeEnum = .unspecified
+            }//: IF ELSE (certMediaType)
+            
+            let newModel = MediaModel(
+                assignedObjectId: certInfoId,
+                ckRecType: recType,
+                mediaType: certMediaTypeEnum,
+                mediaDataSavedAt: certPath,
+                relPathForCKRecordID: filePath
+            )//: MEDIA MODEL
+            return newModel
+        } else {
+            NSLog(">>> CertificateInfo ext error: createMediaModelForCertInfo")
+            NSLog(">>> A MediaModel instance could not be created because  either one of the require CertificateInfo fields is nil or the relativePath field did not contain a valid path value.")
+            return nil
+        }//: IF LET (certInfoId, certMediaType, certPath)
+    }//: createMediaModelForCertInfo
+    
 }//: EXTENSION
 
 // MARK: - PROTOCOL CONFORMANCE
-extension CertificateInfo: LocalFileDeletable {
+extension CertificateInfo: RepresentsDeletableMediaFile, DelayedDeletion {
+    
+    func returnCDSelf() -> NSManagedObject {
+        return self
+    }//: returnCDSelf()
     
 }//: EXTENSION

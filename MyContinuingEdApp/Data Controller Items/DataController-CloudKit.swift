@@ -51,22 +51,12 @@ extension DataController {
             }//: SWITCH
     }//: deleteLocalMediaFileUpon(notification)
     
-    @objc func updateLocalMediaFileUpon(_ notification: Notification) {
-        let prelminCheckResult = okToHandleCKQueryRemoteNotification(for: notification, with: .cloudKitRecordChanged)
+    // MARK: - SUB METHODS
+    
+    private func deleteLocallySavedMediaFile() {
         
-        switch prelminCheckResult {
-        case .success(let values):
-            let recordID = values.recordId
-            let subType = values.subInfo
-            
-            
-        case .failure(let error):
-            NSLog(">>> DataController error: updateLocalMediaFileUpon(notification)")
-            NSLog(">>> The app recieved a remote push notification that a CKRecord has been updated but the preliminary checks were not all met.")
-            NSLog("Details: \(error.localizedDescription)")
-        }//: SWITCH
-        
-    }//: updateLocalMediaFileUpon(notification)
+    }//: deleteLocallySavedMediaFile()
+    
     
     // MARK: - HELPERS
     
@@ -115,13 +105,3 @@ extension DataController {
     
 }//: DATA CONTROLLER
 
-
-// MARK: - SYNC COORDINATION for CORE DATA
-
-extension DataController {
-
-    
-    
-    
-    
-}//: EXTENSION

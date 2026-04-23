@@ -41,9 +41,7 @@ extension ActivityCertificateImageView {
         @Published var showSaveErrorAlert: Bool = false
         
         // Notifications
-        let loadCompleted = Notification.Name(.certLoadingDoneNotification)
-        let certDeleted = Notification.Name(.certDeletionCompletedNotification)
-        let saveCompleted = Notification.Name(.certSaveCompletedNotification)
+        
         
         
         // MARK: - METHODS

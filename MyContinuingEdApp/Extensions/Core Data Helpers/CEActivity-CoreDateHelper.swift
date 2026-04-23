@@ -122,6 +122,15 @@ extension CeActivity {
         set { registrationDeadline = newValue }
     }//: ceRegistrationDeadline
     
+    var ceDeletionTimeStamp: Date {
+        get {
+            deletionTimeStamp ?? Date.now
+        }
+        set {
+            deletionTimeStamp = newValue
+        }
+    }//: ceDeletionTimeStamp
+    
     // MARK: - Tag-related properties
     var activityTags: [Tag] {
         let result = tags?.allObjects as? [Tag] ?? []

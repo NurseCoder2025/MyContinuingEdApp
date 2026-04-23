@@ -9,8 +9,8 @@ import CloudKit
 import Foundation
 
 // MARK: - MEDIA FILES
-enum CertType: String, CaseIterable, Codable {case image, pdf}
-enum MediaType: String, CaseIterable, Codable {case image, pdf, audio}
+enum CertType: String, CaseIterable, Codable {case image, pdf, unspecified}
+enum MediaType: String, CaseIterable, Codable {case image, pdf, audio, unspecified}
 enum SaveLocation: String, Codable {case local, cloud, unknown}
 
 enum MediaClass: String, CaseIterable, Codable {

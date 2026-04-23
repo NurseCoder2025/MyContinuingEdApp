@@ -16,6 +16,16 @@ extension Notification.Name {
     static let cloudKitRecordDeleted = Notification.Name("cloudKitRecordDeleted")
     static let cloudKitUknownRecChange = Notification.Name("unknownCloudKitRecChange")
     
+    // Notfications for indicating that a locally-initiated deletion
+    // of a CKRecord completed successfully
+    static let cloudRecordDeletedSuccessfully = Notification.Name("cloudRecordDeletedSuccessfully")
+    static let cloudRecordDeletionFailed = Notification.Name("cloudRecordDeletionFailed")
+    
+    // Notifications for when local media files are deleted
+    static let localCertFileDeleted = Notification.Name("localCertFileDeleted")
+    static let localAudioReflFileDeleted = Notification.Name("localAudioReflectionDeleted")
+    static let localMediaFileDeletionError = Notification.Name("localMediaFileDeletionError")
+    
     static let cloudCertStoragePrefChanged = Notification.Name("certificateMediaStoragePreferenceChanged")
     
     static let cloudAudioStoragePrefChanged = Notification.Name("audioMediaStoragePrefChanged")

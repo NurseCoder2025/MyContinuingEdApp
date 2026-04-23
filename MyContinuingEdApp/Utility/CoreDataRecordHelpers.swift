@@ -11,12 +11,12 @@ import Foundation
 
 final class CoreDataRecordHelpers {
     // MARK: - PROPERTIES
-    let dataController: DataController
+    weak var dataController: DataController?
     
     // MARK: - COMPUTED PROPERTIES
     
-    var cdContainer: NSPersistentCloudKitContainer {
-        dataController.container
+    var cdContainer: NSPersistentCloudKitContainer? {
+        dataController?.container
     }//: cdContainer
     
     // MARK: - METHODS

@@ -151,6 +151,9 @@
 		3FAE983F2E958FB200FD58BF /* NoEncumberedCredsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */; };
 		3FAE98412E959E2A00FD58BF /* NoCredSubTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */; };
 		3FB486A92EB9A4D300C58ED5 /* DataController-Computations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */; };
+		3FB7C7532F945F7500299197 /* String+Exentions_CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB7C7522F945F7500299197 /* String+Exentions_CloudKit.swift */; };
+		3FB7C7552F94637F00299197 /* CoreDataEntityProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB7C7542F94637F00299197 /* CoreDataEntityProtocols.swift */; };
+		3FB7C7572F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB7C7562F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift */; };
 		3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */; };
 		3FBA7E982F285A9400FE6C80 /* ContextualHelpButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */; };
 		3FBA7E9A2F285BAD00FE6C80 /* HelpSheetRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */; };
@@ -200,6 +203,9 @@
 		3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */; };
 		3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */; };
 		3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */; };
+		3FF090402F9996810057D15F /* AudioInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */; };
+		3FF090422F99B98A0057D15F /* LocalMediaFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */; };
+		3FF090442F99BDFD0057D15F /* MasterMediaList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF090432F99BDFD0057D15F /* MasterMediaList.swift */; };
 		3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */; };
 		3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */; };
 		3FF5ACD62F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */; };
@@ -464,6 +470,9 @@
 		3FAE983E2E958FB200FD58BF /* NoEncumberedCredsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncumberedCredsView.swift; sourceTree = "<group>"; };
 		3FAE98402E959E2A00FD58BF /* NoCredSubTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoCredSubTypeView.swift; sourceTree = "<group>"; };
 		3FB486A82EB9A4D300C58ED5 /* DataController-Computations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Computations.swift"; sourceTree = "<group>"; };
+		3FB7C7522F945F7500299197 /* String+Exentions_CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Exentions_CloudKit.swift"; sourceTree = "<group>"; };
+		3FB7C7542F94637F00299197 /* CoreDataEntityProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataEntityProtocols.swift; sourceTree = "<group>"; };
+		3FB7C7562F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CeActivity-CDHelper_CloudKit.swift"; sourceTree = "<group>"; };
 		3FBA7E952F28379600FE6C80 /* TagRowLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagRowLabelView.swift; sourceTree = "<group>"; };
 		3FBA7E972F285A9400FE6C80 /* ContextualHelpButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualHelpButtonView.swift; sourceTree = "<group>"; };
 		3FBA7E992F285BAD00FE6C80 /* HelpSheetRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpSheetRowView.swift; sourceTree = "<group>"; };
@@ -513,6 +522,9 @@
 		3FE90B942F10888700BD780C /* ReinstatementDocumentationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementDocumentationView.swift; sourceTree = "<group>"; };
 		3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementAdditionalItemsView.swift; sourceTree = "<group>"; };
 		3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsToAddView.swift; sourceTree = "<group>"; };
+		3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
+		3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMediaFileInfo.swift; sourceTree = "<group>"; };
+		3FF090432F99BDFD0057D15F /* MasterMediaList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterMediaList.swift; sourceTree = "<group>"; };
 		3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionResponse-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionPrompt-CoreDataHelper.swift"; sourceTree = "<group>"; };
@@ -755,6 +767,7 @@
 				3F47D9A52F46938100B02580 /* MediaFile+Extensions.swift */,
 				3F84D7E32F91DCB8006A287D /* Notification+Extensions.swift */,
 				3FF979212F457E8A00DD8363 /* String+Extensions.swift */,
+				3FB7C7522F945F7500299197 /* String+Exentions_CloudKit.swift */,
 				3FC4507F2F89C588005DFD4D /* String+Extension_SettingsKeys.swift */,
 				3F28020E2F904DD50025884E /* Double+Extensions.swift */,
 				3FC450812F89CAF4005DFD4D /* Collection+Extensions.swift */,
@@ -934,8 +947,8 @@
 				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
 				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
 				3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */,
-				3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */,
-				3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */,
+				3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */,
+				3FF090432F99BDFD0057D15F /* MasterMediaList.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -997,6 +1010,8 @@
 				F2CC22CB2E284B5D00F1F70D /* Tag-CoreDataHelper.swift */,
 				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
 				3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */,
+				3FB7C7562F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift */,
+				3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */,
 			);
 			path = "Core Data Helpers";
 			sourceTree = "<group>";
@@ -1079,6 +1094,8 @@
 				3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */,
 				3FC450832F89D04F005DFD4D /* CloudMediaBrain.swift */,
 				3FC450872F89D180005DFD4D /* MediaModel.swift */,
+				3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */,
+				3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */,
 			);
 			path = "CE Completion";
 			sourceTree = "<group>";
@@ -1283,6 +1300,7 @@
 				3F3B454D2F402351002792D7 /* MediaFileProtocols.swift */,
 				3FA2961B2EE227FA000F5D12 /* StorePreviewProtocol.swift */,
 				3F71B9962F2AB50600F1AA2C /* GeneralProtocols.swift */,
+				3FB7C7542F94637F00299197 /* CoreDataEntityProtocols.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -1647,6 +1665,7 @@
 				F2BC94A72E32DB4F00926B3D /* AwardsView.swift in Sources */,
 				3F84D1692F2D5B07001C3AB6 /* PromptHeaderView.swift in Sources */,
 				3F4EAA262F8F2CF600884BCC /* CoreDataRecordHelpers.swift in Sources */,
+				3FB7C7572F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift in Sources */,
 				3F817DDB2EC68DFA00791223 /* SpecialCatProgressView.swift in Sources */,
 				F2772BA22E1DDB3B006A94BD /* CEActivityModel.xcdatamodeld in Sources */,
 				F2F6D5762E2B45AE00E1FB5F /* NoActivityView.swift in Sources */,
@@ -1655,7 +1674,9 @@
 				3F83C7C92F0F4C2900FB4CF2 /* RSCRowView.swift in Sources */,
 				F2CC22CC2E284B5D00F1F70D /* Tag-CoreDataHelper.swift in Sources */,
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
+				3FB7C7552F94637F00299197 /* CoreDataEntityProtocols.swift in Sources */,
 				3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */,
+				3FF090422F99B98A0057D15F /* LocalMediaFileInfo.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
 				3FC450842F89D04F005DFD4D /* CloudMediaBrain.swift in Sources */,
 				3FA667522F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift in Sources */,
@@ -1665,6 +1686,7 @@
 				3FCED3EE2F6F84AE00BF407C /* AudioReflection+Helper.swift in Sources */,
 				3FBA7E962F28379600FE6C80 /* TagRowLabelView.swift in Sources */,
 				F2612A1D2E87275000CC463D /* ActivityBasicInfoView.swift in Sources */,
+				3FB7C7532F945F7500299197 /* String+Exentions_CloudKit.swift in Sources */,
 				3F5D03332EB3F3BC00F5B1DC /* DataController-Achievements.swift in Sources */,
 				F2FBAADF2E5FAB9800348AAA /* ActivityFormats.swift in Sources */,
 				F2F6D57A2E2B4FEB00E1FB5F /* ActivityRow.swift in Sources */,
@@ -1674,6 +1696,7 @@
 				3FCED3E82F6F740900BF407C /* PromptResponseTextEntryView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
+				3FF090442F99BDFD0057D15F /* MasterMediaList.swift in Sources */,
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
 				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
 				3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */,
@@ -1804,6 +1827,7 @@
 				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,
+				3FF090402F9996810057D15F /* AudioInfo-CoreDataHelper.swift in Sources */,
 				F2B937A92E83999300AF9155 /* CredentialRestrictionsSectionView.swift in Sources */,
 				3F0044962F52837F006DA9F3 /* CertificateShareView-ViewModel.swift in Sources */,
 				3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */,

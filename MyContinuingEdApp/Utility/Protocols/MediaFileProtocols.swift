@@ -6,6 +6,7 @@
 //
 
 import CloudKit
+import CoreData
 import Foundation
 
 
@@ -24,9 +25,11 @@ protocol Certificate {
 
 // MARK: - MEDIA iCLOUD SYNC
 
-protocol LocalFileDeletable {
-    var removeLocalFile: Bool { get set }
+protocol RepresentsDeletableMediaFile {
+    var uploadedToICloud: Bool { get set }
+    
     func resolveURL(basePath: URL) -> URL?
+    func returnCDSelf() -> NSManagedObject
 }//: LocalFileDeletable
 
 

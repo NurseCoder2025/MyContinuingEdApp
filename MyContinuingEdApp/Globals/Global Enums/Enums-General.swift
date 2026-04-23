@@ -140,7 +140,7 @@ enum CredentialType: String, CaseIterable {
 
 // MARK: - FILE I/O
 
-enum FileIOError: Error {
+enum FileIOError: String, Error {
     case noError
     case writeFailed
     case fileMissing
@@ -156,4 +156,42 @@ enum FileIOError: Error {
     case noDirectoryAvailable
     case incompleteMove
     case metaDataUpdateError
-}
+    case invalidURL
+    
+    var localizedDescription: String {
+        switch self {
+        case .noError:
+            return ""
+        case .writeFailed:
+            return "The file could not be written to disk."
+        case .fileMissing:
+            return "The file could not be located."
+        case .unableToDelete:
+            return "The file could not be deleted for some reason."
+        case .unableToMove:
+            return "The file could not be moved to the requested location."
+        case .operationUnneeded:
+            return "The requested file operation is not neccesary, so it wasn't executed."
+        case .saveLocationUnavailable:
+            return "The specified location for saving the file is not a valid directory or filename (URL value)."
+        case .loadingError:
+            return "The file could not be loaded due to some error."
+        case .syncError:
+            return "The system was unable to sync the file."
+        case .unknownError:
+            return "An unspecified error has occured."
+        case .cantIdentifyFileType:
+            return "The file could not be identified as a known file type."
+        case .invalidArgument:
+            return "The file operation could not be completed due to an invalid value being used as part of the operation."
+        case .noDirectoryAvailable:
+            return "The specified directory for the file is either not valid or does not exist."
+        case .incompleteMove:
+            return "Part of the file was moved but an error or other process interrupted the move so it wasn't completely moved to the new location."
+        case .metaDataUpdateError:
+            return "The metadata for the file could not be updated correctly."
+        case .invalidURL:
+            return "The filepath (URL) provided for a specific file is not valid."
+        }//: SWITCH
+    }//: localizedDescription
+}//: FileIOError

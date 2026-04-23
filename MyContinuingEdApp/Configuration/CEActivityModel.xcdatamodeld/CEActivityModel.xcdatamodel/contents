@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="24G624" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="24G624" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Achievement" representedClassName="Achievement" syncable="YES" codeGenerationType="class">
         <attribute name="achievementDescript" optional="YES" attributeType="String"/>
         <attribute name="color" optional="YES" attributeType="String"/>
@@ -29,6 +29,15 @@
         <attribute name="typeName" optional="YES" attributeType="String"/>
         <relationship name="activity" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="type" inverseEntity="CeActivity"/>
     </entity>
+    <entity name="AudioInfo" representedClassName="AudioInfo" syncable="YES" codeGenerationType="class">
+        <attribute name="audioInfoID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="ckRecordID" optional="YES" attributeType="Transformable"/>
+        <attribute name="fileSize" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="relativePath" optional="YES" attributeType="String"/>
+        <attribute name="transcription" optional="YES" attributeType="String"/>
+        <attribute name="uploadedToICloud" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="response" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReflectionResponse" inverseName="info" inverseEntity="ReflectionResponse"/>
+    </entity>
     <entity name="CeActivity" representedClassName="CeActivity" syncable="YES" codeGenerationType="class" coreSpotlightDisplayNameExpression="activityTitle">
         <attribute name="activityAddedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="activityCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -42,6 +51,7 @@
         <attribute name="cost" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="currentStatus" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
         <attribute name="dateCompleted" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deletionTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="evalRating" optional="YES" attributeType="Integer 16" defaultValueString="3" usesScalarValueType="YES"/>
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -50,6 +60,7 @@
         <attribute name="hasCompletionCertificate" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="infoWebsiteURL" optional="YES" attributeType="String"/>
+        <attribute name="isMarkedForDeletion" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="itemsToBring" optional="YES" attributeType="String"/>
         <attribute name="modifiedDate" optional="YES" attributeType="Date" derived="YES" derivationExpression="now()" usesScalarValueType="NO"/>
         <attribute name="registeredOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -80,7 +91,9 @@
         <attribute name="certCKRecordID" optional="YES" attributeType="Transformable"/>
         <attribute name="certFileSize" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="certType" optional="YES" attributeType="String"/>
+        <attribute name="deletionTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="infoID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isMarkedForDeletion" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="relativePath" optional="YES" attributeType="String"/>
         <attribute name="removeLocalFile" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="uploadedToICloud" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -172,6 +185,7 @@
         <attribute name="hasAudioReflection" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="modifiedOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="info" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="AudioInfo" inverseName="response" inverseEntity="AudioInfo"/>
         <relationship name="question" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ReflectionPrompt" inverseName="responses" inverseEntity="ReflectionPrompt"/>
         <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="responses" inverseEntity="ActivityReflection"/>
     </entity>

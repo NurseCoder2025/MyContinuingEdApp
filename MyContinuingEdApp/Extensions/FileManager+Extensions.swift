@@ -208,5 +208,40 @@ extension FileManager {
         return sanitizedName
     }//: sanitizeFileName
     
+    func createRelativePathStringForCKRecord<T: NSManagedObject>(
+        coreDataObj cdObject: T,
+        assignedToCe activity: CeActivity
+    ) -> String where T : RepresentsDeletableMediaFile {
+    
+        var mediaCat: MediaClass
+        var promptArgument: ReflectionPrompt? = nil
+        var fileExt: String = ""
+        
+        if cdObject is CertificateInfo {
+            mediaCat = .certificate
+            fileExt = String.certFileExtension
+        } else if cdObject is AudioInfo {
+            mediaCat = .audioReflection
+            fileExt = String.audioFormatExtension
+            if let audioInfObject = cdObject.returnCDSelf() as? AudioInfo {
+                promptArgument = audioInfObject.getAssignedPrompt()
+            }//: IF LET
+        } else {
+            return ""
+        }//: IF ELSE
+      
+       let topDirectory = createTopSubDirectoryName(for: mediaCat).convertToASCIIonly()
+       let subDirectory = createActivitySubFolderName(for: activity).convertToASCIIonly()
+       let initialPath = createMediaRelativePath(for: activity, toSave: mediaCat, forPrompt: promptArgument).convertToASCIIonly()
+        
+        guard initialPath.count <= 255 else {
+            return "\(topDirectory)/\(subDirectory)/UnknownFile.\(fileExt)"
+        }//: GUARD
+        
+        NSLog(">>> createRelativePathStringForCKRecord: '\(initialPath)'")
+       return initialPath
+    }//: createRelavtivePathStringForCKRecord()
+    
+    
 }//: EXTENSION
 
