@@ -17,7 +17,7 @@ final class MasterMediaList: @unchecked Sendable {
         }
     }//: _allLocalMedia
     
-    let listLocation: URL = URL.applicationSupportDirectory.appending(component: "MasterMediaList.archive", directoryHint: .notDirectory)
+    private let listLocation: URL = URL.applicationSupportDirectory.appending(component: "MasterMediaList.archive", directoryHint: .notDirectory)
     
     private let queue = DispatchQueue(label: "com.CeCache.masterMediaList", qos: .utility)
     
@@ -79,7 +79,7 @@ final class MasterMediaList: @unchecked Sendable {
         }//: async
     }//: saveList()
     
-    func decodeCurrentState() {
+    func decodeCurrentList() {
         queue.sync {
             if let savedList = try? Data(contentsOf: listLocation) {
                 do {
@@ -95,14 +95,14 @@ final class MasterMediaList: @unchecked Sendable {
                 }//: DO-CATCH
             }//: IF LET
         }//: SYNC
-    }//: decodeCurrentState()
+    }//: decodeCurrentList()
     
 
     // MARK: - INITS
     
     private init() {
         if let _ = (try? Data(contentsOf: listLocation)) {
-            decodeCurrentState()
+            decodeCurrentList()
         }//: IF LET
     }//: INIT
      

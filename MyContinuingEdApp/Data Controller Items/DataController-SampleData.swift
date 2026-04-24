@@ -9,6 +9,7 @@
 // & testing, separating this functionality out of the main DataController class file and into
 // an extension for improved code readability.
 
+import CloudKit
 import CoreData
 import Foundation
 
@@ -563,6 +564,39 @@ extension DataController {
         return newDAI
     }//: createSampleDAiItem()
     
+    func createSampleCertInfoItem(
+        forActivity activity: CeActivity? = nil
+    ) -> CertificateInfo {
+        let fileSystem = FileManager.default
+        var relPathString: String = ""
+        if let associatedActivity = activity {
+            relPathString = fileSystem.createMediaRelativePath(for: associatedActivity, toSave: .certificate, forPrompt: nil)
+        } else {
+            let topDirectory = fileSystem.createTopSubDirectoryName(for: .certificate)
+            let fileName = fileSystem.createMediaFileName(forCE: nil, forPrompt: nil, as: .certificate)
+            relPathString = "\(topDirectory)/\(fileName)"
+        }//: IF LET (associatedActivity)
+        
+        let sampleID: UUID = UUID()
+        let sampleCertSize: Double = 3.5
+        let sampleCertType = MediaType.image.rawValue
+        
+        let sampleRecName: String = "\(sampleID.uuidString)|\(relPathString)"
+        let sampleRecID: CKRecord.ID = .init(recordName: sampleRecName)
+        let transformedRecID = sampleRecID as NSObject
+        
+        let context = container.viewContext
+        let newCertInfo = CertificateInfo(context: context)
+        newCertInfo.infoID = sampleID
+        newCertInfo.certFileSize = sampleCertSize
+        newCertInfo.certType = sampleCertType
+        newCertInfo.certCKRecordID = transformedRecID
+        newCertInfo.uploadedToICloud = true
+        newCertInfo.relativePath = relPathString
+        
+        save()
+        return newCertInfo
+    }//: createSampleCertInfoItem()
     
     
 }//: DataController

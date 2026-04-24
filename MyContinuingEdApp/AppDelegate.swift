@@ -36,51 +36,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         let notification = CKNotification(fromRemoteNotificationDictionary: userInfo)
          
-        if notification?.notificationType == .query,
-            let queryNotification = notification as? CKQueryNotification {
+        if notification?.notificationType == .database,
+            let dbNotification = notification as? CKDatabaseNotification {
             
             Task {
-                await handleCloudKitNotification(queryNotification)
+                await handleCloudKitNotification(dbNotification)
                 completionHandler(.newData)
             }//: TASK
             
         } else {
             completionHandler(.noData)
-        }//: IF (notificationType == .query, notification as CKQueryNotification)
+        }//: IF (notificationType == .database, notification as CKDatabaseNotification)
     }//: application(_, didReceiveRemoteNotification, fetchCompletionHandler)
     
     // MARK: - HELPERS
     
-    private func handleCloudKitNotification(_ notification: CKQueryNotification) async {
-        guard let _ = notification.recordID else { return }
+    private func handleCloudKitNotification(_ notification: CKDatabaseNotification) async {
         
-        // TODO: Simplify as single function can handle all cases
-        switch notification.queryNotificationReason {
-        case .recordCreated:
-            NotificationCenter.default.post(
-                name: .cloudKitRecordAdded,
-                object: nil,
-                userInfo: [String.userInfoNotificationKey : notification]
-            )//: post
-        case .recordUpdated:
-            NotificationCenter.default.post(
-                name: .cloudKitRecordChanged,
-                object: nil,
-                userInfo: [String.userInfoNotificationKey : notification]
-            )//: post
-        case .recordDeleted:
-            NotificationCenter.default.post(
-                name: .cloudKitRecordDeleted,
-                object: nil,
-                userInfo: [String.userInfoNotificationKey : notification]
-            )//: post
-        @unknown default:
-            NotificationCenter.default.post(
-                name: .cloudKitUknownRecChange,
-                object: nil,
-                userInfo: [String.userInfoNotificationKey : notification]
-            )//: post
-        }//: SWITCH
+        
+       
         
     }//: handleCloudKitNotification
     

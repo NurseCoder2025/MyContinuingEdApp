@@ -406,6 +406,15 @@ extension DataController {
         }
     }//: smartSyncCertificateWindow
     
+    var cloudDatabaseSubscriptionSetup: Bool {
+        get {
+            sharedSettings.bool(forKey: String.cloudDBSubscriptionCreatedKey)
+        }
+        set {
+            sharedSettings.set(newValue, forKey: String.cloudDBSubscriptionCreatedKey)
+        }
+    }//: cloudDatabaseSubscriptionSetup
+    
     // MARK: PRIVACY
     
     var allowsAutoTranscriptionOfAudio: Bool {
@@ -454,7 +463,8 @@ extension DataController {
             String.autoAudioTranscriptionKey,
             String.autoDownloadCertsKey,
             String.autoDownloadAudioKey,
-            String.smartSyncCertDownloadWindowKey
+            String.smartSyncCertDownloadWindowKey,
+            String.cloudDBSubscriptionCreatedKey
         ]
         
         guard let userInfo = notification.userInfo, let changedKeys = userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String], settingsKeys.contains(where: { changedKeys.contains($0) }) else {return}

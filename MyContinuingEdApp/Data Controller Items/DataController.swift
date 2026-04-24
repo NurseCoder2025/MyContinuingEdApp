@@ -29,7 +29,6 @@ class DataController: ObservableObject {
     /// Published DataController property that holds the URL for the default iCloud ubiqituity container that is set for the
     /// user for this app.  This value is set by the assessUserICloudStatus method.
     @Published var userCloudDriveURL: URL?
-    private var iCloudTasks: Task<Void, Never>?
     
     /// Constant DataController property that sets a URL for a directory within the app's
     /// sandbox environment into which CE certificate images/PDFs and audio recordings
@@ -282,11 +281,10 @@ class DataController: ObservableObject {
                 object: sharedSettings
             )//: OBSERVER
             
-            
-            
-            // MARK: ICLOUD TASK
-            iCloudTasks = Task {
+            // MARK: ICLOUD
+            Task {
                 await assessUserICloudStatus()
+                await setupCloudKitItems()
             }//: TASK
             
         // MARK: - SPOTLIGHT SETUP

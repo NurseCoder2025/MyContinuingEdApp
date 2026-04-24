@@ -38,22 +38,10 @@ extension String {
     static let audioReflectionZoneId: String = "userAudioReflections"
     
     
-    // MARK: CKQuerySubscription-related constants
-    // *** DO NOT DELETE ***
-    static let mediaFileAddedQuerySubID: String = "new-media-file-added"
-    static let mediaFileUpdatedQuerySubID: String = "media-file-updated"
-    static let mediaFileDeletedQuerySubID: String = "media-file-deleted"
-    // *** DO NOT DELETE ***
+    // MARK: CKDatabase SUBSCRIPTION
+    static let cloudDbSubID: String = "CeCacheiCloudDBSubscription"
     
-    // TODO: Remove the media-specific query sub ID constants:
-    static let certAddedQuerySubID: String = "new-cert-added"
-    static let audioAddedQuerySubID: String = "new-audio-added"
-    
-    static let certChangedQuerySubID: String = "cert-changed"
-    static let audioChangedQuerySubID: String = "audio-changed"
-    
-    static let certDeletedQuerySubID: String = "cert-deleted"
-    static let audioDeletedQuerySubID: String = "audio-deleted"
+   
     
     // MARK: Master MEDIA LIST
     static let emptyRecName: String = "Non-Existent_Record_\(UUID().uuidString)"

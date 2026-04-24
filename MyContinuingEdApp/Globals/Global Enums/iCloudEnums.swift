@@ -138,6 +138,7 @@ enum CloudSyncError: Error {
     case cloudSaveError(MediaClass)
     case mediaDeletionError(String)
     case cloudRecordNotFound(MediaClass)
+    case genCloudRecNotFound
     case mediaDownloadFailed
     case basicCertLimitReached(Int)
     case noRenewalPeriodsSaved
@@ -167,6 +168,8 @@ enum CloudSyncError: Error {
             return "The app was unable to delete the uploaded certificate file due to the following error: \(descript). Please try again later."
         case .cloudRecordNotFound(let type):
             return "The app was unable to locate the iCloud file for the \(type.rawValue) you are trying to download or delete. The file may have been deleted or moved. Please try again later."
+        case .genCloudRecNotFound:
+            return "The app was unable to locate the iCloud file for the media you are trying to download or delete. The file may have been deleted or moved. Please try again later."
         case .mediaDownloadFailed:
             return "The app could not move the downloaded media file to the proper location due to a technical error. Please try again and notify the developer if this continues to occur."
         case .basicCertLimitReached(let limit):
@@ -192,33 +195,53 @@ enum CloudSyncError: Error {
     
 }//: CloudSyncError
 
-/// Enum used for indicating the type of CKQuerySubscription that is being
-/// created. Used within CloudMediaBrain primarily to set the appropriate
-/// CKQuerySubscription properties based on the enum value.
-enum QuerySubscriptionPurpose {
-    case addingFile, changingFile, deletingFile
-}//: QuerySubscriptionPurpose
-
-enum CloudKitQuerySubError: Error {
-    case wrongNotificationName
-    case queryNotificationNotFound
-    case recordIDNotFound
-    case subscriptionIdNotFound
+enum CloudPrelimCheckError: String, CaseIterable, Identifiable, Hashable, Error {
+    case iCloudAccessIssue
+    case userNeedsToUpgrade
+    case certsLocalOnly
+    case audioLocalOnly
+    case certsManDownload
+    case audioManDownload
+    
+    var id: Self { self }
+    
+    var userMessage: String {
+        switch self {
+        case .iCloudAccessIssue:
+            return "The app is unable to access your iCloud account due to one of many possible reasons. Please check that you are currently logged in, have network access, have iCloud drive enabled for this app, and do not have any restrictions placed on your account."
+        case .userNeedsToUpgrade:
+            return "In order to enjoy syncing media files such as CE certificates across your devices with iCloud, please make an in-app purchase today."
+        case .certsLocalOnly:
+            return "You currently want to save your CE certificates only on the device they were saved to. If you wish to sync them to other devices, please enable the option in the app settings."
+        case .audioLocalOnly:
+            return "You currently want to save your audio reflections only on the device they were saved to. If you wish to sync them to other devices, please enable the option in CeCache settings."
+        case .certsManDownload:
+            return "You currently want to manually download new CE certificates from other devices to the current one. If you wish for this to happen automatically, please enable the option in CeCache settings."
+        case .audioManDownload:
+            return "You currently want to manually download new audio reflection files from other devices to the current one. If you wish for this to happen automatically, please enable the option in CeCache settings."
+        }//: SWITCH
+    }//: userMessage
     
     var localizedDescription: String {
         switch self {
-        case .wrongNotificationName:
-            return "A notification other than what was expected was passed in as an argument to the handling method."
-        case .queryNotificationNotFound:
-            return "Either the userInfo dictionary could not be found in the notification object sent into the handler or the key had no corresponding value."
-        case .recordIDNotFound:
-            return "From the CKQueryNotification object (in the userInfo dictionary), the recordID property was nil."
-        case .subscriptionIdNotFound:
-           return "The subscription ID was either nil or could not be obtained from the CKQueryNotification object (in the userInfo dictionary)."
+        case .iCloudAccessIssue:
+            return "The app cannot access the user's iCloud account due to one of several potential reasons."
+        case .userNeedsToUpgrade:
+            return "The user is currently using CeCache Free and needs to make an in-app purchase in order to enjoy using media syncing in iCloud."
+        case .certsLocalOnly:
+            return "The user currently prefers to store certificates on their local device only per the value in the app settings."
+        case .audioLocalOnly:
+            return "The user currently prefers to store audio reflections on their local device only per the value in the app settings."
+        case .certsManDownload:
+            return "The user currently wants to manually download certificates on their other devices per app settings."
+        case .audioManDownload:
+            return "The user currently wants to manually download audio reflections on their other devices per app settings."
         }//: SWITCH
     }//: localizedDescription
-    
-    var messageForEndUser: String {
-        return "The app received a remote push notification from iCloud but an error was encountered while trying to process it. You may need to manually download the desired media file to your device or delete it. Please contact the developer about this issue if it persists."
-    }//: messageForEndUser
-}//: CloudKitQuerySubError
+}//: CloudPrelimCheckError
+
+
+enum CloudDbSubStatus {
+    case alreadyCreated
+    case justAdded
+}//: CloudDbSubStatus

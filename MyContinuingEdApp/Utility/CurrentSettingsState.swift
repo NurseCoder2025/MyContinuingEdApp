@@ -25,8 +25,8 @@ struct CurrentSettingsState: Codable {
     var cloudZonesCreated: Bool = false
     var lastTimeZonesVerified: Date? = nil
     
-    // CKQuerySubscriptions
-    var subscriptionsCreated: Bool = false
+    // CKDatabase Subscription
+    var cloudDbSubscriptionCreated: Bool = false
     
     // iCloud user ID (only in encoded form due to CKRecord.ID conforming
     // to NSCoding (and not Encodable or Decodable)

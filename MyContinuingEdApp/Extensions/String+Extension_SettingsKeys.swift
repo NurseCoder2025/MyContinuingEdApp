@@ -46,6 +46,8 @@ extension String {
     
     static let smartSyncCertDownloadWindowKey: String = "smartSyncCertDownloadWindow"
     
+    static let cloudDBSubscriptionCreatedKey: String = "cloudDbSubscriptionCreated"
+    
 }//: EXTENSION
 
 
