@@ -17,6 +17,78 @@ extension DataController {
         
     }//: handleCloudDbChangedNotification
     
+    // MARK: - FETCHING CHANGES
+    
+    private func fetchCloudDbChanges() async {
+        let mediaBrain = CloudMediaBrain.shared
+        let settings = AppSettingsCache.shared
+        
+        guard settings.iCloudState.iCloudIsAvailable else { return }
+        
+        let previousToken = settings.loadDatabaseToken()
+        
+        do {
+            let allDbChanges = try await mediaBrain.cloudDB.databaseChanges(since: previousToken)
+            let changeCount = allDbChanges.modifications.count + allDbChanges.deletions.count
+            NSLog(">>> DataController | fetchCloudDbChanges: Received \(changeCount) total change notifications.")
+            // TODO: call processZoneChanges once that is done
+        } catch {
+            NSLog(">>> DataController | fetchCloudDbChanges")
+            NSLog(">>> Error: \(error.localizedDescription)")
+        }//: DO-CATCH
+        
+        
+    }//: fetchCloudDbChanges()
+    
+    private func processZoneChanges(forZone zone: CKRecordZone.ID) async {
+        let mediaBrain = CloudMediaBrain.shared
+        let settings = AppSettingsCache.shared
+        let database = mediaBrain.cloudDB
+        
+        let isCertZone = (zone.zoneName == String.certificateZoneId)
+        let isAudioZone = (zone.zoneName == String.audioReflectionZoneId)
+        
+        let zoneToken = settings.loadZoneToken(forZone: zone)
+        
+        do {
+            // Zone Configuration for CKFetchRecordZoneChangesOperation
+            let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
+            zoneConfig.previousServerChangeToken = zoneToken
+            
+            // CKFetchRecordZoneChangesOperation
+            var changedCount: Int = 0
+            var deletedCount: Int = 0
+            
+            let changeOperation = CKFetchRecordZoneChangesOperation()
+            changeOperation.recordZoneIDs = [zone]
+            changeOperation.configurationsByRecordZoneID = [zone: zoneConfig]
+            changeOperation.recordWasChangedBlock = { record, result in
+                switch result {
+                case .success:
+                    changedCount += 1
+                    if isCertZone {
+                        if settings.shouldAutoDownloadMedia(forType: .certificate) {
+                            // TODO: Add code
+                        }//: IF (shouldAutoDownloadMedia)
+                    } else if isAudioZone {
+                        if settings.shouldAutoDownloadMedia(forType: .audioReflection) {
+                            // TODO: Add code
+                        }//: IF (shouldAutoDownloadMedia)
+                    }//: IF ELSE
+                case .failure:
+                }//: SWITCH
+            }//: recordWasChangedBlock
+        
+           database.add(changeOperation)
+           
+        } catch {
+            // TODO: Add error handling
+            NSLog(">>> Error fetching zone changes: \(error.localizedDescription)")
+        }//: DO-CATCH
+        
+    }//: processZoneChanges
+    
+    
     // MARK: - COORDINATING MEDIA CHANGES
     
     func syncLocalMediaFiles() async {

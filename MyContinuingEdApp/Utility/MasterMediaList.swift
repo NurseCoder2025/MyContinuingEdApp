@@ -36,23 +36,35 @@ final class MasterMediaList: @unchecked Sendable {
     
     func addMediaRecord(fromRec: CKRecord.ID, savedAt: URL)  {
         let newItem = LocalMediaFileInfo(id: fromRec, mediaURL: savedAt)
-        _allLocalMedia.append(newItem)
+        queue.async {
+            self._allLocalMedia.append(newItem)
+        }//: async
     }//: addMediaRecord(fromRec, savedAt)
     
     func removeMediaUrl(forRec: CKRecord.ID)  {
-        if let itemWithNoMedia = _allLocalMedia.filter({$0.id == forRec}).first {
-            itemWithNoMedia.mediaURL = nil
-        }//: IF LET
+        queue.async {
+            if let itemWithNoMedia = self._allLocalMedia.filter({$0.id == forRec}).first {
+                itemWithNoMedia.mediaURL = nil
+            }//: IF LET
+        }//: async
     }//: removeMediaUrl(forRec)
     
     func changeMediaUrl(forRec: CKRecord.ID, to newURL: URL)  {
         guard let itemToUpdate = _allLocalMedia.filter({$0.id == forRec}).first else { return }
+        queue.async {
             itemToUpdate.mediaURL = newURL
+        }//: async
     }//: changeMediaUrl(forRec, to newURL)
     
     func removeMediaRecord(withID: CKRecord.ID) {
-        _allLocalMedia.removeAll(where: {$0.id == withID})
+        queue.async {
+            self._allLocalMedia.removeAll(where: {$0.id == withID})
+        }//: async
     }//: removeExistingItem
+    
+    func hasRecord(withID recID: CKRecord.ID) -> Bool {
+        queue.sync { _allLocalMedia.contains(where: {$0.id == recID}) }
+    }//: hasRecord(recID)
     
     
     // MARK: DISK READING/WRITING

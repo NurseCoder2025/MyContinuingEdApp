@@ -33,6 +33,7 @@ final class AppSettingsCache: @unchecked Sendable {
     
     // MARK: - GETTER/SETTER PROPERTIES
     
+    // MARK: ICLOUD
     var iCloudState: iCloudStatus {
         get {
             queue.sync { _currentState.currentiCloudStatus }
@@ -41,52 +42,6 @@ final class AppSettingsCache: @unchecked Sendable {
             queue.async { self._currentState.currentiCloudStatus = newValue}
         }
     }//: iCloudState
-    
-    var userCloudBooleanPrefs: [UserCloudPrefKey: Bool] {
-        get {
-            queue.sync { _currentState.userCloudBooleanPrefs }
-        }
-        set {
-            queue.async { self._currentState.userCloudBooleanPrefs = newValue}
-        }
-    }//: userCloudPrefs
-    
-    var smartSyncCertWindow: Double {
-        get {
-            queue.sync {_currentState.smartSyncWindowForCerts}
-        }
-        set {
-            queue.async { self._currentState.smartSyncWindowForCerts = newValue}
-        }
-    }//: smartSyncCertWindow
-    
-    var appPurchaseLevel: String {
-        get {
-            queue.sync { _currentState.appPurchaseStateString }
-        }
-        set {
-            queue.async { self._currentState.appPurchaseStateString = newValue }
-        }
-    }//: appPurchaseLevel
-    
-    var zonesCreated: Bool {
-        get {
-            queue.sync { _currentState.cloudZonesCreated }
-        }
-        set {
-            queue.async { self._currentState.cloudZonesCreated = newValue}
-        }
-    }//: zonesCreated
-    
-    var zoneVerificationDate: Date? {
-        get {
-            queue.sync { _currentState.lastTimeZonesVerified }
-        }
-        set {
-            queue.async { self._currentState.lastTimeZonesVerified = newValue}
-        }
-    }//: zoneVerificationDate
-    
     var userICloudIdData: Data? {
         get {
             queue.sync { _currentState.codedUserID }
@@ -96,6 +51,51 @@ final class AppSettingsCache: @unchecked Sendable {
         }
     }//: userICloudIdData
     
+    // MARK: USER PREFS
+    var userCloudBooleanPrefs: [UserCloudPrefKey: Bool] {
+        get {
+            queue.sync { _currentState.userCloudBooleanPrefs }
+        }
+        set {
+            queue.async { self._currentState.userCloudBooleanPrefs = newValue}
+        }
+    }//: userCloudPrefs
+    var smartSyncCertWindow: Double {
+        get {
+            queue.sync {_currentState.smartSyncWindowForCerts}
+        }
+        set {
+            queue.async { self._currentState.smartSyncWindowForCerts = newValue}
+        }
+    }//: smartSyncCertWindow
+    
+    // MARK: STORE KIT
+    var appPurchaseLevel: String {
+        get {
+            queue.sync { _currentState.appPurchaseStateString }
+        }
+        set {
+            queue.async { self._currentState.appPurchaseStateString = newValue }
+        }
+    }//: appPurchaseLevel
+    
+    // MARK: CLOUD KIT
+    var zonesCreated: Bool {
+        get {
+            queue.sync { _currentState.cloudZonesCreated }
+        }
+        set {
+            queue.async { self._currentState.cloudZonesCreated = newValue}
+        }
+    }//: zonesCreated
+    var zoneVerificationDate: Date? {
+        get {
+            queue.sync { _currentState.lastTimeZonesVerified }
+        }
+        set {
+            queue.async { self._currentState.lastTimeZonesVerified = newValue}
+        }
+    }//: zoneVerificationDate
     var appHasCloudDatabaseSubscriptionSetup: Bool {
         get {
             queue.sync { _currentState.cloudDbSubscriptionCreated }
@@ -105,7 +105,33 @@ final class AppSettingsCache: @unchecked Sendable {
         }
     }//:appHasCloudDatabaseSubscriptionSetup
     
-    // MARK: - METHODS
+    // MARK: TOKENS
+    var databaseToken: Data? {
+        get {
+            queue.sync { _currentState.databaseChangeToken }
+        }
+        set {
+            queue.async { self._currentState.databaseChangeToken = newValue}
+        }
+    }//: databaseToken
+    var certZoneToken: Data? {
+        get {
+            queue.sync { _currentState.certZoneChangeToken }
+        }
+        set {
+            queue.async { self._currentState.certZoneChangeToken = newValue}
+        }
+    }//: certZoneToken
+    var audioZoneToken: Data? {
+        get {
+            queue.sync { _currentState.audioZoneChangeToken }
+        }
+        set {
+            queue.async { self._currentState.audioZoneChangeToken = newValue}
+        }
+    }//: audioZoneToken
+    
+    // MARK: - LIST SAVING/LOADING
     
     func encodeCurrentState() {
         queue.async {
@@ -137,6 +163,8 @@ final class AppSettingsCache: @unchecked Sendable {
         }//: queue(sync)
     }//: decodeCurrentState()
     
+    // MARK: - GENERAL METHODS
+    
     func getCurrentPurchaseLevel() -> PurchaseStatus {
         let levelString = appPurchaseLevel
         if levelString == PurchaseStatus.free.id {
@@ -152,6 +180,124 @@ final class AppSettingsCache: @unchecked Sendable {
         }//: IF ELSE
     }//: getPurchaseLevel()
     
+    // MARK: - PREF BOOLEAN VALUES
+    
+    func shouldAutoDownloadMedia(forType type: MediaClass) -> Bool {
+        switch type {
+        case .certificate:
+           return userCloudBooleanPrefs[.autoDownloadCerts] ?? true
+        case .audioReflection:
+            return userCloudBooleanPrefs[.autoDownloadAudio] ?? true
+        }//: SWITCH
+    }//: shouldAutoDownlaodMedia(forType)
+    
+    func shouldStoreMediaInCloud(forMedia type: MediaClass) -> Bool {
+        switch type {
+        case .certificate:
+            return userCloudBooleanPrefs[.certsInCloud] ?? true
+        case .audioReflection:
+            return userCloudBooleanPrefs[.audioInCloud] ?? true
+        }//: SWITCH
+    }//: shouldStoreMediaInCloud(forMedia)
+    
+    func shouldAutoTranscribeAudio() -> Bool {
+        return userCloudBooleanPrefs[.autoTranscription] ?? true
+    }//: shouldAutoTranscribeAudio()
+    
+    // MARK: - TOKEN METHODS
+    
+    func saveDatabaseToken(_ token: CKServerChangeToken) {
+        do {
+            let data = try NSKeyedArchiver.archivedData(
+                withRootObject: token,
+                requiringSecureCoding: true
+            )//: archivedData
+            databaseToken = data
+            encodeCurrentState()
+        } catch {
+            NSLog(">>> AppSettingsCache error: saveDatabaseToken")
+            NSLog(">>> Failed to save the database token because: \(error.localizedDescription)")
+        }//: DO-CATCH
+    }//: saveDatabaseToken
+    
+    func loadDatabaseToken() -> CKServerChangeToken? {
+        guard let savedToken = databaseToken else { return nil }
+        
+        do {
+            return try NSKeyedUnarchiver.unarchivedObject(
+                ofClass: CKServerChangeToken.self,
+                from: savedToken
+            )//: unarchivedObject
+        } catch {
+            NSLog(">>> AppSettingsCache error: saveDatabaseToken")
+            NSLog(">>> Failed to load the database token because: \(error.localizedDescription)")
+            return nil
+        }//: DO-CATCH
+    }//: loadDatabaseToken()
+    
+    func saveZoneToken(
+        _ token: CKServerChangeToken,
+        to zoneID: CKRecordZone.ID
+    ) {
+        guard zoneID.zoneName == String.certificateZoneId || zoneID.zoneName == String.audioReflectionZoneId else { return } //: GUARD
+        
+        do {
+            let encodedToken = try NSKeyedArchiver.archivedData(
+                withRootObject: token,
+                requiringSecureCoding: true
+            )//: archivedData
+            
+            if zoneID.zoneName == String.certificateZoneId {
+                certZoneToken = encodedToken
+                encodeCurrentState()
+            } else if zoneID.zoneName == String.audioReflectionZoneId {
+                audioZoneToken = encodedToken
+                encodeCurrentState()
+            }//: IF ELSE
+            
+        } catch {
+            NSLog(">>> AppSettingsCache error: saveDatabaseToken")
+            NSLog(">>> Failed to save the \(zoneID.zoneName) token because: \(error.localizedDescription)")
+        }//: DO-CATCH
+        
+    }//: saveZoneToken
+    
+    func loadZoneToken(forZone zoneID: CKRecordZone.ID) -> CKServerChangeToken? {
+        let zName = zoneID.zoneName
+        guard zName == String.certificateZoneId || zName == String.audioReflectionZoneId else {
+            return nil
+        }//: GUARD
+        var encodedToken: Data = Data()
+        
+        if zName == String.certificateZoneId,
+           let savedCertToken = certZoneToken {
+            encodedToken = savedCertToken
+        } else if zName == String.audioReflectionZoneId,
+                  let savedAudioToken = audioZoneToken {
+            encodedToken = savedAudioToken
+        }//: IF LET ELSE
+        
+        do {
+            return try NSKeyedUnarchiver.unarchivedObject(
+                ofClass: CKServerChangeToken.self,
+                from: encodedToken
+            )//: unarchivedObject
+        } catch {
+            NSLog(">>> AppSettingsCache error: loadZoneToken")
+            NSLog(">>> Failed to load the \(zName) token because: \(error.localizedDescription)")
+            return nil
+        }//: DO-CATCH
+        
+    }//: loadZoneToken
+    
+    func clearAllTokens() {
+        queue.async {
+            self.databaseToken = nil
+            self.certZoneToken = nil
+            self.audioZoneToken = nil
+            self.encodeCurrentState()
+        }//: async
+    }//: clearAllTokens()
     
     // MARK: - INIT
     

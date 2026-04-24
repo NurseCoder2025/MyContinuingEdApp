@@ -13,11 +13,12 @@ import XCTest
 final class CloudKitTests: BaseTestCase {
 
     func testRetrievePathStringFromRecID() {
+        let mediaBrain = CloudMediaBrain.shared
         let sampleCe = controller.createSampleCeActivity(name: "Test CE")
         let sampleCertInfoObj = controller.createSampleCertInfoItem(forActivity: sampleCe)
         
         let retrievedRecord = sampleCertInfoObj.certCloudRecordName
-        let retrievedPath = CloudMediaBrain.retrievePathFromID(recID: retrievedRecord)
+        let retrievedPath = mediaBrain.retrievePathFromID(recID: retrievedRecord)
         let savedRelPathString = sampleCertInfoObj.certInfoRelativePath
         
         XCTAssertEqual(retrievedPath, savedRelPathString, "The two strings should be equal, but what was pulled out from the CKRecord.ID was \(retrievedPath)")
@@ -26,7 +27,7 @@ final class CloudKitTests: BaseTestCase {
         let secondSampleRecID = CKRecord.ID(
             recordName: secondSampleRelPathString
         )
-        let retrievedPath2 = CloudMediaBrain.retrievePathFromID(recID: secondSampleRecID)
+        let retrievedPath2 = mediaBrain.retrievePathFromID(recID: secondSampleRecID)
         
         XCTAssertEqual(secondSampleRelPathString, retrievedPath2, "The two strings should be equal, but what was pulled out from the CKRecord.ID was \(retrievedPath2)")
         

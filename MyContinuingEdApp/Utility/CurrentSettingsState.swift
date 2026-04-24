@@ -28,6 +28,13 @@ struct CurrentSettingsState: Codable {
     // CKDatabase Subscription
     var cloudDbSubscriptionCreated: Bool = false
     
+    // iCloud Server Tokens
+    // Using the Data value type because iCloud server tokens use
+    // NSCoding
+    var databaseChangeToken: Data? = nil
+    var certZoneChangeToken: Data? = nil
+    var audioZoneChangeToken: Data? = nil
+    
     // iCloud user ID (only in encoded form due to CKRecord.ID conforming
     // to NSCoding (and not Encodable or Decodable)
     var codedUserID: Data? = nil
