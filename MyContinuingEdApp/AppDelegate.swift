@@ -40,7 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             let dbNotification = notification as? CKDatabaseNotification {
             
             Task {
-                await handleCloudKitNotification(dbNotification)
+                try? await Task.sleep(for: .seconds(3))
+                await MainActor.run {
+                    handleCloudKitNotification(dbNotification)
+                }//: MAIN ACTOR
                 completionHandler(.newData)
             }//: TASK
             
@@ -51,11 +54,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     // MARK: - HELPERS
     
-    private func handleCloudKitNotification(_ notification: CKDatabaseNotification) async {
-        
-        
-       
-        
+    private func handleCloudKitNotification(
+        _ notification: CKDatabaseNotification
+    ) {
+        let nc = NotificationCenter.default
+        nc.post(name: .cloudDBChangeNotification, object: nil)
     }//: handleCloudKitNotification
     
     

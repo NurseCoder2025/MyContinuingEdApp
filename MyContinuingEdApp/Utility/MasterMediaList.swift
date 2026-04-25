@@ -11,7 +11,7 @@ import Foundation
 
 final class MasterMediaList: @unchecked Sendable {
     // MARK: - PROPERTIES
-    private var _allLocalMedia = [LocalMediaFileInfo]() {
+    private var _allLocalMedia = Set<LocalMediaFileInfo>() {
         willSet {
             dispatchPrecondition(condition: .onQueue(queue))
         }
@@ -29,17 +29,90 @@ final class MasterMediaList: @unchecked Sendable {
     // MARK: - GETTERS
     
     var currentLocalMediaFiles: [LocalMediaFileInfo] {
-        queue.sync { _allLocalMedia }
+        queue.sync { Array(_allLocalMedia) }
     }//: localMediaList
+    
+    var localMediaErrors: [LocalMediaFileInfo] {
+        queue.sync {
+            return _allLocalMedia.filter { $0.hasError }
+        }//: sync
+    }//: localMediaErrors
     
     // MARK: - METHODS
     
-    func addMediaRecord(fromRec: CKRecord.ID, savedAt: URL)  {
-        let newItem = LocalMediaFileInfo(id: fromRec, mediaURL: savedAt)
+    func addMediaRecord(fromRec record: CKRecord.ID, savedAt: URL)  {
+        guard doesNOThaveRecord(withID: record) else { return }
         queue.async {
-            self._allLocalMedia.append(newItem)
+            let newItem = LocalMediaFileInfo(id: record, mediaURL: savedAt)
+            self._allLocalMedia.insert(newItem)
         }//: async
     }//: addMediaRecord(fromRec, savedAt)
+    
+    func addMediaRecWithError(
+        fromRec record: CKRecord.ID,
+        message: String,
+        downloadFlag: Bool? = nil,
+        deletionFlag: Bool? = nil
+    ) {
+        guard doesNOThaveRecord(withID: record) else {
+            queue.async {
+                if let existingRec = self.getLocalMediaRecord(using: record) {
+                    existingRec.errorMessage = message
+                    
+                    if let needsDownload = downloadFlag {
+                        existingRec.shouldReDownload = needsDownload
+                    }//: IF LET
+                    
+                    if let needsDeletion = deletionFlag {
+                        existingRec.shouldDelete = needsDeletion
+                    }//: IF LET
+                    
+                }//: IF LET
+            }//: async
+            return
+        }//: GUARD
+        queue.async {
+            let newItem = LocalMediaFileInfo(id: record, mediaURL: nil, errorMessage: message)
+            
+            if let needsDownload = downloadFlag {
+                newItem.shouldReDownload = needsDownload
+            }//: IF LET
+            
+            if let needsDeletion = deletionFlag {
+                newItem.shouldDelete = needsDeletion
+            }//: IF LET
+            
+            self._allLocalMedia.insert(newItem)
+        }//: async
+    }//: addMediaRecWithError(fromRec, message)
+    
+    func updateMediaRecWithError(
+        fromRec record: CKRecord.ID,
+        message: String,
+        downloadFlag: Bool? = nil,
+        deleteFlag: Bool? = nil
+    ) {
+        guard hasRecord(withID: record) else { return }
+        
+        queue.async {
+            if let itemToUpdate = self.getLocalMediaRecord(using: record) {
+                itemToUpdate.errorMessage = message
+                if let setDownloadFlag = downloadFlag {
+                    itemToUpdate.shouldReDownload = setDownloadFlag
+                }//: IF LET (setDownloadFlag)
+                
+                if let setDeletionFlag = deleteFlag {
+                    itemToUpdate.shouldDelete = setDeletionFlag
+                }//: IF LET
+            }//: IF LET
+        }//: async
+    }//: updateMediaRecWithError(fromRec, message)
+    
+    func getLocalMediaRecord(using record: CKRecord.ID) -> LocalMediaFileInfo?  {
+        queue.sync {
+            return _allLocalMedia.filter({$0.id == record}).first
+        }//: sync
+    }//: getLocalMediaRecord(using)
     
     func removeMediaUrl(forRec: CKRecord.ID)  {
         queue.async {
@@ -57,14 +130,20 @@ final class MasterMediaList: @unchecked Sendable {
     }//: changeMediaUrl(forRec, to newURL)
     
     func removeMediaRecord(withID: CKRecord.ID) {
-        queue.async {
-            self._allLocalMedia.removeAll(where: {$0.id == withID})
-        }//: async
+        if let memberToRemove = _allLocalMedia.filter({$0.id == withID}).first {
+            queue.async {
+                self._allLocalMedia.remove(memberToRemove)
+            }//: async
+        }//: IF LET
     }//: removeExistingItem
     
     func hasRecord(withID recID: CKRecord.ID) -> Bool {
         queue.sync { _allLocalMedia.contains(where: {$0.id == recID}) }
     }//: hasRecord(recID)
+    
+    func doesNOThaveRecord(withID recID: CKRecord.ID) -> Bool {
+        queue.sync { !_allLocalMedia.contains(where: {$0.id == recID}) }
+    }//: doesNOThaveRecord(withID)
     
     
     // MARK: DISK READING/WRITING
@@ -97,9 +176,9 @@ final class MasterMediaList: @unchecked Sendable {
                 do {
                     let unarchiver = try NSKeyedUnarchiver(forReadingFrom: savedList)
                     unarchiver.requiresSecureCoding = true
-                    if let decodedMedia: [LocalMediaFileInfo] = unarchiver.decodeObject(forKey: String.masterMediaListFileKey) as? [LocalMediaFileInfo] {
+                    if let decodedMedia: Set<LocalMediaFileInfo> = unarchiver.decodeObject(forKey: String.masterMediaListFileKey) as? Set<LocalMediaFileInfo> {
                         _allLocalMedia = decodedMedia
-                    }
+                    }//: IF LET (decodedMedia)
                 } catch {
                     NSLog(">>> MasterMediaList error: init")
                     NSLog(">>> The NSKeyedUnarchiver(forReadingFrom) method threw an error while being initialized.")

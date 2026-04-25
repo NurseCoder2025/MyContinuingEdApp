@@ -11,10 +11,7 @@ import Foundation
 
 extension Notification.Name {
     
-    static let cloudKitRecordChanged = Notification.Name("cloudKitRecordChanged")
-    static let cloudKitRecordAdded = Notification.Name("cloudKitRecordAdded")
-    static let cloudKitRecordDeleted = Notification.Name("cloudKitRecordDeleted")
-    static let cloudKitUknownRecChange = Notification.Name("unknownCloudKitRecChange")
+    static let cloudDBChangeNotification = Notification.Name("cloudDatabaseChanged")
     
     // Notfications for indicating that a locally-initiated deletion
     // of a CKRecord completed successfully

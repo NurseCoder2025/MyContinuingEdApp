@@ -49,27 +49,31 @@ extension CertificateInfo {
     /// downcast to that type and saved in the database.
     var certCloudRecordName: CKRecord.ID {
         get {
-            guard let record = certCKRecordID as? CKRecord.ID else {
+            guard let record = ckRecordID as? CKRecord.ID else {
                 return CKRecord.ID(recordName: String.mediaIdPlaceholder)
             }//: GUARD
             return record
         }
         
         set {
-            certCKRecordID = newValue as NSObject
+            ckRecordID = newValue as NSObject
         }
     }//: certCloudRecordName
     
-    var certDeletionTimeStamp: Date {
+    var certErrorMessage: String {
         get {
-            deletionTimeStamp ?? Date.now
+            errorMessage ?? ""
         }
         set {
-            deletionTimeStamp = newValue
+            errorMessage = newValue
         }
-    }//: certIsMarkedForDeletion
+    }//: certErrorMessage
     
     // MARK: - Computed Properties
+    
+    var hasError: Bool {
+        certErrorMessage.isNotEmpty
+    }//: hasError
     
     /// CoreData computed helper property for CertificateInfo that returns either the ceTtile helper value
     /// for the CeActivity assigned to the CertificateInfo object or "N/A" if no activity has been assigned.
@@ -246,7 +250,7 @@ extension CertificateInfo {
 }//: EXTENSION
 
 // MARK: - PROTOCOL CONFORMANCE
-extension CertificateInfo: RepresentsDeletableMediaFile, DelayedDeletion {
+extension CertificateInfo: RepresentsDeletableMediaFile {
     
     func returnCDSelf() -> NSManagedObject {
         return self

@@ -30,6 +30,8 @@ class DataController: ObservableObject {
     /// user for this app.  This value is set by the assessUserICloudStatus method.
     @Published var userCloudDriveURL: URL?
     
+    @Published var criticalCloudAlertMessage: String = ""
+    
     /// Constant DataController property that sets a URL for a directory within the app's
     /// sandbox environment into which CE certificate images/PDFs and audio recordings
     /// can be saved IF the user is not logged into iCloud.  This uses the default documents
@@ -254,7 +256,8 @@ class DataController: ObservableObject {
                 forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey
             )
             // MARK: - OBSERVERS
-            NotificationCenter.default.addObserver(
+            let nc = NotificationCenter.default
+            nc.addObserver(
                 forName: .NSPersistentStoreRemoteChange,
                 object: container.persistentStoreCoordinator,
                 queue: .main,
@@ -264,7 +267,7 @@ class DataController: ObservableObject {
             // Observer for updating the UI whenever the system
             // detects a user logging in/out of iCloud OR the data
             // sync setting changes for iCloud Drive
-            NotificationCenter.default.addObserver(
+            nc.addObserver(
                 self,
                 selector: #selector(handleUbiquityIdChange(_:)),
                 name: .NSUbiquityIdentityDidChange,
@@ -274,11 +277,18 @@ class DataController: ObservableObject {
             // Adding an observer for incoming changes to the sharedSettings
             // property as it is an NSUbiquitousKeyValueStore and is synced
             // over iCloud.
-            NotificationCenter.default.addObserver(
+            nc.addObserver(
                 self,
                 selector: #selector(handleKeyValueStoreChanges(_:)),
                 name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
                 object: sharedSettings
+            )//: OBSERVER
+            
+            nc.addObserver(
+                self,
+                selector: #selector(handleCloudDbChangedNotification(_:)),
+                name: .cloudDBChangeNotification,
+                object: nil
             )//: OBSERVER
             
             // MARK: ICLOUD
@@ -344,6 +354,11 @@ class DataController: ObservableObject {
         
     } //: INIT
     
-   
+    // MARK: - DEINIT
+    deinit {
+        let nc = NotificationCenter.default
+        nc.removeObserver(self)
+    }//: DEINIT
+
     
 } //: DATACONTROLLER

@@ -24,10 +24,10 @@ extension AudioInfo {
     
     var audioTranscription: String {
         get {
-            transcription ?? ""
+            originalTranscription ?? ""
         }
         set {
-            transcription = newValue
+            originalTranscription = newValue
         }
     }//: audioTranscription
     
@@ -43,7 +43,20 @@ extension AudioInfo {
         }
     }//: audioCKRecordID
     
+    var audioErrorMessage: String {
+        get {
+            errorMessage ?? ""
+        }
+        set {
+            errorMessage = newValue
+        }
+    }//: audioErrorMessage
+    
     // MARK: - COMPUTED PROPERTIES
+    
+    var hasError: Bool {
+        audioErrorMessage.isNotEmpty
+    }//: hasError
     
     var questionText: String {
         if let prompt = getAssignedPrompt(),

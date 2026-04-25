@@ -399,16 +399,21 @@ final class CloudMediaBrain: ObservableObject {
                    if await saveRecToICloud(record: certRec) {
                        return Result.success(certRec.recordID)
                    } else {
-                       userErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                       Task{@MainActor in
+                           certInfo.certErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                       }//: TASK
                        return Result.failure(CloudSyncError.cloudSaveError(.certificate))
                    }//: IF AWAIT
                case .failure(let error):
-                   userErrorMessage = error.localizedDescription
+                   Task{@MainActor in
+                       certInfo.certErrorMessage = error.localizedDescription
+                   }//: MAIN ACTOR
                    return Result.failure(error)
                }//: SWITCH (smartSyncEligibility)
-               
        case .failure(let error):
-           userErrorMessage = error.localizedDescription
+           Task{@MainActor in
+               certInfo.certErrorMessage = error.localizedDescription
+           }//: TASK
            return Result.failure(error)
        }//: SWITCH (firstCheck)
     }//: smartSyncCECertificate
@@ -430,17 +435,20 @@ final class CloudMediaBrain: ObservableObject {
             let certSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: 0)
             switch certSyncEligibility {
             case .success(_):
-                return await manualCertUploadProcess(using: model)
+                return await manualCertUploadProcess(for: certInfo, using: model)
             case .failure(let error):
                 return Result.failure(error)
             }//: SWITCH
         } else {
-            return await manualCertUploadProcess(using: model)
+            return await manualCertUploadProcess(for: certInfo, using: model)
         }//: IF ELSE (getCurrentPurchaseLevel)
         
     }//: manualCertUpload(with)
     
-    func syncAudioReflection(using model: MediaModel) async -> Result<CKRecord.ID, Error> {
+    func syncAudioReflection(
+        for audioInfo: AudioInfo,
+        using model: MediaModel
+    ) async -> Result<CKRecord.ID, Error> {
         guard userIsAProUser else { return Result.failure(CloudSyncError.proLevelPurchaseNeeded) }
         
         let preliminaryCheck = canUserUtilizeCloudSyncFor(mediaType: .audioReflection)
@@ -450,18 +458,23 @@ final class CloudMediaBrain: ObservableObject {
             if await saveRecToICloud(record: newRec) {
                 return Result.success(newRec.recordID)
             } else {
-                userErrorMessage = CloudSyncError.cloudSaveError(.audioReflection).localizedDescription
+                Task{@MainActor in
+                    audioInfo.audioErrorMessage = CloudSyncError.cloudSaveError(.audioReflection).localizedDescription
+                }//: TASK
                 return Result.failure(CloudSyncError.cloudSaveError(.audioReflection))
             }//: IF AWAIT
+            
         case .failure(let error):
-            userErrorMessage = error.localizedDescription
+            Task{@MainActor in
+                audioInfo.audioErrorMessage = error.localizedDescription
+            }//: TASK
             return Result.failure(error)
         }//: SWITCH
     }//: syncAudioReflection()
     
     // MARK: SAVE HELPERS
     private func createCKRecord(for objType: MediaClass, with model: MediaModel) -> CKRecord {
-        let recType: String = .mediaRecType
+        var recType: String = ""
         let mediaName = model.getMediaTypeName()
         let assignedObjString = model.createAssignedObjIdString()
         
@@ -473,8 +486,10 @@ final class CloudMediaBrain: ObservableObject {
         switch objType {
         case .certificate:
             zoneToUse = certZone.zoneID
+            recType = CkRecordType.certificate.rawValue
         case .audioReflection:
             zoneToUse = audioZone.zoneID
+            recType = CkRecordType.audioReflection.rawValue
             originalTranscription = CKAsset(fileURL: model.transcriptionSavedAt)
         }//: SWITCH
         
@@ -493,7 +508,10 @@ final class CloudMediaBrain: ObservableObject {
         return record
     }//: createCKRecord(for)
     
-    private func saveRecToICloud(record: CKRecord, retryCount: Int = 0) async -> Bool {
+    private func saveRecToICloud(
+        record: CKRecord,
+        retryCount: Int = 0
+    ) async -> Bool {
         guard settings.zonesCreated else {
             NSLog(">>> CloudMediaBrain error: saveRecToICloud(record) - Zones not yet created")
             await CloudMediaBrain.setupAndVerifyZones()
@@ -529,7 +547,10 @@ final class CloudMediaBrain: ObservableObject {
         }//: DO - CATCH
     }//: saveRecToICloud(record)
     
-    private func manualCertUploadProcess(using model: MediaModel) async -> Result<CKRecord.ID, Error> {
+    private func manualCertUploadProcess(
+        for certInfo: CertificateInfo,
+        using model: MediaModel
+    ) async -> Result<CKRecord.ID, Error> {
         let firstCheck = canUserUtilizeCloudSyncFor(mediaType: .certificate)
         switch firstCheck {
         case .success(_):
@@ -537,11 +558,15 @@ final class CloudMediaBrain: ObservableObject {
             if await saveRecToICloud(record: newRec) {
                 return Result.success(newRec.recordID)
             } else {
-                userErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                Task{@MainActor in
+                    certInfo.certErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                }//: TASK
                 return Result.failure(CloudSyncError.cloudSaveError(.certificate))
             }//: IF AWAIT
         case .failure(let error):
-            userErrorMessage = error.localizedDescription
+            Task{@MainActor in
+                certInfo.certErrorMessage = error.localizedDescription
+            }//: TASK
             return Result.failure(error)
         }//: SWITCH
     }//: manualCertUploadProcess(using)
@@ -666,7 +691,10 @@ final class CloudMediaBrain: ObservableObject {
         }//: IF LET (mediaAsset as? CKAsset)
     }//: downloadOnlineMediaFile(using)
     
-    func restoreOriginalAudioTranscription(using model: MediaModel) async -> (Bool, String?) {
+    func getOriginalAudioTranscription(
+        for audioInfo: AudioInfo,
+        using model: MediaModel
+    ) async -> (Bool, String?) {
         guard iCloudIsAccessible else {
             await MainActor.run {
                 userErrorMessage = settings.iCloudState.userMessage
@@ -699,21 +727,21 @@ final class CloudMediaBrain: ObservableObject {
                         return (false, nil)
                     }//: IF ELSE
                 case .failure(let error):
-                    await MainActor.run {
+                    Task{@MainActor in
                         userErrorMessage = "Failed to retrieve the original transcription from iCloud: \(error.localizedDescription)"
-                    }//: MAIN ACTOR
+                    }//: TASK
                     return (false, nil)
                 }//: SWITCH
             } else {
                 return (false, nil)
             }//: IF LET (searchResults.matchResults.first)
         } catch {
-            await MainActor.run {
+            Task{@MainActor in
                 userErrorMessage = "Error searching for the original transcription: \(error.localizedDescription)"
-            }//: MAIN ACTOR
+            }//: TASK
             return (false, nil)
         }//: DO-CATCH
-    }//: restoreOriginalAudioTranscription(for, using)
+    }//: getOriginalAudioTranscription(for, using)
     
     // MARK: - HELPERS
     

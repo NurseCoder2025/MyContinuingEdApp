@@ -11,7 +11,8 @@ import Foundation
 extension String {
     
     // MARK: CKRecord TYPE
-    static let mediaRecType: String = "MediaFile"
+    static let certRecType: String = "certificate"
+    static let audioRecType: String = "audioReflection"
     
     // MARK: CKRecord KEYS
     /// Constant for use in CloudKit methods. Value is "relativePath".
@@ -32,7 +33,6 @@ extension String {
     static let originalAudioTranscriptionKey: String = "audioTranscription"
 
     
-    
     // MARK: CKRecordZone IDs
     static let certificateZoneId: String = "userCertificates"
     static let audioReflectionZoneId: String = "userAudioReflections"
@@ -41,7 +41,6 @@ extension String {
     // MARK: CKDatabase SUBSCRIPTION
     static let cloudDbSubID: String = "CeCacheiCloudDBSubscription"
     
-   
     
     // MARK: Master MEDIA LIST
     static let emptyRecName: String = "Non-Existent_Record_\(UUID().uuidString)"

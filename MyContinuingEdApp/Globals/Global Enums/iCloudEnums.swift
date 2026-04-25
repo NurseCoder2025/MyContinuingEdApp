@@ -13,6 +13,12 @@ enum CertType: String, CaseIterable, Codable {case image, pdf, unspecified}
 enum MediaType: String, CaseIterable, Codable {case image, pdf, audio, unspecified}
 enum SaveLocation: String, Codable {case local, cloud, unknown}
 
+enum CKAssetType: String, Codable {
+    case certificate = "certificate"
+    case audioReflection = "audio reflection"
+    case transcription = "transcription"
+}//: CKAssetType
+
 enum MediaClass: String, CaseIterable, Codable {
     case certificate = "Certificate"
     case audioReflection = "Audio reflection"

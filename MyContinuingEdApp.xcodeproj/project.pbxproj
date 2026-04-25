@@ -996,6 +996,7 @@
 				F2506F5E2E60F13D00D25D33 /* Credential-CoreDataHelper.swift */,
 				F2BC94A82E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift */,
 				3F0B138C2F7E05ED00CC4A49 /* CertificateInfo-CoreDataHelper.swift */,
+				3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */,
 				3FA667572F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift */,
 				3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */,
 				3F83C7BD2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift */,
@@ -1011,7 +1012,6 @@
 				F2C0D1382E69EF0500458022 /* USState-CoreDataHelper.swift */,
 				3FF5ACD52F29D7840038979D /* ReflectionPrompt-CoreDataHelper.swift */,
 				3FB7C7562F94648A00299197 /* CeActivity-CDHelper_CloudKit.swift */,
-				3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */,
 			);
 			path = "Core Data Helpers";
 			sourceTree = "<group>";
