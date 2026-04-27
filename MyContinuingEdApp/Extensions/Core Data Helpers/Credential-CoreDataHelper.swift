@@ -98,24 +98,32 @@ extension Credential {
     var allDisciplinaryActions: [DisciplinaryActionItem] {
         let actionsTaken = disciplinaryActions?.allObjects as? [DisciplinaryActionItem] ?? []
         return actionsTaken
-    }
+    }//: allDisciplinaryActions
     
     // All CeActivity objects
     var allCredentialCEs: [CeActivity] {
         let cesForCredential = activities?.allObjects as? [CeActivity] ?? []
         return cesForCredential.sorted {$0.ceTitle < $1.ceTitle}
-    }
+    }//: allCredentialCEs
     
     // All RenewalPeriod objects
     var allRenewals: [RenewalPeriod] {
         let credRenewals = renewals?.allObjects as? [RenewalPeriod] ?? []
         return credRenewals.sorted {$0.renewalPeriodStart < $1.renewalPeriodStart}
-    }
+    }//: allRenewals
+    
+    var currentRenewal: RenewalPeriod? {
+        let credRenewals = allRenewals
+        let today = Date.now.standardizedDate
+        return credRenewals.filter({
+            today >= $0.renewalPeriodStart && today <= $0.renewalPeriodEnd
+        }).first
+    }//: currentRenewal
     
     var allSpecialCats: [SpecialCategory] {
         let specialCatsForCred = specialCats?.allObjects as? [SpecialCategory] ?? []
         return specialCatsForCred.sorted { $0.specialName < $1.specialName }
-    }
+    }//: allSpecialCats
     
     
 }//: EXTENSION
@@ -142,5 +150,41 @@ extension Credential {
         }//: LOOP
         return true
     }//: isLapsed
+    
+    var currentRenewalEndsOn: Date? {
+        guard allRenewals.isNotEmpty else { return nil }
+        return currentRenewal?.renewalPeriodEnd
+    }//: currentRenewalEndsOn
+    
+}//: EXTENSION
+
+
+// MARK: - CREDENTIAL METHODS
+extension Credential {
+    
+    func getPreviousRenewalPeriod() -> RenewalPeriod? {
+        let credRenewals = allRenewals
+        guard credRenewals.count > 1 else { return nil }
+        let today = Date.now.standardizedDate
+        
+        var renewalToReturn: RenewalPeriod? = nil
+        
+        let sortedRenewals = credRenewals.sorted(by: {
+            $0.renewalPeriodEnd > $1.renewalPeriodEnd
+        })
+        
+        if let currentRenewal = sortedRenewals.filter( {
+            today >= $0.renewalPeriodStart && today <= $0.renewalPeriodEnd
+        }).first {
+            let trimmedRenewals = sortedRenewals.filter {
+                $0.periodID != currentRenewal.periodID
+            }//: filter
+            renewalToReturn = trimmedRenewals.first
+        } else {
+            renewalToReturn = sortedRenewals.first
+        }//: IF LET ELSE (sortedRenewals.filter)
+        
+        return renewalToReturn
+    }//: getPreviousRenewalPeriod()
     
 }//: EXTENSION

@@ -181,10 +181,30 @@ extension RenewalPeriod {
             return false
         } //: GUARD
         
-        let calendar = Calendar.current
-        let currentDate = calendar.startOfDay(for: Date())
+        let currentDate = Date.now.standardizedDate
         return currentDate >= startDate && currentDate <= endDate
     }//: isRenewalCurrent
+    
+    func updateTransitionAcknowledgementNeeded() {
+        let settings = AppSettingsCache.shared
+        guard settings.getCurrentPurchaseLevel() == PurchaseStatus.basicUnlock else {
+            return
+        }//: GUARD
+        let today = Date.now.standardizedDate
+        
+        if let assignedCred = credential,
+           let previousRenewal = assignedCred.getPreviousRenewalPeriod() {
+            if previousRenewal.hasUserAcknowledgedTransition == false {
+                settings.renewalTransitionAcknowledgementNeeded = true
+                settings.encodeCurrentState()
+            }//: IF (hasUserAcknowledgedTransition)
+        } else if let assignedCred = credential, let endedOn = periodEnd {
+            if today > endedOn {
+                settings.renewalTransitionAcknowledgementNeeded = true
+                settings.encodeCurrentState()
+            }//: IF (today > endedOn)
+        }//: IF LET (assignedCred, previousRenewal)
+    }//: updateTransitionAcknowledgementNeeded()
     
     
 }//: EXTENSION

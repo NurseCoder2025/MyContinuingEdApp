@@ -123,6 +123,16 @@ struct RenewalPeriodView: View {
                 // nil upon the sheet appearing so that its value will always change
                 reinstatementForRenewal = nil
             }//: ON APPEAR
+            // MARK: - ON CHANGE
+            .onChange(of: periodEnd) {_ in
+                // If a user decides to update the ending date for a renewal
+                // period, check if there is now a need for them to acknowledge
+                // the transition from that period to the next one if they are
+                // a Basic Unlock user
+                if let existingRenewal = renewalPeriod {
+                    existingRenewal.updateTransitionAcknowledgementNeeded()
+                }//: IF LET (existingRenewal)
+            }//: ON CHANGE
             
         }//: VSTACK
         // MARK: - SHEETS
@@ -173,12 +183,13 @@ struct RenewalPeriodView: View {
         } else {
             let newRenewal = dataController.createRenewalPeriod()
             mapProperties(for: newRenewal)
-        }
+            newRenewal.updateTransitionAcknowledgementNeeded()
+        }//: IF LET (existingRenewal)
         
         dataController.save()
         dataController.assignActivitiesToRenewalPeriods()
-    }
-}
+    }//: saveRenewal()
+}//: STRUCT
 
 
 // MARK: - Preview

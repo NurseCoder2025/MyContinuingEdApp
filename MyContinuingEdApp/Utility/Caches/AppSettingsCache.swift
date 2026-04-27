@@ -78,6 +78,14 @@ final class AppSettingsCache: @unchecked Sendable {
             queue.async { self._currentState.appPurchaseStateString = newValue }
         }
     }//: appPurchaseLevel
+    var renewalTransitionAcknowledgementNeeded: Bool {
+        get {
+            queue.sync { _currentState.userNeedsToAcknowledgeTransition }
+        }
+        set {
+            queue.async {self._currentState.userNeedsToAcknowledgeTransition = newValue}
+        }
+    }//: renewalTransitionAcknowledgementNeeded
     
     // MARK: CLOUD KIT
     var zonesCreated: Bool {
@@ -106,7 +114,7 @@ final class AppSettingsCache: @unchecked Sendable {
     }//:appHasCloudDatabaseSubscriptionSetup
     
     // MARK: TOKENS
-    var databaseToken: Data? {
+    private var databaseToken: Data? {
         get {
             queue.sync { _currentState.databaseChangeToken }
         }

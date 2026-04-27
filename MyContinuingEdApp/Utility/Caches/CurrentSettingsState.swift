@@ -39,4 +39,7 @@ struct CurrentSettingsState: Codable {
     // to NSCoding (and not Encodable or Decodable)
     var codedUserID: Data? = nil
     
+    // For CE CACHE CORE Users ONLY
+    var userNeedsToAcknowledgeTransition: Bool = false
+    
 }//: STRUCT

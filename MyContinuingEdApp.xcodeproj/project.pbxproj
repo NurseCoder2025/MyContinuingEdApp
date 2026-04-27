@@ -71,6 +71,17 @@
 		3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB712F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift */; };
 		3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */; };
 		3F67DB762F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */; };
+		3F68AD062F9FCB6E00D587C1 /* CMB_RecordSearching.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD052F9FCB6E00D587C1 /* CMB_RecordSearching.swift */; };
+		3F68AD082F9FCC6B00D587C1 /* CMB_RetryLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD072F9FCC6B00D587C1 /* CMB_RetryLogic.swift */; };
+		3F68AD0A2F9FCCBF00D587C1 /* CMB_ZoneHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD092F9FCCBF00D587C1 /* CMB_ZoneHandling.swift */; };
+		3F68AD0C2F9FCD9300D587C1 /* CMB_Saving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD0B2F9FCD9300D587C1 /* CMB_Saving.swift */; };
+		3F68AD0E2F9FCE4500D587C1 /* CMB_Static.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD0D2F9FCE4500D587C1 /* CMB_Static.swift */; };
+		3F68AD102F9FCE8D00D587C1 /* CMB_Downloading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD0F2F9FCE8D00D587C1 /* CMB_Downloading.swift */; };
+		3F68AD122F9FCEDA00D587C1 /* CMB_CKDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD112F9FCEDA00D587C1 /* CMB_CKDatabase.swift */; };
+		3F68AD142F9FCF0C00D587C1 /* CMB_DeletingItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD132F9FCF0C00D587C1 /* CMB_DeletingItems.swift */; };
+		3F68AD162F9FCF3D00D587C1 /* CMB_Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD152F9FCF3D00D587C1 /* CMB_Helpers.swift */; };
+		3F68AD192F9FD06700D587C1 /* CMB_SyncFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD182F9FD06700D587C1 /* CMB_SyncFunctions.swift */; };
+		3F68AD1B2F9FEF9300D587C1 /* DataController-SmartSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F68AD1A2F9FEF9300D587C1 /* DataController-SmartSync.swift */; };
 		3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */; };
 		3F6B4C6C2F92E5B3006C8352 /* iCloudEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */; };
 		3F6B4C6D2F92E5B3006C8352 /* iCloudEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C6B2F92E5B3006C8352 /* iCloudEnums.swift */; };
@@ -87,7 +98,6 @@
 		3F6B4C7E2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */; };
 		3F6B4C7F2F92E792006C8352 /* UserSettingsRelatedEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */; };
 		3F6B4C822F9343F8006C8352 /* CoreDataCoordination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */; };
-		3F6B4C842F93479D006C8352 /* CertificateSyncDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */; };
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
 		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
@@ -397,6 +407,17 @@
 		3F67DB712F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatHrsNeededCardView.swift; sourceTree = "<group>"; };
 		3F67DB732F15C90200489758 /* ReinstatementProgressCheckSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementProgressCheckSheet.swift; sourceTree = "<group>"; };
 		3F67DB752F15CE7F00489758 /* ReinstatementStandAloneProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementStandAloneProgressView.swift; sourceTree = "<group>"; };
+		3F68AD052F9FCB6E00D587C1 /* CMB_RecordSearching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_RecordSearching.swift; sourceTree = "<group>"; };
+		3F68AD072F9FCC6B00D587C1 /* CMB_RetryLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_RetryLogic.swift; sourceTree = "<group>"; };
+		3F68AD092F9FCCBF00D587C1 /* CMB_ZoneHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_ZoneHandling.swift; sourceTree = "<group>"; };
+		3F68AD0B2F9FCD9300D587C1 /* CMB_Saving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_Saving.swift; sourceTree = "<group>"; };
+		3F68AD0D2F9FCE4500D587C1 /* CMB_Static.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_Static.swift; sourceTree = "<group>"; };
+		3F68AD0F2F9FCE8D00D587C1 /* CMB_Downloading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_Downloading.swift; sourceTree = "<group>"; };
+		3F68AD112F9FCEDA00D587C1 /* CMB_CKDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_CKDatabase.swift; sourceTree = "<group>"; };
+		3F68AD132F9FCF0C00D587C1 /* CMB_DeletingItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_DeletingItems.swift; sourceTree = "<group>"; };
+		3F68AD152F9FCF3D00D587C1 /* CMB_Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_Helpers.swift; sourceTree = "<group>"; };
+		3F68AD182F9FD06700D587C1 /* CMB_SyncFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_SyncFunctions.swift; sourceTree = "<group>"; };
+		3F68AD1A2F9FEF9300D587C1 /* DataController-SmartSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-SmartSync.swift"; sourceTree = "<group>"; };
 		3F69189C2EA6C05C00435E02 /* MyContinuingEdAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyContinuingEdAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F6918A52EA6C21D00435E02 /* MyContinuingEdApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = MyContinuingEdApp.xctestplan; path = MyContinuingEdAppTests/MyContinuingEdApp.xctestplan; sourceTree = "<group>"; };
 		3F6918AA2EA6C85400435E02 /* SidebarTagsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarTagsSectionView.swift; sourceTree = "<group>"; };
@@ -408,7 +429,6 @@
 		3F6B4C7A2F92E758006C8352 /* AchievementEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementEnums.swift; sourceTree = "<group>"; };
 		3F6B4C7D2F92E792006C8352 /* UserSettingsRelatedEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsRelatedEnums.swift; sourceTree = "<group>"; };
 		3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCoordination.swift; sourceTree = "<group>"; };
-		3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateSyncDelegate.swift; sourceTree = "<group>"; };
 		3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-InAppPurchases.swift"; sourceTree = "<group>"; };
 		3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaidFeaturePromoView.swift; sourceTree = "<group>"; };
 		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
@@ -942,13 +962,10 @@
 			children = (
 				3FC450862F89D129005DFD4D /* Spotlight */,
 				3FC450852F89D107005DFD4D /* Protocols */,
+				3F334E392F9C7C0E00597AB0 /* Caches */,
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
-				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
-				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
-				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
 				3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */,
-				3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */,
-				3FF090432F99BDFD0057D15F /* MasterMediaList.swift */,
+				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -1092,12 +1109,22 @@
 			children = (
 				3F0C7AA72F4FD6CB001B6034 /* Certificates */,
 				3F6DD15A2ECFC68A00A0B3BA /* Activity Reflections */,
-				3FC450832F89D04F005DFD4D /* CloudMediaBrain.swift */,
+				3F68AD172F9FCFD900D587C1 /* Cloud Media Brain */,
 				3FC450872F89D180005DFD4D /* MediaModel.swift */,
 				3F6B4C812F9343F8006C8352 /* CoreDataCoordination.swift */,
-				3F6B4C832F93479D006C8352 /* CertificateSyncDelegate.swift */,
 			);
 			path = "CE Completion";
+			sourceTree = "<group>";
+		};
+		3F334E392F9C7C0E00597AB0 /* Caches */ = {
+			isa = PBXGroup;
+			children = (
+				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
+				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
+				3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */,
+				3FF090432F99BDFD0057D15F /* MasterMediaList.swift */,
+			);
+			path = Caches;
 			sourceTree = "<group>";
 		};
 		3F396C9C2F631D1C0025F786 /* Audio Reflections */ = {
@@ -1136,8 +1163,27 @@
 				3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */,
 				3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */,
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
+				3F68AD1A2F9FEF9300D587C1 /* DataController-SmartSync.swift */,
 			);
 			path = "Data Controller Items";
+			sourceTree = "<group>";
+		};
+		3F68AD172F9FCFD900D587C1 /* Cloud Media Brain */ = {
+			isa = PBXGroup;
+			children = (
+				3FC450832F89D04F005DFD4D /* CloudMediaBrain.swift */,
+				3F68AD182F9FD06700D587C1 /* CMB_SyncFunctions.swift */,
+				3F68AD052F9FCB6E00D587C1 /* CMB_RecordSearching.swift */,
+				3F68AD0F2F9FCE8D00D587C1 /* CMB_Downloading.swift */,
+				3F68AD132F9FCF0C00D587C1 /* CMB_DeletingItems.swift */,
+				3F68AD152F9FCF3D00D587C1 /* CMB_Helpers.swift */,
+				3F68AD112F9FCEDA00D587C1 /* CMB_CKDatabase.swift */,
+				3F68AD0B2F9FCD9300D587C1 /* CMB_Saving.swift */,
+				3F68AD0D2F9FCE4500D587C1 /* CMB_Static.swift */,
+				3F68AD072F9FCC6B00D587C1 /* CMB_RetryLogic.swift */,
+				3F68AD092F9FCCBF00D587C1 /* CMB_ZoneHandling.swift */,
+			);
+			path = "Cloud Media Brain";
 			sourceTree = "<group>";
 		};
 		3F6B4C802F92E7C5006C8352 /* Global Enums */ = {
@@ -1624,6 +1670,7 @@
 				3FE3724A2ECECD9000CCF0FC /* FeaturesDetailsSheet.swift in Sources */,
 				3F6B4C722F92E69D006C8352 /* UIViewEnums.swift in Sources */,
 				F2F6D5782E2B460D00E1FB5F /* ActivityView.swift in Sources */,
+				3F68AD062F9FCB6E00D587C1 /* CMB_RecordSearching.swift in Sources */,
 				3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */,
 				F22940A72E7663BD00BFE78A /* SpecialCategorySheet.swift in Sources */,
 				3FA59F2F2F6DEEF500EA1418 /* AudioRecordingTimerView.swift in Sources */,
@@ -1632,6 +1679,7 @@
 				3FE90A262EC7DF250010FB12 /* DataController-ObjectRelationships.swift in Sources */,
 				3F396CA82F6332980025F786 /* UIDocument+Extensions.swift in Sources */,
 				3F39AFCD2EA180F8003F5E78 /* ContentViewToolbarView.swift in Sources */,
+				3F68AD142F9FCF0C00D587C1 /* CMB_DeletingItems.swift in Sources */,
 				F2B521C82E1F65A9000AB6E6 /* Filter.swift in Sources */,
 				3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */,
 				3F5D84F52F0DCDC600B179C4 /* HelpInfoSheetView.swift in Sources */,
@@ -1647,6 +1695,7 @@
 				3F817DD72EC679A600791223 /* ChartDataSources.swift in Sources */,
 				F21A7F2F2E6F9F09002D572A /* RenewalPeriod+CoreDataClass.swift in Sources */,
 				3F9520A52EB16FF600F1B498 /* SpotlightCentral.swift in Sources */,
+				3F68AD0E2F9FCE4500D587C1 /* CMB_Static.swift in Sources */,
 				3F8D93E92EBC1C6D0070DEA1 /* SpecialCatRowView.swift in Sources */,
 				3FA59F352F6E70AE00EA1418 /* AudioRecorderControlViewModel.swift in Sources */,
 				F21A7F302E6F9F09002D572A /* RenewalPeriod+CoreDataProperties.swift in Sources */,
@@ -1704,6 +1753,7 @@
 				3F6B4C6D2F92E5B3006C8352 /* iCloudEnums.swift in Sources */,
 				3FF979202F4574B900DD8363 /* URL+Extensions.swift in Sources */,
 				3FE90A1C2EC7C41E0010FB12 /* CeEarnedByMonthChartView.swift in Sources */,
+				3F68AD192F9FD06700D587C1 /* CMB_SyncFunctions.swift in Sources */,
 				3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */,
 				3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
@@ -1713,8 +1763,10 @@
 				F2AA2AAE2E8AFDFD00321667 /* LiveActivitySettings.swift in Sources */,
 				3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */,
 				3F0095DB2E944A5800101310 /* CredentialManagementSheet.swift in Sources */,
+				3F68AD0C2F9FCD9300D587C1 /* CMB_Saving.swift in Sources */,
 				3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
+				3F68AD1B2F9FEF9300D587C1 /* DataController-SmartSync.swift in Sources */,
 				3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
@@ -1732,6 +1784,7 @@
 				3FCED3EC2F6F837600BF407C /* PromptResponseTextEntry_ViewModel.swift in Sources */,
 				3F09F7632EAAB62800FE5277 /* SidebarCredentialsSectionHeaderViewModel.swift in Sources */,
 				F26076002E591E8F00C15C54 /* CeDesignation-CoreDataHelper.swift in Sources */,
+				3F68AD162F9FCF3D00D587C1 /* CMB_Helpers.swift in Sources */,
 				3F83C7BE2F0F2ED500FB4CF2 /* ReinstatementInfo-CoreDataHelper.swift in Sources */,
 				3F7B68002EF0D18C00069528 /* SettingsHeaderView.swift in Sources */,
 				3FBA7E982F285A9400FE6C80 /* ContextualHelpButtonView.swift in Sources */,
@@ -1744,7 +1797,6 @@
 				3F0B138F2F7E0BDE00CC4A49 /* Date+Extensions.swift in Sources */,
 				3F3EAC3C2EF9FEAF00BBE427 /* OnboardingView.swift in Sources */,
 				3FC450802F89C588005DFD4D /* String+Extension_SettingsKeys.swift in Sources */,
-				3F6B4C842F93479D006C8352 /* CertificateSyncDelegate.swift in Sources */,
 				3F83F1202F22185900FCF350 /* GeneralUISettingsView.swift in Sources */,
 				3F83C7C52F0F47CB00FB4CF2 /* FeeAndDeadlineView.swift in Sources */,
 				3F97FA1F2ECD6739009791D6 /* DataController-Settings.swift in Sources */,
@@ -1784,6 +1836,7 @@
 				3FC4508A2F89D8F4005DFD4D /* CurrentSettingsState.swift in Sources */,
 				3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */,
 				3F8DC7CE2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift in Sources */,
+				3F68AD082F9FCC6B00D587C1 /* CMB_RetryLogic.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,
@@ -1802,12 +1855,14 @@
 				3F47D9A62F46938100B02580 /* MediaFile+Extensions.swift in Sources */,
 				F2BC94B12E38770000926B3D /* RenewalPeriodView.swift in Sources */,
 				F243B4202E68FC4D0072419D /* CountryListSheet.swift in Sources */,
+				3F68AD122F9FCEDA00D587C1 /* CMB_CKDatabase.swift in Sources */,
 				3FD74F7A2F0349A6002360AB /* StartButtonView.swift in Sources */,
 				F2BC94A92E382E1700926B3D /* RenewalPeriod-CoreDataHelper.swift in Sources */,
 				3F6B4C762F92E6E5006C8352 /* NotificationEnums.swift in Sources */,
 				3F5D03372EB3F48A00F5B1DC /* DataController-ComputedProperties.swift in Sources */,
 				3FA667582F73EE0400066FF7 /* PromptCategories-CoreDataHelper.swift in Sources */,
 				3F71B9912F2A977800F1AA2C /* PromptSelectionSheet.swift in Sources */,
+				3F68AD102F9FCE8D00D587C1 /* CMB_Downloading.swift in Sources */,
 				3F67DB742F15C90200489758 /* ReinstatementProgressCheckSheet.swift in Sources */,
 				F273EC092E541A12003FCC43 /* NoItemView.swift in Sources */,
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
@@ -1824,6 +1879,7 @@
 				3F82F7D32F0480D100597A66 /* GroupBoxLabelView.swift in Sources */,
 				3FA667502F73A37C00066FF7 /* ActivityReflection_ViewModel.swift in Sources */,
 				3F83A6272F2C1ABF00EDF256 /* PromptResponseView.swift in Sources */,
+				3F68AD0A2F9FCCBF00D587C1 /* CMB_ZoneHandling.swift in Sources */,
 				3FAA1ED72F60D759007B0067 /* MediaStorageSettingsView.swift in Sources */,
 				3F5D032F2EB3F2E500F5B1DC /* DataController-Automation.swift in Sources */,
 				3F3B454E2F402351002792D7 /* MediaFileProtocols.swift in Sources */,

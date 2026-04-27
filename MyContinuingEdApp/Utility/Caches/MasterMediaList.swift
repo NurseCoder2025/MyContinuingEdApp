@@ -38,6 +38,18 @@ final class MasterMediaList: @unchecked Sendable {
         }//: sync
     }//: localMediaErrors
     
+    var filesToDownload: [LocalMediaFileInfo] {
+        queue.sync {
+           return _allLocalMedia.filter {$0.shouldReDownload}//: filter
+        }//: SYNC
+    }//: filesToDownload
+    
+    var filesToDelete: [LocalMediaFileInfo] {
+        queue.sync {
+            return _allLocalMedia.filter {$0.shouldDelete}//: filter
+        }//: sync
+    }//: filesToDelete
+    
     // MARK: - METHODS
     
     func addMediaRecord(fromRec record: CKRecord.ID, savedAt: URL)  {

@@ -30,8 +30,6 @@ class DataController: ObservableObject {
     /// user for this app.  This value is set by the assessUserICloudStatus method.
     @Published var userCloudDriveURL: URL?
     
-    @Published var criticalCloudAlertMessage: String = ""
-    
     /// Constant DataController property that sets a URL for a directory within the app's
     /// sandbox environment into which CE certificate images/PDFs and audio recordings
     /// can be saved IF the user is not logged into iCloud.  This uses the default documents

@@ -27,6 +27,7 @@ extension RenewalPeriod {
     @NSManaged public var periodBeginsOn: Date?
     @NSManaged public var renewalCompletedYN: Bool
     @NSManaged public var renewalCompletedDate: Date?
+    @NSManaged public var hasUserAcknowledgedTransition: Bool
     
     
     // MARK: Relationship properties

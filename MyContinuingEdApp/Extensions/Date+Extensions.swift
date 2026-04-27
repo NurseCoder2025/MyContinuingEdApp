@@ -55,6 +55,12 @@ extension Date {
         return String(year)
     }//: yearString
     
+    var standardizedDate: Date {
+        let calendar = Calendar.current
+        return calendar.startOfDay(for: self)
+    }//: standardizedDate
+    
+    
     // MARK: - METHODS
     
     /// Date method that converts any Date into a hyphened MM-DD-YYYY format as a String

@@ -210,7 +210,8 @@ extension FileManager {
     
     func createRelativePathStringForCKRecord<T: NSManagedObject>(
         coreDataObj cdObject: T,
-        assignedToCe activity: CeActivity
+        assignedToCe activity: CeActivity,
+        certExtension: String = ""
     ) -> String where T : RepresentsDeletableMediaFile {
     
         var mediaCat: MediaClass
@@ -219,7 +220,11 @@ extension FileManager {
         
         if cdObject is CertificateInfo {
             mediaCat = .certificate
-            fileExt = String.certFileExtension
+            if certExtension.isNotEmpty {
+                fileExt = certExtension
+            } else {
+                fileExt = "png"
+            }//: IF ELSE (isNotEmpty)
         } else if cdObject is AudioInfo {
             mediaCat = .audioReflection
             fileExt = String.audioFormatExtension
