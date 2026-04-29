@@ -341,22 +341,23 @@ extension DataController {
     var prefersCertificatesInICloud: Bool {
         get {
             sharedSettings.bool(forKey: String.storeCertsInCloudKey)
-        }
+        }//: GETTER
         set {
             objectWillChange.send()
             sharedSettings.set(newValue, forKey: String.storeCertsInCloudKey)
             settingsCache.userCloudBooleanPrefs[.certsInCloud] = newValue
             settingsCache.encodeCurrentState()
-            let updateNotification = Notification.Name(.cloudStoragePreferenceChanged)
+            let updateNotification = Notification(name: .cloudCertStoragePrefChanged)
             // Need to be explicit about posting on the main thread due to
             // an observer method (moveCertFiles) that needs to be run on
             // background threads and is called within a detached Task by a
             // selector method running on the thread this notification comes
             // from.
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: updateNotification, object: nil)
-            }//: DISPATCH QUEUE
-        }
+            Task{@MainActor in
+                let nc = NotificationCenter.default
+                nc.post(updateNotification)
+            }//: TASK
+        }//: SETTER
     }//: prefersCertificatesInICloud
     
     var prefersAudioReflectionsInICloud: Bool {
@@ -375,12 +376,18 @@ extension DataController {
     var prefersAutoDownloadForCerts: Bool {
         get {
             sharedSettings.bool(forKey: String.autoDownloadCertsKey)
-        }
+        }//: GETTER
         set {
             sharedSettings.set(newValue, forKey: String.autoDownloadCertsKey)
             settingsCache.userCloudBooleanPrefs[.autoDownloadCerts] = newValue
             settingsCache.encodeCurrentState()
-        }
+            
+            Task{@MainActor in
+                let nc = NotificationCenter.default
+                let certAutoDownloadChanged = Notification(name: .certAutoDownloadSettingChanged)
+                nc.post(certAutoDownloadChanged)
+            }//: TASK
+        }//: SETTER
     }//: prefersAutoDownloadForCerts
     
     var prefersAutoDownalodForAudio: Bool {
@@ -391,7 +398,13 @@ extension DataController {
             sharedSettings.set(newValue, forKey: String.autoDownloadAudioKey)
             settingsCache.userCloudBooleanPrefs[.autoDownloadAudio] = newValue
             settingsCache.encodeCurrentState()
-        }
+            
+            Task{@MainActor in
+                let nc = NotificationCenter.default
+                let audioAutoDownloadChanged = Notification(name: .audioAutoDownloadSettingChanged)
+                nc.post(audioAutoDownloadChanged)
+            }//: TASK
+        }//: SETTER
     }//: prefersAutoDownloadForAudio
     
     var smartSyncCertificateWindow: Double {

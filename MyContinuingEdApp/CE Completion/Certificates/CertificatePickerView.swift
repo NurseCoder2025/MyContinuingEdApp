@@ -105,6 +105,7 @@ struct CertificatePickerView: View {
         }//: ALERT
             
     }//: BODY
+    
 }//: STRUCT
 
 

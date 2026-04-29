@@ -22,6 +22,7 @@ extension CloudMediaBrain {
             }//: MAIN ACTOR
             return Result.failure(CloudSyncError.cloudUnavailable)
         }//: GUARD
+        let masterList = MasterMediaList.shared
         
         var mediaRecord: CKRecord
         
@@ -38,9 +39,13 @@ extension CloudMediaBrain {
                         if let searchedRec = await searchZoneForRecordMatching(using: objModel) {
                             mediaRecord = searchedRec
                         } else {
+                            let errorText = "The app was unable to locate the iCloud record for the file you're trying to download. Please check your network connection, iCloud settings, and that the file is still saved in iCloud using the Finder or Files app."
+                            addOrUpdateMasterListEntryWithError(forRecord: object, errorText: errorText)
                             return Result.failure(CloudSyncError.cloudRecordNotFound(objModel.designatedClass))
                         }//: IF LET (searchedRec)
                     } else {
+                        let errorText = "The app was unable to locate the iCloud record for the file you're trying to download. Please check your network connection, iCloud settings, and that the file is still saved in iCloud using the Finder or Files app."
+                        addOrUpdateMasterListEntryWithError(forRecord: object, errorText: errorText)
                         return Result.failure(CloudSyncError.genCloudRecNotFound)
                     }//: IF LET (objModel)
                 } //: IF LET (foundRec)
@@ -49,9 +54,13 @@ extension CloudMediaBrain {
                 if let searchedRec = await searchZoneForRecordMatching(using: createdModel) {
                     mediaRecord = searchedRec
                 } else {
+                    let errorText = "The app was unable to locate the iCloud record for the file you're trying to download. Please check your network connection, iCloud settings, and that the file is still saved in iCloud using the Finder or Files app."
+                    addOrUpdateMasterListEntryWithError(forRecord: object, errorText: errorText)
                     return Result.failure(CloudSyncError.cloudRecordNotFound(createdModel.designatedClass))
                 }//: IF LET (searchedRec)
             } else {
+                let errorText = "The app was unable to locate the iCloud record for the file you're trying to download. Please check your network connection, iCloud settings, and that the file is still saved in iCloud using the Finder or Files app."
+                addOrUpdateMasterListEntryWithError(forRecord: object, errorText: errorText)
                 return Result.failure(error)
             }//: IF ELSE
         }//: DO - CATCH
@@ -67,15 +76,28 @@ extension CloudMediaBrain {
                 }//: IF (fileExists)
                 
                 try fileSystem.moveItem(at: tempURL, to: saveURL)
+                addOrUpdateMasterListEntryNoError(forRec: object, mediaAt: saveURL)
                 return Result.success(saveURL)
             } catch {
                 NSLog(">>> CloudMediaBrain error: downloadOnlineMediaFile")
                 NSLog(">>> The FileManger moveItem method threw an error while trying to move the CKAsset binary from \(tempURL.absoluteString) to \(saveURL.absoluteString).")
+                let errorMessage: String = "The app was able to download the media file from iCloud but encountered an error while trying to move it from temporary to permanent storage on the device. Please ensure there is enough free space on your device and try again."
+                addOrUpdateMasterListEntryWithError(
+                    forRecord: object,
+                    errorText: errorMessage,
+                    setDownloadFlag: true
+                )//: addOrUpdateMasterListEntryWithError()
                 return Result.failure(CloudSyncError.mediaDownloadFailed)
             }//: DO-CATCH
         } else {
             NSLog(">>> CloudMediaBrain error: downloadOnlineMediaFile")
             NSLog(">>> Either there was no binary data assigned to the mediaDataKey or the fileURL getter for the CKAsset returned a nil value.")
+            let errorMessage: String = "Critical media file information on iCloud was either missing or corrupted. Please try re-uploading the desired file to iCloud again and then download on other devices."
+            addOrUpdateMasterListEntryWithError(
+                forRecord: object,
+                errorText: errorMessage,
+                setDownloadFlag: true
+            )//: addOrUpdateMasterListEntryWithError()
             return Result.failure(CloudSyncError.mediaDownloadFailed)
         }//: IF LET (mediaAsset as? CKAsset)
     }//: downloadOnlineMediaFile(using)

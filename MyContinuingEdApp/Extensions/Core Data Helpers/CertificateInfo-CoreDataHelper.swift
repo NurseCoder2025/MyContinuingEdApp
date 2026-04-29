@@ -95,6 +95,16 @@ extension CertificateInfo {
         certFileSize / 1_024_000.0
     }//: fileSizeInMegabytes
     
+    var certMediaType: CertType {
+        if certInfoCertType == CertType.image.rawValue {
+            return .image
+        } else if certInfoCertType == CertType.pdf.rawValue {
+            return .pdf
+        } else {
+            return CertType.unspecified
+        }//: IF ELSE
+    }//: certMediaType
+    
     // MARK: - RELATIONSHIPS
     
     func getAssignedCeActivity() -> CeActivity? { return completedCe }//: getAssignedCeActivity()

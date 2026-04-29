@@ -33,13 +33,16 @@ extension CloudMediaBrain {
             let recID = matchingRec.recordID
             do {
                 _ = try await cloudDB.deleteRecord(withID: recID)
+                removeMasterListEntry(forRecord: object)
                 return Result.success(true)
             } catch {
+                addOrUpdateMasterListEntryWithError(forRecord: object, errorText: "Unable to delete the media file on iCloud due to: \(error.localizedDescription). You may need to manually delete the file off of your other devices.", setManDeletionFlag: true)
                 return Result.failure(
                     CloudSyncError.mediaDeletionError("Error deleting the iCloud file: \(error.localizedDescription)")
                 )//: failure
             }//: DO-CATCH
         } else {
+            addOrUpdateMasterListEntryWithError(forRecord: object, errorText: "Unable to delete the media file on iCloud because it could not be found. You may need to manually remove the file from all other devices.", setManDeletionFlag: true)
             return Result.failure(
                 CloudSyncError.mediaDeletionError("Unable to locate the iCloud record for the \(model.ckRecType.rawValue) you are trying to delete.")
             )//: failure

@@ -43,13 +43,19 @@ final class CloudMediaBrain: ObservableObject {
         return subLevel == .proSubscription || subLevel == .basicUnlock || subLevel == .proLifetime
     }//: userIsASubscriber
     
+    var deviceIsOnline: Bool {
+        return NetworkManager.shared.isConnected
+    }//: deviceIsOnline
     
     // MARK: - PRELIM CHECKS
     
     func getAnyPrelimCloudSyncRelatedIssues() -> Set<CloudPrelimCheckError> {
         var errorsToReturn: Set<CloudPrelimCheckError> = []
         
-        // Check #1: Is iCloud available and ready to use?
+        // Check #1: Is the device currently online?
+        let internetCheck = deviceIsOnline
+        
+        // Check #2: Is iCloud available and ready to use?
         let cloudCheck = settings.iCloudState.iCloudIsAvailable
         
         // Check #2: Can the user utilize iCloud for media files?
@@ -61,6 +67,10 @@ final class CloudMediaBrain: ObservableObject {
         let userWantsAudioInCloud = currentCloudPrefs[.audioInCloud] ?? true
         let userWantsCertsAutoDownloaded = currentCloudPrefs[.autoDownloadCerts] ?? true
         let userWantsAudioAutoDownloaded = currentCloudPrefs[.autoDownloadAudio] ?? true
+        
+        if !internetCheck {
+            errorsToReturn.insert(CloudPrelimCheckError.deviceOffline)
+        }//: IF (!internetCheck)
         
         if !cloudCheck {
             errorsToReturn.insert(CloudPrelimCheckError.iCloudAccessIssue)

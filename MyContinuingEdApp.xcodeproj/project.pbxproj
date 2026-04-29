@@ -101,6 +101,8 @@
 		3F6DD1552ECFA2B300A0B3BA /* DataController-InAppPurchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */; };
 		3F6DD1572ECFBA5200A0B3BA /* PaidFeaturePromoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */; };
 		3F6DD1592ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */; };
+		3F7094722FA1703200C9FDEE /* CertificateDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7094712FA1703200C9FDEE /* CertificateDisplayView.swift */; };
+		3F7094742FA1D79100C9FDEE /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7094732FA1D79100C9FDEE /* NetworkManager.swift */; };
 		3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */; };
 		3F71B98D2F2A96A900F1AA2C /* PromptCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */; };
 		3F71B9912F2A977800F1AA2C /* PromptSelectionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */; };
@@ -432,6 +434,8 @@
 		3F6DD1542ECFA2B300A0B3BA /* DataController-InAppPurchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-InAppPurchases.swift"; sourceTree = "<group>"; };
 		3F6DD1562ECFBA5200A0B3BA /* PaidFeaturePromoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaidFeaturePromoView.swift; sourceTree = "<group>"; };
 		3F6DD1582ECFC4E400A0B3BA /* ActivityAudioReflectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityAudioReflectionView.swift; sourceTree = "<group>"; };
+		3F7094712FA1703200C9FDEE /* CertificateDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateDisplayView.swift; sourceTree = "<group>"; };
+		3F7094732FA1D79100C9FDEE /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		3F7158DC2EF36E5E008431EB /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
 		3F71B98C2F2A96A900F1AA2C /* PromptCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptCardView.swift; sourceTree = "<group>"; };
 		3F71B9902F2A977800F1AA2C /* PromptSelectionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptSelectionSheet.swift; sourceTree = "<group>"; };
@@ -718,6 +722,7 @@
 				F2B389EE2E4C37BA00518868 /* CertificatePickerView.swift */,
 				3F0044932F525B88006DA9F3 /* CertificatePreviewView.swift */,
 				3F0044952F52837F006DA9F3 /* CertificateShareView-ViewModel.swift */,
+				3F7094712FA1703200C9FDEE /* CertificateDisplayView.swift */,
 			);
 			path = Certificates;
 			sourceTree = "<group>";
@@ -966,6 +971,7 @@
 				F2B937AA2E83A92300AF9155 /* DebuggingFunctions.swift */,
 				3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */,
 				F2B389F42E4C556E00518868 /* HelperFunctions.swift */,
+				3F7094732FA1D79100C9FDEE /* NetworkManager.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -1756,6 +1762,7 @@
 				3F68AD192F9FD06700D587C1 /* CMB_SyncFunctions.swift in Sources */,
 				3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */,
 				3F4607F62F57B41600CCD094 /* PDF_EnvironmentKey.swift in Sources */,
+				3F7094722FA1703200C9FDEE /* CertificateDisplayView.swift in Sources */,
 				3F7158DE2EF36E5E008431EB /* NotificationSettingsView.swift in Sources */,
 				F2BDFC0F2E833ACF00A8CDAA /* RenewalTopEditingView.swift in Sources */,
 				3F83F1222F2223A700FCF350 /* TagBadgeExamples.swift in Sources */,
@@ -1917,6 +1924,7 @@
 				3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */,
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
 				3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */,
+				3F7094742FA1D79100C9FDEE /* NetworkManager.swift in Sources */,
 				3FC359122EB5C5F8007884FA /* DataController-CoreData.swift in Sources */,
 				3FC450882F89D180005DFD4D /* MediaModel.swift in Sources */,
 				3FA296202EE22AF3000F5D12 /* MockProduct.swift in Sources */,

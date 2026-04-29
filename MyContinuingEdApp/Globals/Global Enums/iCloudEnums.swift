@@ -155,6 +155,7 @@ enum CloudSyncError: Error {
     case smartSyncCertOutOfWindow
     case smartSyncMaxWindowExceeded(Int)
     case querySubscriptionNotCreated
+    case deviceOffline
     
     var localizedDescription: String {
         switch self {
@@ -196,6 +197,8 @@ enum CloudSyncError: Error {
             return "A value greater than the maximum number of years for SmartSync (\(max)) was used and so the certificate was not uploaded to iCloud automatically. However, you can do so manually if you'd like."
         case .querySubscriptionNotCreated:
             return "Unable to automatically delete or update media files on other files due to an iCloud sync setup error. The app will retry the setup process again."
+        case .deviceOffline:
+            return "Your device appears to be offline when the app tried to connect to iCloud. Please try again once you have re-established a solid network connection."
         }//: SWITCH
     }//: localizedDescription
     
@@ -208,6 +211,7 @@ enum CloudPrelimCheckError: String, CaseIterable, Identifiable, Hashable, Error 
     case audioLocalOnly
     case certsManDownload
     case audioManDownload
+    case deviceOffline
     
     var id: Self { self }
     
@@ -225,6 +229,8 @@ enum CloudPrelimCheckError: String, CaseIterable, Identifiable, Hashable, Error 
             return "You currently want to manually download new CE certificates from other devices to the current one. If you wish for this to happen automatically, please enable the option in CeCache settings."
         case .audioManDownload:
             return "You currently want to manually download new audio reflection files from other devices to the current one. If you wish for this to happen automatically, please enable the option in CeCache settings."
+        case .deviceOffline:
+            return "Your current device appears to be offline. Syncing with iCloud cannot happen until you are back online. Please try again later."
         }//: SWITCH
     }//: userMessage
     
@@ -242,12 +248,19 @@ enum CloudPrelimCheckError: String, CaseIterable, Identifiable, Hashable, Error 
             return "The user currently wants to manually download certificates on their other devices per app settings."
         case .audioManDownload:
             return "The user currently wants to manually download audio reflections on their other devices per app settings."
+        case .deviceOffline:
+            return "The device appears to be offline per the NetworkManager object. All iCloud-related functionality is paused until the device is back online."
         }//: SWITCH
     }//: localizedDescription
 }//: CloudPrelimCheckError
-
 
 enum CloudDbSubStatus {
     case alreadyCreated
     case justAdded
 }//: CloudDbSubStatus
+
+/// Enum representing where to remove a media file from: just the local device, just iCloud
+/// (if applicable), or both to completely delete it.
+enum MediaCloudOption {
+    case deviceOnly, deviceAndCloud, cloudOnly
+}//: MediaCloudDeletionOption

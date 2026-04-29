@@ -41,8 +41,49 @@ enum ResponseEntryType: String, CaseIterable, Identifiable, Hashable {
 }//: ResponseEntryType
 
 enum MediaLoadingState: String, CaseIterable {
-    case blank, loading, loaded, localOnly, error
+    case noMedia, loading, loaded, error
 }//: CertificateLoadingState
+
+enum MediaCloudStatusIcon: String, CaseIterable {
+    case noSavedMedia = "plus.circle.fill"
+    case localOnly = "xmark.icloud"
+    case localByPref = "gear.badge.xmark"
+    case inICloud = "icloud.fill"
+    case availableToDownload = "icloud.and.arrow.down.fill"
+    case availableToUpload = "icloud.and.arrow.up"
+    case cloudError = "exclamationmark.icloud.fill"
+    case differentAppleID = "person.icloud.fill"
+    case downloadingMedia = "arrow.triangle.2.circlepath"
+    case cloudLimitReached = "lock.icloud.fill"
+    case internetUnavailable = "wifi.slash"
+    
+    var labelText: String {
+        switch self {
+        case .noSavedMedia:
+            return "Add a file"
+        case .localOnly:
+            return "Upgrade to sync with iCloud"
+        case .localByPref:
+            return "Change storage preference"
+        case .inICloud:
+            return "Saved to iCloud"
+        case .availableToDownload:
+            return "Download media file"
+        case .availableToUpload:
+            return "Upload media file to iCloud"
+        case .cloudError:
+            return "Error details"
+        case .differentAppleID:
+            return "Saved under a new AppleID account"
+        case .downloadingMedia:
+            return "Downloading..."
+        case .cloudLimitReached:
+            return "500MB limit reached"
+        case .internetUnavailable:
+            return "Device offline"
+        }//: SWITCH
+    }//: labelText
+}//: MediaCloudStatusIcon
 
 
 // MARK: - Enum for sheet types

@@ -26,9 +26,15 @@ extension Notification.Name {
     // Notifications when batch iCloud media files are deleted
     static let uploadedCertsDeleted = Notification.Name("uploadedCertsDeleted")
     
+    // Certificate & Audio Reflection storage preference (iCloud/local)
     static let cloudCertStoragePrefChanged = Notification.Name("certificateMediaStoragePreferenceChanged")
     
     static let cloudAudioStoragePrefChanged = Notification.Name("audioMediaStoragePrefChanged")
+    
+    
+    // Auto-Download Notifications
+    static let certAutoDownloadSettingChanged = Notification.Name("certAutoDownloadSettingChanged")
+    static let audioAutoDownloadSettingChanged = Notification.Name("audioAutoDownloadSettingChanged")
     
     static let promptCategoriesLoaded = Notification.Name("reflectionPromptCategoriesLoaded")
     

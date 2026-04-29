@@ -45,6 +45,65 @@ extension CloudMediaBrain {
         }//: IF ELSE
     }//: canUserUtilizeCloudSync()
     
-   
+    func addOrUpdateMasterListEntryWithError(
+        forRecord record: CKRecord.ID,
+        errorText text: String,
+        setDownloadFlag: Bool = false,
+        setManDeletionFlag deleteFlag: Bool = false
+    ) {
+        let masterList = MasterMediaList.shared
+        
+        if let savedEntry = masterList.getLocalMediaRecord(using: record) {
+            savedEntry.errorMessage = text
+            if setDownloadFlag {
+                savedEntry.shouldReDownload = true
+            }//: IF (setDownloadFlag)
+            
+            if deleteFlag {
+                savedEntry.shouldDelete = true
+            }//: IF (deleteFlag)
+        } else {
+            let newEntry = LocalMediaFileInfo(
+                id: record,
+                mediaURL: nil,
+                errorMessage: text,
+                manualDownload: setDownloadFlag,
+                manualDeletion: deleteFlag
+            )//: LocalMediaFileInfo
+        }//: IF LET ELSE (savedEntry)
+        
+        masterList.saveList()
+    }//: addOrUpdateMasterListEntryWithError()
+    
+    func addOrUpdateMasterListEntryNoError(
+        forRec record: CKRecord.ID,
+        mediaAt savelocation: URL? = nil
+    ) {
+        let masterList = MasterMediaList.shared
+        
+        if let savedEntry = masterList.getLocalMediaRecord(using: record) {
+            savedEntry.mediaURL = savelocation
+            savedEntry.errorMessage = ""
+            savedEntry.shouldReDownload = false
+            savedEntry.shouldDelete = false
+        } else {
+            let newEntry = LocalMediaFileInfo(
+                id: record,
+                mediaURL: savelocation,
+                errorMessage: ""
+              )//: LocalMediaFileInfo
+        }//: IF LET ELSE (savedEntry)
+        
+        masterList.saveList()
+    }//: addOrUpdateMasterListEntryNoError()
+    
+    func removeMasterListEntry(forRecord record: CKRecord.ID) {
+        let masterList = MasterMediaList.shared
+        
+        if let savedRec = masterList.getLocalMediaRecord(using: record) {
+            masterList.removeMediaRecord(withID: savedRec.id)
+            masterList.saveList()
+        }//: IF LET (savedRec)
+    }//: removeMasterListEntry
     
 }//: EXTENSION

@@ -28,102 +28,25 @@ struct ActivityCertificateImageView: View {
     
     
     // MARK: - COMPUTED PROPERTIES
-    var paidStatus: PurchaseStatus {
-        switch dataController.purchaseStatus {
-        case PurchaseStatus.proSubscription.id:
-            return .proSubscription
-        case PurchaseStatus.basicUnlock.id:
-            return .basicUnlock
-        default:
-            return .free
-        }
-    }//: paidStatus
+   
     
     // MARK: - BODY
     var body: some View {
         Group {
             // MARK: - Certificate Image
-            if activity.activityCompleted {
-                if paidStatus == .free {
-                    PaidFeaturePromoView(
-                        featureIcon: "doc.text.image.fill",
-                        featureItem: "Save CE Certificate",
-                        featureUpgradeLevel: .basicAndPro
-                    )
-                } else {
-                    Section("Certificate Image") {
-                        CertificatePickerView(
-                            activity: activity,
-                            certificateData: $certificateData
-                        )//: CertificatePickerView
-                        
-                        switch viewModel.certDisplayStatus {
-                        case .blank:
-                            NoItemView(
-                                noItemTitleText: "No CE Certificate",
-                                noItemMessage: "A certificate has not yet been saved for this CE activity.",
-                                noItemImage: "trophy.circle.fill"
-                            )
-                            .accessibilityLabel("No CE Certificates have been added for this activity yet.")
-                        case .loading:
-                            VStack {
-                                ProgressView("Loading certificate...")
-                                    .progressViewStyle(CircularProgressViewStyle())
-                                Text("Loading certificate for this activity...")
-//                                if viewModel.certDocDownloadingProgress.count > 0 {
-//                                    Divider()
-//                                    Text(viewModel.certDocDownloadingProgress)
-//                                }//: IF
-                            }//: VSTACK
-                        case .loaded:
-                            CertificatePreviewView(savedCert: viewModel.certificateToShow)
-                            
-                            // MARK: Certificate DETAILS & SHARING
-                            if activity.hasCompletionCertificate {
-                                // TODO: Add cert sharing view
-                                
-                                // MARK: DELETE CERTIFICATE
-                                DeleteObjectButtonView(buttonText: "Delete Certificate") {
-                                    viewModel.showCertDeletionWarning = true
-                                }//: DeleteObjectButtonView
-                            }//: IF-LET (hasCompletionCertificate)
-                        case .error:
-                            NoItemView(
-                                noItemTitleText: viewModel.errorAlertTitle,
-                                noItemMessage: viewModel.errorAlertMessage,
-                                noItemImage: "exclamationmark.triangle"
-                            )
-                            .accessibilityLabel(Text(viewModel.errorAlertMessage))
-                        case .localOnly:
-                            CertificatePreviewView(savedCert: viewModel.certificateToShow)
-                            
-                            // MARK: Add button for moving to iCloud
-                                // TODO: Add conditional here
-                                Button {
-                                    Task {@MainActor in
-                                        // TODO: Add moving code
-                                    }//: TASK
-                                } label: {
-                                    Label("Move to iCloud", systemImage: "icloud.and.arrow.up")
-                                        .labelStyle(.titleAndIcon)
-                                        .foregroundStyle(.white)
-                                }//: BUTTON
-                                .buttonStyle(.borderedProminent)
-                           
-                            
-                            // MARK: DELETE CERTIFICATE
-                            DeleteObjectButtonView(buttonText: "Delete Certificate") {
-                                viewModel.showCertDeletionWarning = true
-                            }//: DeleteObjectButtonView
-                        }//: SWITCH
-                    }//: Certificate Section
-                }//: IF ELSE
-            } //: IF activity completed
+            Section("Certificate Image") {
+                CertificatePickerView(
+                    activity: activity,
+                    certificateData: $certificateData
+                )//: CertificatePickerView
+                
+                
+            }//: Certificate Section
         }//: GROUP
         // MARK: - ON APPEAR
-        .onAppear {
-            // TODO: Replace onAppear code
-        }//: ON APPEAR
+      
+        // TODO: Replace onAppear code
+       
         
         // MARK: - ON CHANGE
         .onChange(of: certificateData) { newCert in
