@@ -215,7 +215,7 @@
         <relationship name="specialCat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="rscItems" inverseEntity="SpecialCategory"/>
     </entity>
     <entity name="RenewalPeriod" representedClassName="RenewalPeriod" syncable="YES">
-        <attribute name="hasUserAcknowledgedTransition" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="hasUserAcknowledgedWarning" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lateFeeAmount" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="lateFeeStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="periodBeginsOn" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

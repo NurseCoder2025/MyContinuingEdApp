@@ -21,7 +21,7 @@ struct ActivityCertificateImageView: View {
     // For holding binary data for a new certificate that the
     // user selects using CertificatePickerView which is passed up
     // to it via an @Binding property.
-    @State private var certificateData: Data?
+    @State private var certificate: CECertificate?
     
     // Alerts
     @State private var showChangeCertificateErrorAlert: Bool = false
@@ -37,7 +37,7 @@ struct ActivityCertificateImageView: View {
             Section("Certificate Image") {
                 CertificatePickerView(
                     activity: activity,
-                    certificateData: $certificateData
+                    certificate: $certificate
                 )//: CertificatePickerView
                 
                 
@@ -49,7 +49,7 @@ struct ActivityCertificateImageView: View {
        
         
         // MARK: - ON CHANGE
-        .onChange(of: certificateData) { newCert in
+        .onChange(of: certificate) { newCert in
             if let certData = newCert {
                 // TODO: Replace with new view model method for changing certificates
             }//: IF LET
@@ -59,7 +59,7 @@ struct ActivityCertificateImageView: View {
         // MARK: Change CE Certificate Alert
         .alert("Change Certificate?", isPresented: $viewModel.showCertificateChangeWarning) {
             Button(role: .destructive) {
-                if let newData = certificateData {
+                if let newData = certificate {
                     // TODO: Replace delete certificate method
                     do {
                         // TODO: Add view model methods for updating a certificate
@@ -92,18 +92,18 @@ struct ActivityCertificateImageView: View {
         }//: ALERT (error)
         
         // MARK: Deletion Error
-        .alert("Deletion Error", isPresented: $viewModel.showCertDeletErrorAlert) {
+        .alert("Deletion Error", isPresented: $viewModel.showCertDeleteErrorAlert) {
             Button("OK"){}
         } message: {
             Text(viewModel.errorAlertMessage)
         }//: ALERT (deletion error)
         
         // MARK: General Save Alert
-        .alert("Certificate Save Error", isPresented: $viewModel.showSaveErrorAlert){
-            Button("OK"){}
-        } message: {
-            Text(viewModel.errorAlertMessage)
-        }//: ALERT
+//        .alert("Certificate Save Error", isPresented: $viewModel.showSaveErrorAlert){
+//            Button("OK"){}
+//        } message: {
+//            Text(viewModel.errorAlertMessage)
+//        }//: ALERT
 
         
     }//: BODY

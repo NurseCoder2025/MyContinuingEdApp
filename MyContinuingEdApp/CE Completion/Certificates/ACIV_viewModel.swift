@@ -6,6 +6,7 @@
 //
 
 import CloudKit
+import CoreData
 import Foundation
 import SwiftUI
 import PDFKit
@@ -20,11 +21,12 @@ extension ActivityCertificateImageView {
         private let settings = AppSettingsCache.shared
         private let mediaBrain = CloudMediaBrain.shared
         private let mediaList = MasterMediaList.shared
+        private let netManager = NetworkManager.shared
         
         @ObservedObject var activity: CeActivity
         
         @Published var certificateSavedYN: Bool = false
-        @Published var certificateToShow: Certificate?
+        @Published var certificateToShow: CECertificate?
         
         // Status icons
         @Published var certDisplayStatus: MediaLoadingState = .noMedia
@@ -66,56 +68,222 @@ extension ActivityCertificateImageView {
             return NetworkManager.shared.isConnected
         }//: deviceIsOnline
         
-        // MARK: - METHODS
         
-        // MARK: ADD
-        func addNewCertificate() async {
+        // MARK: - ADD
+        /*
+         Step #3: Check if user is a paid supporter or not
+            a. IF FREE, save only to device (using relativePath value)
+            b. Ensure iCloud is available, and if not, alert user with alert
+            c. IF CORE user (basic unlock):
+                i. save to local device first and then check SmartSync eligibility
+                ii. IF eligible && user has autoUpload turned on,
+                      update SmartSync allowance by the size of the certificate,
+                     create CKRecord with key-values and save it to iCloud,
+                     updating the errorDetailsText and errorMessage property
+                     if the file could not be saved to iCloud for whatever reason. Otherwise,
+                    update the cloudIcon to show that the file is available for upload
+                iii. IF not eligible, notify user with cloudIcon error and errorDetails message
+                     along with an alert
+            d. IF PRO user:
+                 i. Save to local device FIRST (using relativePath value)
+                 ii. IF autoUpload is turned on:
+                     1. Determine if certificate falls within the sync window specified
+                     2. IF SO:
+                         > create CKRecord and save it to iCloud
+                         > Update the cloudIcon to uploading until the record is saved
+                         > Change cloudIcon to savedInCloud once done, but if an error occurs,
+                        show the error cloudIcon along with error details in the errorDetailsText property
+                    3. Otherwise:
+                        > change cloudIcon to uploadAvailable with details explaining that the certificate
+                            is outside of the sync window, but the user can change it if desired
+                iii. IF autoUpload is OFF:
+                     1. Change cloudIcon to uploadAvailable with button for manual upload
+         */
+        func addNewCertificate(usingData data: Data) async {
             
         }//: addNewCertificate
         
-        private func locallyAddNewCertificate(withData data: Data) async {
+        private func saveNewCertToLocalDevice(withData data: Data) async -> Bool {
             // Step #1: Compress data in the right file format
+            guard let certObj = getCertFromRawData(data: data),
+                  let dataToSave = certObj.certData else {
+                NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
+                NSLog(">>>Unable to create a CECertificate object from the data passed in or obtain the respective Data from the certData computed property.")
+                return false
+            } //: GUARD
+            let context = dataController.container.viewContext
+            
+            if let existingCertInfo = activity.certificate {
+                await deleteCertificate(withOption: .deviceAndCloud)
+            }//: IF LET (existingCertInfo)
             
             // Step #2: Create CertificateInfo object and assign to activity with the following values:
             //          a. certType (using CertType enum)
             //          b. certFileSize
             //          c. relativePath (for local use)
+            let newCertInfo = CertificateInfo(context: context)
+            newCertInfo.infoID = UUID()
+            newCertInfo.setCertificateMediaType(as: certObj.certificateType)
+            newCertInfo.certFileSize = Double(dataToSave.count)
+            newCertInfo.completedCe = activity
+            dataController.save()
             
-            /*
-             Step #3: Check if user is a paid supporter or not
-                a. IF FREE, save only to device (using relativePath value)
-                b. Ensure iCloud is available, and if not, alert user with alert
-                c. IF CORE user (basic unlock):
-                    i. save to local device first and then check SmartSync eligibility
-                    ii. IF eligible && user has autoUpload turned on,
-                          update SmartSync allowance by the size of the certificate,
-                         create CKRecord with key-values and save it to iCloud,
-                         updating the errorDetailsText and errorMessage property
-                         if the file could not be saved to iCloud for whatever reason. Otherwise,
-                        update the cloudIcon to show that the file is available for upload
-                    iii. IF not eligible, notify user with cloudIcon error and errorDetails message
-                         along with an alert
-                d. IF PRO user:
-                     i. Save to local device FIRST (using relativePath value)
-                     ii. IF autoUpload is turned on:
-                         1. Determine if certificate falls within the sync window specified
-                         2. IF SO:
-                             > create CKRecord and save it to iCloud
-                             > Update the cloudIcon to uploading until the record is saved
-                             > Change cloudIcon to savedInCloud once done, but if an error occurs,
-                            show the error cloudIcon along with error details in the errorDetailsText property
-                        3. Otherwise:
-                            > change cloudIcon to uploadAvailable with details explaining that the certificate
-                                is outside of the sync window, but the user can change it if desired
-                    iii. IF autoUpload is OFF:
-                         1. Change cloudIcon to uploadAvailable with button for manual upload
-             */
-        }//: locallyAddNewCertificate()
+            let directoryResult = await createAndConfirmCertificateFolders()
+            switch directoryResult {
+            case .success(let dirOutcome):
+                await setRelativePathStringForNewCert(folderResult: dirOutcome, withInfo: newCertInfo, ceCert: certObj)
+            case .failure(_):
+                // Setting the relative path as the file name for saving in the documentsDirectory
+                // directly
+                Task{@MainActor in
+                    let pathName = fileSystem.createMediaFileName(forCE: activity, forPrompt: nil, as: .certificate, usingExt: certObj.fileExtension)
+                    newCertInfo.relativePath = pathName
+                    dataController.save()
+                }//: TASK
+            }//: SWITCH
+            
+            do {
+                if let saveLocation = newCertInfo.resolveURL(basePath: .documentsDirectory) {
+                    _ = try dataToSave.write(to: saveLocation, options: .completeFileProtection)
+                    return true
+                } else {
+                    NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
+                    NSLog(">>>The CertificateInfo resolveURL(basePath) method returned a nil URL value using the path: \(newCertInfo.certInfoRelativePath).")
+                    return false
+                }//: IF LET (saveLocation)
+            } catch let diskError as CocoaError {
+                handleCommonDiskErrors(thrownError: diskError)
+                return false
+            } catch {
+                NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
+                NSLog(">>>The Data.write(to) method threw an error while trying to save the certificate file to the local device/disk.")
+                NSLog(">>> Error details: \(error.localizedDescription)")
+                Task{@MainActor in
+                    certDisplayStatus = .error
+                    errorDetailsText = "The file could not be written to your local device or disk. Please ensure that your device's storage is not full and that the app has write access to it."
+                }//: TASK
+                return false
+            }//: DO-CATCH
+        }//: saveNewCertToLocalDevice()
+        
         private func smartSyncNewCertificate() async {
+            guard mediaBrain.userIsAPaidSupporter else { return }//: GUARD
+            guard let deviceOnline = (try? await doQuickNetworkCheck()) else { return }//: GUARD
+            guard settings.iCloudState.iCloudIsAvailable else { return } //: GUARD
+            guard settings.shouldStoreMediaInCloud(forMedia: .certificate) else { return } //: GUARD
+            
+            
+            
             
         }//: smartSyncNewCertificate()
         
-        // MARK: DELETE
+        
+        
+        
+        
+        private func createAndConfirmCertificateFolders() async -> Result<(allOK: Bool, missing: [String]), Error> {
+            let topDirectoryName = fileSystem.createTopSubDirectoryName(for: .certificate).convertToASCIIonly()
+            
+            let activityDirectoryName = fileSystem.createActivitySubFolderName(for: activity).convertToASCIIonly()
+            
+            let topDirectory = URL.documentsDirectory.appending(path: topDirectoryName, directoryHint: .isDirectory)
+            let activityPath: String = "\(topDirectoryName)/\(activityDirectoryName)"
+            let activityDirectory = URL.documentsDirectory.appending(path: activityPath, directoryHint: .isDirectory)
+            
+            let topDirExists = fileSystem.doesFolderExistAt(path: topDirectory)
+            let ceDirExists = fileSystem.doesFolderExistAt(path: activityDirectory)
+            
+            if topDirExists && ceDirExists {
+                return Result.success((true, []))
+            } else if topDirExists {
+                return Result.success((false, [activityDirectoryName]))
+            } else if ceDirExists {
+                return Result.success((false, [topDirectoryName]))
+            } else {
+                return Result.failure(FileIOError.noDirectoryAvailable)
+            }//: IF (topDirExists && ceDirExists)
+        }//: createAndConfirmCertificateFolders()
+        
+        private func setRelativePathStringForNewCert(
+            folderResult dirOutcome: (Bool, [String]),
+            withInfo newCertInfo: CertificateInfo,
+            ceCert certObj: CECertificate
+        ) async {
+            if dirOutcome.0 {
+                saveComputedRelPathForCert(usingInfo: newCertInfo, ceCert: certObj)
+            } else {
+                let topDirectoryName = fileSystem.createTopSubDirectoryName(for: .certificate).convertToASCIIonly()
+                
+                let activityDirectoryName = fileSystem.createActivitySubFolderName(for: activity).convertToASCIIonly()
+                if dirOutcome.1.contains(where: {$0 == topDirectoryName}) {
+                    // If the top direcotry could not be created for whatever reason, try
+                    // one more time and if that fails simply save the file name as the
+                    // relative path string.
+                    do {
+                        let topPath = URL.documentsDirectory.appending(path: topDirectoryName, directoryHint: .isDirectory).relativePath
+                        _ = try fileSystem.createDirectory(atPath: topPath, withIntermediateDirectories: true)
+                        saveComputedRelPathForCert(usingInfo: newCertInfo, ceCert: certObj)
+                    } catch let diskError as CocoaError {
+                        handleCommonDiskErrors(thrownError: diskError)
+                    } catch {
+                        NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
+                        NSLog(">>>The top-level directory for all CE certificates, 'Certificates', could not be created either by the initial createAndConfirmCertificateFolders or this backup method.")
+                        NSLog(">>> Error details: \(error.localizedDescription)")
+                        // Using just the documents directory to hold the certificate
+                        let fileName = fileSystem.createMediaFileName(forCE: activity, forPrompt: nil, as: .certificate, usingExt: certObj.fileExtension).convertToASCIIonly()
+                        Task{@MainActor in
+                            newCertInfo.relativePath = fileName
+                            dataController.save()
+                        }//: TASK
+                    }//: DO-CATCH
+                } else if dirOutcome.1.contains(where: {$0 == activityDirectoryName}) {
+                    do {
+                        let pathString = "\(topDirectoryName)/\(activityDirectoryName)"
+                        let activityPath = URL.documentsDirectory.appending(path: pathString, directoryHint: .isDirectory).relativePath
+                        
+                        _ = try fileSystem.createDirectory(atPath: activityPath, withIntermediateDirectories: true)
+                        saveComputedRelPathForCert(usingInfo: newCertInfo, ceCert: certObj)
+                    } catch let diskError as CocoaError {
+                        handleCommonDiskErrors(thrownError: diskError)
+                    } catch {
+                        NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
+                        NSLog(">>>The activity-specific directory for the given certificate could not be created either by the initial createAndConfirmCertificateFolders or this backup method.")
+                        NSLog(">>> Error details: \(error.localizedDescription)")
+                        // Simply save the certificate under the general Certificates top level directory
+                        let certFileName = fileSystem.createMediaFileName(forCE: activity, forPrompt: nil, as: .certificate, usingExt: certObj.fileExtension).convertToASCIIonly()
+                        let relPath = "\(topDirectoryName)/\(certFileName)"
+                        Task{@MainActor in
+                            newCertInfo.relativePath = relPath
+                            dataController.save()
+                        }//: TASK
+                    }//: DO-CATCH
+                }//: IF ELSE (dirCoutcome.1.contains)
+            }//: IF ELSE (allOK)
+        }//: setRelativePathStringForNewCert(folderResult)
+        
+        private func saveComputedRelPathForCert(
+            usingInfo certInfo: CertificateInfo,
+            ceCert: CECertificate
+        ) {
+            Task{@MainActor in
+                let relPath = fileSystem.createRelativePathStringForCKRecord(
+                    coreDataObj: certInfo,
+                    assignedToCe: activity,
+                    certExtension: ceCert.fileExtension
+                )//: createRelativePathStringForCKRecord()
+                
+                certInfo.relativePath = relPath
+                dataController.save()
+            }//: TASK
+        }//: saveComputedRelPathForCert()
+        
+        
+        // MARK: - SMART SYNC
+        
+        
+        
+        
+        // MARK: - DELETE
         func deleteCertificate(withOption option: MediaCloudOption = .deviceOnly) async {
             guard let savedCert = activity.certificate else { return }//: GUARD
             // Is the certificate stored in iCloud?
@@ -325,7 +493,7 @@ extension ActivityCertificateImageView {
         }//: deleteCertInfoObject()
         
         
-        // MARK: LOAD / DOWNLOAD
+        // MARK: - LOAD / DOWNLOAD
         func loadLocalFile() {
             guard let savedCert = activity.certificate else {
                 // IF a certificate has NOT been saved for the activity
@@ -460,11 +628,11 @@ extension ActivityCertificateImageView {
             }//: MAIN ACTOR
         }//: downloadAllUploadedCerts()
         
-        private func getCertFromRawData(data: Data) -> Certificate? {
+        private func getCertFromRawData(data: Data) -> CECertificate? {
             if let imageData = UIImage(data: data) {
-                return imageData
+                return CECertificate.image(imageData)
             } else if let pdfData = PDFDocument(data: data) {
-                return pdfData
+                return CECertificate.pdf(pdfData)
             } else {
                 return nil
             }//: IF LET
@@ -517,7 +685,7 @@ extension ActivityCertificateImageView {
         }//: setCloudIconForLoadedCerts()
         
         
-        // MARK: CLOUD REFRESH
+        // MARK: - CLOUD REFRESH
         func manuallySyncMediaFiles() async {
             guard certCloudIcon != .downloadingMedia else {return}//: GUARD
             do {
@@ -526,11 +694,19 @@ extension ActivityCertificateImageView {
                 return
             }//: DO-CATCH
             
+            if !settings.shouldAutoDownloadMedia(forType: .certificate) {
+                await MainActor.run {
+                    errorAlertTitle = "Auto-Download OFF"
+                    errorAlertMessage = "You currently have the auto-download feature for CE certificates turned off. Re-syncing your certificates will not download any new media files."
+                    showGeneralAlert = true
+                }//: MAIN ACTOR
+            }//: IF (!shouldAutoDownloadMedia)
+            
             await mediaBrain.syncLocalMediaFiles()
         }//: manuallySyncMediaFiles()
         
         
-        // MARK: BUTTON METHODS
+        // MARK: - BUTTON METHODS
         func turnAutoDownloadOn() {
             dataController.prefersAutoDownloadForCerts = true
         }//: turnAutoDownloadOn()
@@ -570,6 +746,45 @@ extension ActivityCertificateImageView {
             }//: LOOP
             mediaList.saveList()
         }//: findOrphanCertFilesForDeletion()
+        
+        private func handleCommonDiskErrors(thrownError error: CocoaError) {
+            if error.code == .fileWriteOutOfSpace {
+                NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
+                NSLog(">>>A Cococa Error was thrown by the FileManager's createDirectory method due to the user's device being completely full. User has been alerted.")
+                Task{@MainActor in
+                    errorAlertTitle = "Local Storage Full"
+                    errorAlertMessage = "No new files can be added to your device because your storage is full. Please free up some space before trying to add a new CE certificate."
+                    showGeneralAlert = true
+                }//: TASK
+            } else if error.code == .fileWriteVolumeReadOnly {
+                NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
+                NSLog(">>>A Cococa Error was thrown by the FileManager's createDirectory method due to the particular volume or disk being read-only at the moment. User has been alerted.")
+                Task{@MainActor in
+                    errorAlertTitle = "Cannot Write To Local Disk"
+                    errorAlertMessage = "No files can be written to the currently selected disk or device because the volume is currently in read-only mode. Please ensure the volume has write permissions before trying to add a new CE certificate."
+                    showGeneralAlert = true
+                }//: TASK
+            } else if error.code == .fileNoSuchFile {
+                NSLog(">>>ACIV ViewModel | handleCommonDiskErrors")
+                NSLog(">>>The file system could not locate the specified certificate file based on the path previously created or stored. User has been alerted.")
+                Task{@MainActor in
+                    errorAlertTitle = "File Not Found"
+                    errorAlertMessage = "The file system could not locate the specific certificate file based on the path previously created or saved. If this file has been manually moved or deleted using the Finder or Files app, then re-add the certificate back to the app."
+                    showGeneralAlert = true
+                }//: TASK
+            } else {
+                NSLog(">>>ACIV ViewModel | handleCommonDiskErrors")
+                NSLog(">>>Another type of Cocoa error has been thrown. User has been alerted.")
+                NSLog(">>> Error details: \(error.localizedDescription)")
+                Task{@MainActor in
+                    errorAlertTitle = "Other Error"
+                    errorAlertMessage = "The file system encountered a less common error while trying to access, save, or delete a locally saved certificate file. Please contact the app developer for assistance."
+                    errorDetailsText = error.localizedDescription
+                    showGeneralAlert = true
+                }//: TASK
+            }//: IF ELSE (diskError.code)
+        }//: handleCommonDiskErrors(thrownError)
+        
         
         // MARK: - SELECTORS
         

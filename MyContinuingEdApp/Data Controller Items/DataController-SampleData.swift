@@ -32,6 +32,7 @@ extension DataController {
     /// completed, a sample ActivityReflection object is created and assigned to it with generic values for the string properties.
     func createSampleData() {
         let viewContext = container.viewContext
+        let settings = AppSettingsCache.shared
         
         // Creating calendar components for the sample renewal period
         let calendar = Calendar.current
@@ -76,6 +77,10 @@ extension DataController {
         
         // Assigning sample renewal period to the sample credential
         sampleCredential.addToRenewals(sampleRenewalPeriod)
+        if let assignedCred = sampleCredential.credentialID,
+            let endingOn = sampleRenewalPeriod.periodEnd {
+            settings.addRenewalEndDateToHistory(credId: assignedCred, date: endingOn)
+        }//: IF LET (assignedCred, endingOn)
         
         // Creating 5 sample tags, and 10 activities per tag
         for i in 1...5 {
@@ -570,10 +575,10 @@ extension DataController {
         let fileSystem = FileManager.default
         var relPathString: String = ""
         if let associatedActivity = activity {
-            relPathString = fileSystem.createMediaRelativePath(for: associatedActivity, toSave: .certificate, forPrompt: nil)
+            relPathString = fileSystem.createMediaRelativePath(for: associatedActivity, toSave: .certificate, forPrompt: nil, usingExt: "heic")
         } else {
             let topDirectory = fileSystem.createTopSubDirectoryName(for: .certificate)
-            let fileName = fileSystem.createMediaFileName(forCE: nil, forPrompt: nil, as: .certificate)
+            let fileName = fileSystem.createMediaFileName(forCE: nil, forPrompt: nil, as: .certificate, usingExt: "heic")
             relPathString = "\(topDirectory)/\(fileName)"
         }//: IF LET (associatedActivity)
         
@@ -590,7 +595,7 @@ extension DataController {
         newCertInfo.infoID = sampleID
         newCertInfo.certFileSize = sampleCertSize
         newCertInfo.certType = sampleCertType
-        newCertInfo.certCKRecordID = transformedRecID
+        newCertInfo.ckRecordID = transformedRecID
         newCertInfo.uploadedToICloud = true
         newCertInfo.relativePath = relPathString
         

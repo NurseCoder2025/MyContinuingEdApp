@@ -56,6 +56,8 @@
 		3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */; };
 		3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */; };
 		3F5982BF2F8EEB9400FA30F5 /* AppSettingsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */; };
+		3F5C5EC52FA2C24E003A7447 /* CECertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C5EC42FA2C24E003A7447 /* CECertificate.swift */; };
+		3F5C5EC72FA2EC6F003A7447 /* SmartSyncBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5C5EC62FA2EC6F003A7447 /* SmartSyncBrain.swift */; };
 		3F5D03272EB3F0F800F5B1DC /* DataController-Credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */; };
 		3F5D03292EB3F15800F5B1DC /* DataController-NewObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */; };
 		3F5D032B2EB3F1E400F5B1DC /* DataController-SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */; };
@@ -394,6 +396,8 @@
 		3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDAISectionView.swift; sourceTree = "<group>"; };
 		3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatViewModel.swift; sourceTree = "<group>"; };
 		3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsCache.swift; sourceTree = "<group>"; };
+		3F5C5EC42FA2C24E003A7447 /* CECertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CECertificate.swift; sourceTree = "<group>"; };
+		3F5C5EC62FA2EC6F003A7447 /* SmartSyncBrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartSyncBrain.swift; sourceTree = "<group>"; };
 		3F5D03262EB3F0F800F5B1DC /* DataController-Credentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Credentials.swift"; sourceTree = "<group>"; };
 		3F5D03282EB3F15800F5B1DC /* DataController-NewObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-NewObjects.swift"; sourceTree = "<group>"; };
 		3F5D032A2EB3F1E400F5B1DC /* DataController-SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-SampleData.swift"; sourceTree = "<group>"; };
@@ -723,6 +727,8 @@
 				3F0044932F525B88006DA9F3 /* CertificatePreviewView.swift */,
 				3F0044952F52837F006DA9F3 /* CertificateShareView-ViewModel.swift */,
 				3F7094712FA1703200C9FDEE /* CertificateDisplayView.swift */,
+				3F5C5EC42FA2C24E003A7447 /* CECertificate.swift */,
+				3F5C5EC62FA2EC6F003A7447 /* SmartSyncBrain.swift */,
 			);
 			path = Certificates;
 			sourceTree = "<group>";
@@ -1149,6 +1155,7 @@
 				F2772BA32E1DE3A2006A94BD /* DataController.swift */,
 				3FBBBFAA2F33F4E200CDC7A0 /* DataController-iCloud.swift */,
 				3F28020C2F9048A50025884E /* DataController-CloudKit.swift */,
+				3F68AD1A2F9FEF9300D587C1 /* DataController-SmartSync.swift */,
 				3F97FA1E2ECD6739009791D6 /* DataController-Settings.swift */,
 				3FDF714B2F1850380036D490 /* DataController-Templates.swift */,
 				3FC359112EB5C5F8007884FA /* DataController-CoreData.swift */,
@@ -1169,7 +1176,6 @@
 				3FBCBE632EB2E2020050D6A5 /* DataController-Notifications.swift */,
 				3FD56A5F2F1713CC00D74515 /* DataController-HelperFunctions.swift */,
 				3FE90A252EC7DF250010FB12 /* DataController-ObjectRelationships.swift */,
-				3F68AD1A2F9FEF9300D587C1 /* DataController-SmartSync.swift */,
 			);
 			path = "Data Controller Items";
 			sourceTree = "<group>";
@@ -1773,6 +1779,7 @@
 				3F68AD0C2F9FCD9300D587C1 /* CMB_Saving.swift in Sources */,
 				3F67DB702F159EDD00489758 /* ReinstatementCEProgressView.swift in Sources */,
 				F2FBAAE72E5FDDD000348AAA /* ActivityTypeJSON.swift in Sources */,
+				3F5C5EC52FA2C24E003A7447 /* CECertificate.swift in Sources */,
 				3F68AD1B2F9FEF9300D587C1 /* DataController-SmartSync.swift in Sources */,
 				3FE372462ECE779800CCF0FC /* BasicAndProFeatures.swift in Sources */,
 				F2B389F12E4C49C200518868 /* PDFKitView.swift in Sources */,
@@ -1844,6 +1851,7 @@
 				3F83C7C72F0F4AA700FB4CF2 /* CeRequirementsView.swift in Sources */,
 				3F8DC7CE2F6BA4C7002A72E2 /* AudioReflectionViewModel.swift in Sources */,
 				3F68AD082F9FCC6B00D587C1 /* CMB_RetryLogic.swift in Sources */,
+				3F5C5EC72FA2EC6F003A7447 /* SmartSyncBrain.swift in Sources */,
 				F2BC949F2E32D0C100926B3D /* Bundle-Decodable.swift in Sources */,
 				3F83C7C02F0F330A00FB4CF2 /* ReinstatementSpecialCat-CoreDataHelper.swift in Sources */,
 				3FE3724E2ECED22F00CCF0FC /* FeaturesDetailsHeaderView.swift in Sources */,

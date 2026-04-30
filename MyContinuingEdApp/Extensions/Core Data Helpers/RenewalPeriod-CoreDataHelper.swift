@@ -143,6 +143,10 @@ extension RenewalPeriod {
         return uploadedCerts
     }//: getAllUploadedCertificates()
     
+    var assignedCredentialID: UUID? {
+        credential?.credentialID
+    }//: assignedCredentialID
+    
 }//: EXTENSION
 
 // MARK: - SMART SYNC
@@ -185,11 +189,10 @@ extension RenewalPeriod {
         return currentDate >= startDate && currentDate <= endDate
     }//: isRenewalCurrent
     
+    // TODO: Decide if this method is really needed or not
     func updateTransitionAcknowledgementNeeded() {
         let settings = AppSettingsCache.shared
-        guard settings.getCurrentPurchaseLevel() == PurchaseStatus.basicUnlock else {
-            return
-        }//: GUARD
+        guard userPaidSupportLevel == .basicUnlock else { return }//: GUARD
         let today = Date.now.standardizedDate
         
         if let assignedCred = credential,

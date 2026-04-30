@@ -264,3 +264,26 @@ enum CloudDbSubStatus {
 enum MediaCloudOption {
     case deviceOnly, deviceAndCloud, cloudOnly
 }//: MediaCloudDeletionOption
+
+enum CoreUserRenewalDecision: Codable {
+    case upgradeToPro
+    case archiveExistingCerts([UUID])
+    
+    var choiceLabel: String {
+        switch self {
+        case .upgradeToPro:
+            return "Upgrade to Pro"
+        case .archiveExistingCerts:
+            return "Archive certificates"
+        }//: SWITCH
+    }//: choiceLabel
+    
+    var choiceGuidance: String {
+        switch self {
+        case .upgradeToPro:
+            return "With this choice you keep all of your certificates that are already in iCloud and gain the flexibility to store certificates for a set number of years that you specify, instead of just the current renewal period, with the SmartSync window preference."
+        case .archiveExistingCerts(_):
+            return "Archiving certificates will remove them from iCloud but a copy will remain on the device on which you respond to this prompt. Copies on all other devices will be deleted. However, you can still sync up to 500MB of certificates earned during the new renewal period across all of your devices."
+        }//: SWITCH
+    }//: choiceGuidance
+}//: CoreUserRenewalDecision

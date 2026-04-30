@@ -100,7 +100,12 @@ extension FileManager {
     ///   - media: MediaType enum indicating if the media being stored is an image, pdf, or audio file
     ///   - forPrompt: [Optional] ReflectionPrompt object for which audio reflections are being saved
     /// - Returns: String representing the relative path for the newly selected/created media file
-    func createMediaRelativePath(for activity: CeActivity, toSave media: MediaClass, forPrompt: ReflectionPrompt?) -> String {
+    func createMediaRelativePath(
+        for activity: CeActivity,
+        toSave media: MediaClass,
+        forPrompt: ReflectionPrompt?,
+        usingExt fileExtension: String
+    ) -> String {
         var pathString: String = ""
         var topDirectoryName: String = ""
         var subFolderName: String = ""
@@ -110,9 +115,9 @@ extension FileManager {
         subFolderName = createActivitySubFolderName(for: activity)
         
         if let prompt = forPrompt {
-            fileName = createMediaFileName(forCE: activity, forPrompt: prompt, as: media)
+            fileName = createMediaFileName(forCE: activity, forPrompt: prompt, as: media, usingExt: fileExtension)
         } else {
-            fileName = createMediaFileName(forCE: activity, forPrompt: nil, as: media)
+            fileName = createMediaFileName(forCE: activity, forPrompt: nil, as: media, usingExt: fileExtension)
         }//: IF LET
         
         pathString.append("\(topDirectoryName)/\(subFolderName)/\(fileName)")
@@ -170,18 +175,20 @@ extension FileManager {
     ///
     /// - Note: The reason for making the activity parameter optional is because of the possibility a CeActivity may not be,
     /// and is not required to be, assigned to a mediat object.  Both situations are handled by the method.
-    func createMediaFileName(forCE activity: CeActivity?, forPrompt prompt: ReflectionPrompt?, as category: MediaClass) -> String {
+    func createMediaFileName(
+        forCE activity: CeActivity?,
+        forPrompt prompt: ReflectionPrompt?,
+        as category: MediaClass,
+        usingExt fileExtension: String
+    ) -> String {
         var namePrefix: String = ""
         var baseFileName: String = ""
-        var fileExtension: String = ""
         
         switch category {
         case .certificate:
             namePrefix = "Certificate"
-            fileExtension = String.certImageFormatExtension
         case .audioReflection:
             namePrefix = "Reflection"
-            fileExtension = String.audioFormatExtension
         }//: SWITCH
         
         // This block assigns either the completion date (for CE
@@ -223,7 +230,7 @@ extension FileManager {
             if certExtension.isNotEmpty {
                 fileExt = certExtension
             } else {
-                fileExt = "png"
+                fileExt = "heic"
             }//: IF ELSE (isNotEmpty)
         } else if cdObject is AudioInfo {
             mediaCat = .audioReflection
@@ -237,7 +244,7 @@ extension FileManager {
       
        let topDirectory = createTopSubDirectoryName(for: mediaCat).convertToASCIIonly()
        let subDirectory = createActivitySubFolderName(for: activity).convertToASCIIonly()
-       let initialPath = createMediaRelativePath(for: activity, toSave: mediaCat, forPrompt: promptArgument).convertToASCIIonly()
+        let initialPath = createMediaRelativePath(for: activity, toSave: mediaCat, forPrompt: promptArgument, usingExt: certExtension).convertToASCIIonly()
         
         guard initialPath.count <= 255 else {
             return "\(topDirectory)/\(subDirectory)/UnknownFile.\(fileExt)"

@@ -124,14 +124,12 @@ struct RenewalPeriodView: View {
                 reinstatementForRenewal = nil
             }//: ON APPEAR
             // MARK: - ON CHANGE
-            .onChange(of: periodEnd) {_ in
+            .onChange(of: periodEnd) { [periodEnd] newDate in
                 // If a user decides to update the ending date for a renewal
                 // period, check if there is now a need for them to acknowledge
                 // the transition from that period to the next one if they are
                 // a Basic Unlock user
-                if let existingRenewal = renewalPeriod {
-                    existingRenewal.updateTransitionAcknowledgementNeeded()
-                }//: IF LET (existingRenewal)
+                handleEndDateChanges(oldDate: periodEnd, newDate: newDate)
             }//: ON CHANGE
             
         }//: VSTACK
@@ -155,7 +153,7 @@ struct RenewalPeriodView: View {
     // MARK: - Functions
     /// Maps Renewal Period properties that are user-editable in controls to their corresponding property in the object.
     /// - Parameter renewal: Existing or new renewal object being passed in
-    func mapProperties(for renewal: RenewalPeriod) {
+    private func mapProperties(for renewal: RenewalPeriod) {
         renewal.periodStart = periodStart
         renewal.periodEnd = periodEnd
         renewal.credential = renewalCredential
@@ -177,18 +175,40 @@ struct RenewalPeriodView: View {
     /// For an activity to be assigned to a renewal period, it must meet the following criteria:
     /// 1. Marked as completed by the user
     /// 2. The completion date falls between the renewal period's start and end dates
-    func saveRenewal() {
+    private func saveRenewal() {
         if let existingRenewal = renewalPeriod {
             mapProperties(for: existingRenewal)
         } else {
             let newRenewal = dataController.createRenewalPeriod()
             mapProperties(for: newRenewal)
-            newRenewal.updateTransitionAcknowledgementNeeded()
+            dataController.setRenewalWarningReferenceDate()
+            addNewRenewalToHistoryFile(newRenewal)
         }//: IF LET (existingRenewal)
         
         dataController.save()
         dataController.assignActivitiesToRenewalPeriods()
     }//: saveRenewal()
+    
+    private func handleEndDateChanges(oldDate: Date, newDate: Date) {
+        let settings = AppSettingsCache.shared
+        if let existingRenewal = renewalPeriod {
+            dataController.setRenewalWarningReferenceDate()
+            if let assignedCredId = existingRenewal.assignedCredentialID {
+                settings.updateRenewalEndDateHistory(credId: assignedCredId, oldDate: oldDate, with: newDate)
+            }//: IF LET (assignedCredId)
+        }//: IF LET (existingRenewal)
+    }//: handleEndDateChanges
+    
+    private func addNewRenewalToHistoryFile(_ renewal: RenewalPeriod) {
+        let settings = AppSettingsCache.shared
+        
+        if let renewCred = renewal.assignedCredentialID,
+        let endingOn = renewal.periodEnd {
+            settings.addRenewalEndDateToHistory(credId: renewCred, date: endingOn)
+        }//: IF LET (renewCred, endingOn)
+    }//: addNewRenewalToHistoryFile()
+    
+    
 }//: STRUCT
 
 

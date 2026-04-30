@@ -67,10 +67,15 @@ extension SidebarView {
         /// persistent storage.  As the alert message indicates, this will only delete the renewal period and not the credential or any associated
         /// CE activities with that renewal period.
         func deleteRenewalPeriod() {
-            if let unwantedRenewal = renewalToDelete {
-                dataController.delete(unwantedRenewal)
-                dataController.save()
-            }
+            let settings = AppSettingsCache.shared
+            if let unwantedRenewal = renewalToDelete,
+               let renewCred = unwantedRenewal.credential?.credentialID,
+               let endingOn = unwantedRenewal.periodEnd {
+                settings.removeRenewalEndDateFromHistory(credId: renewCred, date: endingOn)
+                    dataController.delete(unwantedRenewal)
+                    dataController.save()
+                    dataController.setRenewalWarningReferenceDate()
+            }//: IF LET (unwantedRenewal, renewCred, endingOn)
         }//: deleteRenewalPeriod
         
         // MARK: - INITIALIZER

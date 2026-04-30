@@ -69,6 +69,50 @@ final class AppSettingsCache: @unchecked Sendable {
         }
     }//: smartSyncCertWindow
     
+    // MARK: SMART SYNC
+    var allowanceUsed: Double {
+        get {
+            queue.sync {_currentState.smartSyncAllowanceUsed}
+        }
+        set {
+            queue.async {self._currentState.smartSyncAllowanceUsed = newValue}
+        }
+    }//: allowanceUsed
+    var renewalPeriodEndingWarningRefDate: Date? {
+        get {
+            queue.sync { _currentState.renewalWarningReferenceDate }
+        }
+        set {
+            queue.async {self._currentState.renewalWarningReferenceDate = newValue}
+        }
+    }//: renewalPeriodEndingWarningRefDate
+    var renewalEndDate: Date? {
+        get {
+            queue.sync { _currentState.currentRenewalEndDate }
+        }
+        set {
+            queue.async {self._currentState.currentRenewalEndDate = newValue}
+        }
+    }//: renewalEndDate
+    var userToAcknowledgeRenewalEnding: Bool {
+        get {
+            queue.sync { _currentState.userNeedsToAcknowledgeTransition}
+        }
+        set {
+            queue.async {self._currentState.userNeedsToAcknowledgeTransition = newValue}
+        }
+    }//: userToAcknowledgeRenewalEnded
+    
+    // MARK: CE RELATED
+    var renewalHistory: [UUID:[Date]] {
+        get {
+            queue.sync {_currentState.allRenewalPeriodEndDates}
+        }
+        set {
+            queue.async { self._currentState.allRenewalPeriodEndDates = newValue}
+        }
+    }//: renewalEndDates
+    
     // MARK: STORE KIT
     var appPurchaseLevel: String {
         get {
@@ -187,6 +231,128 @@ final class AppSettingsCache: @unchecked Sendable {
             return PurchaseStatus.free
         }//: IF ELSE
     }//: getPurchaseLevel()
+    
+    func updateSmartSyncAllowanceUsed(by value: Double) {
+        allowanceUsed += value
+        encodeCurrentState()
+    }//: updateSmartSyncAllowanceUsed()
+    
+    func decreaseSmartSyncAllowanceUsed(by value: Double) {
+        allowanceUsed -= value
+        encodeCurrentState()
+    }//: decreaseSmartSyncAllowanceUsed(by)
+    
+    // MARK: - RENEWAL PERIOD METHODS
+    
+    func setCurrentRenewalReferenceDate(_ date: Date?) {
+        if let newDate = date {
+            renewalPeriodEndingWarningRefDate = newDate.standardizedDate
+        } else {
+            renewalPeriodEndingWarningRefDate = nil
+        }//: IF LET (newDate)
+        
+        encodeCurrentState()
+    }//: setCurrentRenewalReferenceDate
+    
+    func setCurrentRenewalEndDate(_ date: Date?) {
+        if let newDate = date {
+            renewalEndDate = newDate.standardizedDate
+        } else {
+            renewalEndDate = nil
+        }//: IF LET (newDate)
+        
+        encodeCurrentState()
+    }//: setCurrentRenewalEndDate
+    
+    func confirmUserAcknowledgedRenewalWarning() {
+        userToAcknowledgeRenewalEnding = false
+        encodeCurrentState()
+    }//: confirmUserAcknowledgedRenewalWarning()
+    
+    func flagRenewalAcknowledgementNeeded() {
+        userToAcknowledgeRenewalEnding = true
+        encodeCurrentState()
+    }//: flagRenewalAcknowledgementNeeded()
+    
+    func addRenewalEndDateToHistory(credId: UUID, date: Date) {
+        var allEntries = renewalHistory
+        var endDates: [Date] = allEntries[credId] ?? []
+        let standardizedDate = date.standardizedDate
+        guard endDates.doesNOTContain(standardizedDate) else {
+            NSLog(">>>AppSettingsCache | addRenewalEndDateToHistory")
+            NSLog(">>>There might be two renewal periods, or more, with the same end date for the same assigned credential object.")
+            NSLog(">>> The credential in question has the UUID: \(credId.uuidString).")
+            NSLog(">>> The date in question is: \(standardizedDate.formatted(date: .abbreviated, time: .omitted))")
+            return
+        }//: GUARD
+        
+        endDates.append(standardizedDate)
+        // Array of dates sorted by latest to earliest (most recent being first in order)
+        let sortedDates = endDates.sorted(by: >)
+        allEntries[credId] = sortedDates
+        
+        renewalHistory = allEntries
+        encodeCurrentState()
+    }//: addRenewalEndDateToHistory
+    
+    func updateRenewalEndDateHistory(credId: UUID, oldDate: Date, with newDate: Date) {
+        var allEntries = renewalHistory
+        guard allEntries.keys.contains(credId) else {return}//: GUARD
+        
+        let newStandardDate = newDate.standardizedDate
+        let oldStandardDate = oldDate.standardizedDate
+        var endDates: [Date] = allEntries[credId] ?? []
+        
+        if let existingDate = endDates.firstIndex(where: {$0 == oldStandardDate}) {
+            let deletedDate = endDates.remove(at: existingDate)
+            NSLog(">>> The old renewal period date of \(deletedDate.formatted(date: .abbreviated, time: .omitted)) was successfully deleted from the record for the credential having the id: \(credId.uuidString).")
+            endDates.append(newStandardDate)
+            
+            let sortedDates = endDates.sorted(by: >)
+            allEntries[credId] = sortedDates
+            renewalHistory = allEntries
+            encodeCurrentState()
+        }//: IF LET (existingDate)
+        
+    }//: updateRenewalEndDateHistory()
+    
+    func removeRenewalEndDateFromHistory(credId: UUID, date: Date) {
+        var allEntries = renewalHistory
+        let endDates: [Date] = allEntries[credId] ?? []
+        let standardizedDate = date.standardizedDate
+        guard endDates.contains(standardizedDate) else {
+            NSLog(">>>AppSettingsCache | removeRenewalEndDateFromHistory")
+            NSLog(">>>There renewal end period date that was passed in for removal from the cached renewal history was not found.")
+            NSLog(">>> The credential in question has the UUID: \(credId.uuidString).")
+            NSLog(">>> The date in question is: \(standardizedDate.formatted(date: .abbreviated, time: .omitted))")
+            return
+        }//: GUARD
+        
+        let updatedDates = endDates.filter { $0 != standardizedDate }
+        allEntries[credId] = updatedDates
+        
+        renewalHistory = allEntries
+        encodeCurrentState()
+    }//: removeRenewalEndDateFromHistory(credId, date)
+    
+    func removeEntireRenewalHistorFor(credId: UUID) {
+        var allEntries = renewalHistory
+        guard allEntries.keys.contains(credId) else { return }//: GUARD
+        
+        _ = allEntries.removeValue(forKey: credId)
+        renewalHistory = allEntries
+        
+        encodeCurrentState()
+    }//: removeEntireRenewalHistoryFor(credId)
+    
+    func retrieveRenewalDatesFor(credId: UUID) -> [Date] {
+        let allEntries = renewalHistory
+        guard allEntries.keys.contains(credId) else { return [] }
+        
+        let dates: [Date] = allEntries[credId] ?? []
+        let sortedDates = dates.sorted(by: >)
+        return sortedDates
+    }//: retrieveRenewalDatesFor(credId)
     
     // MARK: - PREF BOOLEAN VALUES
     

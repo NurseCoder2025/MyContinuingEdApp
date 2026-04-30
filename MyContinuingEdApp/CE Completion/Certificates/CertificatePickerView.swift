@@ -15,7 +15,7 @@ import PDFKit
 struct CertificatePickerView: View {
     // MARK: - PROPERTIES
     @ObservedObject var activity: CeActivity
-    @Binding var certificateData: Data?
+    @Binding var certificate: CECertificate?
     
     // Properties for the segmented picker control
     @State private var showImagePicker: Bool = false
@@ -43,8 +43,8 @@ struct CertificatePickerView: View {
             } //: MENU
             .sheet(isPresented: $showCamera) {
                 CameraPickerView { data in
-                    if let data = data {
-                        certificateData = data
+                    if let camData = data, let image = UIImage(data: camData) {
+                        certificate = CECertificate.image(image)
                     } else {
                         errorMessage = "Unable to properly read the image data from the image captured by the device's camera. Please try again."
                         showCertSelectionErrorAlert = true
@@ -64,8 +64,8 @@ struct CertificatePickerView: View {
             allowedContentTypes: [.pdf]
         ) { result in
             if case .success(let url) = result {
-                if let data = try? Data(contentsOf: url) {
-                    certificateData = data
+                if let data = try? Data(contentsOf: url), let doc = PDFDocument(data: data) {
+                    certificate = CECertificate.pdf(doc)
                 } else {
                     showCertSelectionErrorAlert = true
                     errorMessage = "Unable to read the selected PDF file. Try selecting a different one or recreate/re-download the file again as it might be corrupted."
@@ -83,8 +83,8 @@ struct CertificatePickerView: View {
             Task {
                 if let data = try? await item.loadTransferable(type: Data.self){
                     // Checking to ensure that an image can be read
-                    if UIImage(data: data) != nil {
-                        certificateData = data
+                    if let selectedImage = UIImage(data: data) {
+                        certificate = CECertificate.image(selectedImage)
                     } else {
                         errorMessage = "The saved image you selected could not be read. It might be saved in an unrecognized format or have corrupted data."
                         showCertSelectionErrorAlert = true
@@ -112,6 +112,6 @@ struct CertificatePickerView: View {
 // MARK: - PREVIEW
 struct CertificatePickerViewPreview: PreviewProvider {
     static var previews: some View {
-        CertificatePickerView(activity: .example, certificateData: .constant(nil))
+        CertificatePickerView(activity: .example, certificate: .constant(nil))
     }
 }//: PREVIEW

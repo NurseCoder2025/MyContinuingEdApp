@@ -188,3 +188,7 @@ extension Credential {
     }//: getPreviousRenewalPeriod()
     
 }//: EXTENSION
+
+
+// MARK: - PROTOCOLS
+

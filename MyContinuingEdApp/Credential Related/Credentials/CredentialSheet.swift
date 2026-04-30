@@ -113,10 +113,11 @@ struct CredentialSheet: View {
             
             .alert("Delete Credential?", isPresented: $showDeleteCredAlert) {
                 Button("OK", role: .destructive) {
+                    removeCredRenewalHistory()
                     dataController.delete(credential)
                     dismiss()
-                }
-                Button("Cancel", role: .cancel) {}
+                }//: OK Button
+                Button("Cancel", role: .cancel) {}//: CANCEL
             } message: {
                 Text("Are you sure you want to delete the current credential? This will delete any associated disciplinary actions and renewal periods. However, activities associated with this credential will NOT be deleted.")
             }//: ALERT
@@ -148,7 +149,14 @@ struct CredentialSheet: View {
         dismiss()
     }//: MAP & SAVE
     
-}
+    private func removeCredRenewalHistory() {
+        let settings = AppSettingsCache.shared
+        if let assignedCred = credential.credentialID {
+            settings.removeEntireRenewalHistorFor(credId: assignedCred)
+        }//: IF LET (assignedCred)
+    }//: removeCredRenewalHistory()
+    
+}//: STRUCT
 
  // MARK: - PREVIEW
 #Preview {

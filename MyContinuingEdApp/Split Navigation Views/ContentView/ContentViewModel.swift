@@ -22,6 +22,8 @@ extension ContentView {
         @Published var activityToDelete: CeActivity?
         @Published var showDeleteWarning: Bool = false
         
+        @Published var showUpcomingRenewalEndingBox: Bool = false
+        
         // MARK: - CORE DATA
         // These properties are needed in order to select the proper
         // view to show in ContentView, depending on whether the
@@ -115,6 +117,9 @@ extension ContentView {
                 }
             }//: IF ELSE
         } //: controllerDidChangeContent()
+        
+        
+        
         
         
         // MARK: - INIT

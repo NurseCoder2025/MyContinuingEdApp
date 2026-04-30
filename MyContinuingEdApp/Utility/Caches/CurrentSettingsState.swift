@@ -18,7 +18,19 @@ struct CurrentSettingsState: Codable {
         .autoTranscription: true
     ]
     
+    // SmartSync settings
     var smartSyncWindowForCerts: Double = 6.0
+    var smartSyncAllowanceUsed: Double = 0.0
+    
+    // CE-Related
+    /// Property within CurrentSettingsState intended to keep track of the ending date of all renewal periods
+    /// for every credential stored within the app.
+    ///
+    /// - Important: The dictionary key is a UUID value which needs to be the credentialID property, corresponding to the
+    /// proper credential object. The value for each key entry is an array of Dates, which should only be the periodEnd value for each
+    /// renewal period for that specific credential.
+    var allRenewalPeriodEndDates: [UUID : [Date]] = [:]
+    
     var appPurchaseStateString: String = ""
     
     // CKRecordZone related
@@ -41,5 +53,7 @@ struct CurrentSettingsState: Codable {
     
     // For CE CACHE CORE Users ONLY
     var userNeedsToAcknowledgeTransition: Bool = false
+    var renewalWarningReferenceDate: Date? = nil
+    var currentRenewalEndDate: Date? = nil
     
 }//: STRUCT
