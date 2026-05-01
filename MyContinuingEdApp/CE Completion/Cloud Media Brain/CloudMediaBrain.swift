@@ -15,6 +15,7 @@ final class CloudMediaBrain: ObservableObject {
     
     let settings = AppSettingsCache.shared
     let fileSystem = FileManager.default
+    let netManager = NetworkManager.shared
     
     let cloudDB: CKDatabase = CKContainer.default().privateCloudDatabase
     let certZone = CKRecordZone(zoneName: String.certificateZoneId)

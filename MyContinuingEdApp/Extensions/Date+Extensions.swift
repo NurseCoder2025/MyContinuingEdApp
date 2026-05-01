@@ -23,8 +23,8 @@ extension Date {
     static let renewalStartDate: Date = Date.now.addingTimeInterval(86400 * -180)
     
     // Property for providing a reasonable renewal period end date
-    /// Computed constant date that is set for three years after the current date and time
-    static let renewalEndDate: Date = Date.now.addingTimeInterval(86400 * 1095)
+    /// Computed constant date that is set for two years after the current date and time
+    static let renewalEndDate: Date = Date.now.addingTimeInterval(86400 * 730)
     
     // Property for providing a reasonable late fee start date for a given renewal period
     /// Computed constant date that is set for a month (30 days) prior to the Date.renewalEndDate

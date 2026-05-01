@@ -31,7 +31,9 @@ struct CurrentSettingsState: Codable {
     /// renewal period for that specific credential.
     var allRenewalPeriodEndDates: [UUID : [Date]] = [:]
     
+    // In-App Purchases
     var appPurchaseStateString: String = ""
+    var credentialSelectionNeeded: Bool = false
     
     // CKRecordZone related
     var cloudZonesCreated: Bool = false
@@ -52,8 +54,14 @@ struct CurrentSettingsState: Codable {
     var codedUserID: Data? = nil
     
     // For CE CACHE CORE Users ONLY
-    var userNeedsToAcknowledgeTransition: Bool = false
-    var renewalWarningReferenceDate: Date? = nil
+    let settingsCreatedOn: Date
+    var userNeedsToAcknowledgeTransition: Bool = true
+    var renewalWarningStartDate: Date? = nil
     var currentRenewalEndDate: Date? = nil
+    
+    // MARK: - INIT
+    init() {
+        settingsCreatedOn = Date()
+    }//: INIT
     
 }//: STRUCT

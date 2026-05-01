@@ -31,6 +31,7 @@
     </entity>
     <entity name="AudioInfo" representedClassName="AudioInfo" syncable="YES" codeGenerationType="class">
         <attribute name="audioInfoID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="autoRemoveOffCloud" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="ckRecordID" optional="YES" attributeType="Transformable"/>
         <attribute name="errorMessage" optional="YES" attributeType="String"/>
         <attribute name="fileSize" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
@@ -89,6 +90,7 @@
         <relationship name="activities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CeActivity" inverseName="designation" inverseEntity="CeActivity"/>
     </entity>
     <entity name="CertificateInfo" representedClassName="CertificateInfo" syncable="YES" codeGenerationType="class">
+        <attribute name="autoRemoveOffCloud" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="certFileSize" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="certType" optional="YES" attributeType="String"/>
         <attribute name="ckRecordID" optional="YES" attributeType="Transformable"/>

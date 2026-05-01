@@ -127,8 +127,12 @@ extension DataController {
                 // enable basic unlock features; otherwise, set app to
                 // free mode
             } else if await revertPurchaseToBasicUnlockStatus() {
+                downgradeMade = .proToCore
+                credentialSelectionNeeded = true
                 return
             } else {
+                downgradeMade = .proToFree
+                credentialSelectionNeeded = true
                 revertPurchaseToFreeStatus()
             }//: IF AWAIT
         } else if prodID == Self.proAnnualID || prodID == Self.proMonthlyID {
@@ -143,8 +147,12 @@ extension DataController {
                 // enable basic unlock features; otherwise, set app to
                 // free mode
             } else if await revertPurchaseToBasicUnlockStatus() {
+                downgradeMade = .proToCore
+                credentialSelectionNeeded = true
                 return
             } else {
+                downgradeMade = .proToFree
+                credentialSelectionNeeded = true
                 revertPurchaseToFreeStatus()
             }//: IF ELSE
         } else if prodID == Self.basicUnlocKID {
@@ -153,6 +161,7 @@ extension DataController {
             } else if await revertPurchaseToSubscriptionStatus() {
                 return
             } else {
+                downgradeMade = .coreToFree
                 revertPurchaseToFreeStatus()
             }//: IF ELSE
         }//: IF ELSE (prodID == )
@@ -231,7 +240,94 @@ extension DataController {
     }//: purchase
     
     
+    // MARK: - DOWNGRADING
     
+    /*
+     Downgrade Policy:
+     > If a user chooses to downgrade from a paid option (Core or Pro) to a lower tier (Pro to Core, Pro to Free, or Core to Free),
+        then only remove items that are copies on iCloud (as applicable) and extra credentials (which will subsequently remove all associated
+        disciplinary actions, reinstatement actions, and renewal periods. Individual CE activities, however, will NOT be removed.)
+     > Whatever items were created via the paid feature will be retained in CoreData or on the device (for media files) so that if the user
+        chooses to upgrade again later, they won't lose any of their previously-created data.
+     */
+    
+    
+
+    func initiateDowngradeChanges(
+        changeType: DowngradeType,
+        selectedCred credential: Credential?
+    ) async {
+            switch changeType {
+            case .noChange:
+                return
+            case .proToCore:
+                if let credToKeep = credential {
+                    await downgradeToCore(keepingCred: credToKeep)
+                    await MainActor.run {
+                        credentialSelectionNeeded = false
+                    }//: MAIN ACTOR
+                } else {
+                    await downgradeToCore(keepingCred: nil)
+                    await MainActor.run {
+                        credentialSelectionNeeded = false
+                    }//: MAIN ACTOR
+                }//: IF LET (credToKeep)
+            case .coreToFree:
+                await downgradeToFree()
+            case .proToFree:
+                if let credToKeep = credential {
+                    await downgradeToCore(keepingCred: credToKeep)
+                    await downgradeToFree()
+                    await MainActor.run {
+                        credentialSelectionNeeded = false
+                    }//: MAIN ACTOR
+                } else {
+                    await downgradeToCore(keepingCred: nil)
+                    await downgradeToFree()
+                    await MainActor.run {
+                        credentialSelectionNeeded = false
+                    }//: MAIN ACTOR
+                }//: IF LET (credToKeep)
+            }//: SWITCH
+        // Once the downgrade methods have completed, reset the @Published properties
+        await MainActor.run {
+            downgradeMade = .noChange
+        }//: MAIN ACTOR
+    }//: initiateDowngradeChanges()
+    
+    
+    private func downgradeToCore(keepingCred: Credential?) async {
+        // Delete all credentials except for the one chosen by the user
+        let allCreds = getAllCredentials()
+        if allCreds.count > 1, let selectedCred = keepingCred {
+            deleteAllCredsExceptFor(credToKeep: selectedCred)
+        }//: IF (allCreds.count > 1)
+        
+        // Delete all audio reflections on iCloud
+        // Keeping local copies on one device for restoration by user later if
+        // they choose to upgrade to Pro again
+        let mediaBrain = CloudMediaBrain.shared
+        let _ = await mediaBrain.deleteAllAudioFiles()
+        
+        // Remove all certificates on iCloud NOT belonging to the current renewal (so long as under 500MB limit)
+        let certsOutsideLimit = areThereUploadedCertsOutsideCurrentRenewal()
+        if certsOutsideLimit.certsOutside {
+            await mediaBrain.removeUploadedCerts(certs: certsOutsideLimit.certs)
+        }//: IF (certsOutsideLimit)
+    }//: downgradeToCore
+    
+    
+    private func downgradeToFree() async {
+        // Everyting in downgradeToCore, PLUS:
+        // Remove ALL certificates from iCloud
+        let mediaBrain = CloudMediaBrain.shared
+        _ = await mediaBrain.deleteAllCertificateFilesOffICloud()
+    }//: downgradeFromCoreToFree()
+    
+    
+    
+    
+   
     
     
 }//: DATA CONTROLLER

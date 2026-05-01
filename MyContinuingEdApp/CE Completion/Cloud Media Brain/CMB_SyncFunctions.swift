@@ -52,6 +52,7 @@ extension CloudMediaBrain {
         }//: DO-CATCH
     }//: fetchCloudDbChanges()
     
+    // TODO: Ensure that the MasterMediaList is updated prior to any new records being sent to iCloud
     private func processZoneChanges(forZone zone: CKRecordZone.ID) async {
         let isCertZone = (zone.zoneName == String.certificateZoneId)
         let isAudioZone = (zone.zoneName == String.audioReflectionZoneId)
@@ -61,6 +62,8 @@ extension CloudMediaBrain {
         let settings = AppSettingsCache.shared
         let database = mediaBrain.cloudDB
         let mediaList = MasterMediaList.shared
+        
+        let recType: CkRecordType = isCertZone ? .certificate : .audioReflection
         
         let zoneToken = settings.loadZoneToken(forZone: zone)
         
@@ -82,12 +85,22 @@ extension CloudMediaBrain {
             case .success(let foundRec):
                 addedRecords.append(foundRec)
                 Task{
-                    _ = await self.addNewLocalMediaFile(usingRec: foundRec)
+                    if mediaList.doesNOThaveRecord(withID: record) {
+                        _ = await self.addNewLocalMediaFile(usingRec: foundRec)
+                    }//: IF (doesNOThaveRecord)
                 }//: TASK
             case .failure(_):
                 recsToManuallyDownload.append(record)
-                mediaList.addMediaRecWithError(fromRec: record, message: "You will need to manually download the file from iCloud at your convenience.", downloadFlag: true)
-                mediaList.saveList()
+                if mediaList.doesNOThaveRecord(withID: record) {
+                    mediaList.addMediaRecWithError(
+                        fromRec: record,
+                        type: recType,
+                        keepYN: false,
+                        message: "You will need to manually download the file from iCloud at your convenience.",
+                        downloadFlag: true
+                    )//: addMediaRecWithError
+                    mediaList.saveList()
+                }//: IF (doesNOThaveRecord)
             }//: SWITCH
         }//: recordWasChangedBlock
         // MARK: Deleting Media
@@ -131,6 +144,12 @@ extension CloudMediaBrain {
         var finalResult: [Bool] = []
         
         let recType = record.recordType
+        var mediaTypeForList: CkRecordType = .certificate
+        
+        if recType == CkRecordType.audioReflection.rawValue {
+            mediaTypeForList = .audioReflection
+        }//: IF (recType == audioReflection)
+        
         let logMediaName = createMediaTypeStringForMessages(basedOn: recType)
        
         let retrievedPath = mediaBrain.retrievePathFromID(recID: record.recordID)
@@ -139,7 +158,12 @@ extension CloudMediaBrain {
         let assetKey: String = String.mediaDataKey
         if recType == CkRecordType.certificate.rawValue {
             guard settings.shouldAutoDownloadMedia(forType: .certificate) else {
-                mediaList.addMediaRecWithError(fromRec: record.recordID, message: "You need to manually download the certificate from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true)
+                mediaList.addMediaRecWithError(
+                    fromRec: record.recordID,
+                    type: mediaTypeForList,
+                    keepYN: false,
+                    message: "You need to manually download the certificate from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true
+                )//: addMediaRecWithError
                 mediaList.saveList()
                 return true
             }//: GUARD
@@ -154,7 +178,12 @@ extension CloudMediaBrain {
             }//: IF LET (certData)
         } else if recType == CkRecordType.audioReflection.rawValue {
             guard settings.shouldAutoDownloadMedia(forType: .audioReflection) else {
-                mediaList.addMediaRecWithError(fromRec: record.recordID, message: "You need to manually download the audio reflection file from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true)
+                mediaList.addMediaRecWithError(
+                    fromRec: record.recordID,
+                    type: mediaTypeForList,
+                    keepYN: false,
+                    message: "You need to manually download the audio reflection file from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true
+                )//: addMediaRecWithError
                 mediaList.saveList()
                 return true
             }//: GUARD
@@ -184,31 +213,61 @@ extension CloudMediaBrain {
         let recType = record.recordType
         let assetName: String = type.rawValue
         
+        var mediaListType: CkRecordType
+        switch type {
+        case .certificate:
+            mediaListType = .certificate
+        case .audioReflection:
+            mediaListType = .audioReflection
+        case .transcription:
+            mediaListType = .audioReflection
+        }//: SWITCH
+        
         if let tempURL = asset.fileURL {
             do {
                 _ = try FileManager.default.moveItem(at: tempURL, to: location)
-                mediaList.addMediaRecord(fromRec: recID, savedAt: location)
+                mediaList.addMediaRecord(
+                    fromRec: recID,
+                    type: mediaListType,
+                    keepYN: false,
+                    savedAt: location
+                )//: addMediaRecord
                 mediaList.saveList()
                return true
             } catch CocoaError.fileNoSuchFile{
                 NSLog(">>> DataController error | addNewLocalMediaFile")
                 NSLog(">>> The \(assetName) file that should have been downloade from iCloud to the temporary URL \(tempURL.absoluteString) does not exist.")
                 let mediaNameForError = createMediaTypeStringForMessages(basedOn: recType)
-                mediaList.addMediaRecWithError(fromRec: record.recordID, message: "The \(mediaNameForError) file that should have been downloaded to the device does not exist where it was expected to be found. Please try manually downloading again.")
+                mediaList.addMediaRecWithError(
+                    fromRec: record.recordID,
+                    type: mediaListType,
+                    keepYN: false,
+                    message: "The \(mediaNameForError) file that should have been downloaded to the device does not exist where it was expected to be found. Please try manually downloading again."
+                )//: addMediaRecWithError
                 mediaList.saveList()
                 return false
             } catch CocoaError.fileWriteOutOfSpace {
                 NSLog(">>> DataController error | addNewLocalMediaFile")
                 NSLog(">>> The device does not have enough free space to save the \(assetName) file.")
                 let mediaNameForError = createMediaTypeStringForMessages(basedOn: recType)
-                mediaList.addMediaRecWithError(fromRec: record.recordID, message: "Your device's storage capacity is currently full so the app was unable to download the \(mediaNameForError) file. Please free up space and try to manually download again.")
+                mediaList.addMediaRecWithError(
+                    fromRec: record.recordID,
+                    type: mediaListType,
+                    keepYN:  false,
+                    message: "Your device's storage capacity is currently full so the app was unable to download the \(mediaNameForError) file. Please free up space and try to manually download again."
+                )//: addMediaRecWithError
                 mediaList.saveList()
                 return false
             } catch {
                 NSLog(">>> DataController error | addNewLocalMediaFile")
                 NSLog(">>> The moveItem method threw an error unrelated to the downloaded \(assetName) file being missing or the user's device being full: \(error.localizedDescription)")
                 let mediaNameForError = createMediaTypeStringForMessages(basedOn: recType)
-                mediaList.addMediaRecWithError(fromRec: record.recordID, message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again.")
+                mediaList.addMediaRecWithError(
+                    fromRec: record.recordID,
+                    type: mediaListType,
+                    keepYN: false,
+                    message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again."
+                )//: addMediaRecWithError
                 mediaList.saveList()
                 return false
             }//: DO - CATCH
@@ -217,7 +276,12 @@ extension CloudMediaBrain {
             NSLog(">>> The CKRecord that was added to the database and fetched by this method either had a nil value for the mediaDataKey, a value that could not be cast as a CKAsset, or the fileURL property was nil.")
             NSLog(">>> The mediaDataKey was: \(String(describing: record.recordID.recordName))")
             let mediaNameForError = createMediaTypeStringForMessages(basedOn: recType)
-            mediaList.addMediaRecWithError(fromRec: record.recordID, message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again.")
+            mediaList.addMediaRecWithError(
+                fromRec: record.recordID,
+                type: mediaListType,
+                keepYN: false,
+                message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again."
+            )//: addMediaRecWithError
             mediaList.saveList()
             return false
         }//: IF LET (existingAsset)
@@ -229,7 +293,7 @@ extension CloudMediaBrain {
         let mediaBrain = CloudMediaBrain.shared
         let fileSystem = FileManager.default
         
-        guard mediaList.hasRecord(withID: record) else { return false }
+        guard let recFile = mediaList.getLocalMediaRecord(using: record), recFile.keepOnDevice == false else { return false }
         
         let savedFilePathString: String = mediaBrain.retrievePathFromID(recID: record)
         let fileToDelete: URL = URL.documentsDirectory.appending(path: savedFilePathString, directoryHint: .notDirectory)
@@ -250,6 +314,7 @@ extension CloudMediaBrain {
     private func attemptMediaDeleteUsingMasterList(for record: CKRecord.ID) async -> Bool {
         let mediaList = MasterMediaList.shared
         if let mediaRecord = mediaList.getLocalMediaRecord(using: record),
+        mediaRecord.keepOnDevice == false,
         let dataAtLocation: URL = mediaRecord.mediaURL {
             do {
                 _ = try FileManager.default.removeItem(at: dataAtLocation)

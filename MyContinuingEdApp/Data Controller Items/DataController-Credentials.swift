@@ -85,5 +85,31 @@ extension DataController {
     }
     
     
+    func getAllCredentials() -> [Credential] {
+        let context = container.viewContext
+        let credFetch = Credential.fetchRequest()
+        let nameSort = NSSortDescriptor(key: "name", ascending: true)
+        credFetch.sortDescriptors = [nameSort]
+        
+        let allCreds = (try? context.fetch(credFetch)) ?? []
+        return allCreds
+    }//: getAllCredentials()
+    
+    func deleteAllCredsExceptFor(credToKeep: Credential) {
+        guard getAllCredentials().count > 1 else { return }
+        
+        let settings = AppSettingsCache.shared
+        
+        let allCreds = getAllCredentials()
+        for cred in allCreds {
+            if cred != credToKeep {
+                if let credId = cred.credentialID {
+                    settings.removeEntireRenewalHistorFor(credId: credId)
+                }//: IF LET (credId)
+                delete(cred)
+            }//: IF (cred != credToKeep)
+        }//: LOOP
+        save()
+    }//: deleteAllCredsExceptFor(credToKeep)
     
 }//: DataController

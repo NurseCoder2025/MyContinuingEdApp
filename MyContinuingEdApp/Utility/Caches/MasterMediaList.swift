@@ -11,7 +11,7 @@ import Foundation
 
 final class MasterMediaList: @unchecked Sendable {
     // MARK: - PROPERTIES
-    private var _allLocalMedia = Set<LocalMediaFileInfo>() {
+    private var _allLocalMedia = Set<ICloudMediaFileOnDevice>() {
         willSet {
             dispatchPrecondition(condition: .onQueue(queue))
         }
@@ -28,40 +28,65 @@ final class MasterMediaList: @unchecked Sendable {
     
     // MARK: - GETTERS
     
-    var currentLocalMediaFiles: [LocalMediaFileInfo] {
+    var currentLocalMediaFiles: [ICloudMediaFileOnDevice] {
         queue.sync { Array(_allLocalMedia) }
     }//: localMediaList
     
-    var localMediaErrors: [LocalMediaFileInfo] {
+    var localMediaErrors: [ICloudMediaFileOnDevice] {
         queue.sync {
             return _allLocalMedia.filter { $0.hasError }
         }//: sync
     }//: localMediaErrors
     
-    var filesToDownload: [LocalMediaFileInfo] {
+    var filesToDownload: [ICloudMediaFileOnDevice] {
         queue.sync {
            return _allLocalMedia.filter {$0.shouldReDownload}//: filter
         }//: SYNC
     }//: filesToDownload
     
-    var filesToDelete: [LocalMediaFileInfo] {
+    var filesToDelete: [ICloudMediaFileOnDevice] {
         queue.sync {
             return _allLocalMedia.filter {$0.shouldDelete}//: filter
         }//: sync
     }//: filesToDelete
     
+    var allCertMediaFiles: [ICloudMediaFileOnDevice] {
+        queue.sync {
+            _allLocalMedia.filter { $0.recType == .certificate }
+        }
+    }//: allCertMediaFiles
+    
+    var allAudioMediaFiles: [ICloudMediaFileOnDevice] {
+        queue.sync {
+            _allLocalMedia.filter({$0.recType == .audioReflection})
+        }
+    }//: allAudioMediaFiles
+    
+    var filesToLeaveSavedOnDevice: [ICloudMediaFileOnDevice] {
+        queue.sync {
+            _allLocalMedia.filter({$0.keepOnDevice})
+        }
+    }//: filesToLeaveSavedOnDevice
+    
     // MARK: - METHODS
     
-    func addMediaRecord(fromRec record: CKRecord.ID, savedAt: URL)  {
+    func addMediaRecord(
+        fromRec record: CKRecord.ID,
+        type: CkRecordType,
+        keepYN: Bool,
+        savedAt: URL
+    )  {
         guard doesNOThaveRecord(withID: record) else { return }
         queue.async {
-            let newItem = LocalMediaFileInfo(id: record, mediaURL: savedAt)
+            let newItem = ICloudMediaFileOnDevice(id: record, recType: type, keepOnDevice: keepYN, mediaURL: savedAt)
             self._allLocalMedia.insert(newItem)
         }//: async
     }//: addMediaRecord(fromRec, savedAt)
     
     func addMediaRecWithError(
         fromRec record: CKRecord.ID,
+        type: CkRecordType,
+        keepYN: Bool,
         message: String,
         downloadFlag: Bool? = nil,
         deletionFlag: Bool? = nil
@@ -84,7 +109,7 @@ final class MasterMediaList: @unchecked Sendable {
             return
         }//: GUARD
         queue.async {
-            let newItem = LocalMediaFileInfo(id: record, mediaURL: nil, errorMessage: message)
+            let newItem = ICloudMediaFileOnDevice(id: record, recType: type, keepOnDevice: keepYN, mediaURL: nil, errorMessage: message)
             
             if let needsDownload = downloadFlag {
                 newItem.shouldReDownload = needsDownload
@@ -120,7 +145,7 @@ final class MasterMediaList: @unchecked Sendable {
         }//: async
     }//: updateMediaRecWithError(fromRec, message)
     
-    func getLocalMediaRecord(using record: CKRecord.ID) -> LocalMediaFileInfo?  {
+    func getLocalMediaRecord(using record: CKRecord.ID) -> ICloudMediaFileOnDevice?  {
         queue.sync {
             return _allLocalMedia.filter({$0.id == record}).first
         }//: sync
@@ -188,7 +213,7 @@ final class MasterMediaList: @unchecked Sendable {
                 do {
                     let unarchiver = try NSKeyedUnarchiver(forReadingFrom: savedList)
                     unarchiver.requiresSecureCoding = true
-                    if let decodedMedia: Set<LocalMediaFileInfo> = unarchiver.decodeObject(forKey: String.masterMediaListFileKey) as? Set<LocalMediaFileInfo> {
+                    if let decodedMedia: Set<ICloudMediaFileOnDevice> = unarchiver.decodeObject(forKey: String.masterMediaListFileKey) as? Set<ICloudMediaFileOnDevice> {
                         _allLocalMedia = decodedMedia
                     }//: IF LET (decodedMedia)
                 } catch {

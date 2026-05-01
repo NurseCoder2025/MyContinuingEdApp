@@ -17,7 +17,7 @@ struct AppPurchaseLevelView: View {
         case PurchaseStatus.proSubscription.id:
             return "CE Cache Pro (\(dataController.currentSubscriptionType.capitalized))"
         case PurchaseStatus.basicUnlock.id:
-            return "CE Cache Basic"
+            return "CE Cache Core"
         default:
             return "CE Cache FREE"
         }//: SWITCH

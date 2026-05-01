@@ -26,6 +26,11 @@ struct PurchaseInfoView: View {
     
     @State private var showProductLoadingIssueAlert: Bool = false
     
+    // Pro Downgrade
+    @State private var showProDowngradeWarning: Bool = false
+    @State private var showDowngradeFailedAlert: Bool = false
+    @State private var downGradeAlertMessage: String = ""
+    
     let currentDevice = ProcessInfo()
     
     let basicUnlockMessageForProUsers: String = """
@@ -38,7 +43,7 @@ struct PurchaseInfoView: View {
     /// which is an instance of ProcessInfo().
     var deviceSupportsSubManagementSheet: Bool {
         return !currentDevice.isMacCatalystApp && !currentDevice.isiOSAppOnMac
-    }
+    }//: deviceSupportsSubManagementSheet
     
     var subscribedProduct: (Product, Date)? {
         for item in purchasedProds {
@@ -59,6 +64,18 @@ struct PurchaseInfoView: View {
         }//: LOOP
         return nil
     }//: basicUnlockProduct
+    
+    var userPurchasedCore: Bool {
+        if let corePurchased = basicUnlockProduct {
+            return true
+        } else {
+            return false
+        }//: IF LET (corePurchased)
+    }//: userPurchasedCore
+    
+    var userHasAProSubscription: Bool {
+        return (purchasedProds.filter {$0.0.type == .autoRenewable}).count > 0
+    }//: userHasAProSubscription
     
     // MARK: - BODY
     var body: some View {
@@ -83,52 +100,46 @@ struct PurchaseInfoView: View {
                 } else {
                     VStack(spacing: 20) {
                         // MARK: - Subscription
-                        if let subscription = subscribedProduct?.0, let purchaseDate = subscribedProduct?.1, let renewalDay = subRenewalDate {
-                            GroupBox {
-                                HStack{
-                                    // TODO: Add image
-                                    VStack {
-                                        LeftAlignedTextView(text: subscription.displayName.localizedCapitalized)
-                                            .font(.title2).bold()
-                                            .foregroundStyle(Color.purple)
-                                        
-                                        HStack {
-                                            LeftAlignedTextView(text: "Purchased on: ")
-                                            Text("\(purchaseDate.formatted(date: .numeric, time: .omitted))")
-                                                .bold()
-                                        }//: HStack
-                                        
-                                        HStack {
-                                            LeftAlignedTextView(text: "Subscription renews: ")
-                                            Text("\(renewalDay.formatted(date: .numeric, time: .omitted))")
-                                                .bold()
-                                                .foregroundStyle(Color.orange)
-                                        }//: HSTACK
-                                    }//: VSTACK
-                                }//: HSTACK
-                                
-                                Divider()
-                                
-                                if deviceSupportsSubManagementSheet {
-                                    Button {
-                                        showManageSubscriptionSheet.toggle()
-                                    } label: {
-                                        Text("Manage Subscription")
-                                    }//: BUTTON
-                                    .buttonStyle(.borderedProminent)
-                                } else {
-                                    Button {
-                                        showRefundSheetForSubscription.toggle()
-                                    } label: {
-                                        Text("Cancel Subscription")
-                                    }//: BUTTON
-                                    .buttonStyle(.bordered)
-                                }
-                                
-                            } label: {
-                                SettingsHeaderView(headerText: "Subscription Info", headerImage: "calendar.badge.clock.rtl")
-                            }//: GROUP BOX
-                        }
+                        if let subscription = subscribedProduct?.0,
+                            let purchaseDate = subscribedProduct?.1,
+                            let renewalDay = subRenewalDate {
+                                GroupBox {
+                                    HStack{
+                                        // TODO: Add image
+                                        VStack {
+                                            LeftAlignedTextView(text: subscription.displayName.localizedCapitalized)
+                                                .font(.title2).bold()
+                                                .foregroundStyle(Color.purple)
+                                            
+                                            HStack {
+                                                LeftAlignedTextView(text: "Purchased on: ")
+                                                Text("\(purchaseDate.formatted(date: .numeric, time: .omitted))")
+                                                    .bold()
+                                            }//: HStack
+                                            
+                                            HStack {
+                                                LeftAlignedTextView(text: "Subscription renews: ")
+                                                Text("\(renewalDay.formatted(date: .numeric, time: .omitted))")
+                                                    .bold()
+                                                    .foregroundStyle(Color.orange)
+                                            }//: HSTACK
+                                        }//: VSTACK
+                                    }//: HSTACK
+                                    
+                                    Divider()
+                                    
+                                        // MARK: CANCEL PRO SUBSCRIPTION
+                                        Button {
+                                            showProDowngradeWarning = true
+                                        } label: {
+                                            Text("Cancel Subscription")
+                                        }//: BUTTON
+                                        .buttonStyle(.bordered)
+                                    
+                                } label: {
+                                    SettingsHeaderView(headerText: "Subscription Info", headerImage: "calendar.badge.clock.rtl")
+                                }//: GROUP BOX
+                        }//: IF LET (subscription, purchaseDate, renewalDay)
                         
                         // MARK: - Basic Unlock
                         if let basicProduct = basicUnlockProduct {
@@ -185,13 +196,17 @@ struct PurchaseInfoView: View {
                         }//: IF LET
                         
                     }//: VSTACK
+                    // MARK: - ON CHANGE
+                    
                      // MARK: - SHEETS
                     .manageSubscriptionsSheet(isPresented: $showManageSubscriptionSheet)
-                    .refundRequestSheet(for: subTransactionID, isPresented: $showRefundSheetForSubscription)
+                    .refundRequestSheet(for: subTransactionID, isPresented: $showRefundSheetForSubscription) //: REFUND SHEET (PRO SUBSCRIPTION)
+                    
                     .refundRequestSheet(
                         for: basicUnlockTransactionID,
                         isPresented: $showRefundSheetForBasicUnlock
-                    )
+                    )//: REFUND SHEET (CORE)
+                    
                     .sheet(isPresented: $showUpgradeToProSheet) {
                         UpgradeToPaidSheet(itemMaxReached: "")
                     }//: SHEET
@@ -200,9 +215,29 @@ struct PurchaseInfoView: View {
                     .alert("Problem Loading Purchases",isPresented: $showProductLoadingIssueAlert) {
                     } message: {
                         Text("There was an issue loading purchases from the App Store. Check your network connection and try again.")
-                    }
+                    }//: ALERT (problem loading purchases)
                     
-                }//: IF ELSE
+                    .alert("Downgrade Request Failed", isPresented: $showDowngradeFailedAlert) {
+                        Button("OK") {}
+                    } message: {
+                        Text(downGradeAlertMessage)
+                    }//: ALERT (downgrade request failed)
+                    
+                    // MARK: - CONFIRMATION DIALOGS
+                    .confirmationDialog("Downgrade Notice", isPresented: $showProDowngradeWarning) {
+                        Button("Downgrade", role: .destructive){
+                            if deviceSupportsSubManagementSheet {
+                                showManageSubscriptionSheet = true
+                            } else {
+                                showRefundSheetForSubscription = true
+                            }//:  IF ELSE (deviceSupportsSubManagementSheet)
+                        }//: BUTTON (Downgrade)
+                        Button("Cancel", role: .cancel) {}//: Button (cancel)
+                    } message: {
+                        Text("If you choose to downgrade from Pro, all but one existing credential will be deleted (you will need to select which one to keep) along with their renewal periods (but not associated CE activities), any certificates uploaded in iCloud that are not for the current renewal will be removed along with all audio recordings, in addition to the loss of all other Pro features. This will occur once the app recieves confirmation of your refund from Apple.")
+                    }//: ALERT (Pro Downgrade)
+                    
+                }//: IF ELSE (purchasedProds.isEmpty)
                  // MARK: - ERROR
             case .error:
                 VStack {
@@ -271,6 +306,7 @@ struct PurchaseInfoView: View {
             }//: IF CASE LET
         }//: FOR AWAIT
     }//: loadPurchasedProducts()
+    
     
 }//: STRUCT
 

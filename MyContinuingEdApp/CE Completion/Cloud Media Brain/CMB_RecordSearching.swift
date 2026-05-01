@@ -133,5 +133,142 @@ extension CloudMediaBrain {
         }//: DO - CATCH
     }//: searchZoneForRecordMatching(objID)
     
+    func getAllAudioRecords(retryCount: Int = 0) async throws -> (found: [CKRecord], missing: [CKRecord.ID]) {
+        guard netManager.isConnected else { return ([], []) }//: GUARD
+        return try await withCheckedThrowingContinuation { continuation in
+            // Defining everything that needs to happen within the continuation
+            // inside an internal method declaration (searchAttempt)
+            func searchAttempt(retry: Int) {
+                let audioPred: NSPredicate = NSPredicate(value: true)
+                let audioQuery: CKQuery = CKQuery(
+                    recordType: CkRecordType.audioReflection.rawValue, predicate: audioPred
+                )//: CKQuery
+                
+                var audioRecordingsInCloud: [CKRecord] = []
+                var audioRecordingsNotObtained: [CKRecord.ID] = []
+                
+                let queryOperation = CKQueryOperation(query: audioQuery)
+                queryOperation.desiredKeys = [
+                    String.mediaKey,
+                    String.assignedObjectKey
+                ]
+                queryOperation.zoneID = audioZone.zoneID
+                queryOperation.recordMatchedBlock = { recordId, result in
+                    switch result {
+                    case .success(let rec):
+                        audioRecordingsInCloud.append(rec)
+                    case .failure(let error):
+                        NSLog(">>>CloudMediaBrain | getAllAudioRecords")
+                        NSLog(">>>While attempting to find all stored audio reflections in iCloud, a record was found with the query but the record itself could not be obtained due to: \(error.localizedDescription).")
+                        NSLog(">>> Record ID: \(recordId.recordName)")
+                        audioRecordingsNotObtained.append(recordId)
+                    }//: SWITCH
+                }//: recordMatchedBlock
+                
+                queryOperation.queryResultBlock = { [weak self] result in
+                    switch result {
+                    case .success(_):
+                        NSLog(">>>CloudMediaBrain | getAllAudioRecords")
+                        NSLog(">>>The search operation completed successfully with a total of \(audioRecordingsInCloud.count) records obtained and \(audioRecordingsNotObtained.count) records that could not be obtained.")
+                        continuation.resume(returning: (audioRecordingsInCloud, audioRecordingsNotObtained))
+                    case .failure(let error):
+                        if let webError = error as? CKError,
+                           let _ = self?.shouldRetry(
+                            error: webError,
+                            currentRetry: retryCount
+                           ),
+                           let delay = self?.calculateRetryBackoff(
+                            retryCount: retryCount,
+                            error: webError
+                           ) {
+                            
+                            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                                searchAttempt(retry: retryCount + 1)
+                            }//: DISPATCH QUEUE
+                            
+                        } else {
+                            NSLog(">>>CloudMediaBrain | getAllAudioRecords")
+                            NSLog(">>>The queryOperation queryResultBlock encountered an unexpected error that is not a transient CKError: \(error.localizedDescription).")
+                            continuation.resume(throwing: error)
+                        }//: IF LET (webError = error as? CKError)
+                    }//: SWITCH
+                }//: queryResultBlock
+                cloudDB.add(queryOperation)
+            }//: FUNC
+            
+            // Calling the method so that it runs and the continuation resumes
+            // ** VERY IMPORTANT **
+            // If this method is not called, then the entire getAllAudioRecords method
+            // will hang indefinitely!!
+            searchAttempt(retry: retryCount)
+        }//: withCheckedContinuation
+    }//: getAllAudioRecords()
+    
+    
+    func getAllCertificateRecords(retryCount: Int = 0) async throws -> (found: [CKRecord], missing: [CKRecord.ID]) {
+        guard netManager.isConnected else { return ([], [])}//: GUARD
+        
+        let searchResult: ([CKRecord], [CKRecord.ID]) = try await withCheckedThrowingContinuation { continuation in
+            // Defining the method that the continuation needs to run
+            func certSearchAttempt(attemptNumber: Int) {
+                let certPred: NSPredicate = NSPredicate(value: true)
+                let certQuery: CKQuery = CKQuery(recordType: CkRecordType.certificate.rawValue, predicate: certPred)
+                
+                var certsInCloud: [CKRecord] = []
+                var certsNotObtainable: [CKRecord.ID] = []
+                
+                let queryOp = CKQueryOperation(query: certQuery)
+                queryOp.desiredKeys = [
+                    String.mediaKey,
+                    String.assignedObjectKey
+                ]
+                
+                queryOp.zoneID = certZone.zoneID
+                
+                queryOp.recordMatchedBlock = { recId, result in
+                    switch result {
+                    case .success(let rec):
+                        certsInCloud.append(rec)
+                    case .failure(let error):
+                        NSLog(">>>CloudMediaBrain | getAllCertificateRecords")
+                        NSLog(">>>While searching for all CE certificate records in iCloud, the query operation was able to find but not pull the record for \(recId.recordName).")
+                        NSLog(">>> Error details: \(error.localizedDescription).")
+                        certsNotObtainable.append(recId)
+                    }//: SWITCH
+                }//: recordMatchedBlock
+                queryOp.queryResultBlock = { [weak self] result in
+                    switch result {
+                    case .success(_):
+                        NSLog(">>>CloudMediaBrain | getAllCertificateRecords")
+                        NSLog(">>>The query operation for finding certificates in iCloud found a total of \(certsInCloud.count) records, with \(certsNotObtainable.count) records that could not be retrieved.")
+                        continuation.resume(returning: (certsInCloud, certsNotObtainable))
+                    case .failure(let error):
+                        if let webError = error as? CKError,
+                        let _ = self?.shouldRetry(error: webError, currentRetry: retryCount),
+                        let delay = self?.calculateRetryBackoff(
+                            retryCount: retryCount,
+                            error: webError
+                        ) {
+                            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                                certSearchAttempt(attemptNumber: retryCount + 1)
+                            }//: DISPATCH QUEUE
+                        } else {
+                            NSLog(">>>CloudMediaBrain | getAllCertificateRecords")
+                            NSLog(">>>After making multiple attempts, could not successfully retrieve certificate records from iCloud.")
+                            NSLog(">>> Error details: \(error.localizedDescription).")
+                            continuation.resume(throwing: error)
+                        }//: IF LET (webError)
+                    }//: SWITCH
+                }//: queryResultsBlock
+                cloudDB.add(queryOp)
+            }//: FUNC: certSearchAttempt
+            
+            // Calling the previously defined method
+            certSearchAttempt(attemptNumber: retryCount)
+        }//: CONTINUATION
+        
+        return searchResult
+    }//: getAllCertificateRecords
+    
     
 }//: EXTENSION

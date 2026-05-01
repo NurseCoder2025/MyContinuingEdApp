@@ -23,6 +23,7 @@ struct RenewalPeriodView: View {
     let renewalPeriod: RenewalPeriod?
     
     // Renewal period properties
+    // TODO: Test whether user can delete starting and ending dates
     @State private var periodStart: Date = Date.renewalStartDate
     @State private var periodEnd: Date = Date.renewalEndDate
     @State private var reinstatingYN: Bool = false
@@ -55,6 +56,10 @@ struct RenewalPeriodView: View {
         
         Be sure to check with your licensing board for any additional requirements that may apply.
         """
+    
+    // ALERTS
+    @State private var showRequiredFieldsIncompleteAlert: Bool = false
+    
     // MARK: - CORE DATA Fetches
     @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) var allCredentials: FetchedResults<Credential>
     // MARK: - BODY
@@ -181,18 +186,17 @@ struct RenewalPeriodView: View {
         } else {
             let newRenewal = dataController.createRenewalPeriod()
             mapProperties(for: newRenewal)
-            dataController.setRenewalWarningReferenceDate()
             addNewRenewalToHistoryFile(newRenewal)
         }//: IF LET (existingRenewal)
         
         dataController.save()
         dataController.assignActivitiesToRenewalPeriods()
+        dataController.saveCurrentRenewalEndingDatesInSettings()
     }//: saveRenewal()
     
     private func handleEndDateChanges(oldDate: Date, newDate: Date) {
         let settings = AppSettingsCache.shared
         if let existingRenewal = renewalPeriod {
-            dataController.setRenewalWarningReferenceDate()
             if let assignedCredId = existingRenewal.assignedCredentialID {
                 settings.updateRenewalEndDateHistory(credId: assignedCredId, oldDate: oldDate, with: newDate)
             }//: IF LET (assignedCredId)

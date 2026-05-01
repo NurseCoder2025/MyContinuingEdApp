@@ -47,6 +47,8 @@ extension CloudMediaBrain {
     
     func addOrUpdateMasterListEntryWithError(
         forRecord record: CKRecord.ID,
+        type: CkRecordType,
+        uploadedYN: Bool = false,
         errorText text: String,
         setDownloadFlag: Bool = false,
         setManDeletionFlag deleteFlag: Bool = false
@@ -63,8 +65,10 @@ extension CloudMediaBrain {
                 savedEntry.shouldDelete = true
             }//: IF (deleteFlag)
         } else {
-            let newEntry = LocalMediaFileInfo(
+            let newEntry = ICloudMediaFileOnDevice(
                 id: record,
+                recType: type,
+                uploadedBy: uploadedYN,
                 mediaURL: nil,
                 errorMessage: text,
                 manualDownload: setDownloadFlag,
@@ -77,6 +81,8 @@ extension CloudMediaBrain {
     
     func addOrUpdateMasterListEntryNoError(
         forRec record: CKRecord.ID,
+        type: CkRecordType,
+        uploadedYN: Bool = false,
         mediaAt savelocation: URL? = nil
     ) {
         let masterList = MasterMediaList.shared
@@ -87,8 +93,10 @@ extension CloudMediaBrain {
             savedEntry.shouldReDownload = false
             savedEntry.shouldDelete = false
         } else {
-            let newEntry = LocalMediaFileInfo(
+            let newEntry = ICloudMediaFileOnDevice(
                 id: record,
+                recType: type,
+                uploadedBy: uploadedYN,
                 mediaURL: savelocation,
                 errorMessage: ""
               )//: LocalMediaFileInfo

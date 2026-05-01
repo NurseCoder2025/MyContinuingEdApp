@@ -28,7 +28,7 @@ final class AppSettingsCache: @unchecked Sendable {
         }
     }//: _currentState
     
-    // class singleton
+    // MARK: - Singleton
     static let shared = AppSettingsCache()
     
     // MARK: - GETTER/SETTER PROPERTIES
@@ -80,10 +80,10 @@ final class AppSettingsCache: @unchecked Sendable {
     }//: allowanceUsed
     var renewalPeriodEndingWarningRefDate: Date? {
         get {
-            queue.sync { _currentState.renewalWarningReferenceDate }
+            queue.sync { _currentState.renewalWarningStartDate }
         }
         set {
-            queue.async {self._currentState.renewalWarningReferenceDate = newValue}
+            queue.async {self._currentState.renewalWarningStartDate = newValue}
         }
     }//: renewalPeriodEndingWarningRefDate
     var renewalEndDate: Date? {
@@ -102,6 +102,11 @@ final class AppSettingsCache: @unchecked Sendable {
             queue.async {self._currentState.userNeedsToAcknowledgeTransition = newValue}
         }
     }//: userToAcknowledgeRenewalEnded
+    var settingsStartDate: Date {
+        get {
+            queue.sync {_currentState.settingsCreatedOn}
+        }
+    }//: settingsStartDate
     
     // MARK: CE RELATED
     var renewalHistory: [UUID:[Date]] {
@@ -130,6 +135,14 @@ final class AppSettingsCache: @unchecked Sendable {
             queue.async {self._currentState.userNeedsToAcknowledgeTransition = newValue}
         }
     }//: renewalTransitionAcknowledgementNeeded
+    var credSelectionNeeded: Bool {
+        get {
+            queue.sync {_currentState.credentialSelectionNeeded}
+        }
+        set {
+            queue.async { self._currentState.credentialSelectionNeeded = newValue }
+        }
+    }//: credSelectionNeeded
     
     // MARK: CLOUD KIT
     var zonesCreated: Bool {
@@ -244,14 +257,14 @@ final class AppSettingsCache: @unchecked Sendable {
     
     // MARK: - RENEWAL PERIOD METHODS
     
-    func setCurrentRenewalReferenceDate(_ date: Date?) {
+    func setCurrentRenewalWarningWindowDate(_ date: Date?) {
         if let newDate = date {
             renewalPeriodEndingWarningRefDate = newDate.standardizedDate
+            encodeCurrentState()
         } else {
             renewalPeriodEndingWarningRefDate = nil
+            encodeCurrentState()
         }//: IF LET (newDate)
-        
-        encodeCurrentState()
     }//: setCurrentRenewalReferenceDate
     
     func setCurrentRenewalEndDate(_ date: Date?) {

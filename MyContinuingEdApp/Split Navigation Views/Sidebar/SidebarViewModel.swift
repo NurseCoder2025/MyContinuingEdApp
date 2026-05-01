@@ -74,7 +74,7 @@ extension SidebarView {
                 settings.removeRenewalEndDateFromHistory(credId: renewCred, date: endingOn)
                     dataController.delete(unwantedRenewal)
                     dataController.save()
-                    dataController.setRenewalWarningReferenceDate()
+                    dataController.saveCurrentRenewalEndingDatesInSettings()
             }//: IF LET (unwantedRenewal, renewCred, endingOn)
         }//: deleteRenewalPeriod
         

@@ -97,7 +97,8 @@ class DataController: ObservableObject {
     @Published var products: [Product] = []
     /// String value for displaying to the user which subscription type that they currently have.
     @Published var currentSubscriptionType: String = ""
-    
+    @Published var credentialSelectionNeeded: Bool = false
+    @Published var downgradeMade: DowngradeType = .noChange
     
     // MARK: - SAVING & DELETING METHODS
     

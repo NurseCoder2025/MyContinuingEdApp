@@ -50,3 +50,9 @@ enum UpgradeNeeded: Error {
 enum LoadState {
     case loading, loaded, error
 }//: LoadState
+
+enum DowngradeType: String, CaseIterable, Equatable, Identifiable {
+    case noChange, proToCore, coreToFree, proToFree
+    
+    var id: String { self.rawValue }
+}//: DowngradeType

@@ -22,6 +22,7 @@
 		3F0B13912F7E166700CC4A49 /* CKRecord+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F0B13902F7E166700CC4A49 /* CKRecord+Extensions.swift */; };
 		3F1209F72ED6383100D8D93A /* PaidAppConfigurations.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3F1209F62ED6383100D8D93A /* PaidAppConfigurations.storekit */; };
 		3F1209F92ED67FBF00D8D93A /* DataController-StoreKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */; };
+		3F188D4A2FA4ADAE00DE9370 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F188D492FA4ADAE00DE9370 /* Int+Extensions.swift */; };
 		3F2064522EB01DCB0036C4B1 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2064512EB01DCB0036C4B1 /* ContentViewModel.swift */; };
 		3F2064542EB028AB0036C4B1 /* CredentialSubCatListSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2064532EB028AB0036C4B1 /* CredentialSubCatListSheetViewModel.swift */; };
 		3F2064562EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2064552EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift */; };
@@ -32,6 +33,8 @@
 		3F207EB02F6EA1AB004693AE /* AudioPlayerProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */; };
 		3F28020D2F9048A50025884E /* DataController-CloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28020C2F9048A50025884E /* DataController-CloudKit.swift */; };
 		3F28020F2F904DD50025884E /* Double+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28020E2F904DD50025884E /* Double+Extensions.swift */; };
+		3F28B4C62FA3FCE9005F1EEB /* CredentialSelectionForDowngradeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28B4C52FA3FCE9005F1EEB /* CredentialSelectionForDowngradeSheet.swift */; };
+		3F28B4C82FA3FE4B005F1EEB /* CredentialListRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F28B4C72FA3FE4B005F1EEB /* CredentialListRowView.swift */; };
 		3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2A42D42EA2E43700B095CB /* DAButtonView.swift */; };
 		3F2BD1012F11FCAD003C62D3 /* DataController-Reinstatement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */; };
 		3F33A35B2F6A206E00C24210 /* Recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F33A35A2F6A206E00C24210 /* Recording.swift */; };
@@ -218,7 +221,7 @@
 		3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */; };
 		3FE90B992F109BC700BD780C /* NoSpecialCatsToAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */; };
 		3FF090402F9996810057D15F /* AudioInfo-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */; };
-		3FF090422F99B98A0057D15F /* LocalMediaFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */; };
+		3FF090422F99B98A0057D15F /* ICloudMediaFileOnDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF090412F99B98A0057D15F /* ICloudMediaFileOnDevice.swift */; };
 		3FF090442F99BDFD0057D15F /* MasterMediaList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF090432F99BDFD0057D15F /* MasterMediaList.swift */; };
 		3FF5ACD22F296E5A0038979D /* Achievement-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */; };
 		3FF5ACD42F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */; };
@@ -362,6 +365,7 @@
 		3F0B13902F7E166700CC4A49 /* CKRecord+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extensions.swift"; sourceTree = "<group>"; };
 		3F1209F62ED6383100D8D93A /* PaidAppConfigurations.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = PaidAppConfigurations.storekit; sourceTree = "<group>"; };
 		3F1209F82ED67FBF00D8D93A /* DataController-StoreKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-StoreKit.swift"; sourceTree = "<group>"; };
+		3F188D492FA4ADAE00DE9370 /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		3F2064512EB01DCB0036C4B1 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		3F2064532EB028AB0036C4B1 /* CredentialSubCatListSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSubCatListSheetViewModel.swift; sourceTree = "<group>"; };
 		3F2064552EB030AD0036C4B1 /* CredentialManagementSheetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialManagementSheetViewModel.swift; sourceTree = "<group>"; };
@@ -372,6 +376,8 @@
 		3F207EAF2F6EA1AB004693AE /* AudioPlayerProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerProgressBar.swift; sourceTree = "<group>"; };
 		3F28020C2F9048A50025884E /* DataController-CloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-CloudKit.swift"; sourceTree = "<group>"; };
 		3F28020E2F904DD50025884E /* Double+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Extensions.swift"; sourceTree = "<group>"; };
+		3F28B4C52FA3FCE9005F1EEB /* CredentialSelectionForDowngradeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialSelectionForDowngradeSheet.swift; sourceTree = "<group>"; };
+		3F28B4C72FA3FE4B005F1EEB /* CredentialListRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialListRowView.swift; sourceTree = "<group>"; };
 		3F2A42D42EA2E43700B095CB /* DAButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAButtonView.swift; sourceTree = "<group>"; };
 		3F2BD1002F11FCAD003C62D3 /* DataController-Reinstatement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DataController-Reinstatement.swift"; sourceTree = "<group>"; };
 		3F33A35A2F6A206E00C24210 /* Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recording.swift; sourceTree = "<group>"; };
@@ -551,7 +557,7 @@
 		3FE90B962F108A2200BD780C /* ReinstatementAdditionalItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReinstatementAdditionalItemsView.swift; sourceTree = "<group>"; };
 		3FE90B982F109BC700BD780C /* NoSpecialCatsToAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoSpecialCatsToAddView.swift; sourceTree = "<group>"; };
 		3FF0903F2F9996810057D15F /* AudioInfo-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioInfo-CoreDataHelper.swift"; sourceTree = "<group>"; };
-		3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMediaFileInfo.swift; sourceTree = "<group>"; };
+		3FF090412F99B98A0057D15F /* ICloudMediaFileOnDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudMediaFileOnDevice.swift; sourceTree = "<group>"; };
 		3FF090432F99BDFD0057D15F /* MasterMediaList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterMediaList.swift; sourceTree = "<group>"; };
 		3FF5ACD12F296E5A0038979D /* Achievement-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Achievement-CoreDataHelper.swift"; sourceTree = "<group>"; };
 		3FF5ACD32F29C4600038979D /* ReflectionResponse-CoreDataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReflectionResponse-CoreDataHelper.swift"; sourceTree = "<group>"; };
@@ -807,6 +813,7 @@
 				3F2A42D72EA2E67000B095CB /* Core Data Helpers */,
 				F2BC949E2E32D0C100926B3D /* Bundle-Decodable.swift */,
 				F272591C2E78D0B800210F11 /* Extensions-Styles.swift */,
+				3F188D492FA4ADAE00DE9370 /* Int+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -889,6 +896,8 @@
 		3F2A42CB2EA2C79900B095CB /* Credentials */ = {
 			isa = PBXGroup;
 			children = (
+				3F28B4C52FA3FCE9005F1EEB /* CredentialSelectionForDowngradeSheet.swift */,
+				3F28B4C72FA3FE4B005F1EEB /* CredentialListRowView.swift */,
 				F2506F602E610BC700D25D33 /* CredentialSheet.swift */,
 				F2CFCE612E70D41D00443C5C /* NoCredentialsButtonView.swift */,
 				3F2064582EB035CA0036C4B1 /* Credential Sheet Sub Views */,
@@ -1133,7 +1142,7 @@
 			children = (
 				3FC450892F89D8F4005DFD4D /* CurrentSettingsState.swift */,
 				3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */,
-				3FF090412F99B98A0057D15F /* LocalMediaFileInfo.swift */,
+				3FF090412F99B98A0057D15F /* ICloudMediaFileOnDevice.swift */,
 				3FF090432F99BDFD0057D15F /* MasterMediaList.swift */,
 			);
 			path = Caches;
@@ -1737,7 +1746,7 @@
 				3FBCBE662EB2FDCE0050D6A5 /* Settings.swift in Sources */,
 				3FB7C7552F94637F00299197 /* CoreDataEntityProtocols.swift in Sources */,
 				3F39AFD12EA18AC5003F5E78 /* SidebarSmartFilterRow.swift in Sources */,
-				3FF090422F99B98A0057D15F /* LocalMediaFileInfo.swift in Sources */,
+				3FF090422F99B98A0057D15F /* ICloudMediaFileOnDevice.swift in Sources */,
 				F2BC94A52E32DA4300926B3D /* Awards.swift in Sources */,
 				3FC450842F89D04F005DFD4D /* CloudMediaBrain.swift in Sources */,
 				3FA667522F73ABEE00066FF7 /* ActivityReflectionPromptResponseRowView.swift in Sources */,
@@ -1786,6 +1795,7 @@
 				F2612A252E87512D00CC463D /* ActivityCEDetailsView.swift in Sources */,
 				3FA6675A2F73F40100066FF7 /* PromptCategoryJSON.swift in Sources */,
 				3F67DB722F15B9BB00489758 /* SpecialCatHrsNeededCardView.swift in Sources */,
+				3F28B4C82FA3FE4B005F1EEB /* CredentialListRowView.swift in Sources */,
 				3F2A42D52EA2E43700B095CB /* DAButtonView.swift in Sources */,
 				3FE372402ECE6D3200CCF0FC /* BasicFeaturesGridView.swift in Sources */,
 				3F6B4C782F92E736006C8352 /* MediaFileRelatedEnums.swift in Sources */,
@@ -1832,6 +1842,7 @@
 				3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */,
 				3FA59F312F6DF9BC00EA1418 /* AudioMetricBar.swift in Sources */,
 				3F6918AB2EA6C85400435E02 /* SidebarTagsSectionView.swift in Sources */,
+				3F28B4C62FA3FCE9005F1EEB /* CredentialSelectionForDowngradeSheet.swift in Sources */,
 				3F71B99D2F2B043E00F1AA2C /* CustomPromptSelectionView.swift in Sources */,
 				F2506F612E610BC700D25D33 /* CredentialSheet.swift in Sources */,
 				F27B0FC52E2EF6AA00A8B4E9 /* GeneralExtensions.swift in Sources */,
@@ -1930,6 +1941,7 @@
 				F25DCC742E553470006EFEDE /* CameraPickerView.swift in Sources */,
 				F254BB9D2E74EFFF0020DB28 /* DismissButtonCustomizations.swift in Sources */,
 				3FE90B952F10888700BD780C /* ReinstatementDocumentationView.swift in Sources */,
+				3F188D4A2FA4ADAE00DE9370 /* Int+Extensions.swift in Sources */,
 				3F20645F2EB049AD0036C4B1 /* DisciplinaryActionListSheetViewModel.swift in Sources */,
 				3F3905F12ECC209D006EB291 /* TotalRenewalProgressBar.swift in Sources */,
 				3F7094742FA1D79100C9FDEE /* NetworkManager.swift in Sources */,

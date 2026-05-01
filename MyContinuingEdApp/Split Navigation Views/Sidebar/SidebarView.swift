@@ -5,6 +5,7 @@
 //  Created by Manann on 7/9/25.
 //
 
+import CoreData
 import SwiftUI
 import UIKit
 
@@ -25,20 +26,15 @@ struct SidebarView: View {
     @State private var showUpgradeToPaidSheet: Bool = false
     @State private var showFeaturesDetailsSheet: Bool = false
     
+    // Downgrade related
+    @State private var showCredentialSelectionSheet: Bool = false
+    @State var selectedCredentialToKeep: Credential? = nil
+    
     // MARK: Smart filters
     let smartFilters: [Filter] = [.allActivities, .recentActivities]
     
-    // MARK: - Computed Properties
-    var paidStatus: PurchaseStatus {
-        switch dataController.purchaseStatus {
-        case PurchaseStatus.proSubscription.id:
-            return .proSubscription
-        case PurchaseStatus.basicUnlock.id:
-            return .basicUnlock
-        default:
-            return .free
-        }
-    }//: paidStatus
+    // MARK: - CORE DATA
+    @FetchRequest(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)]) var allCredentials: FetchedResults<Credential>
    
     // MARK: - BODY
     var body: some View {
@@ -100,6 +96,26 @@ struct SidebarView: View {
             .navigationTitle("CE Filters")
             // MARK: - Toolbar
             .toolbar(content: SidebarViewTopToolbar.init)
+        // MARK: - ON CHANGE
+            .onChange(of: dataController.downgradeMade) {
+                handleDowngradeMade()
+            }//: ON CHANGE
+        
+            .onChange(of: selectedCredentialToKeep) { cred in
+                // This will only run when the user has more than 1 credential
+                // because selectedCredentialToKeep will only change when the
+                // credential selection sheet crops up, and that is only called
+                // by the handledDowngradeMade method when the user has > 1
+                // credentials per the Credential fetch request.
+                if let credToKeep = cred {
+                    let change = dataController.downgradeMade
+                    if change != .noChange {
+                        Task{
+                            await dataController.initiateDowngradeChanges(changeType: change, selectedCred: credToKeep)
+                        }//: TASK
+                    }//: IF (!= .noChange)
+                }//: IF LET
+            }//: ON CHANGE
         // MARK: - ON APPEAR
             .onAppear {
                 // First time running of app only
@@ -112,6 +128,7 @@ struct SidebarView: View {
                     await viewModel.dataController.updateAllReminders()
                 }//: TASK
                 
+                handleDowngradeMade()
             }//: ON APPEAR
         // MARK: - Alerts
         .alert("Name New Tag", isPresented: $showAddNewTagAlert) {
@@ -169,13 +186,13 @@ struct SidebarView: View {
             let currentRenewalNum = viewModel.dataController.currentNumberOfRenewals
             let existingRenewal = data.renewal
             
-            if paidStatus != .free {
+            if userPaidSupportLevel != .free {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
                     .presentationDetents([.large])
-            } else if paidStatus == .free && currentRenewalNum < 1 {
+            } else if userPaidSupportLevel == .free && currentRenewalNum < 1 {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: data.renewal)
                     .presentationDetents([.large])
-            } else if paidStatus == .free, currentRenewalNum == 1, let renewal = existingRenewal {
+            } else if userPaidSupportLevel == .free, currentRenewalNum == 1, let renewal = existingRenewal {
                 RenewalPeriodView(renewalCredential: data.credential, renewalPeriod: renewal)
                     .presentationDetents([.large])
             } else {
@@ -207,6 +224,10 @@ struct SidebarView: View {
             ReinstatementInfoSheet(reinstatement: reInfo)
         }//: SHEET
         
+        // MARK: Credential Selection
+        .sheet(isPresented: $showCredentialSelectionSheet) {
+            CredentialSelectionForDowngradeSheet(selectedCredToKeep: selectedCredentialToKeep)
+        }//: SHEET
         
     } //: BODY
     
@@ -219,12 +240,37 @@ struct SidebarView: View {
         openURL(settingsURL)
     }//: showAppSettings()
     
+    func handleDowngradeMade() {
+        switch dataController.downgradeMade {
+        case .noChange:
+            return
+        case .proToCore:
+            handleAllProDowngrades(change: .proToCore)
+        case .coreToFree:
+            Task{
+               await dataController.initiateDowngradeChanges(changeType: .coreToFree, selectedCred: nil)
+            }//: TASK
+        case .proToFree:
+            handleAllProDowngrades(change: .proToFree)
+        }//: SWITCH
+    }//: handelDowngrademade()
+    
+    private func handleAllProDowngrades(change: DowngradeType) {
+        if allCredentials.count > 1 {
+            showCredentialSelectionSheet = true
+        } else {
+            Task{
+                await dataController.initiateDowngradeChanges(changeType: change, selectedCred: nil)
+            }//: TASK
+        }//: IF ELSE (allCredentials.count > 1)
+    }//: handleAllProDowngrades
+    
     
  // MARK: - INIT
     init(dataController: DataController) {
         let viewModel = ViewModel(dataController: dataController)
         _viewModel = StateObject(wrappedValue: viewModel)
-    }
+    }//: INIT
         
 } //: STRUCT
 

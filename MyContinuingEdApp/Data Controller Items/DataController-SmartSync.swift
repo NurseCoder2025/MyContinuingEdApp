@@ -18,6 +18,9 @@ extension DataController {
         var certCheckResult: Bool = false
         var uploadedCertsNotInCurrentPeriod: [CertificateInfo] = []
         
+        // Check to see if there even is a current renewal period, and if so,
+        // use that to filter out all certificates that have been uploaded for a
+        // different renewal period
         if let currentRenewal = getCurrentRenewalPeriods().first {
             let renewalFetch = RenewalPeriod.fetchRequest()
             renewalFetch.sortDescriptors = [NSSortDescriptor(key: "periodEnd", ascending: true)]
@@ -31,43 +34,65 @@ extension DataController {
             if uploadedCertsNotInCurrentPeriod.isNotEmpty {
                 certCheckResult = true
             }//: IF (uploadedCertsNotInCurrentPeriod)
+        } else {
+            // Even if there is no current renewal period, there still might be older
+            // or even future renewals that have been entered.  If so, then for each
+            // of those simply find all certificates that have been uploaded for each.
+            let renewalFetch = RenewalPeriod.fetchRequest()
+            renewalFetch.sortDescriptors = [NSSortDescriptor(key: "periodEnd", ascending: true)]
+            
+            let allRenewals = (try? context.fetch(renewalFetch)) ?? []
+            guard allRenewals.isNotEmpty else { return (false, []) }//: GUARD
+            
+            for renewal in allRenewals {
+                let uploadedCerts = renewal.getAllUploadedCertificates()
+                uploadedCertsNotInCurrentPeriod.append(contentsOf: uploadedCerts)
+            }//: LOOP
+            
+            if uploadedCertsNotInCurrentPeriod.isNotEmpty {
+                certCheckResult = true
+            }//: IF (uploadedCertsNotInCurrentPeriod.isNotEmpty)
+            
         }//: IF LET (getCurrentRenewalPeriods().first)
         
         return (certCheckResult, uploadedCertsNotInCurrentPeriod)
     }//: areThereUploadedCertsOutsideCurrentRenewal()
     
     
-    func setRenewalWarningReferenceDate(daysAhead: Int = 30) {
+    func saveCurrentRenewalEndingDatesInSettings(warningStarts daysAhead: Int = 60) {
         guard userPaidSupportLevel == .basicUnlock else { return } //: GUARD
-        guard let currentRenewal = getCurrentRenewalPeriods().first,
-              let currentEndsOn = currentRenewal.periodEnd else {
-            let settings = AppSettingsCache.shared
-            settings.setCurrentRenewalEndDate(nil)
-            settings.setCurrentRenewalReferenceDate(nil)
-            return
-        } //: GUARD
+
+        let settings = AppSettingsCache.shared
+        
+        if let endingDate = getCurrentRenewalEndDate() {
+            settings.setCurrentRenewalEndDate(endingDate)
+        }//: IF LET (endingDate)
+        
+        if let windowDate = getRenewalWarningWindowStartDate(daysAhead: daysAhead) {
+            settings.setCurrentRenewalWarningWindowDate(windowDate)
+        }//: IF LET (windowDate)
+    }//: saveCurrentRenewalEndingDatesInSettings(daysAhead)
+    
+    func getRenewalWarningWindowStartDate(daysAhead: Int = 60) -> Date? {
+        guard userPaidSupportLevel == .basicUnlock else { return nil }//: GUARD
+        guard let currentRenewal = getCurrentRenewalPeriods().first, let currentEnds = currentRenewal.periodEnd else { return nil }//: GUARD
         
         let settings = AppSettingsCache.shared
-        guard settings.userToAcknowledgeRenewalEnding else {
-            settings.setCurrentRenewalReferenceDate(nil)
-            return
-        } //: GUARD
-        
         let calendar = Calendar.current
-        let currentDate = Date.now.standardizedDate
-        let daysInTimeInterval: TimeInterval = Double(daysAhead * 24 * 60 * 60)
+        let daysToSubtract: Int = -daysAhead
         
-        if currentEndsOn.timeIntervalSince(currentDate) >= daysInTimeInterval {
-            if let targetRefDate = calendar.date(byAdding: .second, value: Int(daysInTimeInterval), to: currentEndsOn)?.standardizedDate {
-                settings.setCurrentRenewalReferenceDate(targetRefDate)
-            }//: IF LET (targetRefDate)
-        } else if currentEndsOn.timeIntervalSince(currentDate) >= 0 {
-            let targetRefDate = currentDate
-            settings.setCurrentRenewalReferenceDate(targetRefDate)
-        } else {
-            return
-        }//: IF ELSE (timeIntervalSince)
-    }//: setRenewalWarningReferenceDate(daysAhead)
+        let standardEndDate = currentEnds.standardizedDate
+        let windowStartDate = calendar.date(byAdding: .day, value: daysToSubtract, to: standardEndDate)
+        
+        return windowStartDate?.standardizedDate
+    }//: getRenewalWarningWindowStartDate(daysAhead)
+    
+    func getCurrentRenewalEndDate() -> Date? {
+        guard let currentRenewal = getCurrentRenewalPeriods().first, let currentEnds = currentRenewal.periodEnd else { return nil }
+        return currentEnds.standardizedDate
+    }//: getCurrentRenewalEndDate()
+    
+    
    
     
 }//: DATA CONTROLLER
