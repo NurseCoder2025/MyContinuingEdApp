@@ -44,6 +44,10 @@ final class MasterMediaList: @unchecked Sendable {
         }//: SYNC
     }//: filesToDownload
     
+    var filesToAutoReDownload: [ICloudMediaFileOnDevice] {
+        queue.sync { _allLocalMedia.filter({$0.willRetryAutoDownload})}
+    }//: filesToAutoReDownload
+    
     var filesToDelete: [ICloudMediaFileOnDevice] {
         queue.sync {
             return _allLocalMedia.filter {$0.shouldDelete}//: filter
@@ -64,21 +68,30 @@ final class MasterMediaList: @unchecked Sendable {
     
     var filesToLeaveSavedOnDevice: [ICloudMediaFileOnDevice] {
         queue.sync {
-            _allLocalMedia.filter({$0.keepOnDevice})
+            _allLocalMedia.filter({$0.fileOriginatedOnThisDevice})
         }
     }//: filesToLeaveSavedOnDevice
+    
+    var filesToRetryUploading: [ICloudMediaFileOnDevice] {
+        queue.sync { _allLocalMedia.filter( {$0.shouldRetryUpload} ) }
+    }//: filesToRetryUploading
     
     // MARK: - METHODS
     
     func addMediaRecord(
         fromRec record: CKRecord.ID,
         type: CkRecordType,
-        keepYN: Bool,
+        originatedHere originated: Bool,
         savedAt: URL
     )  {
         guard doesNOThaveRecord(withID: record) else { return }
         queue.async {
-            let newItem = ICloudMediaFileOnDevice(id: record, recType: type, keepOnDevice: keepYN, mediaURL: savedAt)
+            let newItem = ICloudMediaFileOnDevice(
+                id: record,
+                recType: type,
+                originatedOnDevice: originated,
+                mediaURL: savedAt
+            )//: newItem
             self._allLocalMedia.insert(newItem)
         }//: async
     }//: addMediaRecord(fromRec, savedAt)
@@ -86,10 +99,12 @@ final class MasterMediaList: @unchecked Sendable {
     func addMediaRecWithError(
         fromRec record: CKRecord.ID,
         type: CkRecordType,
-        keepYN: Bool,
+        originatedHere originated: Bool,
         message: String,
         downloadFlag: Bool? = nil,
-        deletionFlag: Bool? = nil
+        deletionFlag: Bool? = nil,
+        autoRetryDownload: Bool? = nil,
+        retryUploadFlag: Bool? = nil
     ) {
         guard doesNOThaveRecord(withID: record) else {
             queue.async {
@@ -104,12 +119,26 @@ final class MasterMediaList: @unchecked Sendable {
                         existingRec.shouldDelete = needsDeletion
                     }//: IF LET
                     
+                    if let autoReDownload = autoRetryDownload {
+                        existingRec.willRetryAutoDownload = autoReDownload
+                    }//: IF LET
+                    
+                    if let uploadFlag = retryUploadFlag {
+                        existingRec.shouldRetryUpload = uploadFlag
+                    }//: IF LET (uploadFlag)
+                    
                 }//: IF LET
             }//: async
             return
         }//: GUARD
         queue.async {
-            let newItem = ICloudMediaFileOnDevice(id: record, recType: type, keepOnDevice: keepYN, mediaURL: nil, errorMessage: message)
+            let newItem = ICloudMediaFileOnDevice(
+                id: record,
+                recType: type,
+                originatedOnDevice: originated,
+                mediaURL: nil,
+                errorMessage: message
+            )//: newItem
             
             if let needsDownload = downloadFlag {
                 newItem.shouldReDownload = needsDownload
@@ -119,6 +148,14 @@ final class MasterMediaList: @unchecked Sendable {
                 newItem.shouldDelete = needsDeletion
             }//: IF LET
             
+            if let needsAutoDownloaded = autoRetryDownload {
+                newItem.willRetryAutoDownload = needsAutoDownloaded
+            }//: IF LET
+            
+            if let uploadFlag = retryUploadFlag {
+                newItem.shouldRetryUpload = uploadFlag
+            }//: IF LET (uploadFlag)
+            
             self._allLocalMedia.insert(newItem)
         }//: async
     }//: addMediaRecWithError(fromRec, message)
@@ -127,7 +164,9 @@ final class MasterMediaList: @unchecked Sendable {
         fromRec record: CKRecord.ID,
         message: String,
         downloadFlag: Bool? = nil,
-        deleteFlag: Bool? = nil
+        deleteFlag: Bool? = nil,
+        autoRetryDownloadFlag: Bool? = nil,
+        setRetryUploadFlag: Bool? = nil
     ) {
         guard hasRecord(withID: record) else { return }
         
@@ -140,7 +179,17 @@ final class MasterMediaList: @unchecked Sendable {
                 
                 if let setDeletionFlag = deleteFlag {
                     itemToUpdate.shouldDelete = setDeletionFlag
-                }//: IF LET
+                }//: IF LET (setDeletionFlag)
+                
+                if let reDownloadFlag = autoRetryDownloadFlag {
+                    itemToUpdate.willRetryAutoDownload = reDownloadFlag
+                }//: IF LET (reDownloadFlag)
+                
+                if let uploadFlag = setRetryUploadFlag {
+                    itemToUpdate.shouldRetryUpload = uploadFlag
+                }//: IF LET (uploadFlag)
+                
+                self.saveList()
             }//: IF LET
         }//: async
     }//: updateMediaRecWithError(fromRec, message)

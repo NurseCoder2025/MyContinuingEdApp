@@ -32,3 +32,8 @@ import Foundation
 protocol SyncIdentifiable {
     var syncID: String { get }
 }//: PROTOCOL
+
+
+protocol InfoIcon {
+    var userMessage: String { get }
+}//: PROTOCOL

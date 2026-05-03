@@ -135,27 +135,28 @@ enum UserCloudPrefKey: String, CaseIterable, Codable {
     
 }//: userCloudPrefKeys
 
-enum CloudSyncError: Error {
+enum CloudSyncError: Error, CaseIterable {
     case paidUpgradeNeeded
     case proLevelPurchaseNeeded
     case audioSyncProhibited
-    case prefersLocalStorage(MediaClass)
+    case prefersLocalStorage
     case cloudUnavailable
-    case cloudSaveError(MediaClass)
-    case mediaDeletionError(String)
-    case cloudRecordNotFound(MediaClass)
+    case cloudSaveError
+    case mediaDeletionError
+    case cloudRecordNotFound
     case genCloudRecNotFound
     case mediaDownloadFailed
-    case basicCertLimitReached(Int)
+    case basicCertLimitReached
     case noRenewalPeriodsSaved
     case noCurrentRenewalFound
     case syncLimitNotApplicable
     case smartSyncDateWindowError
     case smartSyncWindowCalcError
     case smartSyncCertOutOfWindow
-    case smartSyncMaxWindowExceeded(Int)
+    case smartSyncMaxWindowExceeded
     case querySubscriptionNotCreated
     case deviceOffline
+    case mediaModelError
     
     var localizedDescription: String {
         switch self {
@@ -165,22 +166,22 @@ enum CloudSyncError: Error {
             return "This feature is currently restricted to users who have purchased either a Pro Subscription or the Pro Lifetime in-app purchase. Upgrade today to enjoy all of the extra benefits!"
         case .audioSyncProhibited:
             return "You need to either have a Pro Subscription or the Pro Lifetime upgrade in order to enjoy unlimited iCloud syncing for audio reflections. Updgrade today!"
-        case .prefersLocalStorage(let mediaType):
-            return "You currently prefer to store all of your \(mediaType.pluralString) files locally. Change this by going into the Settings menu (in this app) and toggle the control to sync files with iCloud."
+        case .prefersLocalStorage:
+            return "You currently prefer to store all of your files locally. Change this by going into the Settings menu (in this app) and toggle the control to sync files with iCloud."
         case .cloudUnavailable:
             return "Unfortunately, access to your iCloud account isn't available due to one of many potential reasons. Please check your network connection, iCloud settings, and current iCloud drive storage capacity."
-        case .cloudSaveError(let type):
-            return "A technical iCloud-side error was encountered while trying to save the \(type.rawValue) data. Please try uploading it later."
-        case .mediaDeletionError(let descript):
-            return "The app was unable to delete the uploaded certificate file due to the following error: \(descript). Please try again later."
-        case .cloudRecordNotFound(let type):
-            return "The app was unable to locate the iCloud file for the \(type.rawValue) you are trying to download or delete. The file may have been deleted or moved. Please try again later."
+        case .cloudSaveError:
+            return "A technical iCloud-side error was encountered while trying to save the data. Please try uploading it later."
+        case .mediaDeletionError:
+            return "The app was unable to delete the uploaded certificate. Please try again later."
+        case .cloudRecordNotFound:
+            return "The app was unable to locate the iCloud file for the item you are trying to download or delete. The file may have been deleted or moved. Please try again later."
         case .genCloudRecNotFound:
             return "The app was unable to locate the iCloud file for the media you are trying to download or delete. The file may have been deleted or moved. Please try again later."
         case .mediaDownloadFailed:
             return "The app could not move the downloaded media file to the proper location due to a technical error. Please try again and notify the developer if this continues to occur."
-        case .basicCertLimitReached(let limit):
-            return "You have reached the \(limit)MB limit for syncing certificates in iCloud. Upgrade to a Pro Subscription or the Pro Lifetime purchase in order to enjoy unlimited syncing for certificates + audio too!"
+        case .basicCertLimitReached:
+            return "You have reached the \(Int(Double.maxCertAllowance))MB limit for syncing certificates in iCloud. Upgrade to a Pro Subscription or the Pro Lifetime purchase in order to enjoy unlimited syncing for certificates + audio too!"
         case .noRenewalPeriodsSaved:
             return "Unable to find and load the current renewal period for your credential. Please add one in the CeCache home screen."
         case .noCurrentRenewalFound:
@@ -193,12 +194,14 @@ enum CloudSyncError: Error {
             return "The SmartSync feature was unable to calculate the starting point for the sync window due to a technical problem and so the certificate was not uploaded to iCloud automatically. However, you can do so manually if you'd like."
         case .smartSyncCertOutOfWindow:
             return "According to the window value you set, the selected certificate is too old to be synced to iCloud automatically. However, you can either adjust the window value in the app settings or manually upload it."
-        case .smartSyncMaxWindowExceeded(let max):
-            return "A value greater than the maximum number of years for SmartSync (\(max)) was used and so the certificate was not uploaded to iCloud automatically. However, you can do so manually if you'd like."
+        case .smartSyncMaxWindowExceeded:
+            return "A value greater than the maximum number of years for SmartSync was used and so the certificate was not uploaded to iCloud automatically. However, you can do so manually if you'd like."
         case .querySubscriptionNotCreated:
             return "Unable to automatically delete or update media files on other files due to an iCloud sync setup error. The app will retry the setup process again."
         case .deviceOffline:
             return "Your device appears to be offline when the app tried to connect to iCloud. Please try again once you have re-established a solid network connection."
+        case .mediaModelError:
+            return "Data that is needed to upload the CE certificate could not be retrieved due to a technical error. Please try again. If this error still happens, try saving a different certificate file. Contact the developer if neither of those steps resolve the problem."
         }//: SWITCH
     }//: localizedDescription
     
@@ -267,7 +270,7 @@ enum MediaCloudOption {
 
 enum CoreUserRenewalDecision: Codable {
     case upgradeToPro
-    case archiveExistingCerts([UUID])
+    case archiveExistingCerts
     
     var choiceLabel: String {
         switch self {
@@ -282,7 +285,7 @@ enum CoreUserRenewalDecision: Codable {
         switch self {
         case .upgradeToPro:
             return "With this choice you keep all of your certificates that are already in iCloud and gain the flexibility to store certificates for a set number of years that you specify, instead of just the current renewal period, with the SmartSync window preference."
-        case .archiveExistingCerts(_):
+        case .archiveExistingCerts:
             return "Archiving certificates will remove them from iCloud but a copy will remain on the device on which you respond to this prompt. Copies on all other devices will be deleted. However, you can still sync up to 500MB of certificates earned during the new renewal period across all of your devices."
         }//: SWITCH
     }//: choiceGuidance

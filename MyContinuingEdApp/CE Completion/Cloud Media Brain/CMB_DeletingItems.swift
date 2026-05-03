@@ -47,7 +47,7 @@ extension CloudMediaBrain {
                     setManDeletionFlag: true
                 )//: addOrUpdateMasterListEntryWithError
                 return Result.failure(
-                    CloudSyncError.mediaDeletionError("Error deleting the iCloud file: \(error.localizedDescription)")
+                    CloudSyncError.mediaDeletionError
                 )//: failure
             }//: DO-CATCH
         } else {
@@ -57,7 +57,7 @@ extension CloudMediaBrain {
                 errorText: "Unable to delete the media file on iCloud because it could not be found. You may need to manually remove the file from all other devices.", setManDeletionFlag: true
             )//: addOrUpdateMasterListEntryWithError
             return Result.failure(
-                CloudSyncError.mediaDeletionError("Unable to locate the iCloud record for the \(model.ckRecType.rawValue) you are trying to delete.")
+                CloudSyncError.mediaDeletionError
             )//: failure
         }//: IF LET ELSE (matchingRec)
     }//: deleteEntireRecord(for)
@@ -87,7 +87,7 @@ extension CloudMediaBrain {
                     setManDeletionFlag: true
                 )//: addOrUpdateMasterListEntryWithError
                 return Result.failure(
-                    CloudSyncError.mediaDeletionError("Error deleting the iCloud file: \(webError.localizedDescription)")
+                    CloudSyncError.mediaDeletionError
                 )//: failure
             }//: IF (shouldRetry)
         } catch {
@@ -98,7 +98,7 @@ extension CloudMediaBrain {
                 setManDeletionFlag: true
             )//: addOrUpdateMasterListEntryWithError
             return Result.failure(
-                CloudSyncError.mediaDeletionError("Error deleting the iCloud file: \(error.localizedDescription)")
+                CloudSyncError.mediaDeletionError
             )//: failure
         }//: DO-CATCH
         

@@ -48,6 +48,14 @@ final class CloudMediaBrain: ObservableObject {
         return NetworkManager.shared.isConnected
     }//: deviceIsOnline
     
+    var userWantsCertsInCloud: Bool {
+        settings.shouldStoreMediaInCloud(forMedia: .certificate)
+    }//: userWantsCertsInCloud
+    
+    var userWantsAudioReflectionsInCloud: Bool {
+        settings.shouldStoreMediaInCloud(forMedia: .audioReflection)
+    }//: userWantsAudioReflectionsInCloud
+    
     // MARK: - PRELIM CHECKS
     
     func getAnyPrelimCloudSyncRelatedIssues() -> Set<CloudPrelimCheckError> {

@@ -170,7 +170,7 @@ extension CertificateInfo {
     }//: isCertEligibleForSmartSync(syncWindow)
     
     
-    private func proUserSmartSyncCheck(with window: Double) -> Result<Bool, CloudSyncError> {
+    func proUserSmartSyncCheck(with window: Double) -> Result<Bool, CloudSyncError> {
         guard let ceCompltedOn = completedCe?.dateCompleted,
                 window >= 1.0 else {
             NSLog(">>> CertificateInfo helper method error: proUserSmartSyncCheck")
@@ -182,7 +182,7 @@ extension CertificateInfo {
         
         guard window <= Double.maxCertAllowance else {
             let windowInt: Int = Int(window)
-            return Result.failure(CloudSyncError.smartSyncMaxWindowExceeded(windowInt))
+            return Result.failure(CloudSyncError.smartSyncMaxWindowExceeded)
         }//: GUARD
         
         let convertedWindow = Int(window)
@@ -208,8 +208,25 @@ extension CertificateInfo {
         }//: IF (syncCheck)
     }//: proUserSmartSyncCheck(with)
     
-    private func basicUserSmartSyncCheck() -> Result<Bool, CloudSyncError> {
-        guard let ceRenewals: [RenewalPeriod] = completedCe?.renewals as? [RenewalPeriod] else {
+    /// CertificateInfo method that determines whether a selected CE certificate image or pdf
+    /// file can be uploaded to iCloud as part of the SmartSync feature for existing CE Cache Core
+    /// users.
+    /// - Returns: A Result struct with a boolean of true if the certificate can be uploaded to iCloud
+    /// based upon Core's limited SmartSync criteria or, if not, the specific reason why not as returned
+    /// via the CloudSyncError enum case.
+    ///
+    /// This method only applies to users whose app purchase tier is CE Cache Core. The rules are
+    /// straightforward: 500MB of certificate related binary data can be syned to iCloud, but only
+    /// for the current renewal period.
+    ///
+    /// Enforcement of these rules occurs by looking for the current renewal period (Core users
+    /// can only have 1 Credential, so all renewals are linked to that object).  If one is found,
+    /// if the CertificateInfo object is not saved to a CeActivity that is part of that renewal,
+    /// then the method returns a failure result with CloudSyncError of noCurrentRenewalFound. Otherwise,
+    /// the method determines if the max cloud storage limit has been met and if so, returns a result of
+    /// failure. Only if all requirements are met will a successful Result be returned.
+    func basicUserSmartSyncCheck() -> Result<Bool, CloudSyncError> {
+        guard let ceRenewals: [RenewalPeriod] = completedCe?.renewals as? [RenewalPeriod], ceRenewals.isNotEmpty else {
             return Result.failure(CloudSyncError.noRenewalPeriodsSaved)
         }//: GUARD
         
@@ -217,7 +234,7 @@ extension CertificateInfo {
             let basicLimit: Int = Int(Double.maxCertAllowance)
             let limitExceeded: Bool = currentRenewal.hasUserExceededMaxCertAllowance()
             if limitExceeded {
-                return Result.failure(CloudSyncError.basicCertLimitReached(basicLimit))
+                return Result.failure(CloudSyncError.basicCertLimitReached)
             } else {
                 return Result.success(true)
             }//:IF ELSE

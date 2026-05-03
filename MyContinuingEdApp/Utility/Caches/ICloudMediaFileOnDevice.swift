@@ -13,33 +13,37 @@ final class ICloudMediaFileOnDevice: NSObject, NSSecureCoding, Identifiable {
    // MARK: - PROPERTIES
     private(set) var id: CKRecord.ID
     private(set) var recType: CkRecordType
-    private(set) var keepOnDevice: Bool
+    private var originatedOnDevice: Bool
     
     var mediaURL: URL?
     var errorMessage: String = ""
     private var needsManualDownload: Bool = false
+    private var needsAutoDownloadRetry: Bool = false
     private var needsManualDeletion: Bool = false
+    private var needsUploadRetry: Bool = false
     
     static var supportsSecureCoding: Bool = true
     
     // MARK: - KEYS
     enum RecordKey: String, CodingKey {
-        case id, recType, uploadedBy, url, error, manDeletion, manDownload
+        case id, recType, origin, url, error, manDeletion, manDownload, downloadRetry, uploadRetry
     }//: CodingKeys
     
-    let idKey = RecordKey.id.rawValue
-    let typeKey = RecordKey.recType.rawValue
-    let uploadKey = RecordKey.uploadedBy.rawValue
-    let urlKey = RecordKey.url.rawValue
-    let errorKey = RecordKey.error.rawValue
-    let deletionKey = RecordKey.manDeletion.rawValue
-    let downloadKey = RecordKey.manDownload.rawValue
+    private let idKey = RecordKey.id.rawValue
+    private let typeKey = RecordKey.recType.rawValue
+    private let originKey = RecordKey.origin.rawValue
+    private let urlKey = RecordKey.url.rawValue
+    private let errorKey = RecordKey.error.rawValue
+    private let deletionKey = RecordKey.manDeletion.rawValue
+    private let downloadKey = RecordKey.manDownload.rawValue
+    private let retryKey = RecordKey.downloadRetry.rawValue
+    private let reUploadKey = RecordKey.uploadRetry.rawValue
     
     // MARK: - COMPUTED PROPERTIES
     
-    var hasError: Bool {
-        errorMessage.isNotEmpty
-    }//: hasError
+    var hasError: Bool { errorMessage.isNotEmpty }//: hasError
+    
+    // MARK: GETTERS & SETTERS
     var shouldReDownload: Bool {
         get {
             needsManualDownload
@@ -56,18 +60,41 @@ final class ICloudMediaFileOnDevice: NSObject, NSSecureCoding, Identifiable {
             needsManualDeletion = newValue
         }
     }//: shouldDelete
+    var willRetryAutoDownload: Bool {
+        get {
+            needsAutoDownloadRetry
+        }
+        set {
+            needsAutoDownloadRetry = newValue
+        }
+    }//: willRetryAutoDownload
+    var fileOriginatedOnThisDevice: Bool { originatedOnDevice }//: fileOriginatedOnThisDevice
+    var shouldRetryUpload: Bool {
+        get {
+            needsUploadRetry
+        }
+        set {
+            needsUploadRetry = newValue
+        }
+    }//: shouldRetryUpload
+    
     
     // MARK: - METHODS
     
     func encode(with coder: NSCoder) {
         coder.encode(id, forKey: idKey)
         coder.encode(recType, forKey: typeKey)
-        coder.encode(keepOnDevice, forKey: uploadKey)
+        coder.encode(originatedOnDevice, forKey: originKey)
         coder.encode(mediaURL, forKey: urlKey)
         coder.encode(errorMessage, forKey: errorKey)
         coder.encode(needsManualDeletion, forKey: deletionKey)
         coder.encode(needsManualDownload, forKey: downloadKey)
+        coder.encode(needsAutoDownloadRetry, forKey: retryKey)
+        coder.encode(needsUploadRetry, forKey: reUploadKey)
     }//: encode(coder)
+    
+    func updateRecType(to: CkRecordType) { recType = to } //: updateRecType(to)
+    func changeFileOrigination(to: Bool) { originatedOnDevice = to }//: changeFileOrigination()
     
     
     // MARK: - INIT
@@ -75,19 +102,21 @@ final class ICloudMediaFileOnDevice: NSObject, NSSecureCoding, Identifiable {
     init(
         id: CKRecord.ID,
         recType: CkRecordType,
-        keepOnDevice: Bool,
+        originatedOnDevice: Bool,
         mediaURL: URL?,
         errorMessage: String = "",
         manualDownload: Bool = false,
-        manualDeletion: Bool = false
+        manualDeletion: Bool = false,
+        retryUpload: Bool = false
     ) {
         self.id = id
         self.recType = recType
-        self.keepOnDevice = keepOnDevice
+        self.originatedOnDevice = originatedOnDevice
         self.mediaURL = mediaURL
         self.errorMessage = errorMessage
         self.needsManualDeletion = manualDeletion
         self.needsManualDownload = manualDownload
+        self.needsAutoDownloadRetry = retryUpload
     }//: INIT
     
     init?(coder decoder: NSCoder) {
@@ -99,10 +128,14 @@ final class ICloudMediaFileOnDevice: NSObject, NSSecureCoding, Identifiable {
         
         if let recTypeKey = decoder.decodeObject(forKey: typeKey) as? CkRecordType {
             self.recType = recTypeKey
+        } else {
+            self.recType = .certificate
         }//: IF LET (recTypeKey)
         
-        if let uploadedByKey = decoder.decodeObject(forKey: uploadKey) as? Bool {
-            self.keepOnDevice = uploadedByKey
+        if let uploadedByKey = decoder.decodeObject(forKey: originKey) as? Bool {
+            self.originatedOnDevice = uploadedByKey
+        } else {
+            self.originatedOnDevice = false
         }//: IF LET (uploadedByKey)
         
         if let savedURL = decoder.decodeObject(forKey: urlKey) as? URL {
@@ -122,6 +155,14 @@ final class ICloudMediaFileOnDevice: NSObject, NSSecureCoding, Identifiable {
         if let savedDeletionFlag = decoder.decodeObject(forKey: deletionKey) as? Bool {
             self.needsManualDeletion = savedDeletionFlag
         }//: IF LET
+        
+        if let savedDownloadRetryFlag = decoder.decodeObject(forKey: retryKey) as? Bool {
+            self.needsAutoDownloadRetry = savedDownloadRetryFlag
+        }//: IF LET (savedDownloadRetryFlag)
+        
+        if let uploadAfterErrorFlag = decoder.decodeObject(forKey: reUploadKey) as? Bool {
+            self.needsUploadRetry = uploadAfterErrorFlag
+        }//: IF lET (uploadAfterErrorFlag)
         
     }//: INIT
     

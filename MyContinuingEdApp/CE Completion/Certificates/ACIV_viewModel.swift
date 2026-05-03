@@ -22,6 +22,7 @@ extension ActivityCertificateImageView {
         private let mediaBrain = CloudMediaBrain.shared
         private let mediaList = MasterMediaList.shared
         private let netManager = NetworkManager.shared
+        private let syncBrain = SmartSyncBrain.shared
         
         @ObservedObject var activity: CeActivity
         
@@ -70,46 +71,24 @@ extension ActivityCertificateImageView {
         
         
         // MARK: - ADD
-        /*
-         Step #3: Check if user is a paid supporter or not
-            a. IF FREE, save only to device (using relativePath value)
-            b. Ensure iCloud is available, and if not, alert user with alert
-            c. IF CORE user (basic unlock):
-                i. save to local device first and then check SmartSync eligibility
-                ii. IF eligible && user has autoUpload turned on,
-                      update SmartSync allowance by the size of the certificate,
-                     create CKRecord with key-values and save it to iCloud,
-                     updating the errorDetailsText and errorMessage property
-                     if the file could not be saved to iCloud for whatever reason. Otherwise,
-                    update the cloudIcon to show that the file is available for upload
-                iii. IF not eligible, notify user with cloudIcon error and errorDetails message
-                     along with an alert
-            d. IF PRO user:
-                 i. Save to local device FIRST (using relativePath value)
-                 ii. IF autoUpload is turned on:
-                     1. Determine if certificate falls within the sync window specified
-                     2. IF SO:
-                         > create CKRecord and save it to iCloud
-                         > Update the cloudIcon to uploading until the record is saved
-                         > Change cloudIcon to savedInCloud once done, but if an error occurs,
-                        show the error cloudIcon along with error details in the errorDetailsText property
-                    3. Otherwise:
-                        > change cloudIcon to uploadAvailable with details explaining that the certificate
-                            is outside of the sync window, but the user can change it if desired
-                iii. IF autoUpload is OFF:
-                     1. Change cloudIcon to uploadAvailable with button for manual upload
-         */
+        
         func addNewCertificate(usingData data: Data) async {
+            
+            let newCertResult = await saveNewCertToLocalDevice(withData: data)
+            
+            if userPaidSupportLevel != .free, let savedCert = newCertResult.cert {
+                await smartSyncNewCertificate(cert: savedCert)
+            }//: IF (userPaidSupportLevel, savedCert)
             
         }//: addNewCertificate
         
-        private func saveNewCertToLocalDevice(withData data: Data) async -> Bool {
+        private func saveNewCertToLocalDevice(withData data: Data) async -> (result: Bool, cert: CertificateInfo?) {
             // Step #1: Compress data in the right file format
             guard let certObj = getCertFromRawData(data: data),
                   let dataToSave = certObj.certData else {
                 NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
                 NSLog(">>>Unable to create a CECertificate object from the data passed in or obtain the respective Data from the certData computed property.")
-                return false
+                return (false, nil)
             } //: GUARD
             let context = dataController.container.viewContext
             
@@ -145,15 +124,15 @@ extension ActivityCertificateImageView {
             do {
                 if let saveLocation = newCertInfo.resolveURL(basePath: .documentsDirectory) {
                     _ = try dataToSave.write(to: saveLocation, options: .completeFileProtection)
-                    return true
+                    return (true, newCertInfo)
                 } else {
                     NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
                     NSLog(">>>The CertificateInfo resolveURL(basePath) method returned a nil URL value using the path: \(newCertInfo.certInfoRelativePath).")
-                    return false
+                    return (false, nil)
                 }//: IF LET (saveLocation)
             } catch let diskError as CocoaError {
                 handleCommonDiskErrors(thrownError: diskError)
-                return false
+                return (false, nil)
             } catch {
                 NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
                 NSLog(">>>The Data.write(to) method threw an error while trying to save the certificate file to the local device/disk.")
@@ -162,24 +141,249 @@ extension ActivityCertificateImageView {
                     certDisplayStatus = .error
                     errorDetailsText = "The file could not be written to your local device or disk. Please ensure that your device's storage is not full and that the app has write access to it."
                 }//: TASK
-                return false
+                return (false, nil)
             }//: DO-CATCH
         }//: saveNewCertToLocalDevice()
         
-        private func smartSyncNewCertificate() async {
+        private func smartSyncNewCertificate(cert: CertificateInfo) async {
             guard mediaBrain.userIsAPaidSupporter else { return }//: GUARD
-            guard let deviceOnline = (try? await doQuickNetworkCheck()) else { return }//: GUARD
-            guard settings.iCloudState.iCloudIsAvailable else { return } //: GUARD
-            guard settings.shouldStoreMediaInCloud(forMedia: .certificate) else { return } //: GUARD
-            
-            
-            
-            
+           
+            if userPaidSupportLevel == .basicUnlock {
+                let userPrefCheck = await userWantsCertsInCloudCheck(cert: cert)
+                if userPrefCheck {
+                    let syncEligibilityCheck = await canCoreUserUploadCertToiCloud(cert: cert)
+                    if syncEligibilityCheck {
+                        let initalPrepCheck = await initialUploadPrepFor(cert: cert)
+                        if initalPrepCheck {
+                            let networkCheck = await assessDeviceIsOnline(forCert: cert)
+                            if networkCheck {
+                                let iCloudCheck = await assessUserICloudIsAvailable(forCert: cert)
+                                if iCloudCheck {
+                                    await uploadCertificateToICloud(cert: cert)
+                                }//: IF iCloudCheck
+                            }//: IF (networkCheck)
+                        }//: IF (initialPrepCheck)
+                    }//: IF (syncEligibilityCheck)
+                }//: IF (userPrefCheck)
+            } else if userPaidSupportLevel == .proSubscription || userPaidSupportLevel == .proLifetime {
+                let userPrefCheck = await userWantsCertsInCloudCheck(cert: cert)
+                if userPrefCheck {
+                    let syncEligibilityCheck = await canProUserSmartSyncCertAutomatically(cert: cert)
+                    if syncEligibilityCheck {
+                        let initalPrepCheck = await initialUploadPrepFor(cert: cert)
+                        if initalPrepCheck {
+                            let networkCheck = await assessDeviceIsOnline(forCert: cert)
+                            if networkCheck {
+                                let iCloudCheck = await assessUserICloudIsAvailable(forCert: cert)
+                                if iCloudCheck {
+                                    await uploadCertificateToICloud(cert: cert)
+                                }//: IF iCloudCheck
+                            }//: IF (networkCheck)
+                        }//: IF (initialPrepCheck)
+                    }//: IF (syncEligibilityCheck)
+                }//: IF (userPrefCheck)
+            }//: IF ELSE (userPaidSupportLevel)
         }//: smartSyncNewCertificate()
         
+        // MARK: SAVE SUB-METHODS
+        
+        /// This certificate save sub-method basically looks at the current user preference in AppSettingsCache for whether
+        /// they wish to save certificates in iCloud or not and returns that value.
+        /// - Parameter cert: CertificateInfo object for the locally saved certificate that might be uploaded to iCloud
+        /// - Returns: True if the user wants to save certificates in iCloud or not (caveat for Core users who do  not)
+        ///
+        /// This method should be called as the first step in the SmartSync sequence for CE certificates.  While the method
+        /// essentially returns the current user preference via the CloudMediaBrain's userWantsCertsInCloud computed
+        /// property, it also sets the certificate icon for Core or Pro users who have the preference turned off.  For Pro users,
+        /// they automatically see the availableToUpload enum value since there are not limits on what they can upload to
+        /// iCloud. However, for Core users the method first checks whether uploading the added certificate is even possible due
+        /// to Core SmartSync limitations.
+        ///
+        /// If the Core user is eligible, then the method will set the certificate icon to availableToUpload.  Otherwise, it will
+        /// remain as localStorageOnly.
+        private func userWantsCertsInCloudCheck(cert: CertificateInfo) async -> Bool {
+            guard userPaidSupportLevel != .free else {
+                await MainActor.run {
+                    certCloudIcon = .localOnly
+                }//: MAIN ACTOR
+                return false
+            } //: GUARD
+            var userWantsCloud: Bool = false
+            
+            Task {@MainActor in
+                if userPaidSupportLevel == .basicUnlock {
+                    if mediaBrain.userWantsCertsInCloud {
+                        userWantsCloud = true
+                    } else {
+                        // The Core user does NOT want certificates saved to iCloud
+                        // The Core user has the cloud preference for CE certificates turned OFF,
+                        // so these lines basically set the appropriate cloud status icon
+                        if syncBrain.shouldAllowCertUpload(for: cert) {
+                            certCloudIcon = .availableToUpload
+                            userWantsCloud = false
+                        } else {
+                            // IF the certificate is NOT eligible for SmartSync, then either it is
+                            // becuase the limit has been reached, it is for an activity outside of
+                            // the current renewal period, there is no current renewal period entered
+                            // in the app (or any renewal periods altogether), or the user hasn't
+                            // acknowledged the transition alert from the previous renewal to the
+                            // new one.
+                            
+                            // Need to call the getSmartSyncIneligibilityReason method here mainly
+                            // becuase this method updates two properties in SmartSyncBrain that
+                            // are used for controlling the SmartSync icon that will be displayed to the
+                            // user in the UI.
+                            let ineligibilityReason = syncBrain.getSmartSyncIneligibilityReason(for: cert)
+                            if ineligibilityReason.isNotEmpty {
+                                certCloudIcon = .localOnly
+                            }
+                            userWantsCloud = false
+                        }//: IF ELSE (shouldAllowCertUpload(for)
+                    }//: IF ELSE (userWantsCertsInCloud - .basicUnlock)
+                } else {
+                        if mediaBrain.userWantsCertsInCloud {
+                            userWantsCloud = true
+                        } else {
+                        // For Pro users, even if the certificate is for a CE activity that is outside
+                        // of the selected SmartSync window timeframe, they can always upload whatever
+                        // they want to iCloud.
+                            certCloudIcon = .availableToUpload
+                        userWantsCloud = false
+                    }//: IF ELSE (userWantsCertsInCloud)
+                }//: IF ELSE (userPaidSupportLevel)
+            }//: TASK
+            
+            return userWantsCloud
+        }//: userWantsCertsInCloudCheck()
+        
+        private func canCoreUserUploadCertToiCloud(cert: CertificateInfo) async -> Bool {
+           await flagWhetherSmartSyncWillUploadCert(cert: cert)
+        }//: canCoreUserUploadCertToiCloud(cert)
+        
+        private func initialUploadPrepFor(cert: CertificateInfo) async -> Bool {
+            var result: Bool = false
+            
+            Task{@MainActor in
+                if let model = cert.createMediaModelForCertInfo(),
+                let savedPath = cert.resolveURL(basePath: .desktopDirectory) {
+                    let zoneId = mediaBrain.certZone.zoneID
+                    let newRecId = mediaBrain.createCKRecordID(using: model, forZoneId: zoneId)
+                    cert.certCloudRecordName = newRecId
+                    dataController.save()
+                    
+                    mediaList.addMediaRecord(
+                        fromRec: newRecId,
+                        type: .certificate,
+                        originatedHere: true,
+                        savedAt: savedPath
+                    )//: addMediaRecord
+                    mediaList.saveList()
+                    result = true
+                } else {
+                    result = false
+                    NSLog(">>>ACIV ViewModel | initialUploadPrepFor")
+                    NSLog(">>>The method was not able to create the CKRecord.ID property for the CertificateInfo argument due to either a missing/invalid relativePath string, a nil value returned from the resolveURL(basePath method), or the medial model for the CertificateInfo object could not be created.")
+                    if let assignedCe = cert.getAssignedCeActivity() {
+                        NSLog(">>> CE Activity: \(assignedCe.ceTitle)")
+                    }//: IF LET (assignedCe)
+                }//: IF LET (model, savedPath)
+            }//: TASK
+            
+            return result
+        }//: initialUploadPrepFor(cert)
+        
+        private func assessDeviceIsOnline(forCert cert: CertificateInfo) async -> Bool {
+            if deviceIsOnline {
+                return true
+            } else {
+                await MainActor.run {
+                    certCloudIcon = .internetUnavailable
+                    if let savedFile = mediaList.getLocalMediaRecord(using: cert.certCloudRecordName) {
+                        savedFile.shouldRetryUpload = true
+                        savedFile.errorMessage = "Device was offline when a new CE certificate was added that was eligible for SmartSync upload. The app will try to automatically upload it to iCloud when the device is back online."
+                        mediaList.saveList()
+                    }//: IF LET (savedFile)
+                }//: MAIN ACTOR
+                return false
+            }//: IF (isConnected)
+        }//: assessDeviceIsOnline()
+        
+        private func assessUserICloudIsAvailable(forCert cert: CertificateInfo) async -> Bool {
+            if mediaBrain.iCloudIsAccessible {
+                return true
+            } else {
+                await MainActor.run {
+                    certCloudIcon = .cloudError
+                    certIconDetails = settings.iCloudState.userMessage
+                }//: MAIN ACTOR
+                if let savedFile = mediaList.getLocalMediaRecord(using: cert.certCloudRecordName) {
+                    savedFile.shouldRetryUpload = true
+                    savedFile.errorMessage = "The app does not have access to your iCloud account. Please check your iCloud drive settings, whether you are signed into iCloud, and if any restrictions have been placed on your account by Apple. The CE certificate you are adding will not be uploaded to iCloud."
+                    mediaList.saveList()
+                }//: IF LET (savedFile)
+                return false
+            }//: IF (mediaBrain.iCloudIsAccessible)
+        }//: assessUserICloudIsAvailable(forCert)
+        
+        private func canProUserSmartSyncCertAutomatically(cert: CertificateInfo) async -> Bool {
+            var result: Bool = false
+            Task{@MainActor in
+                let window = settings.smartSyncCertWindow
+                let eligibilityResult = cert.isCertEligibleForSmartSync(syncWindow: window)
+                switch eligibilityResult {
+                case .success(_):
+                    result = true
+                case .failure(let syncError):
+                    certCloudIcon = .availableToUpload
+                    certIconDetails = syncError.localizedDescription
+                    result = false
+                }//: SWITCH
+            }//: TASK
+            return result
+        }//: canProUserSmartSyncCertAutomatically(cert)
+        
+        private func uploadCertificateToICloud(cert: CertificateInfo) async {
+            var certModel: MediaModel = .placeholder
+            await MainActor.run {
+                certModel = cert.createMediaModelForCertInfo() ?? .placeholder
+            }//: MAIN ACTOR
+           
+            if !certModel.isPlaceholder {
+                let uploadResult = await mediaBrain.manualCertUploadProcess(for: cert, using: certModel)
+                switch uploadResult {
+                case .success(_):
+                    await MainActor.run {
+                        cert.uploadedToICloud = true
+                        certCloudIcon = .inICloud
+                        dataController.save()
+                    }//: MAIN ACTOR
+                    syncBrain.updateSmartSyncUsage(for: cert)
+                case .failure(let syncError):
+                    await handleCertUploadError(syncError: syncError, forCert: cert)
+                }//: SWITCH
+            } else {
+                let noModelError: CloudSyncError = .mediaModelError
+                await handleCertUploadError(syncError: noModelError, forCert: cert)
+            }//: IF LET (certModel)
+        }//: uploadCertificateToICloud(cert)
         
         
+        // MARK: SAVE HELPERS
         
+        private func flagWhetherSmartSyncWillUploadCert(cert: CertificateInfo) async -> Bool {
+            var willUpload: Bool = false
+            Task{@MainActor in
+                if syncBrain.shouldAllowCertUpload(for: cert) {
+                    willUpload = true
+                } else {
+                    // Calling this method so the right SmartSync status icon and error properties
+                    // in SmartSyncBrain are updated - don't need to use the returned String here
+                    let _ = syncBrain.getSmartSyncIneligibilityReason(for: cert)
+                    willUpload = false
+                }//: IF ELSE (shouldAllowCertUpload)
+            }//: TASK
+            return willUpload
+        }//: flagWhetherSmartSyncWillUploadCert(cert)
         
         private func createAndConfirmCertificateFolders() async -> Result<(allOK: Bool, missing: [String]), Error> {
             let topDirectoryName = fileSystem.createTopSubDirectoryName(for: .certificate).convertToASCIIonly()
@@ -277,10 +481,16 @@ extension ActivityCertificateImageView {
             }//: TASK
         }//: saveComputedRelPathForCert()
         
-        
-        // MARK: - SMART SYNC
-        
-        
+        private func handleCertUploadError(
+            syncError: Error,
+            forCert cert: CertificateInfo
+        ) async {
+            await MainActor.run {
+                certCloudIcon = .cloudError
+                certIconDetails = syncError.localizedDescription
+            }//: MAIN ACTOR
+            mediaList.updateMediaRecWithError(fromRec: cert.certCloudRecordName, message: syncError.localizedDescription, setRetryUploadFlag: true)
+        }//: handleCertUploadError
         
         
         // MARK: - DELETE
@@ -561,7 +771,7 @@ extension ActivityCertificateImageView {
             let certModel = savedCert.createMediaModelForCertInfo()
             let savedRecId = savedCert.certCloudRecordName
             if savedRecId.recordName != String.mediaIdPlaceholder {
-                let downloadResult = await mediaBrain.downloadOnlineMediaFile(for: savedRecId, using: certModel)
+                let downloadResult = await mediaBrain.downloadOnlineMediaFile(for: savedRecId, type: .certificate, using: certModel)
                 switch downloadResult {
                 case .success(_):
                     Task{@MainActor in
@@ -599,7 +809,7 @@ extension ActivityCertificateImageView {
             }//: GUARD
             
             for cert in certsToGet {
-                let downloadResult = await mediaBrain.downloadOnlineMediaFile(for: cert.id)
+                let downloadResult = await mediaBrain.downloadOnlineMediaFile(for: cert.id, type: .certificate)
                 switch downloadResult {
                 case .success(let savedAt):
                     cert.errorMessage = ""

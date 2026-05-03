@@ -18,11 +18,16 @@ final class SmartSyncBrain: ObservableObject {
     private let masterList = MasterMediaList.shared
     
     let currentAllowanceTotal: Double = Double.maxCertAllowance
+    let defaultRenewalWindow: Int = 90
     
     enum SmartSyncAllowanceWarning {
         case nearLimit, reachedLimit
     }//: SmartSyncAllowanceWarning
     var allowanceLimitAlertType: SmartSyncAllowanceWarning = .nearLimit
+    
+    // SmartSync Error Details for user
+    @Published var smartSyncErrorDetails: String = ""
+    @Published var smartSyncErrorIcon: SmartSyncStatusIcon = .notApplicable
     
     // Alerts
     @Published var showAllowanceWarningAlert: Bool = false
@@ -80,6 +85,8 @@ final class SmartSyncBrain: ObservableObject {
     
     // MARK: - SINGLETON
     
+    static let shared = SmartSyncBrain()
+    
     // MARK: - METHODS
     
     func updateSmartSyncUsage(for certInfo: CertificateInfo) {
@@ -110,10 +117,58 @@ final class SmartSyncBrain: ObservableObject {
         switch smartSyncElibilityResult {
         case .success(_):
             return (userIsPastRenewalWithoutAcknowledgement ? false : true)
-        case .failure(_):
+        case .failure(let syncError):
+            smartSyncErrorDetails = syncError.localizedDescription
             return false
         }//: SWITCH
     }//: shouldAllowCertUpload
+    
+    /// This SmartSyncBrain method returns a String value representing a message to the user explaining why
+    /// the current certificate is not eligible for SmartSync.
+    /// - Parameter cert: CertificateInfo object representing the certificate being viewed by the user
+    /// - Returns: A String value with details corresponding to the specific reason why the certificate cannot be
+    /// uploaded to iCloud
+    ///
+    /// - Note: Even though only CE Cache Core users have limits placed on their SmartSync usage techincally,
+    /// Pro users may still encounter times when a certificate is not found to eligible only because it is assigned to
+    /// a CE activity that falls outside of the sync window value that they set. In this situation, they will be alerted to
+    /// that fact but given the option to manually upload the certificate to iCloud if they so choose (they can also update
+    /// the sync window value as well).
+    ///
+    /// This method actually does two things: first, it updates the SmartSyncBrain @Published property
+    /// smartSyncErrorIcon (with the proper SmartSyncStatusIcon enum value) and returns a String value based
+    /// on the enum being assigned to the smartSyncErrorIcon property (via the userMessage computed property within
+    /// the enum).  If the cert argument happens to meet all of the SmartSync eligibility criteria, then an empty
+    /// string is returned.
+    func getSmartSyncIneligibilityReason(for cert: CertificateInfo) -> String {
+        var reason: String = ""
+        smartSyncErrorIcon = .notApplicable
+        
+        let smartSyncElibilityResult = cert.isCertEligibleForSmartSync(syncWindow: settings.smartSyncCertWindow)
+        switch smartSyncElibilityResult {
+        case .success(_):
+            if userIsPastRenewalWithoutAcknowledgement {
+                smartSyncErrorIcon = .transitionNotAcknowledged
+                reason = smartSyncErrorIcon.userMessage
+            }//: IF (userIsPastRenewalWithoutAcknowlegement)
+        case .failure(let syncError):
+            smartSyncErrorDetails = syncError.localizedDescription
+            if syncError == CloudSyncError.basicCertLimitReached {
+                smartSyncErrorIcon = .limitReached
+                reason = smartSyncErrorIcon.userMessage
+            } else if syncError == CloudSyncError.noRenewalPeriodsSaved {
+                smartSyncErrorIcon = .noRenewalPeriod
+                reason = smartSyncErrorIcon.userMessage
+            } else if syncError == CloudSyncError.noCurrentRenewalFound {
+                smartSyncErrorIcon = .noCurrentRenewal
+                reason = smartSyncErrorIcon.userMessage
+            } else {
+                smartSyncErrorIcon = .unspecifiedError
+                reason = smartSyncErrorDetails
+            }//: IF ELSE
+        }//: SWITCH
+        return reason
+    }//: getSmartSyncIneligibilityReason
     
     func shouldShowRenewalWarningBox(using cred: Credential?) -> Bool {
         guard userIsACoreUser else { return false } //: GUARD
@@ -140,32 +195,18 @@ final class SmartSyncBrain: ObservableObject {
                 return false
             }//: IF (isTodayWithinRenewalWindow, !userAcknowledged)
         } else {
-            // If there is not a current renewal period or the current renewal has no end date
-            // create an aribtrary "fake" renewal period for the purpose of syncing a limited
-            // number of certificates for Core users
-            let defaultRenewalStartDate = settings.settingsStartDate.standardizedDate
-            let defaultRenewalEndDate = defaultRenewalStartDate.addingTimeInterval(86400 * 730)
-            
-            if isTodayWithinRenewalWindow(basedOn: defaultRenewalEndDate) && needUserAcknowledgement {
-                let daysRemaining = calculateDaysRemainingUntilRenewalEnds(basedOn: defaultRenewalEndDate)
-                setRenewalWarningBoxText(using: daysRemaining, usingDefaultRenewal: true, defaultEndDate: defaultRenewalEndDate)
-                renewalPeriodNeedsAdded = true
-                renewalWarningBoxIsShowing = true
-                return true
-            } else if isTodayPastRenewalWindow(basedOn: defaultRenewalEndDate) && needUserAcknowledgement {
-                userIsPastRenewalWithoutAcknowledgement = true
-                renewalWarningBoxIsShowing = true
-                let daysRemaining = calculateDaysRemainingUntilRenewalEnds(basedOn: defaultRenewalEndDate)
-                setRenewalWarningBoxText(using: daysRemaining, usingDefaultRenewal: true, defaultEndDate: defaultRenewalEndDate)
-                return true
-            } else {
-                renewalWarningBoxIsShowing = false
-                return false
-            }//: IF (isTodayWithinRenewalWindow)
+            // If there is not a current renewal period or the current renewal then no need
+            // to show anything - a separate box alerting the user to create a renewal period will
+            // be displayed by the respective view model.
+            // However, SmartSync for Core users without any entered renewals should be blocked until
+            // data by the user is entered, so setting the userIsPastRenewalWithoutAcknowledgement to
+            // true in this situation.
+            userIsPastRenewalWithoutAcknowledgement = true
+            return false
         }//: IF LET (enteredCred, renewEndsOn)
     }//: shouldShowRenewalWarningBox()
     
-    private func isTodayWithinRenewalWindow(basedOn endDate: Date, window: Int = 60) -> Bool {
+    private func isTodayWithinRenewalWindow(basedOn endDate: Date, window: Int = 90) -> Bool {
         let calendar = Calendar.current
         let today = Date.now.standardizedDate
         
@@ -178,7 +219,7 @@ final class SmartSyncBrain: ObservableObject {
         }//: IF LET (windowStartDate)
     }//: isTodayWithinRenewalWindow()
     
-    private func isTodayPastRenewalWindow(basedOn endDate: Date, window: Int = 60) -> Bool {
+    private func isTodayPastRenewalWindow(basedOn endDate: Date, window: Int = 90) -> Bool {
         let standardEndDate = endDate.standardizedDate
         let today = Date.now.standardizedDate
         
@@ -236,5 +277,9 @@ final class SmartSyncBrain: ObservableObject {
     }//: setRenewalWarningBoxText
     
     // MARK: - INIT
+    
+    private init() {
+        
+    }//: INIT
     
 }//: CLASS

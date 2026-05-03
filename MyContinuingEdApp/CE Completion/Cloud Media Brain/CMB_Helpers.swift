@@ -37,7 +37,7 @@ extension CloudMediaBrain {
         if cloudSyncGoAhead {
             return Result.success(true)
         } else if userWantsToStoreInCloud == false {
-            return Result.failure(CloudSyncError.prefersLocalStorage(mediaType))
+            return Result.failure(CloudSyncError.prefersLocalStorage)
         } else if iCloudIsAccessible == false {
             return Result.failure(CloudSyncError.cloudUnavailable)
         } else {
@@ -48,7 +48,7 @@ extension CloudMediaBrain {
     func addOrUpdateMasterListEntryWithError(
         forRecord record: CKRecord.ID,
         type: CkRecordType,
-        uploadedYN: Bool = false,
+        originatedHere originated: Bool = false,
         errorText text: String,
         setDownloadFlag: Bool = false,
         setManDeletionFlag deleteFlag: Bool = false
@@ -68,7 +68,7 @@ extension CloudMediaBrain {
             let newEntry = ICloudMediaFileOnDevice(
                 id: record,
                 recType: type,
-                uploadedBy: uploadedYN,
+                originatedOnDevice: originated,
                 mediaURL: nil,
                 errorMessage: text,
                 manualDownload: setDownloadFlag,
@@ -82,7 +82,7 @@ extension CloudMediaBrain {
     func addOrUpdateMasterListEntryNoError(
         forRec record: CKRecord.ID,
         type: CkRecordType,
-        uploadedYN: Bool = false,
+        originatedHere originated: Bool = false,
         mediaAt savelocation: URL? = nil
     ) {
         let masterList = MasterMediaList.shared
@@ -96,7 +96,7 @@ extension CloudMediaBrain {
             let newEntry = ICloudMediaFileOnDevice(
                 id: record,
                 recType: type,
-                uploadedBy: uploadedYN,
+                originatedOnDevice: originated,
                 mediaURL: savelocation,
                 errorMessage: ""
               )//: LocalMediaFileInfo

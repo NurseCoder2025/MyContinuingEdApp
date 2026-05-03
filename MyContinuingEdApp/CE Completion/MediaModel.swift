@@ -17,6 +17,8 @@ struct MediaModel {
     let mediaDataSavedAt: URL
     let relPathForCKRecordID: String
     
+    var isPlaceholder: Bool = false
+    
     // Audio reflections ONLY
     var transcription: String = ""
     let transcriptionSavedAt: URL = URL.tempTranscriptionFile
@@ -31,6 +33,17 @@ struct MediaModel {
             return MediaClass.audioReflection
         }//: SWITCH
     }//: designatedClass
+    
+    static var placeholder: MediaModel {
+        .init(
+            assignedObjectId: UUID(),
+            ckRecType: .certificate,
+            mediaType: .pdf,
+            mediaDataSavedAt: URL.tempTranscriptionFile,
+            relPathForCKRecordID: "",
+            isPlaceholder: true
+        )//: INIT
+    }//: placeholder
     
     
     // MARK: - METHODS

@@ -85,6 +85,42 @@ enum MediaCloudStatusIcon: String, CaseIterable {
     }//: labelText
 }//: MediaCloudStatusIcon
 
+enum SmartSyncStatusIcon: String, InfoIcon {
+    case eligible = "checkmark.icloud"
+    case limitReached = "xmark.app"
+    case noRenewalPeriod = "calendar.badge.plus"
+    case noCurrentRenewal = "calendar.badge.exclamationmark"
+    case transitionNotAcknowledged = "message.badge"
+    case acknowledgeTransition = "checklist"
+    case outsideOfSyncWindow = "clock.badge.xmark"
+    case unspecifiedError = "exclamationmark.icloud.fill"
+    case notApplicable = ""
+    
+    var userMessage: String {
+        switch self {
+        case .eligible:
+            return "This certificate is currently eligible for SmartSync. Upload it to iCloud whenever desired."
+        case .limitReached:
+            return "You have currently reached the max SmartSync limit for this renewal period. If you wish to upload this certificate, then you will need to select another certificate or certificates to remove from iCloud first."
+        case .noRenewalPeriod:
+            return "There are no renewal periods entered in this app currently. As a CE Cache Core user, the app must have renewal periods entered in order to determine SmartSync eligibility. You will not be able to upload anything until a renewal is entered."
+        case .noCurrentRenewal:
+            return "None of the renewal periods entered in the app are part of the current renewal period for your credential. Please add the new renewal period to the app so SmartSync can continue saving certificates earned for this period across your devices."
+        case .transitionNotAcknowledged:
+            return "The previous renewal period has ended but you have yet to acknowledge the renewal alert on the certificate list screen. Until you do so any new certificates will only be added locallyt to your device."
+        case .acknowledgeTransition:
+            return "The current renewal period will be ending soon. As a Core user, you must acknowledge this transition to ensure that your certificates are synced to iCloud."
+        case .outsideOfSyncWindow:
+            return "The certificate you are trying to upload is not within the current SmartSync sync window. However, as a Pro user you can either manually upload this certificate to iCloud or change the sync window value so that this certificate is included."
+        case .unspecifiedError:
+            return "An unknown error is preventing SmartSync from being able to upload the certificate. Please check your network connection, iCloud drive settings, SmartSync allowance usage, and that the current renewal period has been added to the app."
+        case .notApplicable:
+            return ""
+        }//: SWITCH
+    }//: userMessage
+    
+}//: SmartSyncStatusIcon
+
 
 // MARK: - Enum for sheet types
 enum SheetType {

@@ -293,7 +293,7 @@ extension CloudMediaBrain {
         let mediaBrain = CloudMediaBrain.shared
         let fileSystem = FileManager.default
         
-        guard let recFile = mediaList.getLocalMediaRecord(using: record), recFile.keepOnDevice == false else { return false }
+        guard let recFile = mediaList.getLocalMediaRecord(using: record), recFile.originatedOnDevice == false else { return false }
         
         let savedFilePathString: String = mediaBrain.retrievePathFromID(recID: record)
         let fileToDelete: URL = URL.documentsDirectory.appending(path: savedFilePathString, directoryHint: .notDirectory)
@@ -314,7 +314,7 @@ extension CloudMediaBrain {
     private func attemptMediaDeleteUsingMasterList(for record: CKRecord.ID) async -> Bool {
         let mediaList = MasterMediaList.shared
         if let mediaRecord = mediaList.getLocalMediaRecord(using: record),
-        mediaRecord.keepOnDevice == false,
+        mediaRecord.originatedOnDevice == false,
         let dataAtLocation: URL = mediaRecord.mediaURL {
             do {
                 _ = try FileManager.default.removeItem(at: dataAtLocation)

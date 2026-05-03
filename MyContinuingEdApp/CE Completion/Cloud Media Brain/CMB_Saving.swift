@@ -31,9 +31,9 @@ extension CloudMediaBrain {
                        return Result.success(certRec.recordID)
                    } else {
                        Task{@MainActor in
-                           certInfo.certErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
+                           certInfo.certErrorMessage = CloudSyncError.cloudSaveError.localizedDescription
                        }//: TASK
-                       return Result.failure(CloudSyncError.cloudSaveError(.certificate))
+                       return Result.failure(CloudSyncError.cloudSaveError)
                    }//: IF AWAIT
                case .failure(let error):
                    Task{@MainActor in
@@ -90,9 +90,9 @@ extension CloudMediaBrain {
                 return Result.success(newRec.recordID)
             } else {
                 Task{@MainActor in
-                    audioInfo.audioErrorMessage = CloudSyncError.cloudSaveError(.audioReflection).localizedDescription
+                    audioInfo.audioErrorMessage = CloudSyncError.cloudSaveError.localizedDescription
                 }//: TASK
-                return Result.failure(CloudSyncError.cloudSaveError(.audioReflection))
+                return Result.failure(CloudSyncError.cloudSaveError)
             }//: IF AWAIT
             
         case .failure(let error):
@@ -104,7 +104,7 @@ extension CloudMediaBrain {
     }//: syncAudioReflection()
     
     // MARK: - SAVE HELPERS
-    private func createCKRecord(for objType: MediaClass, with model: MediaModel) -> CKRecord {
+    func createCKRecord(for objType: MediaClass, with model: MediaModel) -> CKRecord {
         var recType: String = ""
         let mediaName = model.getMediaTypeName()
         let assignedObjString = model.createAssignedObjIdString()
@@ -139,7 +139,7 @@ extension CloudMediaBrain {
         return record
     }//: createCKRecord(for)
     
-    private func saveRecToICloud(
+    func saveRecToICloud(
         record: CKRecord,
         retryCount: Int = 0
     ) async -> Bool {
@@ -178,28 +178,20 @@ extension CloudMediaBrain {
         }//: DO - CATCH
     }//: saveRecToICloud(record)
     
-    private func manualCertUploadProcess(
+    func manualCertUploadProcess(
         for certInfo: CertificateInfo,
         using model: MediaModel
     ) async -> Result<CKRecord.ID, Error> {
-        let firstCheck = canUserUtilizeCloudSyncFor(mediaType: .certificate)
-        switch firstCheck {
-        case .success(_):
-            let newRec = createCKRecord(for: .certificate, with: model)
-            if await saveRecToICloud(record: newRec) {
-                return Result.success(newRec.recordID)
-            } else {
-                Task{@MainActor in
-                    certInfo.certErrorMessage = CloudSyncError.cloudSaveError(.certificate).localizedDescription
-                }//: TASK
-                return Result.failure(CloudSyncError.cloudSaveError(.certificate))
-            }//: IF AWAIT
-        case .failure(let error):
+        let newRec = createCKRecord(for: .certificate, with: model)
+        
+        if await saveRecToICloud(record: newRec) {
+            return Result.success(newRec.recordID)
+        } else {
             Task{@MainActor in
-                certInfo.certErrorMessage = error.localizedDescription
+                certInfo.certErrorMessage = CloudSyncError.cloudSaveError.localizedDescription
             }//: TASK
-            return Result.failure(error)
-        }//: SWITCH
+            return Result.failure(CloudSyncError.cloudSaveError)
+        }//: IF AWAIT
     }//: manualCertUploadProcess(using)
     
     func createCKRecordID(
