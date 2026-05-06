@@ -254,6 +254,83 @@ extension FileManager {
        return initialPath
     }//: createRelavtivePathStringForCKRecord()
     
+    // MARK: - I/O Errors
+    
+    /// Custom FileManager method designed to log and return user alert string values for common file I/O errors, such as the disk being full or invalid filename.
+    /// - Parameters:
+    ///   - error: Cococa error that was thrown by a method
+    ///   - purpose: IOPurpose enum value representing what the method was trying to do (save, move, delete)
+    ///   - objectName: Name of the object in which the method is defined and called
+    ///   - callingMethod: Name of the method that threw the error
+    ///   - path: String representing the path of the file the error is related to (default value: "")
+    ///   - finalActions: Closure that allows for custom additional actions wherever this method is called from (default value: {})
+    /// - Returns: Tuple with two string values that can be used in an alert or other UI presentation to the user so they can be informed about the error that
+    /// occurred and what to do about it.
+    ///
+    /// As part of the function, two NSLog statements are created: the first providing the name of the object and method so the error can be tracked down easier.
+    /// The second NSLog statement provides a brief and more technical description of the error along with whatever value is in the filePathString argument (if
+    /// left to the default value of "", then no path will be shown in the log).  The closure takes no parameters and returns nothing.
+    ///
+    ///  - Note: The action property of whatever IOPurpose enum value is passed in as an argument for when will be used in the message part of the returned
+    ///  tuple as the verb for describing what the user was trying to do when the error occurred.
+    func handleCommonDiskErrors(
+        thrownError error: CocoaError,
+        when purpose: IOPurpose,
+        objectName: String,
+        callingMethod: String,
+        filePathString path: String = "",
+        finalActions: @escaping () -> Void = {}
+    ) -> (alertTitle: String, alertMessage: String) {
+        var logText: String = ""
+        var titleText: String = ""
+        var messageText: String = ""
+        
+        if error.code == .fileNoSuchFile {
+            logText = "A Cococa error was thrown by the \(callingMethod) method due to the file system being unable to locate it based on the path provided: \(path)."
+            titleText = "File Not Found"
+            messageText = "The specified file could not be \(purpose.action) because the file system was unable to locate it based on the path provided. If the file has been manually moved or deleted using the Finder or Files app, then plase re-add it to the app and try again."
+        } else if error.code == .fileReadCorruptFile {
+            logText = "A Cococa error was thrown by the \(callingMethod) method due to the file system being unable to read the file due to it being corrupted. Path for the file: \(path)."
+            titleText = "File Corrupted"
+            messageText = "The specified file could not be \(purpose.action) because the underlying data has somehow been corrupted and cannot be read by the system. Please try manually removing the file by using the Finder or Files app and then re-add it again. Contact the app developer if additional assistance is needed."
+        } else if error.code == .fileReadNoPermission {
+            logText = "A Cococa error was thrown by the \(callingMethod) method because the app does not have the necessary permissions to read the file at its current path: \(path)."
+            titleText = "File Not Accessible"
+            messageText = "The app was unable to \(purpose.action) the file because the disk or area it is stored in lacks read permission access. If possible, use the Finder to grant read permission to the disk or area containing the file. Otherwise, contact the administrator for the device or Apple support."
+        } else if error.code == .fileReadInvalidFileName || error.code == .fileWriteInvalidFileName {
+            logText = "A Cococa error was thrown by the \(callingMethod) method becuase the file name for the specified file is in an invalid format or has invalid characters. Path for the file: \(path)."
+            titleText = "Invalid Filename"
+            messageText = "The app was unable to \(purpose.action) the file because the name given to it is invalid. Use the Finder or Files app to locate it and rename it with only valid characters, ensuring that the extension after the name is a recognized one (ex. jpeg, png, pdf, etc.)."
+        } else if error.code == .fileWriteFileExists {
+            logText = "A Cococa error was thrown by the \(callingMethod) method becuase the user tried to write over an existing file with the same name. Path for the file: \(path)."
+            titleText = "Duplication Error"
+            messageText = "The app was unable to \(purpose.action) the file because either another file has the exact same name as the one being \(purpose.action) or the file system is preventing the app from overwriting the existing file. Find the file that has the same name and either re-name or delete it, then try again."
+        } else if error.code == .fileReadTooLarge {
+            logText = "A Cococa error was thrown by the \(callingMethod) method becuase the file is too large to be read by the system. Path for the file: \(path)."
+            titleText = "File Size Error"
+            messageText = "The app was unable to \(purpose.action) the file because the file's size made it impossible for the system to read it. Try manually removing the file using the Finder or File app and then re-add it in a smaller (compressed if possible) size."
+        } else if error.code == .fileWriteNoPermission {
+            logText = ">>>A Cococa error was thrown by the \(callingMethod) method becuase the app does not have write permission for the path specified. Path: \(path)."
+            titleText = "Can't Save File"
+            messageText = "The app is unable to save the file to the location specified because you do not have write permission for the disk or directory you're trying to save it to. Please select a different location or update the permissions for the disk or directory so that the app can write to it."
+        } else if error.code == .fileWriteVolumeReadOnly {
+            logText = "A Cococa error was thrown by the \(callingMethod) method becuase the app does not have write permission for the disk/volume that it is being saved to. Path: \(path)."
+            titleText = "Can't Save File"
+            messageText = "The app is unable to save the file to the location specified because you do not have write permission for the disk or volume you're trying to save it to. Please select a different location or update the permissions for the disk so that the app can write to it."
+        } else if error.code == .fileWriteOutOfSpace {
+            logText = "A Cococa error was thrown by the \(callingMethod) method becuase the user's device or disk is completely full and nothing further can be saved ot it. Path: \(path)."
+            titleText = "Disk/Device Storage Full"
+            messageText = "The app is unable to save the file to the location specified because there is not enough free space available on which to save the file. Please either select a different disk that has free space (if possible) or free up space on the current device and try again."
+        } else {
+            logText = "A less common Cococa error was thrown by the \(callingMethod) due to a technical reason unrelated to the disk/volume being full, permission errors, invalid filename, file size, file corruption, file not being found, or duplicate file error."
+            titleText = "Other Error"
+            messageText = "The app was unable to \(purpose.action) the specified file due to a technical issue that is not commonly encountered such as the disk/device storage being full or an invalid filename. Please try again later. If this continues to occur, please contact the developer for additional support."
+        }//: IF ELSE
+        
+        NSLog(">>>\(objectName) | \(callingMethod)")
+        NSLog(">>>\(logText)")
+        return (titleText, messageText)
+    }//: handleCommonDiskErrors(thrownError, when, finalActions)
     
 }//: EXTENSION
 

@@ -275,6 +275,14 @@ extension CeActivity {
         return nonLiveNames.doesNOTContain(selectedType.activityTypeName)
     }//: isLiveActivity
     
+    var hasCompletionCertificate: Bool {
+        if let savedCert = self.certificate {
+            return true
+        } else {
+            return false
+        }//: IF LET (savedCert)
+    }//: hasCompletionCertificate
+    
 }//: EXTENSION
 
 // MARK: - Designation ID Computed Property

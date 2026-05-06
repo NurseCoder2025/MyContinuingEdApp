@@ -13,68 +13,6 @@ extension CloudMediaBrain {
     
     // MARK: - SAVING (UPLOADING)
     
-    func smartSyncCECertificate(
-        using certInfo: CertificateInfo,
-        with model: MediaModel
-    ) async -> Result<CKRecord.ID, Error> {
-       let syncWinSetting: Double = settings.smartSyncCertWindow
-       let firstCheck = canUserUtilizeCloudSyncFor(mediaType: .certificate)
-        
-       switch firstCheck {
-       case .success(_):
-               let smartSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: syncWinSetting)
-               
-               switch smartSyncEligibility {
-               case .success(_):
-                   let certRec = createCKRecord(for: .certificate, with: model)
-                   if await saveRecToICloud(record: certRec) {
-                       return Result.success(certRec.recordID)
-                   } else {
-                       Task{@MainActor in
-                           certInfo.certErrorMessage = CloudSyncError.cloudSaveError.localizedDescription
-                       }//: TASK
-                       return Result.failure(CloudSyncError.cloudSaveError)
-                   }//: IF AWAIT
-               case .failure(let error):
-                   Task{@MainActor in
-                       certInfo.certErrorMessage = error.localizedDescription
-                   }//: MAIN ACTOR
-                   return Result.failure(error)
-               }//: SWITCH (smartSyncEligibility)
-       case .failure(let error):
-           Task{@MainActor in
-               certInfo.certErrorMessage = error.localizedDescription
-           }//: TASK
-           return Result.failure(error)
-       }//: SWITCH (firstCheck)
-    }//: smartSyncCECertificate
-    
-    func manualCertUpload(
-        for certInfo: CertificateInfo,
-        with model: MediaModel
-    ) async -> Result<CKRecord.ID, Error> {
-        guard iCloudIsAccessible else {
-            await MainActor.run {
-                userErrorMessage = settings.iCloudState.userMessage
-            }//: MAIN ACTOR
-            return Result.failure(CloudSyncError.cloudUnavailable)
-        }//: GUARD
-        guard userIsAPaidSupporter else { return Result.failure(CloudSyncError.paidUpgradeNeeded)
-        }//: GUARD
-        
-        if settings.getCurrentPurchaseLevel() == .basicUnlock {
-            let certSyncEligibility = certInfo.isCertEligibleForSmartSync(syncWindow: 0)
-            switch certSyncEligibility {
-            case .success(_):
-                return await manualCertUploadProcess(for: certInfo, using: model)
-            case .failure(let error):
-                return Result.failure(error)
-            }//: SWITCH
-        } else {
-            return await manualCertUploadProcess(for: certInfo, using: model)
-        }//: IF ELSE (getCurrentPurchaseLevel)
-        
-    }//: manualCertUpload(with)
     
     func syncAudioReflection(
         for audioInfo: AudioInfo,
@@ -178,7 +116,7 @@ extension CloudMediaBrain {
         }//: DO - CATCH
     }//: saveRecToICloud(record)
     
-    func manualCertUploadProcess(
+    func uploadCertToICloud(
         for certInfo: CertificateInfo,
         using model: MediaModel
     ) async -> Result<CKRecord.ID, Error> {

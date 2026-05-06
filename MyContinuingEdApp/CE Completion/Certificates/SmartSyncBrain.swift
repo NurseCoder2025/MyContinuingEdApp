@@ -26,8 +26,8 @@ final class SmartSyncBrain: ObservableObject {
     var allowanceLimitAlertType: SmartSyncAllowanceWarning = .nearLimit
     
     // SmartSync Error Details for user
-    @Published var smartSyncErrorDetails: String = ""
-    @Published var smartSyncErrorIcon: SmartSyncStatusIcon = .notApplicable
+    @Published var smartSyncCurrentStateDetails: String = ""
+    @Published var smartSyncCurrentStateIcon: SmartSyncStatusIcon = .notApplicable
     
     // Alerts
     @Published var showAllowanceWarningAlert: Bool = false
@@ -37,6 +37,13 @@ final class SmartSyncBrain: ObservableObject {
     @Published var renewalPeriodNeedsAdded: Bool = false
     @Published var renewalWarningBoxIsShowing: Bool = false
     @Published var userIsPastRenewalWithoutAcknowledgement: Bool = false
+    
+    /// SmartSyncBrain property intended to hold the RenewalPeriod object for which the renewal warning applies to.
+    ///
+    /// This property is set by the shouldShowRenewalWarningBox method in the event the current date falls within the
+    /// renewal warning period for the current renewal or if there is a recent previous renewal that the user has not acknowledged
+    /// yet. If no renewal periods have been entered, then the property should remain nil.
+    var renewalForWarning: RenewalPeriod? = nil
     
     // MARK: - COMPUTED PROPERTIES
     
@@ -81,8 +88,6 @@ final class SmartSyncBrain: ObservableObject {
         }//: SWITCH
     }//: approachingLimitAlertMessage
     
-   
-    
     // MARK: - SINGLETON
     
     static let shared = SmartSyncBrain()
@@ -116,9 +121,16 @@ final class SmartSyncBrain: ObservableObject {
         let smartSyncElibilityResult = certInfo.isCertEligibleForSmartSync(syncWindow: settings.smartSyncCertWindow)
         switch smartSyncElibilityResult {
         case .success(_):
-            return (userIsPastRenewalWithoutAcknowledgement ? false : true)
+            if userIsPastRenewalWithoutAcknowledgement {
+                smartSyncCurrentStateIcon = .transitionNotAcknowledged
+                smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+                return false
+            } else {
+                smartSyncCurrentStateIcon = .eligible
+                return true
+            }//: IF ELSE (userIsPastRenewalWithoutAcknowledgement)
         case .failure(let syncError):
-            smartSyncErrorDetails = syncError.localizedDescription
+            setSyncErrorProperties(basedOn: syncError)
             return false
         }//: SWITCH
     }//: shouldAllowCertUpload
@@ -142,29 +154,29 @@ final class SmartSyncBrain: ObservableObject {
     /// string is returned.
     func getSmartSyncIneligibilityReason(for cert: CertificateInfo) -> String {
         var reason: String = ""
-        smartSyncErrorIcon = .notApplicable
+        smartSyncCurrentStateIcon = .notApplicable
         
         let smartSyncElibilityResult = cert.isCertEligibleForSmartSync(syncWindow: settings.smartSyncCertWindow)
         switch smartSyncElibilityResult {
         case .success(_):
             if userIsPastRenewalWithoutAcknowledgement {
-                smartSyncErrorIcon = .transitionNotAcknowledged
-                reason = smartSyncErrorIcon.userMessage
+                smartSyncCurrentStateIcon = .transitionNotAcknowledged
+                reason = smartSyncCurrentStateIcon.userMessage
             }//: IF (userIsPastRenewalWithoutAcknowlegement)
         case .failure(let syncError):
-            smartSyncErrorDetails = syncError.localizedDescription
+            smartSyncCurrentStateDetails = syncError.localizedDescription
             if syncError == CloudSyncError.basicCertLimitReached {
-                smartSyncErrorIcon = .limitReached
-                reason = smartSyncErrorIcon.userMessage
+                smartSyncCurrentStateIcon = .limitReached
+                reason = smartSyncCurrentStateIcon.userMessage
             } else if syncError == CloudSyncError.noRenewalPeriodsSaved {
-                smartSyncErrorIcon = .noRenewalPeriod
-                reason = smartSyncErrorIcon.userMessage
+                smartSyncCurrentStateIcon = .noRenewalPeriod
+                reason = smartSyncCurrentStateIcon.userMessage
             } else if syncError == CloudSyncError.noCurrentRenewalFound {
-                smartSyncErrorIcon = .noCurrentRenewal
-                reason = smartSyncErrorIcon.userMessage
+                smartSyncCurrentStateIcon = .noCurrentRenewal
+                reason = smartSyncCurrentStateIcon.userMessage
             } else {
-                smartSyncErrorIcon = .unspecifiedError
-                reason = smartSyncErrorDetails
+                smartSyncCurrentStateIcon = .unspecifiedError
+                reason = smartSyncCurrentStateDetails
             }//: IF ELSE
         }//: SWITCH
         return reason
@@ -176,11 +188,20 @@ final class SmartSyncBrain: ObservableObject {
         let today = Date.now.standardizedDate
         let needUserAcknowledgement = settings.userToAcknowledgeRenewalEnding
         
-        if let enteredCred = cred, let renewEndsOn = enteredCred.currentRenewalEndsOn {
+        // Is there a current renewal period entered and does it have a date value for the
+        // periodEnd property?  If so, determine if today is within the renewal warning
+        // window period and if not, check to see if there is a previous renewal and whether
+        // the user has acknowledged the transition for that period.  If not, then show the warning
+        // box for the current or previous renewal (as applicable).  Otherwise, no need to show.
+        if let enteredCred = cred,
+            let curRenewal = enteredCred.currentRenewal,
+            let renewEndsOn = enteredCred.currentRenewalEndsOn,
+            curRenewal.hasUserAcknowledgedWarning == false {
             if isTodayWithinRenewalWindow(basedOn: renewEndsOn), needUserAcknowledgement {
                 let daysRemaining = calculateDaysRemainingUntilRenewalEnds(basedOn: renewEndsOn)
                 setRenewalWarningBoxText(using: daysRemaining, usingDefaultRenewal: false, defaultEndDate: nil)
                 renewalWarningBoxIsShowing = true
+                renewalForWarning = curRenewal
                 return true
             } else if !isTodayWithinRenewalWindow(basedOn: renewEndsOn),
                 let previousRenew = enteredCred.getPreviousRenewalPeriod(),
@@ -189,6 +210,7 @@ final class SmartSyncBrain: ObservableObject {
                 setRenewalWarningBoxText(using: daysRemaining, usingDefaultRenewal: false, defaultEndDate: nil)
                 renewalWarningBoxIsShowing = true
                 userIsPastRenewalWithoutAcknowledgement = true
+                renewalForWarning = previousRenew
                 return true
             } else {
                 renewalWarningBoxIsShowing = false
@@ -205,6 +227,13 @@ final class SmartSyncBrain: ObservableObject {
             return false
         }//: IF LET (enteredCred, renewEndsOn)
     }//: shouldShowRenewalWarningBox()
+    
+    func resetSyncErrorIconPropertiesToDefault() {
+        smartSyncCurrentStateIcon = .notApplicable
+        smartSyncCurrentStateDetails = ""
+    }//: resetSyncErrorIconPropertiestoDefault()
+    
+    // MARK: - HELPER METHODS
     
     private func isTodayWithinRenewalWindow(basedOn endDate: Date, window: Int = 90) -> Bool {
         let calendar = Calendar.current
@@ -275,6 +304,38 @@ final class SmartSyncBrain: ObservableObject {
             """
         }//: IF ELSE (usingDefaultRenewal)
     }//: setRenewalWarningBoxText
+    
+    private func setSyncErrorProperties(basedOn error: CloudSyncError) {
+        switch error {
+        case .paidUpgradeNeeded:
+            smartSyncCurrentStateIcon = .restrictedToLocalDevice
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .basicCertLimitReached:
+            smartSyncCurrentStateIcon = .limitReached
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .noRenewalPeriodsSaved:
+            smartSyncCurrentStateIcon = .noRenewalPeriod
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .noCurrentRenewalFound:
+            smartSyncCurrentStateIcon = .noCurrentRenewal
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .smartSyncDateWindowError:
+            smartSyncCurrentStateIcon = .outsideOfSyncWindow
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .smartSyncWindowCalcError:
+            smartSyncCurrentStateIcon = .outsideOfSyncWindow
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .smartSyncCertOutOfWindow:
+            smartSyncCurrentStateIcon = .outsideOfSyncWindow
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        case .smartSyncMaxWindowExceeded:
+            smartSyncCurrentStateIcon = .outsideOfSyncWindow
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        default:
+            smartSyncCurrentStateIcon = .unspecifiedError
+            smartSyncCurrentStateDetails = smartSyncCurrentStateIcon.userMessage
+        }//: SWITCH
+    }//: setSyncErrorProperties(basedOn)
     
     // MARK: - INIT
     

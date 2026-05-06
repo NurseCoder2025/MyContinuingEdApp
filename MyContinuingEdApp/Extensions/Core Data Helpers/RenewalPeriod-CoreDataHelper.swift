@@ -189,6 +189,25 @@ extension RenewalPeriod {
         return currentDate >= startDate && currentDate <= endDate
     }//: isRenewalCurrent
     
+    // TODO: TEST this method to ensure it gets the right renewal period
+    func isRenewalPrevious() -> Bool {
+        let calendar = Calendar.current
+        if let assignedCred = credential, let curRenew = assignedCred.currentRenewal {
+            let allRenewals = assignedCred.allRenewals.sorted(by: {$0.renewalPeriodEnd > $1.renewalPeriodEnd})
+            // Find the first renewal period after the current one
+            if let previousRenewal = allRenewals.last(where: { $0.renewalPeriodEnd < curRenew.renewalPeriodStart }), previousRenewal == self {
+                let prevRenewalYear = calendar.dateComponents(in: .current, from: previousRenewal.renewalPeriodEnd).year
+                let curRenewalYear = calendar.dateComponents(in: .current, from: curRenew.renewalPeriodStart).year
+                return prevRenewalYear == curRenewalYear
+                && previousRenewal.renewalPeriodEnd < curRenew.renewalPeriodStart
+            } else {
+                return false
+            }//: IF LET (previousRenewal)
+        } else {
+            return false
+        }//: IF LET (assignedCred, curRenewal)
+    }//: isRenewalPrevious()
+    
     // TODO: Decide if this method is really needed or not
     func updateTransitionAcknowledgementNeeded() {
         let settings = AppSettingsCache.shared
@@ -197,7 +216,7 @@ extension RenewalPeriod {
         
         if let assignedCred = credential,
            let previousRenewal = assignedCred.getPreviousRenewalPeriod() {
-            if previousRenewal.hasUserAcknowledgedTransition == false {
+            if previousRenewal.hasUserAcknowledgedWarning == false {
                 settings.renewalTransitionAcknowledgementNeeded = true
                 settings.encodeCurrentState()
             }//: IF (hasUserAcknowledgedTransition)

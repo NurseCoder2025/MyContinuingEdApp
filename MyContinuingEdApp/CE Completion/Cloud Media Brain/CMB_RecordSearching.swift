@@ -33,7 +33,7 @@ extension CloudMediaBrain {
                         logRecordCantBeFound(for: recId, with: error)
                     }//: SWITCH
                 } else {
-                    logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound(recType))
+                    logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound)
                 }//: IF LET ELSE (resultForId)
             } else {
                 // Retrieving the entire record, which will download any associated CKAssets
@@ -63,14 +63,14 @@ extension CloudMediaBrain {
               if let objModel = model {
                   matchingRecord = await searchZoneForRecordMatching(using: objModel)
               } else {
-                  logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound(recType))
+                  logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound)
               }//: IF LET (objModel)
           }//: IF ELSE (shouldRetry)
         } catch {
             if let objModel = model {
                 matchingRecord = await searchZoneForRecordMatching(using: objModel)
             } else {
-                logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound(recType))
+                logRecordCantBeFound(for: recId, with: CloudSyncError.cloudRecordNotFound)
             }//: IF LET (objModel)
         }//: DO - CATCH
         

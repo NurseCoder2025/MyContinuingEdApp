@@ -87,6 +87,7 @@ enum MediaCloudStatusIcon: String, CaseIterable {
 
 enum SmartSyncStatusIcon: String, InfoIcon {
     case eligible = "checkmark.icloud"
+    case restrictedToLocalDevice = "externaldrive.fill"
     case limitReached = "xmark.app"
     case noRenewalPeriod = "calendar.badge.plus"
     case noCurrentRenewal = "calendar.badge.exclamationmark"
@@ -100,6 +101,8 @@ enum SmartSyncStatusIcon: String, InfoIcon {
         switch self {
         case .eligible:
             return "This certificate is currently eligible for SmartSync. Upload it to iCloud whenever desired."
+        case .restrictedToLocalDevice:
+            return "Only paid users of the app may utilize SmartSync. Please upgrade to a paid option in order to save your CE certificates to iCloud."
         case .limitReached:
             return "You have currently reached the max SmartSync limit for this renewal period. If you wish to upload this certificate, then you will need to select another certificate or certificates to remove from iCloud first."
         case .noRenewalPeriod:

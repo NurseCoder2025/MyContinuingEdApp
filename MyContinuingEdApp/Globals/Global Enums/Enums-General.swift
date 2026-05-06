@@ -195,3 +195,20 @@ enum FileIOError: String, Error {
         }//: SWITCH
     }//: localizedDescription
 }//: FileIOError
+
+enum IOPurpose: String {
+    case reading, writing, moving, deleting
+    
+    var action: String {
+        switch self {
+        case .reading:
+            return "read"
+        case .writing:
+            return "written/saved"
+        case .moving:
+            return "moved"
+        case .deleting:
+            return "deleted"
+        }//: SWITCH
+    }//: action
+}//: IOPurpose

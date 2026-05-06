@@ -59,7 +59,6 @@
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="expirationReminderYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="forReinstatementYN" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="hasCompletionCertificate" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="hoursOrUnits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="infoWebsiteURL" optional="YES" attributeType="String"/>
         <attribute name="isMarkedForDeletion" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -76,7 +75,7 @@
         <relationship name="credentials" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Credential" inverseName="activities" inverseEntity="Credential"/>
         <relationship name="designation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CeDesignation" inverseName="activities" inverseEntity="CeDesignation"/>
         <relationship name="disciplinaryAction" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="DisciplinaryActionItem" inverseName="ces" inverseEntity="DisciplinaryActionItem"/>
-        <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
+        <relationship name="reflection" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ActivityReflection" inverseName="ceToReflectUpon" inverseEntity="ActivityReflection"/>
         <relationship name="renewals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="RenewalPeriod" inverseName="cesCompleted" inverseEntity="RenewalPeriod"/>
         <relationship name="specialCat" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SpecialCategory" inverseName="activities" inverseEntity="SpecialCategory"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="activities" inverseEntity="Tag"/>

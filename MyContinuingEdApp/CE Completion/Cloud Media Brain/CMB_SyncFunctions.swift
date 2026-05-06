@@ -95,7 +95,7 @@ extension CloudMediaBrain {
                     mediaList.addMediaRecWithError(
                         fromRec: record,
                         type: recType,
-                        keepYN: false,
+                        originatedHere: false,
                         message: "You will need to manually download the file from iCloud at your convenience.",
                         downloadFlag: true
                     )//: addMediaRecWithError
@@ -161,7 +161,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecWithError(
                     fromRec: record.recordID,
                     type: mediaTypeForList,
-                    keepYN: false,
+                    originatedHere: false,
                     message: "You need to manually download the certificate from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true
                 )//: addMediaRecWithError
                 mediaList.saveList()
@@ -181,7 +181,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecWithError(
                     fromRec: record.recordID,
                     type: mediaTypeForList,
-                    keepYN: false,
+                    originatedHere: false,
                     message: "You need to manually download the audio reflection file from iCloud at your convenience as auto-downloading is currently turned off.", downloadFlag: true
                 )//: addMediaRecWithError
                 mediaList.saveList()
@@ -229,7 +229,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecord(
                     fromRec: recID,
                     type: mediaListType,
-                    keepYN: false,
+                    originatedHere: false,
                     savedAt: location
                 )//: addMediaRecord
                 mediaList.saveList()
@@ -241,7 +241,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecWithError(
                     fromRec: record.recordID,
                     type: mediaListType,
-                    keepYN: false,
+                    originatedHere: false,
                     message: "The \(mediaNameForError) file that should have been downloaded to the device does not exist where it was expected to be found. Please try manually downloading again."
                 )//: addMediaRecWithError
                 mediaList.saveList()
@@ -253,7 +253,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecWithError(
                     fromRec: record.recordID,
                     type: mediaListType,
-                    keepYN:  false,
+                    originatedHere: false,
                     message: "Your device's storage capacity is currently full so the app was unable to download the \(mediaNameForError) file. Please free up space and try to manually download again."
                 )//: addMediaRecWithError
                 mediaList.saveList()
@@ -265,7 +265,7 @@ extension CloudMediaBrain {
                 mediaList.addMediaRecWithError(
                     fromRec: record.recordID,
                     type: mediaListType,
-                    keepYN: false,
+                    originatedHere: false,
                     message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again."
                 )//: addMediaRecWithError
                 mediaList.saveList()
@@ -279,7 +279,7 @@ extension CloudMediaBrain {
             mediaList.addMediaRecWithError(
                 fromRec: record.recordID,
                 type: mediaListType,
-                keepYN: false,
+                originatedHere: false,
                 message: "A technical error was encountered while trying to save the \(mediaNameForError) file. Please try manually downloading again."
             )//: addMediaRecWithError
             mediaList.saveList()
@@ -293,7 +293,7 @@ extension CloudMediaBrain {
         let mediaBrain = CloudMediaBrain.shared
         let fileSystem = FileManager.default
         
-        guard let recFile = mediaList.getLocalMediaRecord(using: record), recFile.originatedOnDevice == false else { return false }
+        guard let recFile = mediaList.getLocalMediaRecord(using: record), recFile.fileOriginatedOnThisDevice == false else { return false }
         
         let savedFilePathString: String = mediaBrain.retrievePathFromID(recID: record)
         let fileToDelete: URL = URL.documentsDirectory.appending(path: savedFilePathString, directoryHint: .notDirectory)
@@ -314,7 +314,7 @@ extension CloudMediaBrain {
     private func attemptMediaDeleteUsingMasterList(for record: CKRecord.ID) async -> Bool {
         let mediaList = MasterMediaList.shared
         if let mediaRecord = mediaList.getLocalMediaRecord(using: record),
-        mediaRecord.originatedOnDevice == false,
+        mediaRecord.fileOriginatedOnThisDevice == false,
         let dataAtLocation: URL = mediaRecord.mediaURL {
             do {
                 _ = try FileManager.default.removeItem(at: dataAtLocation)

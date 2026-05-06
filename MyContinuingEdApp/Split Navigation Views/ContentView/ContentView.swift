@@ -23,6 +23,31 @@ struct ContentView: View {
     @State private var showDeletionErrorAlert: Bool = false
     @State private var deletionErrorMessage: String = ""
     
+    // Warning box-related
+    @State private var showRenewalAcknowledgementConfirmation: Bool = false
+    private let syncBrain = SmartSyncBrain.shared
+    // MARK: - COMPUTED PROPERTIES
+    
+    var addRenewalWarningBoxMessage: String {
+        if userPaidSupportLevel == .basicUnlock {
+            return "In order to sync CE certificates across your devices in iCloud, you need to have information pertaining to the current renewal period in the app. Otherwise, certificates will only be stored locally on the device."
+        } else {
+            return "Please add at least one renewal period to this app to help keep your CE activities organized."
+        }//: IF ELSE (userPaidSupportLevel == .basicUnlock)
+    }//: addRenewalWarningBoxMessage
+    
+    var renewalEndingBoxMessage: String {
+        if let renewal = syncBrain.renewalForWarning {
+            if renewal.isRenewalPrevious() {
+                return "The renewal period under which CE certificates were being uploaded to iCloud with SmartSync has now ended. In order to continue using SmartSync as a CE Cache Core user, please acknowledge an important reminder concerning SmartSync by tapping on the acknowledge button."
+            } else {
+                return "The current renewal period is about to end. Please tap on the 'Acknowledge' button to review important information regarding certificates currently stored in iCloud prior to the renewal's ending. SmartSync will stop functioning after the renewal ends if this information is not acknowledged by you."
+            }//: IF LET (renewal = syncBrain.renewalForWarning)
+        } else {
+            return "The current renewal period is about to end. Please tap on the 'Acknowledge' button to review important information regarding certificates currently stored in iCloud prior to the renewal's ending. SmartSync will stop functioning after the renewal ends if this information is not acknowledged by you."
+        }//: IF LET (renewal)
+    }//: renewalEndingBoxMessage
+    
     // MARK: - BODY
     var body: some View {
         if viewModel.allActivities.isEmpty && viewModel.allCredentials.isEmpty {
@@ -42,41 +67,78 @@ struct ContentView: View {
                 .navigationTitle("CE Activities")
             }//: GEO READER
         } else {
-            /// The List section displays the ActivityROW and not the ActivityView. The
-            /// ActivityView struct is for showing the details of each activity.
-            List(selection: $viewModel.dataController.selectedActivity) {
-                // MARK: Regular list with no header section
-                if dataController.sortType != .name {
-                    ForEach(viewModel.computedCEActivityList) { activity in
-                        ActivityRow(activity: activity)
-                            .swipeActions {
-                                Button(role: .destructive) {
-                                    viewModel.delete(activity: activity)
-                                } label: {
-                                    Label("Delete", systemImage: "trash.fill")
-                                }//: BUTTON
-                            }//: SWIPE
-                    }//: LOOP
-                } else {
-                    // MARK: List With Activity Name Alphabetical Sorting
-                    ForEach(viewModel.sortedKeys, id: \.self) { key in
-                        Section(header: Text(key)) {
+            VStack {
+                if viewModel.shouldDisplayWarningBoxSection() {
+                    ScrollView {
+                        VStack(spacing: 8){
+                            // Display any pertinent warning boxes to the user
+                            if viewModel.showNoCredentialsWarningBox {
+                                UserWarningBoxView(
+                                    warningTitle: "Add Credential",
+                                    warningText: "To make the most of this app (and to sync certificates in iCloud if you are a CE Cache Core user), please add the license or other credential that you're tracking continuing education activities for.",
+                                    warningAccentColor: Color.gray
+                                )//: USERWARNINGBOXVIEW
+                            }//: IF (showNoCredentialsWarningBox)
                             
-                            // Ce Activity row under the key header
-                            ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
-                                ActivityRow(activity: activity)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
-                                            viewModel.delete(activity: activity)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash.fill")
-                                        }//: BUTTON
-                                    }//: SWIPE
-                            } //: LOOP
-                        }//: SECTION
-                    }//: LOOP
-                }//: IF - ELSE
-            } //: LIST
+                            if viewModel.showAddRenewalBox {
+                                UserWarningBoxView(
+                                    warningTitle: "Add Renewal Period",
+                                    warningText: addRenewalWarningBoxMessage,
+                                    warningAccentColor: Color.indigo
+                                )//: USER WARNING BOX VIEW
+                            }//: IF (showAddRenewalBox)
+                            
+                            if viewModel.showUpcomingRenewalEndingBox {
+                                UserWarningBoxView(
+                                    warningTitle: "Renewal Ending Soon",
+                                    warningText: renewalEndingBoxMessage,
+                                        showActionButton: true,
+                                        buttonLabelText: "Acknowledge"
+                                ) {
+                                    showRenewalAcknowledgementConfirmation = true
+                                }
+                            }//: IF (showUpcomingRenewalEndingBox)
+                        }//: VSTACK
+                    }//: SCROLLVIEW
+                    .frame(maxHeight: 250)
+                }//: IF (shouldDisplayWarningBoxSection)
+                
+                /// The List section displays the ActivityROW and not the ActivityView. The
+                /// ActivityView struct is for showing the details of each activity.
+                List(selection: $viewModel.dataController.selectedActivity) {
+                    // MARK: Regular list with no header section
+                    if dataController.sortType != .name {
+                        ForEach(viewModel.computedCEActivityList) { activity in
+                            ActivityRow(activity: activity)
+                                .swipeActions {
+                                    Button(role: .destructive) {
+                                        viewModel.delete(activity: activity)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash.fill")
+                                    }//: BUTTON
+                                }//: SWIPE
+                        }//: LOOP
+                    } else {
+                        // MARK: List With Activity Name Alphabetical Sorting
+                        ForEach(viewModel.sortedKeys, id: \.self) { key in
+                            Section(header: Text(key)) {
+                                
+                                // Ce Activity row under the key header
+                                ForEach(viewModel.dataController.activitiesBeginningWith(letter: key)) { activity in
+                                    ActivityRow(activity: activity)
+                                        .swipeActions {
+                                            Button(role: .destructive) {
+                                                viewModel.delete(activity: activity)
+                                            } label: {
+                                                Label("Delete", systemImage: "trash.fill")
+                                            }//: BUTTON
+                                        }//: SWIPE
+                                } //: LOOP
+                            }//: SECTION
+                        }//: LOOP
+                    }//: IF - ELSE
+                } //: LIST
+            }//: VSTACK
             .navigationTitle("CE Activities")
             .searchable(
                 text: $viewModel.dataController.filterText,
@@ -86,10 +148,17 @@ struct ContentView: View {
                     Text(tag.tagTagName)
                 }
             // MARK: - ALERTS
-                .alert("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
+                .alert("CE Deletion Error", isPresented: $showDeletionErrorAlert) {
+                    Button("OK"){}
+                } message: {
+                    Text(deletionErrorMessage)
+                }//: ALERT (deletion error)
+            
+            // MARK: - CONFIRMATION DIALOGS
+                .confirmationDialog("CE Activity Deletion Warning", isPresented: $viewModel.showDeleteWarning) {
                     Button("Delete", role: .destructive) {
                         if let selectedActivity = viewModel.activityToDelete {
-                            fullyDeleteCeActivity(selectedActivity)
+                           // TODO: Add code
                         }//: IF LET
                     } //: DELETE button
                     Button("Cancel", role: .cancel) {viewModel.activityToDelete = nil}
@@ -99,11 +168,16 @@ struct ContentView: View {
                     }//: IF LET
                 }//: ALERT (delete)
             
-                .alert("CE Deletion Error", isPresented: $showDeletionErrorAlert) {
-                    Button("OK"){}
-                } message: {
-                    Text(deletionErrorMessage)
-                }//: ALERT (deletion error)
+                .confirmationDialog("Acknowledge Renewal Transition", isPresented: $showRenewalAcknowledgementConfirmation) {
+                    Button("Acknowledge") {
+                        if let renewal = syncBrain.renewalForWarning {
+                            viewModel.userAcknowledgesRenewalWarning(for: renewal)
+                        }//: IF LET (renewal)
+                    }//: BUTTON (acknowledge)
+                    Button("Cancel", role: .cancel) {} //: BUTTON (cancel)
+                } message : {
+                    Text(syncBrain.renewalWindowWarningBoxMessage)
+                }//: CONFIRMATION DIALOG
             
             // MARK: - ON CHANGE
                 .onChange(of: deletionErrorMessage) {_ in
@@ -158,48 +232,7 @@ struct ContentView: View {
         }
     }//: askForReview
     
-    /// ContentView method that deletes a selected CeActivity CoreData object along with all media files associated with it.
-    /// - Parameter activity: CeActivity that is to be deleted
-    ///
-    /// The method first checks if the activity has a CE certificate and/or any audio reflections associated with it, and then
-    /// deletes them first.  Once those are successfully deleted, then the core data object is removed.  However, since the
-    /// media-related deletion methods can throw errors, this method will update the deletionErrorMessage and return without
-    /// removing the CoreData object instead.  Once the deletionErrorMessage updates, then a new alert will be generated for
-    /// the user.
-    func fullyDeleteCeActivity(_ activity: CeActivity) {
-        if activity.hasCompletionCertificate {
-            Task { @MainActor in
-                // TODO: Add code
-//                guard confirmedCert else {
-//                    NSLog(">>> Invalid hasCompletionCertificate value for \(activity.ceTitle).")
-//                    NSLog(">>> Unable to find a certificate or coordinator object for the activity when there should be one.")
-//                    deletionErrorMessage = "The app's internal information on this activity shows that there should be a certificate saved, but none was found (or could be found). Reach out to the developer for assistance."
-//                    return
-//                }//: GUARD
-                
-                do {
-                    // TODO: Add code
-                } catch {
-                    NSLog(">>> Error deleting the CE activity \(activity.ceTitle) due to an error when trying to delete the associated certificate file.")
-                    NSLog(">>> Neither the activity nor certificate were deleted.")
-                    NSLog(">>> Likely cause is an invalid URL in the certificate coordinator for the associated certificate due to the actual file being moved or deleted without updating the coordinator list accordingly.")
-                    deletionErrorMessage = "Unable to delete the certificate because an error was encountered while trying to delete the certificate associated with it. Try manually deleting the certificate first and then try again."
-                    return
-                }//: DO - CATCH
-                
-                viewModel.deleteCeActivityCoreDataObject(activity)
-                return
-            }//: TASK
-        } else if activity.hasCompletionCertificate {
-            NSLog(">>>Error deleting the CE activity \(activity.ceTitle) due to a nil certificateBrain value. However, the hasCompletionCertificate property is still true.")
-            deletionErrorMessage = "Unable to delete the certificate because an error was encountered while trying to delete the certificate associated with it. Try manually deleting the certificate first and then try again."
-            return
-        }//: IF - ELSE IF
-        
-        viewModel.deleteCeActivityCoreDataObject(activity)
-        viewModel.activityToDelete = nil
-    }//: fullyDeleteCeActivity
-    
+   
     
     
     // MARK: - INIT

@@ -78,7 +78,7 @@ extension CloudMediaBrain {
             if shouldRetry(error: webError, currentRetry: retryCount) {
                 let delay = calculateRetryBackoff(retryCount: retryCount, error: webError)
                 _ = try? await Task.sleep(for: .seconds(delay))
-                _ = await deleteCompleteCKRecordWithoutModel(for: recId, recordType: type, retryCount: retryCount + 1)
+                return await deleteCompleteCKRecordWithoutModel(for: recId, recordType: type, retryCount: retryCount + 1)
             } else {
                 addOrUpdateMasterListEntryWithError(
                     forRecord: recId,
@@ -101,8 +101,6 @@ extension CloudMediaBrain {
                 CloudSyncError.mediaDeletionError
             )//: failure
         }//: DO-CATCH
-        
-        
     }//: deleteCompleteCKRecordWithoutModel()
     
     func removeUploadedCerts(

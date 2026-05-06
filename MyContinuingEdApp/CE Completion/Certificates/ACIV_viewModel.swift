@@ -29,10 +29,15 @@ extension ActivityCertificateImageView {
         @Published var certificateSavedYN: Bool = false
         @Published var certificateToShow: CECertificate?
         
-        // Status icons
+        // Status icons - iCloud status
         @Published var certDisplayStatus: MediaLoadingState = .noMedia
         @Published var certCloudIcon: MediaCloudStatusIcon = .noSavedMedia
+        @Published var certIconMessage: String = ""
         @Published var certIconDetails: String = ""
+        
+        // Status icons - SmartSync status
+        @Published var smartSyncStatus: SmartSyncStatusIcon = .notApplicable
+        @Published var smartSyncStatusDetails: String = ""
         
         // Limited SmartSync properties (for CeCache Core users only)
         @Published var cloudUploadAllowanceUsed: Double = 0.0
@@ -131,7 +136,19 @@ extension ActivityCertificateImageView {
                     return (false, nil)
                 }//: IF LET (saveLocation)
             } catch let diskError as CocoaError {
-                handleCommonDiskErrors(thrownError: diskError)
+                Task{@MainActor in
+                    let alertValues = fileSystem.handleCommonDiskErrors(
+                        thrownError: diskError,
+                        when: .writing,
+                        objectName: "ActivityCertificateImageView",
+                        callingMethod: "saveNewCertToLocalDevice(with)",
+                        filePathString: newCertInfo.relativePath ?? ""
+                    )//: handleCommonDiskErrors
+                    errorAlertTitle = alertValues.alertTitle
+                    errorAlertMessage = alertValues.alertMessage
+                    errorDetailsText = diskError.localizedDescription
+                    showGeneralAlert = true
+                }//: TASK
                 return (false, nil)
             } catch {
                 NSLog(">>>ACIV ViewModel | saveNewCertToLocalDevice")
@@ -220,6 +237,9 @@ extension ActivityCertificateImageView {
                         // so these lines basically set the appropriate cloud status icon
                         if syncBrain.shouldAllowCertUpload(for: cert) {
                             certCloudIcon = .availableToUpload
+                            certIconMessage = "Upload Certificate to iCloud"
+                            smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                            smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
                             userWantsCloud = false
                         } else {
                             // IF the certificate is NOT eligible for SmartSync, then either it is
@@ -233,22 +253,22 @@ extension ActivityCertificateImageView {
                             // becuase this method updates two properties in SmartSyncBrain that
                             // are used for controlling the SmartSync icon that will be displayed to the
                             // user in the UI.
-                            let ineligibilityReason = syncBrain.getSmartSyncIneligibilityReason(for: cert)
-                            if ineligibilityReason.isNotEmpty {
-                                certCloudIcon = .localOnly
-                            }
+                            smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                            smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
                             userWantsCloud = false
                         }//: IF ELSE (shouldAllowCertUpload(for)
                     }//: IF ELSE (userWantsCertsInCloud - .basicUnlock)
                 } else {
                         if mediaBrain.userWantsCertsInCloud {
                             userWantsCloud = true
+                            updateSyncStatusIconForProUsers(for: cert)
                         } else {
                         // For Pro users, even if the certificate is for a CE activity that is outside
                         // of the selected SmartSync window timeframe, they can always upload whatever
                         // they want to iCloud.
                             certCloudIcon = .availableToUpload
-                        userWantsCloud = false
+                            userWantsCloud = false
+                            updateSyncStatusIconForProUsers(for: cert)
                     }//: IF ELSE (userWantsCertsInCloud)
                 }//: IF ELSE (userPaidSupportLevel)
             }//: TASK
@@ -298,6 +318,7 @@ extension ActivityCertificateImageView {
             } else {
                 await MainActor.run {
                     certCloudIcon = .internetUnavailable
+                    certIconMessage = "Device Offline"
                     if let savedFile = mediaList.getLocalMediaRecord(using: cert.certCloudRecordName) {
                         savedFile.shouldRetryUpload = true
                         savedFile.errorMessage = "Device was offline when a new CE certificate was added that was eligible for SmartSync upload. The app will try to automatically upload it to iCloud when the device is back online."
@@ -314,6 +335,7 @@ extension ActivityCertificateImageView {
             } else {
                 await MainActor.run {
                     certCloudIcon = .cloudError
+                    certIconMessage = "iCloud Unavailable: Tap on Details for More Info"
                     certIconDetails = settings.iCloudState.userMessage
                 }//: MAIN ACTOR
                 if let savedFile = mediaList.getLocalMediaRecord(using: cert.certCloudRecordName) {
@@ -335,9 +357,11 @@ extension ActivityCertificateImageView {
                     result = true
                 case .failure(let syncError):
                     certCloudIcon = .availableToUpload
+                    certIconMessage = "Out of Sync Window"
                     certIconDetails = syncError.localizedDescription
                     result = false
                 }//: SWITCH
+                updateSyncStatusIconForProUsers(for: cert)
             }//: TASK
             return result
         }//: canProUserSmartSyncCertAutomatically(cert)
@@ -349,7 +373,7 @@ extension ActivityCertificateImageView {
             }//: MAIN ACTOR
            
             if !certModel.isPlaceholder {
-                let uploadResult = await mediaBrain.manualCertUploadProcess(for: cert, using: certModel)
+                let uploadResult = await mediaBrain.uploadCertToICloud(for: cert, using: certModel)
                 switch uploadResult {
                 case .success(_):
                     await MainActor.run {
@@ -367,6 +391,16 @@ extension ActivityCertificateImageView {
             }//: IF LET (certModel)
         }//: uploadCertificateToICloud(cert)
         
+        private func updateSyncStatusIconForProUsers(for cert: CertificateInfo) {
+            if syncBrain.shouldAllowCertUpload(for: cert) {
+                smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
+            } else {
+                smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
+            }//: IF ELSE
+        }//: updateSyncSTatusIconForProUsers(for cert)
+        
         
         // MARK: SAVE HELPERS
         
@@ -376,9 +410,8 @@ extension ActivityCertificateImageView {
                 if syncBrain.shouldAllowCertUpload(for: cert) {
                     willUpload = true
                 } else {
-                    // Calling this method so the right SmartSync status icon and error properties
-                    // in SmartSyncBrain are updated - don't need to use the returned String here
-                    let _ = syncBrain.getSmartSyncIneligibilityReason(for: cert)
+                    smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                    smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
                     willUpload = false
                 }//: IF ELSE (shouldAllowCertUpload)
             }//: TASK
@@ -428,7 +461,18 @@ extension ActivityCertificateImageView {
                         _ = try fileSystem.createDirectory(atPath: topPath, withIntermediateDirectories: true)
                         saveComputedRelPathForCert(usingInfo: newCertInfo, ceCert: certObj)
                     } catch let diskError as CocoaError {
-                        handleCommonDiskErrors(thrownError: diskError)
+                        Task{@MainActor in
+                            let alertStrings = fileSystem.handleCommonDiskErrors(
+                                thrownError: diskError,
+                                when: .writing,
+                                objectName: "ActivityCertificateImageView viewModel",
+                                callingMethod: "setRelativePathStringForNewCert"
+                            )//: handleCommonDiskErrors
+                            errorAlertTitle = alertStrings.alertTitle
+                            errorAlertMessage = alertStrings.alertMessage
+                            errorDetailsText = diskError.localizedDescription
+                            showGeneralAlert = true
+                        }//: TASK
                     } catch {
                         NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
                         NSLog(">>>The top-level directory for all CE certificates, 'Certificates', could not be created either by the initial createAndConfirmCertificateFolders or this backup method.")
@@ -448,7 +492,19 @@ extension ActivityCertificateImageView {
                         _ = try fileSystem.createDirectory(atPath: activityPath, withIntermediateDirectories: true)
                         saveComputedRelPathForCert(usingInfo: newCertInfo, ceCert: certObj)
                     } catch let diskError as CocoaError {
-                        handleCommonDiskErrors(thrownError: diskError)
+                        Task{@MainActor in
+                            let alertStrings = fileSystem.handleCommonDiskErrors(
+                                thrownError: diskError,
+                                when: .writing,
+                                objectName: "ActivityCertificateImageView viewModel",
+                                callingMethod: "setRelativePathStringForNewCert",
+                                filePathString: newCertInfo.relativePath ?? ""
+                            )//: handleCommonDiskErrors
+                            errorAlertTitle = alertStrings.alertTitle
+                            errorAlertMessage = alertStrings.alertMessage
+                            errorDetailsText = diskError.localizedDescription
+                            showGeneralAlert = true
+                        }//: TASK
                     } catch {
                         NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
                         NSLog(">>>The activity-specific directory for the given certificate could not be created either by the initial createAndConfirmCertificateFolders or this backup method.")
@@ -487,6 +543,7 @@ extension ActivityCertificateImageView {
         ) async {
             await MainActor.run {
                 certCloudIcon = .cloudError
+                certIconMessage = "Failed to upload certificate"
                 certIconDetails = syncError.localizedDescription
             }//: MAIN ACTOR
             mediaList.updateMediaRecWithError(fromRec: cert.certCloudRecordName, message: syncError.localizedDescription, setRetryUploadFlag: true)
@@ -503,7 +560,7 @@ extension ActivityCertificateImageView {
                 switch option {
                 case .deviceOnly:
                     // For freeing up space on the user's device
-                    await removeCertificateFromDevice()
+                    await deleteLocalCertAndUpdateIcon()
                 case .deviceAndCloud:
                     // For permanent removal of the certificate
                     await permanentlyRemoveCertificateAndInfo()
@@ -517,7 +574,7 @@ extension ActivityCertificateImageView {
         }//: deleteCertificate()
         
         private func removeUploadedCertFromICloud() async {
-            guard let savedCert = activity.certificate else { return }//: GUARD
+            guard let savedCert = activity.certificate, savedCert.uploadedToICloud else { return }//: GUARD
             do {
                 _ = try await doQuickNetworkCheck()
             } catch {
@@ -527,7 +584,7 @@ extension ActivityCertificateImageView {
             // Is the certificate stored in iCloud?
             let isInICloud = savedCert.uploadedToICloud
             
-            if isInICloud {
+            if isInICloud, mediaBrain.iCloudIsAccessible {
                 let cloudDeleteResult = await deleteUploadedCertFile()
                 if cloudDeleteResult.result {
                     await MainActor.run {
@@ -535,42 +592,48 @@ extension ActivityCertificateImageView {
                         dataController.save()
                         certCloudIcon = .availableToUpload
                     }//: MAIN ACTOR
+                   // Note: The removal or updating of the MasterMediaList item is handled by
+                   // the CloudMediaBrain method deleteEntireRecord, which is called
+                   // by the deleteUploadedCertFile method above.
                 } else {
                 let cloudError = cloudDeleteResult.error
                     await MainActor.run {
                         certCloudIcon = .cloudError
-                        certIconDetails = cloudError?.localizedDescription ?? "A network, server, or other iCloud error prevented the app from deleting the certificate saved in iCloud. Please try again later."
+                        certIconMessage = cloudError?.localizedDescription ?? "A network, server, or other iCloud error prevented the app from deleting the certificate saved in iCloud. Please try again later."
                     }//: MAIN ACTOR
                 }//: IF ELSE (result)
-            }//: IF (isInICloud)
+            } else if isInICloud {
+                await MainActor.run {
+                    certCloudIcon = .cloudError
+                    certIconMessage = "iCloud is not currently accessible by the app due to the following reason: \(settings.iCloudState.rawValue) | Please try again later."
+                    certIconDetails = settings.iCloudState.userMessage
+                }//: MAIN ACTOR
+            }//: IF (isInICloud, iCloudIsAccessible)
         }//: removeUploadedCertFromICloud()
         
-        private func removeCertificateFromDevice() async {
-            guard let savedCert = activity.certificate else { return }//: GUARD
+        private func removeCertificateFromDevice() async -> Bool {
+            guard let savedCert = activity.certificate else { return true }//: GUARD
             
             if let savedLocation: URL = savedCert.resolveURL(basePath: .documentsDirectory) {
-                let _ = await deleteCertFileOnDevice(at: savedLocation)
-                
+                let deletionResult = await deleteCertFileOnDevice(at: savedLocation)
+                switch deletionResult {
+                case .success(_):
+                    return true
+                case .failure(_):
+                    return false
+                }//: SWITCH
+            } else {
+                NSLog(">>>ActivityCertificateImageView viewModel | removeCertificateFromDevice")
+                NSLog(">>>Unable to delete a saved certificate because the resolveURL method for the corresponding CertificateInfo object was nil.")
+                await MainActor.run {
+                    errorAlertTitle = "Deletion Error"
+                    errorAlertMessage = "The app could not delete the certificate file that was saved to this device because the file was not located where it should have been. You may need to manually use the Finder or Files app to look for it within the Certificates folder and delete."
+                    showGeneralAlert = true
+                }//: MAIN ACTOR
+                return false
             }//: IF LET (savedLocation)
         }//: removeCertificateFromDevice()
         
-        private func permanentlyRemoveCertFromDevice() async {
-            guard let savedCert = activity.certificate  else { return }
-            await removeCertificateFromDevice()
-            // Making sure that the local file was actually deleted before removing the
-            // CertificateInfo object
-            if let formerFile = savedCert.resolveURL(basePath: .documentsDirectory),
-               let deletedData = try? Data(contentsOf: formerFile) {
-                NSLog(">>>ACIV ViewModel | permanentlyDeleteOnlineCertificateAndInfo")
-                NSLog(">>>The locally stored certificate at \(formerFile.absoluteString) was still located by the app, meaning that the deleteCertFileOnDevice method failed to remove it.")
-                await MainActor.run {
-                    errorAlertTitle = "Certificate Not Fully Deleted"
-                    errorAlertMessage = "The saved certificate on the device could not be deleted at this time. You can still add a new certificate file in place of this one, however. Use the Finder or Files app to manually delete the file off your device."
-                    errorDetailsText = "The file was supposed to be at this path: \(formerFile.absoluteString). Use the Finder or Files app to find and manually delete the file off your device."
-                    showGeneralAlert = true
-                }//: MAIN ACTOR
-            } //: IF LET ELSE (formerFile, deletedData)
-        }//: permanentlyRemoveCertFromDevice()
         
         private func locallyDeleteCertificate() async -> Result<(success: Bool, onlineId: CKRecord.ID?), FileIOError> {
             guard let savedCert = activity.certificate else { return Result.failure(FileIOError.fileMissing)}//: GUARD
@@ -650,43 +713,52 @@ extension ActivityCertificateImageView {
                 }//: DO-CATCH
         }//: deleteCertFileOnDevice
         
+        private func deleteLocalCertAndUpdateIcon() async {
+            let localDeletionResult = await removeCertificateFromDevice()
+            if localDeletionResult {
+                Task{@MainActor in
+                    checkAndUpdateSmartSyncStatusForFile()
+                }//: Task
+            }//: IF (localDeletionResult)
+        }//: deleteLocalCertAndUpdateIcon()
+        
         private func permanentlyRemoveCertificateAndInfo() async {
             guard let savedCert = activity.certificate else { return }//: GUARD
             let certCloudId = savedCert.certCloudRecordName
             
-            await permanentlyRemoveCertFromDevice()
-            
-            if savedCert.uploadedToICloud {
-                let certInCloudWasDeleted = await deleteUploadedCertFile()
-                if certInCloudWasDeleted.result {
-                    deleteCertInfoObject()
+            if await removeCertificateFromDevice() {
+                if savedCert.uploadedToICloud {
+                    let certInCloudWasDeleted = await deleteUploadedCertFile()
+                    if certInCloudWasDeleted.result {
+                        deleteCertInfoObject()
+                    } else {
+                        NSLog(">>>ACIV ViewModel | permanentlyDeleteCertificate")
+                        NSLog(">>>The deleteUploadedCertFile returned false as the result of its operation to delete the CKRecord associated with the certificate for the activity \(activity.ceTitle).")
+                        Task{@MainActor in
+                            errorAlertTitle = "Certificate Not Fully Deleted"
+                            errorAlertMessage = "The saved certificate in iCloud could not be deleted at this time. Tap on the error details button to get more info. However, the local file was removed and can be replaced with another file if desired."
+                            
+                            if let errorMessage = certInCloudWasDeleted.error?.localizedDescription {
+                                errorDetailsText = errorMessage
+                            } else {
+                                errorDetailsText = "A network, server, or other technical error prevented the app from being able to delete the certificate off of iCloud at this time. The app will continue to try deleting the iCloud copy in the meantime."
+                            }//: IF LET (errorMessage)
+                            
+                            let deletionErrorMessage: String = "An attempt was made to delete the certificate for the CE activity '\(activity.ceTitle)' from iCloud, but an error was encountered."
+                            mediaList.updateMediaRecWithError(
+                                fromRec: certCloudId,
+                                message: deletionErrorMessage,
+                                deleteFlag: true
+                            )//: updateMediaRecWithError()
+                            mediaList.saveList()
+                            showGeneralAlert = true
+                        }//: TASK
+                        deleteCertInfoObject()
+                    }//: IF (certInCloudWasDeleted)
                 } else {
-                    NSLog(">>>ACIV ViewModel | permanentlyDeleteCertificate")
-                    NSLog(">>>The deleteUploadedCertFile returned false as the result of its operation to delete the CKRecord associated with the certificate for the activity \(activity.ceTitle).")
-                    Task{@MainActor in
-                        errorAlertTitle = "Certificate Not Fully Deleted"
-                        errorAlertMessage = "The saved certificate in iCloud could not be deleted at this time. Tap on the error details button to get more info. However, the local file was removed and can be replaced with another file if desired."
-                        
-                        if let errorMessage = certInCloudWasDeleted.error?.localizedDescription {
-                            errorDetailsText = errorMessage
-                        } else {
-                            errorDetailsText = "A network, server, or other technical error prevented the app from being able to delete the certificate off of iCloud at this time. The app will continue to try deleting the iCloud copy in the meantime."
-                        }//: IF LET (errorMessage)
-                        
-                        let deletionErrorMessage: String = "An attempt was made to delete the certificate for the CE activity '\(activity.ceTitle)' from iCloud, but an error was encountered."
-                        mediaList.updateMediaRecWithError(
-                            fromRec: certCloudId,
-                            message: deletionErrorMessage,
-                            deleteFlag: true
-                        )//: updateMediaRecWithError()
-                        mediaList.saveList()
-                        showGeneralAlert = true
-                    }//: TASK
                     deleteCertInfoObject()
-                }//: IF (certInCloudWasDeleted)
-            } else {
-                deleteCertInfoObject()
-            }//: IF ELSE (uploadedToICloud)
+                }//: IF ELSE (uploadedToICloud)
+            }//: IF (removedFromDevice)
         }//: permanentlyRemoveCertificateAndInfo()
         
         private func deleteCertInfoObject() {
@@ -736,6 +808,7 @@ extension ActivityCertificateImageView {
                 certDisplayStatus = .loaded
                 
                 setCloudIconForLoadedCerts()
+                checkAndUpdateSmartSyncStatusForFile()
                 
             } else if savedCert.uploadedToICloud {
                 certCloudIcon = .availableToDownload
@@ -746,6 +819,22 @@ extension ActivityCertificateImageView {
                 errorDetailsText = "Could not load the saved certificate file. Please try re-selecting the certificate file or take another picture of it."
             }//: IF LET ELSE (certURL, mediaData, savedCertData)
         }//: loadLocalFile
+        
+        func checkAndUpdateSmartSyncStatusForFile() {
+            guard let savedCert = activity.certificate else { return }//: GUARD
+            if userPaidSupportLevel == .free {
+                updateSmartSyncIconAndDetails(to: .restrictedToLocalDevice)
+            } else if userPaidSupportLevel == .basicUnlock {
+                if syncBrain.shouldAllowCertUpload(for: savedCert) {
+                    updateSmartSyncIconAndDetails(to: .eligible)
+                } else {
+                    smartSyncStatus = syncBrain.smartSyncCurrentStateIcon
+                    smartSyncStatusDetails = syncBrain.smartSyncCurrentStateDetails
+                }//: IF (shouldAllowCertUpload)
+            } else {
+                updateSyncStatusIconForProUsers(for: savedCert)
+            }//: IF ELSE (userPaidSupportLevel)
+        }//: checkAndUpdateSmartSyncStatusForFile()
         
         func manuallyDownloadCertificate() async {
             do {
@@ -917,9 +1006,6 @@ extension ActivityCertificateImageView {
         
         
         // MARK: - BUTTON METHODS
-        func turnAutoDownloadOn() {
-            dataController.prefersAutoDownloadForCerts = true
-        }//: turnAutoDownloadOn()
         
         func showUpgradeOptions() {
             
@@ -957,44 +1043,10 @@ extension ActivityCertificateImageView {
             mediaList.saveList()
         }//: findOrphanCertFilesForDeletion()
         
-        private func handleCommonDiskErrors(thrownError error: CocoaError) {
-            if error.code == .fileWriteOutOfSpace {
-                NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
-                NSLog(">>>A Cococa Error was thrown by the FileManager's createDirectory method due to the user's device being completely full. User has been alerted.")
-                Task{@MainActor in
-                    errorAlertTitle = "Local Storage Full"
-                    errorAlertMessage = "No new files can be added to your device because your storage is full. Please free up some space before trying to add a new CE certificate."
-                    showGeneralAlert = true
-                }//: TASK
-            } else if error.code == .fileWriteVolumeReadOnly {
-                NSLog(">>>ACIV ViewModel | setRelativePathStringForNewCert")
-                NSLog(">>>A Cococa Error was thrown by the FileManager's createDirectory method due to the particular volume or disk being read-only at the moment. User has been alerted.")
-                Task{@MainActor in
-                    errorAlertTitle = "Cannot Write To Local Disk"
-                    errorAlertMessage = "No files can be written to the currently selected disk or device because the volume is currently in read-only mode. Please ensure the volume has write permissions before trying to add a new CE certificate."
-                    showGeneralAlert = true
-                }//: TASK
-            } else if error.code == .fileNoSuchFile {
-                NSLog(">>>ACIV ViewModel | handleCommonDiskErrors")
-                NSLog(">>>The file system could not locate the specified certificate file based on the path previously created or stored. User has been alerted.")
-                Task{@MainActor in
-                    errorAlertTitle = "File Not Found"
-                    errorAlertMessage = "The file system could not locate the specific certificate file based on the path previously created or saved. If this file has been manually moved or deleted using the Finder or Files app, then re-add the certificate back to the app."
-                    showGeneralAlert = true
-                }//: TASK
-            } else {
-                NSLog(">>>ACIV ViewModel | handleCommonDiskErrors")
-                NSLog(">>>Another type of Cocoa error has been thrown. User has been alerted.")
-                NSLog(">>> Error details: \(error.localizedDescription)")
-                Task{@MainActor in
-                    errorAlertTitle = "Other Error"
-                    errorAlertMessage = "The file system encountered a less common error while trying to access, save, or delete a locally saved certificate file. Please contact the app developer for assistance."
-                    errorDetailsText = error.localizedDescription
-                    showGeneralAlert = true
-                }//: TASK
-            }//: IF ELSE (diskError.code)
-        }//: handleCommonDiskErrors(thrownError)
-        
+        private func updateSmartSyncIconAndDetails(to iconState: SmartSyncStatusIcon) {
+            smartSyncStatus = iconState
+            smartSyncStatusDetails = iconState.userMessage
+        }//: updateSmartSyncIconAndDetails(to)
         
         // MARK: - SELECTORS
         

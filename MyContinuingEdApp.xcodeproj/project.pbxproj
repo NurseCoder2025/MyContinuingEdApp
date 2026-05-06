@@ -56,6 +56,8 @@
 		3F4D0E7E2F50F870005E26F3 /* CertificateDataWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */; };
 		3F4D0E802F50FF06005E26F3 /* ACIV_viewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */; };
 		3F4EAA262F8F2CF600884BCC /* CoreDataRecordHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */; };
+		3F534B502FA9294500140E5E /* CMB_SmartSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F534B4F2FA9294500140E5E /* CMB_SmartSync.swift */; };
+		3F534B522FA945C400140E5E /* UserWarningBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F534B512FA945C400140E5E /* UserWarningBoxView.swift */; };
 		3F5534D82EBAC06900581628 /* CredentialDAISectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */; };
 		3F5534DA2EBAD70600581628 /* SpecialCatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */; };
 		3F5982BF2F8EEB9400FA30F5 /* AppSettingsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */; };
@@ -399,6 +401,8 @@
 		3F4D0E7D2F50F870005E26F3 /* CertificateDataWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificateDataWrapper.swift; sourceTree = "<group>"; };
 		3F4D0E7F2F50FF06005E26F3 /* ACIV_viewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACIV_viewModel.swift; sourceTree = "<group>"; };
 		3F4EAA252F8F2CF600884BCC /* CoreDataRecordHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecordHelpers.swift; sourceTree = "<group>"; };
+		3F534B4F2FA9294500140E5E /* CMB_SmartSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMB_SmartSync.swift; sourceTree = "<group>"; };
+		3F534B512FA945C400140E5E /* UserWarningBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserWarningBoxView.swift; path = "MyContinuingEdApp/UI Styles/UserWarningBoxView.swift"; sourceTree = SOURCE_ROOT; };
 		3F5534D72EBAC06900581628 /* CredentialDAISectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialDAISectionView.swift; sourceTree = "<group>"; };
 		3F5534D92EBAD70600581628 /* SpecialCatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialCatViewModel.swift; sourceTree = "<group>"; };
 		3F5982BE2F8EEB9400FA30F5 /* AppSettingsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsCache.swift; sourceTree = "<group>"; };
@@ -851,6 +855,7 @@
 				F2772B942E1DDA9F006A94BD /* ContentView.swift */,
 				3F2064512EB01DCB0036C4B1 /* ContentViewModel.swift */,
 				3F39AFCC2EA180F8003F5E78 /* ContentViewToolbarView.swift */,
+				3F534B512FA945C400140E5E /* UserWarningBoxView.swift */,
 			);
 			path = ContentView;
 			sourceTree = "<group>";
@@ -1203,6 +1208,7 @@
 				3F68AD0D2F9FCE4500D587C1 /* CMB_Static.swift */,
 				3F68AD072F9FCC6B00D587C1 /* CMB_RetryLogic.swift */,
 				3F68AD092F9FCCBF00D587C1 /* CMB_ZoneHandling.swift */,
+				3F534B4F2FA9294500140E5E /* CMB_SmartSync.swift */,
 			);
 			path = "Cloud Media Brain";
 			sourceTree = "<group>";
@@ -1766,6 +1772,7 @@
 				3FCED3E82F6F740900BF407C /* PromptResponseTextEntryView.swift in Sources */,
 				3FE90A242EC7DCCB0010FB12 /* RenewalProgressSheet.swift in Sources */,
 				F2C0D1392E69EF0500458022 /* USState-CoreDataHelper.swift in Sources */,
+				3F534B522FA945C400140E5E /* UserWarningBoxView.swift in Sources */,
 				3FF090442F99BDFD0057D15F /* MasterMediaList.swift in Sources */,
 				3FE90A222EC7D9FA0010FB12 /* RenewalPeriodNavLabelView.swift in Sources */,
 				3F03BEA12EECE791003B89E7 /* SettingsSheet.swift in Sources */,
@@ -1894,6 +1901,7 @@
 				F2892B062E5D2BC700DA392A /* CeDesignationJSON.swift in Sources */,
 				3F84D7E42F91DCB8006A287D /* Notification+Extensions.swift in Sources */,
 				3F20645B2EB036F10036C4B1 /* IssuerSheetViewModel.swift in Sources */,
+				3F534B502FA9294500140E5E /* CMB_SmartSync.swift in Sources */,
 				3FE90B972F108A2200BD780C /* ReinstatementAdditionalItemsView.swift in Sources */,
 				F2CE98422E7C99C100B6A627 /* CredentialSelectionPopOver.swift in Sources */,
 				3FE90A1E2EC7CA570010FB12 /* MoneySpentByMonthView.swift in Sources */,
